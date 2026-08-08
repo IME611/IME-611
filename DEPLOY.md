@@ -1,0 +1,1 @@
+Vercel should use npm run build and serve dist for this Vite application.

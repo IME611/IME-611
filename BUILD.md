@@ -1,0 +1,1 @@
+E.I.L MVP build: React + Vite + TypeScript. Vercel target: dist.
