@@ -1,1 +1,1 @@
-export { default } from './main';
+export function App(){return null}
