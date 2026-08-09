@@ -1,0 +1,1 @@
+export default async function handler(req,res){if(req.method==='POST'){const b=req.body||{};return res.status(201).json({ok:true,file:{name:String(b.name||'unnamed'),size:Number(b.size||0),type:String(b.type||'application/octet-stream'),status:'received'}})}return res.status(405).json({ok:false,error:'method not allowed'})}
