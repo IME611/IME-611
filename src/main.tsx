@@ -6,6 +6,7 @@ import EvolutionWorkspace from'./EvolutionWorkspace';
 import{Sidebar,EvolutionDashboard}from'./InterfaceV2';
 import'./styles.css';
 import'./interface-v2.css';
+import'./sidebar-flow.css';
 import'./evolution-workspace.css';
 
 type Item={id?:number;title:string;kind:string;content?:string;tags?:string[];source?:string};
