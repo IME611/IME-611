@@ -1,0 +1,22 @@
+import React from 'react';
+
+type Page={id:string;label:string;icon:string};
+type Group={title:string;items:string[][]};
+type Props={page:string;groups:Group[];onNav:(id:string)=>void;onAdd:()=>void;collapsed:boolean;setCollapsed:(v:boolean)=>void;online:boolean};
+
+export function Sidebar({page,groups,onNav,onAdd,collapsed,setCollapsed,online}:Props){return <aside className={'sideRail '+(collapsed?'collapsed':'')}>
+  <div className="sideBrand"><button className="brandMark" onClick={()=>onNav('dashboard')}>E</button>{!collapsed&&<div><b>E.I.L</b><small>EVOLUTION OS</small></div>}<button className="collapseBtn" onClick={()=>setCollapsed(!collapsed)}>{collapsed?'‹':'›'}</button></div>
+  <button className="sideAdd" onClick={onAdd}><span>＋</span>{!collapsed&&'הוסף מקור'}</button>
+  <nav className="sideNav"><button className={page==='dashboard'?'sideLink active':'sideLink'} onClick={()=>onNav('dashboard')}><i>⌂</i>{!collapsed&&<><span>היום</span><em>נקודת המודעות</em></>}</button>
+  {groups.map(g=><section className="sideGroup" key={g.title}>{!collapsed&&<label>{g.title}</label>}{g.items.map(([id,label,icon])=><button className={page===id?'sideLink active':'sideLink'} key={id} onClick={()=>onNav(id)} title={label}><i>{icon}</i>{!collapsed&&<span>{label}</span>}</button>)}</section>)}</nav>
+  <div className="sideFooter"><span className={online?'pulse online':'pulse'}/>{!collapsed&&<div><b>{online?'המערכת מחוברת':'מצב מקומי'}</b><small>הידע נשאר מקור. ההבנה מתפתחת.</small></div>}</div>
+</aside>}
+
+type DashProps={onNav:(id:string)=>void;onAdd:()=>void;itemsCount:number;paragraphs:number;corpusReady:boolean};
+export function EvolutionDashboard({onNav,onAdd,itemsCount,paragraphs,corpusReady}:DashProps){return <div className="evolutionDash">
+ <header className="dashIntro"><div><span className="eyebrow">E.I.L / AWARENESS → ACTION</span><h1>מה אני רואה עכשיו?</h1><p>המערכת לא נועדה לאגור עוד מידע. היא נועדה להפוך את מה שצברת לאורך השנים למודעות, קשרים והחלטה אחת שאפשר לחיות לפיה.</p></div><button className="quietAdd" onClick={onAdd}>＋ הוסף משהו שלמדתי</button></header>
+ <section className="awarenessHero"><div className="awarenessCopy"><span className="heroKicker">YOUR CURRENT EDGE</span><h2>ידע הופך להתפתחות<br/>רק כשהוא משנה פעולה.</h2><p>מסמכים, תמונות, מאמרים ורעיונות נכנסים כמקורות. E.I.L מחפש ביניהם דפוסים, מתח וחזרות — ואז מחזיר אותך לשאלה החשובה: <b>מה דורש ממני תשומת לב עכשיו?</b></p><div className="heroActions"><button className="primary" onClick={()=>onNav('library')}>המשך במסע</button><button className="ghostAction" onClick={()=>onNav('insights')}>ראה תובנות פעילות</button></div></div><div className="awarenessLoop"><div className="loopCore"><small>עכשיו</small><b>מודעות</b><span>מה אני מפספס?</span></div><i className="loopNode n1">לקלוט<small>מקור</small></i><i className="loopNode n2">לחבר<small>דפוס</small></i><i className="loopNode n3">להבין<small>משמעות</small></i><i className="loopNode n4">לפעול<small>ניסוי</small></i></div></section>
+ <section className="focusGrid"><article className="focusCard mainFocus"><span className="cardLabel">הפוקוס שלי</span><h3>מה הדבר האחד שכדאי להפוך ממידע להתנהגות?</h3><p>ככל שתתקדם במסע ותוסיף מקורות, כאן תופיע סינתזה בין מה שחוזר בידע שלך לבין המקום שבו יש פער בין הבנה למעשה.</p><button onClick={()=>onNav('journey')}>פתח את המסע שלי ←</button></article><article className="focusCard"><span className="cardLabel">לולאת ההתפתחות</span><div className="miniSteps"><b>01 מודעות</b><span>לראות את הדפוס</span><b>02 בחירה</b><span>להחליט מה חשוב</span><b>03 פעולה</b><span>לנסות בעולם האמיתי</span><b>04 התבוננות</b><span>ללמוד מה השתנה</span></div></article></section>
+ <section className="signalStrip"><button onClick={()=>onNav('library')}><strong>18</strong><span>תחנות במסע</span><small>שכבות של הבנה</small></button><button onClick={()=>onNav('sources')}><strong>{paragraphs||'—'}</strong><span>פסקאות מקור</span><small>{corpusReady?'המקור המלא מחובר':'המקור נטען'}</small></button><button onClick={()=>onNav('atlas')}><strong>5</strong><span>עולמות</span><small>קשרים בין תחומים</small></button><button onClick={()=>onNav('inbox')}><strong>{itemsCount}</strong><span>מקורות אישיים</span><small>חומר גלם להתפתחות</small></button></section>
+ <section className="nextMove"><div><span className="cardLabel">NEXT MOVE</span><h3>אל תשאל “מה עוד אני יודע?”</h3><p>שאל: “מה מתוך מה שאני כבר יודע, אני עדיין לא חי?”</p></div><button className="primary" onClick={()=>onNav('mentor')}>דבר עם המנטור ✦</button></section>
+ </div>}
