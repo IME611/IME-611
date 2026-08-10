@@ -1,26 +1,26 @@
 export type LearningStage='SEE'|'EXPERIENCE'|'UNDERSTAND'|'CONNECT'|'APPLY'|'REFLECT';
-export type JourneyChapter={number:number;world:string;stage:LearningStage;unlockAfter:number|null;goal:string;accent:string};
+export type JourneyChapter={number:number;world:string;stage:LearningStage;unlockAfter:number|null;goal:string;accent:string;question:string;bridge:string;revisit?:string};
 
-// The owner can browse everything. Future learner accounts follow unlockAfter sequentially.
+// Each chapter is not merely next in a list: it answers a question left open by the previous layer.
 export const learningPath:JourneyChapter[]=[
-{number:1,world:'SELF',stage:'SEE',unlockAfter:null,goal:'ליצור נקודת מוצא: מי אני ומה מרכיב את החוויה שלי?',accent:'זהות'},
-{number:2,world:'BODY',stage:'EXPERIENCE',unlockAfter:1,goal:'להכיר את הגוף ככלי שדרכו אנחנו פוגשים את העולם.',accent:'גוף'},
-{number:3,world:'BODY',stage:'UNDERSTAND',unlockAfter:2,goal:'להבין ויסות, איזון והמערכות שפועלות מתחת לפני השטח.',accent:'ויסות'},
-{number:4,world:'MIND',stage:'SEE',unlockAfter:3,goal:'לבנות תמונה ראשונה של המוח כמערכת לומדת וחוזה.',accent:'מוח'},
-{number:5,world:'MIND',stage:'UNDERSTAND',unlockAfter:4,goal:'להעמיק בזיכרון, למידה, קשב והרגלים.',accent:'למידה'},
-{number:6,world:'MIND',stage:'CONNECT',unlockAfter:5,goal:'לחבר בין פעילות מוחית, תפיסה והחוויה המודעת.',accent:'תודעה'},
-{number:7,world:'SYSTEMS',stage:'EXPERIENCE',unlockAfter:6,goal:'לבחון אנרגיה כשפה לתנועה, חיוניות ומצב.',accent:'אנרגיה'},
-{number:8,world:'SYSTEMS',stage:'SEE',unlockAfter:7,goal:'לחוות כיצד צליל, קצב ותדר משפיעים על החוויה.',accent:'צליל'},
-{number:9,world:'BODY',stage:'CONNECT',unlockAfter:8,goal:'לחזור אל הגוף ברמה גבוהה יותר ולראות מערכת של מערכות.',accent:'מערכת'},
-{number:10,world:'MIND',stage:'CONNECT',unlockAfter:9,goal:'לחזור למוח ולתודעה ולחבר בין מנגנון לחוויה.',accent:'אינטגרציה'},
-{number:11,world:'SELF',stage:'UNDERSTAND',unlockAfter:10,goal:'לראות כיצד אמונות וזהויות מארגנות מידע ומכוונות פעולה.',accent:'אמונות'},
-{number:12,world:'SELF',stage:'EXPERIENCE',unlockAfter:11,goal:'להבין רגשות כאותות, פרשנות ומערכות פעולה.',accent:'רגש'},
-{number:13,world:'SYSTEMS',stage:'CONNECT',unlockAfter:12,goal:'לחבר אדם, סביבה, תרבות והשפעות הדדיות.',accent:'קשרים'},
-{number:14,world:'MEANING',stage:'REFLECT',unlockAfter:13,goal:'לבחון עקרונות ומודלים רחבים כעדשות לחשיבה.',accent:'עקרונות'},
-{number:15,world:'MEANING',stage:'APPLY',unlockAfter:14,goal:'לתרגם הבנה לכיוון ולעתיד רצוי.',accent:'חזון'},
-{number:16,world:'MEANING',stage:'APPLY',unlockAfter:15,goal:'להעביר ידע מהבנה להתנהגות, ניסוי ושיפור.',accent:'מימוש'},
-{number:17,world:'MEANING',stage:'REFLECT',unlockAfter:16,goal:'לחבר ערכים, בחירה וכיוון למשמעות אישית.',accent:'משמעות'},
-{number:18,world:'SELF',stage:'REFLECT',unlockAfter:17,goal:'לחזור לשאלה מי אני ולענות עליה מתוך כל שכבות המסע.',accent:'סינתזה'}
+{number:1,world:'SELF',stage:'SEE',unlockAfter:null,goal:'ליצור נקודת מוצא למחקר: להתבונן באדם כמכלול לפני שמפרקים אותו.',accent:'זהות',question:'מי אני — ומה בכלל צריך להבין כדי לענות על השאלה הזאת?',bridge:'כדי לחקור את “אני”, צריך קודם להגדיר ממה המכלול הזה בנוי.',revisit:'זו תשובת האפס. נשמור אותה ונחזור אליה כשהמודל שלך לאדם יהיה עשיר יותר.'},
+{number:2,world:'BODY',stage:'EXPERIENCE',unlockAfter:1,goal:'להכיר את הגוף ככלי הפיזי שדרכו האדם מתקיים ופוגש את העולם.',accent:'גוף',question:'אם האדם הוא מכלול — מהו החלק הפיזי שלו?',bridge:'הגדרנו מכלול. עכשיו מתחילים במה שאפשר לראות, למדוד ולחוות ישירות.'},
+{number:3,world:'BODY',stage:'UNDERSTAND',unlockAfter:2,goal:'להבין כיצד הגוף שומר על איזון באמצעות מערכות שפועלות מתחת למודעות.',accent:'ויסות',question:'איך הגוף מצליח להחזיק חיים בלי שאצטרך לנהל כל פעולה שלו?',bridge:'הגוף אינו רק חומר; הוא מערכת שמווסתת את עצמה ללא הפסקה.'},
+{number:4,world:'MIND',stage:'SEE',unlockAfter:3,goal:'לעבור מהכלי הפיזי אל מערכת העיבוד שמפרשת, לומדת וחוזה.',accent:'מוח',question:'מי מנהל את המידע שמגיע מהגוף ומהעולם?',bridge:'אחרי שהכרנו את הגוף כמערכת, עולה השאלה כיצד המידע שבתוכה נהפך לחוויה ולהחלטה.'},
+{number:5,world:'MIND',stage:'UNDERSTAND',unlockAfter:4,goal:'להעמיק בזיכרון, למידה, קשב והרגלים כמנגנונים שבונים את המודל הפנימי שלנו.',accent:'למידה',question:'איך ניסיון הופך לזיכרון, הרגל ודרך לראות את העולם?',bridge:'מוח בלי למידה היה נשאר מנגנון; למידה היא מה שמאפשר לו להשתנות עם החיים.'},
+{number:6,world:'MIND',stage:'CONNECT',unlockAfter:5,goal:'לחבר בין פעילות מוחית, תפיסה והחוויה המודעת.',accent:'תודעה',question:'אם המוח מעבד מידע — מאיפה מגיעה התחושה שיש “אני” שחווה אותו?',bridge:'כאן המעבר ממנגנון לחוויה נעשה בלתי נמנע: לא רק מה המוח עושה, אלא מי חווה את התוצאה.',revisit:'חזור לרגע ל“מי אני?”. האם אתה עדיין מזהה את עצמך רק עם הגוף? רק עם המוח?'},
+{number:7,world:'SYSTEMS',stage:'EXPERIENCE',unlockAfter:6,goal:'לבחון אנרגיה כשפה לתנועה, חיוניות ושינוי מצב במערכות.',accent:'אנרגיה',question:'מה מאפשר למערכות חיות לפעול, להשתנות ולהעביר השפעה?',bridge:'אחרי מנגנון וחוויה, מרחיבים את המבט אל התנאים שמאפשרים למערכת לפעול.'},
+{number:8,world:'SYSTEMS',stage:'SEE',unlockAfter:7,goal:'לבחון צליל, קצב ותדר כדוגמה מוחשית לאופן שבו סביבה משנה חוויה.',accent:'צליל',question:'איך משהו מחוץ לי יכול לשנות את מה שקורה בתוכי?',bridge:'אנרגיה נעשית מעניינת כשהיא עוברת בין מערכות. צליל נותן לנו דרך מוחשית לראות את המעבר הזה.'},
+{number:9,world:'BODY',stage:'CONNECT',unlockAfter:8,goal:'לחזור אל הגוף ברמת עומק גבוהה יותר ולראות אותו כמערכת של מערכות שמושפעת מסביבתה.',accent:'מערכת',question:'האם אפשר בכלל להפריד בין הגוף לבין מה שפועל עליו?',bridge:'אנחנו חוזרים לגוף, אבל עכשיו הוא כבר אינו אובייקט מבודד — הוא צומת של השפעות.'},
+{number:10,world:'MIND',stage:'CONNECT',unlockAfter:9,goal:'לחזור למוח ולתודעה ולחבר בין מנגנון, גוף, סביבה וחוויה.',accent:'אינטגרציה',question:'אם גוף, מוח וסביבה משפיעים זה על זה — איפה עובר הגבול של “אני”?',bridge:'הספירלה חוזרת למוח עם יותר שכבות, ולכן גם שאלת הזהות נעשית מורכבת יותר.'},
+{number:11,world:'SELF',stage:'UNDERSTAND',unlockAfter:10,goal:'לראות כיצד אמונות וזהויות מארגנות מידע ומכוונות פעולה.',accent:'אמונות',question:'כמה ממה שאני קורא לו “אני” הוא בעצם סיפור שלמדתי להאמין בו?',bridge:'אחרי שהבנו תפיסה ואינטגרציה, אפשר לבדוק את המסננים שמארגנים את מה שאנחנו תופסים.'},
+{number:12,world:'SELF',stage:'EXPERIENCE',unlockAfter:11,goal:'להבין רגשות כאותות, פרשנות ומערכות פעולה ולא רק כתחושות חולפות.',accent:'רגש',question:'מה הרגש מנסה לומר למערכת — ולמה הוא משנה את הבחירות שלי?',bridge:'אמונה אינה נשארת רעיון מופשט; היא פוגשת גוף ומצב דרך רגש.',revisit:'בדוק שוב את “מי אני?”: כמה מהתשובה שלך היא זהות, כמה אמונה וכמה מצב רגשי?'},
+{number:13,world:'SYSTEMS',stage:'CONNECT',unlockAfter:12,goal:'לחבר אדם, סביבה, תרבות וקשרים כמערכת של השפעות הדדיות.',accent:'קשרים',question:'כמה ממני נוצר ביחסים עם כל מה שאינו אני?',bridge:'אחרי שחקרנו את העולם הפנימי, אי אפשר להתעלם מכך שהוא מתעצב בתוך עולם חיצוני.'},
+{number:14,world:'MEANING',stage:'REFLECT',unlockAfter:13,goal:'לבחון עקרונות ומודלים רחבים כעדשות לחשיבה ולא כאמיתות אוטומטיות.',accent:'עקרונות',question:'אם אני מושפע מכל כך הרבה מערכות — לפי מה נכון לי לבחור?',bridge:'הכרה בהשפעות מובילה לשאלת הקריטריון: מה מנחה בחירה כאשר אין תשובה אחת פשוטה?'},
+{number:15,world:'MEANING',stage:'APPLY',unlockAfter:14,goal:'לתרגם הבנה של ערכים ועקרונות לכיוון ולעתיד רצוי.',accent:'חזון',question:'לאן אני רוצה לכוון את המערכת הזאת שנקראת “אני”?',bridge:'עקרונות בלי כיוון נשארים תיאוריה. עכשיו הם צריכים להפוך לתמונה של עתיד.'},
+{number:16,world:'MEANING',stage:'APPLY',unlockAfter:15,goal:'להעביר ידע מהבנה להתנהגות, ניסוי, משוב ושיפור.',accent:'מימוש',question:'איך הופכים הבנה לחיים בפועל?',bridge:'חזון מקבל משמעות רק כשהוא משנה פעולה, ולכן עוברים מידע לניסוי בעולם האמיתי.'},
+{number:17,world:'MEANING',stage:'REFLECT',unlockAfter:16,goal:'לחבר ערכים, בחירה, פעולה וכיוון לשאלת המשמעות האישית.',accent:'משמעות',question:'אם אני יכול לבחור כיוון — מה הופך אותו למשמעותי?',bridge:'אחרי פעולה ומשוב אפשר לשאול לא רק מה עובד, אלא מה ראוי עבורי להמשיך לבנות.'},
+{number:18,world:'SELF',stage:'REFLECT',unlockAfter:17,goal:'לחזור לנקודת ההתחלה ולנסח תשובה עשירה יותר מתוך כל שכבות המסע.',accent:'סינתזה',question:'מי אני — עכשיו?',bridge:'חוזרים בדיוק לשאלה שממנה יצאנו, אבל האדם ששואל אותה מחזיק עכשיו מודל רחב יותר.',revisit:'השווה בין תשובת האפס לתשובה של עכשיו: מה השתנה בדרך שבה אתה מבין גוף, תודעה, זהות, השפעה, בחירה ומשמעות?'}
 ];
 
 export const stageLabels:Record<LearningStage,string>={SEE:'לראות',EXPERIENCE:'לחוות',UNDERSTAND:'להבין',CONNECT:'לחבר',APPLY:'ליישם',REFLECT:'להתבונן'};
