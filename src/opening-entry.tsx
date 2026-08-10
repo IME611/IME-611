@@ -1,4 +1,4 @@
-import React from'react';import{createRoot}from'react-dom/client';import OpeningExperience from'./OpeningExperience';
+import React from'react';import{createRoot}from'react-dom/client';import OpeningExperience from'./OpeningExperience';import'./progressive.css';
 const host=document.getElementById('opening-root');
 if(host&&localStorage.getItem('eil-intro-seen')!=='1'){
  const root=createRoot(host);const close=()=>{root.unmount();host.remove()};
