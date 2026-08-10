@@ -1,5 +1,6 @@
 import React,{useMemo,useState}from'react';
 import{learningPath,stageLabels,worldLabels}from'./data/learning-path';
+import'./spiral.css';
 
 type Chapter={number:number;title:string;subtitle:string;sourceFile:string;paragraphs:string[];paragraphCount?:number;characterCount?:number};
 type Props={chapters:Chapter[];query:string;setQuery:(v:string)=>void;corpusReady:boolean;paragraphs:number;characters:number};
