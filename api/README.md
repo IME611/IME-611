@@ -14,7 +14,7 @@ The long-term architecture is to keep these files thin and move reusable/domain 
 
 ## Synthesis domain
 - `atlas.js` — connection/knowledge-map data.
-- `insights.js` — cross-source derived patterns and evidence.
+- `insights.js` — cross-source derived patterns and evidence. It also hosts the canonical Core Loop transport under `?mode=core-loop` so the Hobby deployment remains within the 12-function limit; the actual Core Loop logic remains in `server/synthesis/`.
 - `match.js` — matching/overlap logic.
 - `mentor.js` — source-grounded question answering.
 - `reviews.js` — review/synthesis workflow.
