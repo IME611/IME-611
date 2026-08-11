@@ -48,6 +48,24 @@ CREATE INDEX IF NOT EXISTS sources_created_at_idx ON sources(created_at DESC);
 CREATE INDEX IF NOT EXISTS sources_type_idx ON sources(type);
 CREATE INDEX IF NOT EXISTS sources_metadata_gin_idx ON sources USING GIN(metadata);
 
+CREATE OR REPLACE FUNCTION prevent_canonical_source_mutation()
+RETURNS TRIGGER AS $$
+BEGIN
+  IF NEW.raw_content IS DISTINCT FROM OLD.raw_content
+     OR NEW.original_bytes_uri IS DISTINCT FROM OLD.original_bytes_uri
+     OR NEW.content_hash IS DISTINCT FROM OLD.content_hash
+     OR NEW.immutable_original IS DISTINCT FROM OLD.immutable_original THEN
+    RAISE EXCEPTION 'canonical source payload is immutable; create a new source version instead';
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS sources_immutable_original_guard ON sources;
+CREATE TRIGGER sources_immutable_original_guard
+BEFORE UPDATE ON sources
+FOR EACH ROW EXECUTE FUNCTION prevent_canonical_source_mutation();
+
 CREATE TABLE IF NOT EXISTS source_fragments (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   source_id UUID NOT NULL REFERENCES sources(id) ON DELETE RESTRICT,
