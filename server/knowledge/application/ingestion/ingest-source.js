@@ -25,7 +25,7 @@ export async function ingestCanonicalSource({ db, repository, input }) {
     return { deduplicated: true, source: existing, fragments };
   }
 
-  const fragments = fragmentText(input.extractedText);
+  const fragments = fragmentText(input.extractedText, { sourceContentHash: contentHash });
   await db.query('BEGIN');
   try {
     const source = await repository.insertSource({
