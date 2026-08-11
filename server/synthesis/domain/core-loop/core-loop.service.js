@@ -1,21 +1,3 @@
-export async function createInsightFromClaims({ repository, statement, claimIds, modelConfidence=null, metadata={} }) {
-  if (!statement?.trim()) throw new Error('Insight statement is required.');
-  if (!Array.isArray(claimIds)||!claimIds.length) throw new Error('Insight requires at least one claim.');
-  const coverage=await repository.getClaimEvidenceCoverage(claimIds);
-  const fullyCovered=coverage.length===new Set(claimIds).size && coverage.every(x=>Number(x.evidence_count)>0);
-  const insight=await repository.createInsight({statement:statement.trim(),modelConfidence,status:fullyCovered?'SUPPORTED':'HYPOTHESIS',metadata});
-  for(const claimId of claimIds) await repository.linkInsightToClaim(insight.id,claimId);
-  return {...insight,provenanceComplete:fullyCovered};
-}
-
-export async function createExperiment({ repository, insightId, hypothesis, action, expectedSignal }) {
-  const trace=await repository.getInsightTrace(insightId);
-  if(!trace?.provenanceComplete) throw new Error('Experiment cannot start from an insight without complete provenance.');
-  return repository.createExperiment({insightId,hypothesis,action,expectedSignal,status:'PLANNED'});
-}
-
-export async function reflectOnExperiment({ repository, experimentId, observation, outcome, interpretation }) {
-  if(!observation?.trim()) throw new Error('Reflection requires an observation.');
-  const reflection=await repository.createReflection({experimentId,observation:observation.trim(),outcome:outcome||'',interpretation:interpretation||''});
-  return {reflection,transformation:{beforeInsightId:reflection.insight_id,experimentId,reflectionId:reflection.id,summary:interpretation||observation}};
-}
+export async function createInsightFromClaims({repository,statement,claimIds,modelConfidence=null,metadata={}}){if(!statement?.trim())throw new Error('Insight statement is required.');if(!Array.isArray(claimIds)||!claimIds.length)throw new Error('Insight requires at least one claim.');const coverage=await repository.getClaimEvidenceCoverage(claimIds);const fullyCovered=coverage.length===new Set(claimIds).size&&coverage.every(x=>Number(x.evidence_count)>0);const insight=await repository.createInsight({statement:statement.trim(),modelConfidence,status:fullyCovered?'SUPPORTED':'HYPOTHESIS',metadata});for(const id of claimIds)await repository.linkInsightToClaim(insight.id,id);return{...insight,provenanceComplete:fullyCovered}}
+export async function createExperiment({repository,insightId,hypothesis,action,expectedSignal}){const trace=await repository.getInsightTrace(insightId);if(!trace?.provenanceComplete)throw new Error('Experiment cannot start from an insight without complete provenance.');return repository.createExperiment({insightId,hypothesis,action,expectedSignal,status:'DRAFT'})}
+export async function reflectOnExperiment({repository,experimentId,observation,outcome,interpretation}){if(!observation?.trim())throw new Error('Reflection requires an observation.');const reflection=await repository.createReflection({experimentId,observation:observation.trim(),outcome:outcome||'',interpretation:interpretation||''});return{reflection,transformation:{beforeInsightId:reflection.insight_id,experimentId,reflectionId:reflection.id,summary:interpretation||observation}}}
