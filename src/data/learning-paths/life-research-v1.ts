@@ -1,4 +1,5 @@
 import type { LearningPath } from '../../core/learning-path/learning-path.types';
+import { assertValidLearningPath } from '../../core/learning-path/learning-path.validation';
 import { chapters } from '../chapters';
 
 const questions = [
@@ -31,7 +32,7 @@ const conceptSets = [
   ['suffering','meaning','resilience'],['integration','body','mind','meaning'],['self-model','synthesis','uncertainty'],
 ];
 
-export const lifeResearchV1: LearningPath = {
+const path: LearningPath = {
   id: 'life-research',
   version: 1,
   title: 'מחקר החיים — מסע ראשוני',
@@ -58,3 +59,5 @@ export const lifeResearchV1: LearningPath = {
     },
   })),
 };
+
+export const lifeResearchV1 = assertValidLearningPath(path);
