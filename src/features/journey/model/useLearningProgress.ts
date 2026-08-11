@@ -7,7 +7,7 @@ import { nextUnlockedStage } from '../../../core/learning-path/spiral-planner';
 
 export function useLearningProgress(path:LearningPath){
   const[state,setState]=useState<LearningProgressState>(()=>loadLearningProgress(path));
-  const currentStage=useMemo(()=>nextUnlockedStage(path,state)??path.stages.at(-1),[path,state]);
+  const currentStage=useMemo(()=>nextUnlockedStage(path,state)??path.stages[path.stages.length-1],[path,state]);
   const isUnlocked=(stage:LearningStage)=>isStageUnlocked(stage,state);
   const complete=(stageId:string,reflection?:string)=>{
     setState(previous=>{
