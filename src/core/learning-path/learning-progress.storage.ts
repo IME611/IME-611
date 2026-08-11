@@ -1,4 +1,5 @@
 import type { LearningPath } from './learning-path.types';
+import type { LearningProgressRepository } from './learning-progress.repository';
 import { emptyLearningProgress, type LearningProgressState } from './learning-progress';
 
 const keyFor=(path:LearningPath)=>`eil-learning-progress:${path.id}:v${path.version}`;
@@ -24,3 +25,9 @@ export function loadLearningProgress(path:LearningPath):LearningProgressState{
 }
 export function saveLearningProgress(path:LearningPath,state:LearningProgressState){try{localStorage.setItem(keyFor(path),JSON.stringify(state))}catch{}}
 export function resetLearningProgress(path:LearningPath){try{localStorage.removeItem(keyFor(path))}catch{}}
+
+export const localLearningProgressRepository:LearningProgressRepository={
+  load:loadLearningProgress,
+  save:saveLearningProgress,
+  reset:resetLearningProgress,
+};
