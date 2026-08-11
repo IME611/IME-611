@@ -6,8 +6,12 @@ export function sha256(value) {
   return crypto.createHash('sha256').update(value).digest('hex');
 }
 
-export function fragmentText(text, { size = 2400, overlap = 250 } = {}) {
+export function fragmentText(text, { size = 2400, overlap = 250, sourceContentHash } = {}) {
   if (typeof text !== 'string' || !text.length) return [];
+  if (!/^[0-9a-f]{64}$/.test(String(sourceContentHash || ''))) {
+    throw new Error('fragmentText requires a canonical sourceContentHash');
+  }
+
   const fragments = [];
   let start = 0;
   let ordinal = 0;
@@ -22,12 +26,14 @@ export function fragmentText(text, { size = 2400, overlap = 250 } = {}) {
     const rawText = text.slice(start, end);
     const contentHash = sha256(rawText);
     const fragmentKey = sha256([
+      'eil.fragment.v1',
+      sourceContentHash,
       FRAGMENTER_VERSION,
       ordinal,
       start,
       end,
-      contentHash,
-    ].join(':'));
+      rawText,
+    ].join('\u001f'));
 
     fragments.push({
       ordinal,
