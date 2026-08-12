@@ -27,5 +27,9 @@
 @import './glass/legacy/pass-3.css';
 @import './glass/current.css';
 
-/* Stage 5 authority — always loaded last */
+/* Canonical material authority */
 @import './glass/system.css';
+
+/* Stage 7 interaction authorities — responsive and a11y always win last */
+@import './responsive.css';
+@import './accessibility.css';

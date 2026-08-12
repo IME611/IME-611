@@ -1,0 +1,10 @@
+:root{--focus-ring:0 0 0 3px rgba(137,216,255,.42),0 0 0 6px rgba(4,12,30,.72)}
+:where(button,a,input,textarea,select,[tabindex]):focus-visible{outline:2px solid rgba(206,239,255,.96);outline-offset:3px;box-shadow:var(--focus-ring)}
+:where(button,[role="button"]){touch-action:manipulation}
+:where(button,input,textarea,select){font:inherit}
+:where(button:disabled,[aria-disabled="true"]){cursor:not-allowed;opacity:.55}
+[role="dialog"]:focus{outline:none}
+.srOnly{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+.skipLink{position:fixed;top:10px;left:10px;z-index:1000;transform:translateY(-160%);padding:10px 14px;border-radius:12px;background:#071225;color:#fff}.skipLink:focus{transform:none}
+@media(prefers-contrast:more){:root{--focus-ring:0 0 0 4px #fff,0 0 0 7px #000}.glassSurface,.glassCard,.glassNavigation,.mediaCard,.videoModal{border-color:rgba(255,255,255,.62)!important}.muted,.mediaCard header p,.mediaDisclosure p,.frequencyActions small{color:rgba(247,251,255,.86)!important}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
