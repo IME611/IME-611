@@ -1,6 +1,40 @@
-import pg from 'pg';
-const { Pool } = pg;
-let pool;
-function getPool(){if(!process.env.DATABASE_URL)return null;if(!pool)pool=new Pool({connectionString:process.env.DATABASE_URL,ssl:process.env.DATABASE_SSL==='false'?false:{rejectUnauthorized:false},max:5});return pool}
-async function ensureTable(db){await db.query(`CREATE TABLE IF NOT EXISTS knowledge_items (id BIGSERIAL PRIMARY KEY,title TEXT NOT NULL,kind TEXT NOT NULL DEFAULT 'ידע',content TEXT NOT NULL DEFAULT '',tags TEXT[] NOT NULL DEFAULT '{}',source TEXT NOT NULL DEFAULT '',created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW())`)}
-export default async function handler(req,res){const db=getPool();if(!db)return res.status(503).json({ok:false,error:'DATABASE_URL is not configured'});try{await ensureTable(db);const id=Number(req.query?.id);if(req.method==='GET'){if(Number.isInteger(id)){const {rows}=await db.query('SELECT * FROM knowledge_items WHERE id=$1',[id]);return rows[0]?res.status(200).json({ok:true,item:rows[0]}):res.status(404).json({ok:false,error:'item not found'})}const q=String(req.query?.q||'').trim();const {rows}=q?await db.query(`SELECT * FROM knowledge_items WHERE title ILIKE $1 OR content ILIKE $1 OR source ILIKE $1 OR EXISTS(SELECT 1 FROM unnest(tags) t WHERE t ILIKE $1) ORDER BY updated_at DESC`,[`%${q}%`]):await db.query('SELECT * FROM knowledge_items ORDER BY updated_at DESC');return res.status(200).json({ok:true,items:rows})}if(req.method==='POST'){const b=req.body||{},title=String(b.title||'').trim();if(!title)return res.status(400).json({ok:false,error:'title is required'});const {rows}=await db.query('INSERT INTO knowledge_items(title,kind,content,tags,source) VALUES($1,$2,$3,$4,$5) RETURNING *',[title,String(b.kind||'ידע'),String(b.content||''),Array.isArray(b.tags)?b.tags.map(String):[],String(b.source||'')]);return res.status(201).json({ok:true,item:rows[0]})}if(req.method==='PUT'){if(!Number.isInteger(id))return res.status(400).json({ok:false,error:'id is required'});const b=req.body||{},title=String(b.title||'').trim();if(!title)return res.status(400).json({ok:false,error:'title is required'});const {rows}=await db.query('UPDATE knowledge_items SET title=$1,kind=$2,content=$3,tags=$4,source=$5,updated_at=NOW() WHERE id=$6 RETURNING *',[title,String(b.kind||'ידע'),String(b.content||''),Array.isArray(b.tags)?b.tags.map(String):[],String(b.source||''),id]);return rows[0]?res.status(200).json({ok:true,item:rows[0]}):res.status(404).json({ok:false,error:'item not found'})}if(req.method==='DELETE'){if(!Number.isInteger(id))return res.status(400).json({ok:false,error:'id is required'});await db.query('DELETE FROM knowledge_items WHERE id=$1',[id]);return res.status(204).end()}res.setHeader('Allow','GET,POST,PUT,DELETE');return res.status(405).json({ok:false,error:'method not allowed'})}catch(error){console.error(error);return res.status(500).json({ok:false,error:'database error'})}}
+import{getDb}from'../server/shared/postgres.js';
+import{withHardening,text}from'./_lib/hardening.js';
+
+async function items(req,res){
+ const db=getDb();
+ const id=Number(req.query?.id);
+ if(req.method==='GET'){
+  if(Number.isInteger(id)){
+   const{rows}=await db.query('SELECT * FROM knowledge_items WHERE id=$1',[id]);
+   return rows[0]?res.status(200).json({ok:true,item:rows[0]}):res.status(404).json({ok:false,error:'item not found'});
+  }
+  const q=text(req.query?.q,{max:240});
+  const{rows}=q
+   ?await db.query(`SELECT * FROM knowledge_items WHERE title ILIKE $1 OR content ILIKE $1 OR source ILIKE $1 OR EXISTS(SELECT 1 FROM unnest(tags) t WHERE t ILIKE $1) ORDER BY updated_at DESC`,[`%${q}%`])
+   :await db.query('SELECT * FROM knowledge_items ORDER BY updated_at DESC');
+  return res.status(200).json({ok:true,items:rows});
+ }
+ if(req.method==='POST'){
+  const b=req.body||{},title=text(b.title,{max:500});
+  if(!title)return res.status(400).json({ok:false,error:'title is required'});
+  const{rows}=await db.query('INSERT INTO knowledge_items(title,kind,content,tags,source) VALUES($1,$2,$3,$4,$5) RETURNING *',[title,text(b.kind||'ידע',{max:120}),text(b.content,{max:200_000,trim:false}),Array.isArray(b.tags)?b.tags.slice(0,50).map(tag=>text(tag,{max:100})):[],text(b.source,{max:2_000})]);
+  return res.status(201).json({ok:true,item:rows[0]});
+ }
+ if(req.method==='PUT'){
+  if(!Number.isInteger(id))return res.status(400).json({ok:false,error:'id is required'});
+  const b=req.body||{},title=text(b.title,{max:500});
+  if(!title)return res.status(400).json({ok:false,error:'title is required'});
+  const{rows}=await db.query('UPDATE knowledge_items SET title=$1,kind=$2,content=$3,tags=$4,source=$5,updated_at=NOW() WHERE id=$6 RETURNING *',[title,text(b.kind||'ידע',{max:120}),text(b.content,{max:200_000,trim:false}),Array.isArray(b.tags)?b.tags.slice(0,50).map(tag=>text(tag,{max:100})):[],text(b.source,{max:2_000}),id]);
+  return rows[0]?res.status(200).json({ok:true,item:rows[0]}):res.status(404).json({ok:false,error:'item not found'});
+ }
+ if(req.method==='DELETE'){
+  if(!Number.isInteger(id))return res.status(400).json({ok:false,error:'id is required'});
+  await db.query('DELETE FROM knowledge_items WHERE id=$1',[id]);
+  return res.status(204).end();
+ }
+ res.setHeader('Allow','GET,POST,PUT,DELETE');
+ return res.status(405).json({ok:false,error:'method not allowed'});
+}
+
+export default withHardening(items,{rateLimit:{limit:60,windowMs:60_000,keyPrefix:'items'},maxBytes:2_000_000});

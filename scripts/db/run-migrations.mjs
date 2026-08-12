@@ -7,12 +7,20 @@ const { Client } = pg;
 const DATABASE_URL = process.env.DATABASE_URL;
 if (!DATABASE_URL) throw new Error('DATABASE_URL is required');
 
+function canonicalConnectionString(value) {
+  const url = new URL(value);
+  url.searchParams.delete('sslmode');
+  url.searchParams.delete('uselibpqcompat');
+  return url.toString();
+}
+
 const ssl = process.env.DATABASE_SSL === 'false' ? false : { rejectUnauthorized: false };
-const client = new Client({ connectionString: DATABASE_URL, ssl });
+const client = new Client({ connectionString: canonicalConnectionString(DATABASE_URL), ssl });
 const root = process.cwd();
 const migrations = [
   'database/migrations/001_knowledge_foundation.sql',
   'database/migrations/002_legacy_source_backfill.sql',
+  'database/migrations/003_product_runtime_foundation.sql',
 ];
 
 const sha256 = value => crypto.createHash('sha256').update(value).digest('hex');
