@@ -9,6 +9,7 @@
 /* Feature presentation */
 @import './features/shell.css';
 @import './features/sidebar.css';
+@import './features/navigation.css';
 @import './features/evolution.css';
 @import './features/journey.css';
 @import './features/dashboard.css';
