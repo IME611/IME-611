@@ -11,6 +11,7 @@ export const mentalModelNavigation:NavigationGroup[]=[
   {id:'sources',label:'מה משפיע עליי?',question:'מקורות · סביבה · קלט',icon:'↗'},
   {id:'insights',label:'מה אני מבין?',question:'טענות · ראיות · תובנות',icon:'✧'},
   {id:'transformation',label:'מה אני בודק בחיים?',question:'ניסוי · תצפית · שינוי',icon:'✓'},
+  {id:'media',label:'איך זה נראה ומתחבר?',question:'מפות · תדרים · המחשות',icon:'◫'},
  ]},
  {id:'deeper',label:'כלים עמוקים',items:[
   {id:'atlas',label:'מפת הקשרים',icon:'◉',ownerOnly:true},
