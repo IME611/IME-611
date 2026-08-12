@@ -8,6 +8,12 @@ export function applySecurityHeaders(res){
  res.setHeader('Cache-Control','no-store');
 }
 
+export function requestUrl(req){
+ const host=String(req.headers?.host||'localhost');
+ const proto=String(req.headers?.['x-forwarded-proto']||'https');
+ return new URL(String(req.url||'/'),`${proto}://${host}`);
+}
+
 export function rateLimit(req,{limit=30,windowMs=60_000,keyPrefix='api'}={}){
  const forwarded=String(req.headers?.['x-forwarded-for']||'').split(',')[0].trim();
  const ip=forwarded||req.socket?.remoteAddress||'unknown';
