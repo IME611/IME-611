@@ -1,3 +1,4 @@
+import{GlassButton}from'../../design/primitives/Glass';
 import{DashboardHero}from'./components/DashboardHero';
 import{JourneyProgressCard}from'./components/JourneyProgressCard';
 import{UnderstandingCard}from'./components/UnderstandingCard';
@@ -26,7 +27,7 @@ export function ProductDashboard({onNav,onAdd}:ProductDashboardProps){
    :{label:'העמק בשאלה הבאה במסע',description:`השלב הפעיל הוא: ${dashboard.activeStage.guidingQuestion}`,action:'המשך ללמוד',page:'library'};
  const selected=provenance.state.status==='idle'?null:provenance.state.insightId;
  return <div className="pdDashboard">
-  <header className="pdIntro"><div><span className="pdEyebrow">E.I.L / TODAY</span><h1>היום לא צריך לראות את כל המערכת.</h1><p>רק להבין איפה אתה, מה כבר התחבר, ומה הפעולה היחידה ששווה לעשות עכשיו.</p></div>{dashboard.owner&&<button className="pdAdd" type="button" onClick={onAdd}>＋ הוסף מקור</button>}</header>
+  <header className="pdIntro"><div><span className="pdEyebrow">E.I.L / TODAY</span><h1>היום לא צריך לראות את כל המערכת.</h1><p>רק להבין איפה אתה, מה כבר התחבר, ומה הפעולה היחידה ששווה לעשות עכשיו.</p></div>{dashboard.owner&&<GlassButton className="pdAdd" type="button" onClick={onAdd}>＋ הוסף מקור</GlassButton>}</header>
   <DashboardHero transformation={dashboard.latestTransformation} reflection={data.reflections[0]??null}/>
   <div className="pdActionBar" aria-label="פעולות מהירות"><button type="button" onClick={onAdd}><span>＋</span><b>מה נכנס אליי?</b><small>הוסף מקור</small></button><button type="button" onClick={()=>onNav('insights')}><span>◇</span><b>מה אני מבין?</b><small>{data.insights.filter(item=>item.status==='SUPPORTED').length} תובנות מבוססות</small></button><button type="button" onClick={()=>onNav('transformation')}><span>↗</span><b>מה אני בודק?</b><small>{experiment?experiment.status==='ACTIVE'?'ניסוי פעיל':'Core Loop':'אין ניסוי פעיל'}</small></button></div>
   <div className="pdGrid"><JourneyProgressCard activeStage={dashboard.activeStage} completed={dashboard.completed} total={dashboard.total} owner={dashboard.owner} onContinue={()=>onNav('library')}/><ActiveExperimentCard experiment={experiment} onOpen={()=>onNav('transformation')}/></div>
