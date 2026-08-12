@@ -2,6 +2,10 @@
    All visual styling must enter the app through this file.
    Product/domain code must not import individual CSS files directly. */
 
+/* Canonical design primitives */
+@import './primitives/tokens.css';
+@import './primitives/primitives.css';
+
 /* Foundations */
 @import './foundations/base.css';
 @import './foundations/progressive.css';
@@ -14,11 +18,12 @@
 @import './features/journey.css';
 @import './features/dashboard.css';
 
-/* Glass material history — kept isolated during consolidation */
+/* Glass material history — isolated and overridden by the canonical system below */
 @import './glass/legacy/base.css';
 @import './glass/legacy/pass-2.css';
 @import './glass/legacy/dashboard.css';
 @import './glass/legacy/pass-3.css';
-
-/* Current visual authority — always loaded last */
 @import './glass/current.css';
+
+/* Stage 5 authority — always loaded last */
+@import './glass/system.css';
