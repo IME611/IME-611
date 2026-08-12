@@ -1,6 +1,5 @@
 import{loadCorpus,normalizeText as n,readJson}from'../server/shared/corpus.js';
 import{getDb}from'../server/shared/postgres.js';
-import{bootstrapLiveDatabase}from'../server/knowledge/application/bootstrap/bootstrap-live-db.js';
 import{PostgresCoreLoopRepository}from'../server/synthesis/infrastructure/postgres/core-loop.repository.js';
 import{getInsightProvenanceTrace}from'../server/synthesis/infrastructure/postgres/provenance-trace.js';
 import{createInsightFromClaims,createExperiment,reflectOnExperiment}from'../server/synthesis/domain/core-loop/core-loop.service.js';
@@ -22,16 +21,8 @@ async function handleCoreLoop(req,res){
  if(action==='reflect')return res.json({ok:true,...await reflectOnExperiment({repository,experimentId:body.experimentId,observation:body.observation,outcome:body.outcome,interpretation:body.interpretation})});
  return bad(res,400,'Unknown core loop action');
 }
-async function handleBootstrap(req,res){
- if(process.env.VERCEL_ENV!=='preview')return bad(res,404,'Not found');
- if(req.method!=='GET')return bad(res,405,'Method not allowed');
- if(!process.env.DATABASE_URL)return bad(res,503,'DATABASE_URL is not configured');
- const result=await bootstrapLiveDatabase(getDb());
- return res.json(result);
-}
 export default async function handler(req,res){try{
- if(req.query?.mode==='bootstrap')return await handleBootstrap(req,res);
  if(req.query?.mode==='core-loop')return await handleCoreLoop(req,res);
  if(req.method!=='GET')return bad(res,405,'Method not allowed');
  const map=readJson('data/content-map.json'),cs=loadCorpus();const insights=map.crossCuttingTopics.map((t,i)=>{const ev=t.chapters.flatMap(id=>evidence(cs.find(c=>c.number===id),t.topic).map(x=>({chapter:id,sourceFile:cs.find(c=>c.number===id)?.sourceFile||'',...x})));return{id:`topic-${i+1}`,type:'cross-document',title:`${t.topic} מחבר ${t.chapters.length} פרקים`,topic:t.topic,chapters:t.chapters,confidence:ev.length>=3?'high':ev.length?'medium':'mapped',evidence:ev.slice(0,8),traceable:ev.length>0}});const overlaps=[];for(let a=0;a<map.chapters.length;a++)for(let b=a+1;b<map.chapters.length;b++){const A=map.chapters[a],B=map.chapters[b],shared=A.topics.filter(x=>B.topics.some(y=>n(x)===n(y)));if(shared.length)overlaps.push({chapters:[A.id,B.id],sharedTopics:shared,kind:'topic-overlap'})}return res.json({ok:true,sourceMode:'lossless-docx-text',insights,overlaps:overlaps.slice(0,40),contradictions:[],contradictionStatus:'not-asserted-without-semantic-evidence',policy:'derived knowledge never replaces source; every asserted insight carries source evidence'})
-}catch(e){const m=e?.message||'Insights failed';console.error(e);return bad(res,/provenance|evidence|claim|required|bootstrap|migration|integrity/i.test(m)?422:500,m)}}
+}catch(e){const m=e?.message||'Insights failed';return bad(res,/provenance|evidence|claim|required/i.test(m)?422:500,m)}}
