@@ -1,0 +1,37 @@
+import{DashboardHero}from'./components/DashboardHero';
+import{JourneyProgressCard}from'./components/JourneyProgressCard';
+import{UnderstandingCard}from'./components/UnderstandingCard';
+import{ActiveExperimentCard}from'./components/ActiveExperimentCard';
+import{NextStepCard}from'./components/NextStepCard';
+import{useProductDashboard}from'./model/useProductDashboard';
+import{useInsightProvenance}from'./model/useInsightProvenance';
+
+interface ProductDashboardProps{
+  onNav:(id:string)=>void;
+  onAdd:()=>void;
+}
+
+export function ProductDashboard({onNav,onAdd}:ProductDashboardProps){
+ const dashboard=useProductDashboard();
+ const provenance=useInsightProvenance();
+ if(dashboard.state.status==='loading')return <div className="pdDashboard"><section className="pdSkeleton" aria-label="טוען דשבורד"><i/><i/><i/></section></div>;
+ if(dashboard.state.status==='error')return <div className="pdDashboard"><section className="pdError"><span className="pdEyebrow">DASHBOARD</span><h1>המסע זמין, אבל תמונת המצב החיה לא נטענה.</h1><p>{dashboard.state.message}</p><button className="pdPrimary" onClick={()=>onNav('library')}>המשך למסע ←</button></section></div>;
+ const data=dashboard.state.data;
+ const experiment=data.experiments.find(item=>item.status==='ACTIVE')??data.experiments.find(item=>item.status==='DRAFT')??data.experiments[0]??null;
+ const supportedInsight=data.insights.find(item=>item.status==='SUPPORTED')??null;
+ const next=experiment&&experiment.status!=='COMPLETED'
+  ?{label:'חזור למה שאתה בודק עכשיו',description:'כבר יש ניסוי שמחובר לתובנה מבוססת מקור. אל תפתח כיוון חדש לפני שחזרת עם תצפית.',action:'פתח את הניסוי',page:'transformation'}
+  :supportedInsight
+   ?{label:'הפוך הבנה לבדיקה בחיים',description:'יש תובנה מבוססת ראיות. השלב הבא הוא לא לקרוא עוד — אלא לבדוק מה היא משנה בהתנהגות או בתשומת הלב.',action:'צור ניסוי',page:'transformation'}
+   :{label:'העמק בשאלה הבאה במסע',description:`השלב הפעיל הוא: ${dashboard.activeStage.guidingQuestion}`,action:'המשך ללמוד',page:'library'};
+ const selected=provenance.state.status==='idle'?null:provenance.state.insightId;
+ return <div className="pdDashboard">
+  <header className="pdIntro"><div><span className="pdEyebrow">E.I.L / TODAY</span><h1>היום לא צריך לראות את כל המערכת.</h1><p>רק להבין איפה אתה, מה כבר התחבר, ומה הפעולה היחידה ששווה לעשות עכשיו.</p></div>{dashboard.owner&&<button className="pdAdd" type="button" onClick={onAdd}>＋ הוסף מקור</button>}</header>
+  <DashboardHero transformation={dashboard.latestTransformation} reflection={data.reflections[0]??null}/>
+  <div className="pdActionBar" aria-label="פעולות מהירות"><button type="button" onClick={onAdd}><span>＋</span><b>מה נכנס אליי?</b><small>הוסף מקור</small></button><button type="button" onClick={()=>onNav('insights')}><span>◇</span><b>מה אני מבין?</b><small>{data.insights.filter(item=>item.status==='SUPPORTED').length} תובנות מבוססות</small></button><button type="button" onClick={()=>onNav('transformation')}><span>↗</span><b>מה אני בודק?</b><small>{experiment?experiment.status==='ACTIVE'?'ניסוי פעיל':'Core Loop':'אין ניסוי פעיל'}</small></button></div>
+  <div className="pdGrid"><JourneyProgressCard activeStage={dashboard.activeStage} completed={dashboard.completed} total={dashboard.total} owner={dashboard.owner} onContinue={()=>onNav('library')}/><ActiveExperimentCard experiment={experiment} onOpen={()=>onNav('transformation')}/></div>
+  <UnderstandingCard insights={data.insights} selectedInsightId={selected} provenanceRows={provenance.state.status==='success'?provenance.state.rows:[]} provenanceStatus={provenance.state.status} provenanceMessage={provenance.state.status==='error'?provenance.state.message:undefined} onOpenProvenance={provenance.load} onCloseProvenance={provenance.close} onOpenInsights={()=>onNav('insights')}/>
+  <NextStepCard label={next.label} description={next.description} actionLabel={next.action} onAction={()=>onNav(next.page)}/>
+  <section className="pdTruthStrip" aria-label="מצב מנוע הידע"><span><b>{data.counts.sources}</b> מקורות קנוניים</span><span><b>{data.counts.fragments}</b> קטעי מקור</span><span><b>{data.counts.evidence}</b> קשרי Evidence</span><span><b>{data.insights.filter(item=>item.status==='SUPPORTED').length}</b> תובנות SUPPORTED</span></section>
+ </div>;
+}
