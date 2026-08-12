@@ -1,3 +1,5 @@
+import type{ReactNode}from'react';
+
 export type MediaKind='diagram'|'frequency'|'video'|'summary';
 
 export interface MediaVisualSpec{
@@ -15,5 +17,5 @@ export interface MediaCardProps{
   eyebrow?:string;
   title:string;
   description?:string;
-  children:React.ReactNode;
+  children:ReactNode;
 }
