@@ -1,15 +1,16 @@
 import{getDb}from'../server/shared/postgres.js';
-import{withHardening,text}from'./_lib/hardening.js';
+import{withHardening,text,requestUrl}from'./_lib/hardening.js';
 
 async function items(req,res){
  const db=getDb();
- const id=Number(req.query?.id);
+ const params=requestUrl(req).searchParams;
+ const id=Number(params.get('id'));
  if(req.method==='GET'){
   if(Number.isInteger(id)){
    const{rows}=await db.query('SELECT * FROM knowledge_items WHERE id=$1',[id]);
    return rows[0]?res.status(200).json({ok:true,item:rows[0]}):res.status(404).json({ok:false,error:'item not found'});
   }
-  const q=text(req.query?.q,{max:240});
+  const q=text(params.get('q'),{max:240});
   const{rows}=q
    ?await db.query(`SELECT * FROM knowledge_items WHERE title ILIKE $1 OR content ILIKE $1 OR source ILIKE $1 OR EXISTS(SELECT 1 FROM unnest(tags) t WHERE t ILIKE $1) ORDER BY updated_at DESC`,[`%${q}%`])
    :await db.query('SELECT * FROM knowledge_items ORDER BY updated_at DESC');
