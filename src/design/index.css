@@ -17,6 +17,8 @@
 @import './features/evolution.css';
 @import './features/journey.css';
 @import './features/dashboard.css';
+@import './features/media.css';
+@import './features/media-workspace.css';
 
 /* Glass material history — isolated and overridden by the canonical system below */
 @import './glass/legacy/base.css';
