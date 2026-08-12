@@ -19,6 +19,8 @@
 @import './features/dashboard.css';
 @import './features/media.css';
 @import './features/media-workspace.css';
+@import './features/cards.css';
+@import './features/crystals.css';
 @import './features/errors.css';
 
 /* Glass material history — isolated and overridden by the canonical system below */
