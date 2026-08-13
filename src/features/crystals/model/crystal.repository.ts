@@ -49,7 +49,7 @@ export const crystalCollectionRepository={
    const response=await fetch('/api/knowledge?resource=crystals',{
     method:exists?'DELETE':'PUT',
     headers:{'Content-Type':'application/json',...ownerHeaders()},
-    body:JSON.stringify({fragmentId:record.fragmentId,...record}),
+    body:JSON.stringify(record),
    });
    if(!response.ok)throw new Error('crystal persistence failed');
   }catch{
