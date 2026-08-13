@@ -1,187 +1,68 @@
-import pg from 'pg';
-import crypto from 'crypto';
-import fs from 'fs';
-import path from 'path';
-import mammoth from 'mammoth';
-import { PDFParse } from 'pdf-parse';
-import { ingestCanonicalSource } from '../server/knowledge/application/ingestion/ingest-source.js';
-import { PostgresSourceIngestionRepository } from '../server/knowledge/infrastructure/postgres/source-ingestion.repository.js';
+import mammoth from'mammoth';
+import{PDFParse}from'pdf-parse';
+import{getDb}from'../server/shared/postgres.js';
+import{ingestCanonicalSource}from'../server/knowledge/application/ingestion/ingest-source.js';
+import{PostgresSourceIngestionRepository}from'../server/knowledge/infrastructure/postgres/source-ingestion.repository.js';
+import{withHardening,text as safeText}from'./_lib/hardening.js';
 
-const { Pool } = pg;
-let pool;
-function db() {
-  if (!process.env.DATABASE_URL) return null;
-  if (!pool) pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-    ssl: process.env.DATABASE_SSL === 'false' ? false : { rejectUnauthorized: false },
-    max: 5,
-  });
-  return pool;
+async function extract(fileName,mimeType,base64,suppliedText){
+ if(String(suppliedText||'').trim())return String(suppliedText);
+ const bytes=Buffer.from(String(base64||''),'base64');
+ const lower=fileName.toLowerCase();
+ if(lower.endsWith('.pdf')||mimeType==='application/pdf'){
+  const parser=new PDFParse({data:bytes});
+  try{const result=await parser.getText();return String(result.text||'')}finally{await parser.destroy()}
+ }
+ if(lower.endsWith('.docx')||mimeType.includes('wordprocessingml')){
+  const result=await mammoth.extractRawText({buffer:bytes});
+  return result.value;
+ }
+ if(lower.match(/\.(txt|md|csv|json|html?)$/)||mimeType.startsWith('text/'))return bytes.toString('utf8');
+ throw new Error('unsupported file type');
 }
 
-function taxonomy() {
-  return JSON.parse(fs.readFileSync(path.join(process.cwd(), 'data', 'content-map.json'), 'utf8'));
+async function importSource(db,body,fileName,mimeType,base64,extractedText){
+ const originalBytes=base64?Buffer.from(base64,'base64'):Buffer.from(extractedText,'utf8');
+ const repository=new PostgresSourceIngestionRepository(db);
+ const result=await ingestCanonicalSource({
+  db,
+  repository,
+  input:{
+   originalBytes,
+   extractedText,
+   fileName,
+   mimeType,
+   title:safeText(body.title||fileName.replace(/\.[^.]+$/,''),{max:500}),
+   author:safeText(body.author,{max:500}),
+   originalUri:body.sourceUrl?safeText(body.sourceUrl,{max:2_000}):null,
+  },
+ });
+ return{
+  ok:true,
+  canonical:true,
+  deduplicated:result.deduplicated,
+  source:result.source,
+  fragmentCount:result.fragments.length,
+  preservedCharacters:extractedText.length,
+ };
 }
 
-function chunkText(text, size = 2400, overlap = 250) {
-  const out = [];
-  let s = 0;
-  let i = 0;
-  while (s < text.length) {
-    let e = Math.min(text.length, s + size);
-    if (e < text.length) {
-      const p = text.lastIndexOf('\n', e);
-      if (p > s + size * 0.6) e = p;
-    }
-    out.push({ index: i++, content: text.slice(s, e), start: s, end: e });
-    if (e === text.length) break;
-    s = Math.max(e - overlap, s + 1);
-  }
-  return out;
+async function importHandler(req,res){
+ if(req.method!=='POST')return res.status(405).json({ok:false,error:'method not allowed'});
+ const body=req.body||{};
+ const fileName=safeText(body.fileName||body.sourceFilename||'document.txt',{max:500});
+ const mimeType=safeText(body.mimeType||'text/plain',{max:200});
+ const base64=String(body.fileBase64||'');
+ const extractedText=await extract(fileName,mimeType,base64,body.text);
+ if(!extractedText.trim())return res.status(400).json({ok:false,error:'document contains no readable text'});
+ try{
+  const payload=await importSource(getDb(),body,fileName,mimeType,base64,extractedText);
+  return res.status(payload.deduplicated?200:201).json(payload);
+ }catch(error){
+  const message=String(error?.message||'canonical import failed');
+  if(/relation .* does not exist/i.test(message)||/type .* does not exist/i.test(message))return res.status(503).json({ok:false,canonical:true,error:'Knowledge migrations have not been applied yet.'});
+  throw error;
+ }
 }
 
-function classify(text, map) {
-  const low = text.toLowerCase();
-  const scoreTerms = terms => terms.reduce((n, t) => {
-    const x = String(t).toLowerCase();
-    let p = 0;
-    let c = 0;
-    while ((p = low.indexOf(x, p)) >= 0 && c < 20) {
-      c += 1;
-      p += x.length;
-    }
-    return n + c;
-  }, 0);
-  const categories = map.categories.map(c => ({ ...c, score: scoreTerms(c.topics) })).sort((a, b) => b.score - a.score);
-  const chapters = map.chapters.map(c => ({ ...c, score: scoreTerms(c.topics) })).sort((a, b) => b.score - a.score);
-  const max = Math.max(1, categories[0]?.score || 1);
-  return {
-    category: categories[0] || null,
-    categories: categories.slice(0, 3).map(c => ({ id: c.id, label: c.label, score: c.score, confidence: Math.min(1, c.score / max) })),
-    chapters: chapters.slice(0, 5).filter(c => c.score > 0).map(c => ({ id: c.id, title: c.title, score: c.score })),
-    topics: [...new Set(chapters.slice(0, 5).flatMap(c => c.score > 0 ? c.topics : []))].slice(0, 12),
-  };
-}
-
-async function ensureLegacy(c) {
-  await c.query(`CREATE TABLE IF NOT EXISTS source_documents(id BIGSERIAL PRIMARY KEY,title TEXT NOT NULL,file_name TEXT NOT NULL DEFAULT '',mime_type TEXT NOT NULL DEFAULT 'text/plain',byte_size BIGINT NOT NULL DEFAULT 0,sha256 TEXT NOT NULL DEFAULT '',original_text TEXT NOT NULL,original_file_base64 TEXT NOT NULL DEFAULT '',source_url TEXT NOT NULL DEFAULT '',author TEXT NOT NULL DEFAULT '',metadata JSONB NOT NULL DEFAULT '{}'::jsonb,created_at TIMESTAMPTZ NOT NULL DEFAULT NOW())`);
-  await c.query(`CREATE TABLE IF NOT EXISTS document_chunks(id BIGSERIAL PRIMARY KEY,source_document_id BIGINT NOT NULL REFERENCES source_documents(id) ON DELETE CASCADE,chunk_index INTEGER NOT NULL,content TEXT NOT NULL,start_char INTEGER NOT NULL DEFAULT 0,end_char INTEGER NOT NULL DEFAULT 0,metadata JSONB NOT NULL DEFAULT '{}'::jsonb,UNIQUE(source_document_id,chunk_index))`);
-  await c.query(`CREATE TABLE IF NOT EXISTS derived_knowledge(id BIGSERIAL PRIMARY KEY,document_id BIGINT NOT NULL REFERENCES source_documents(id) ON DELETE CASCADE,kind TEXT NOT NULL,content TEXT NOT NULL,category_id TEXT,confidence NUMERIC(6,3),source_chunk_ids BIGINT[] NOT NULL DEFAULT '{}',created_at TIMESTAMPTZ NOT NULL DEFAULT NOW())`);
-}
-
-async function extract(name, mime, b64, suppliedText) {
-  if (suppliedText?.trim()) return String(suppliedText);
-  const buf = Buffer.from(String(b64 || ''), 'base64');
-  const lower = name.toLowerCase();
-  if (lower.endsWith('.pdf') || mime === 'application/pdf') {
-    const parser = new PDFParse({ data: buf });
-    try {
-      const result = await parser.getText();
-      return String(result.text || '');
-    } finally {
-      await parser.destroy();
-    }
-  }
-  if (lower.endsWith('.docx') || mime.includes('wordprocessingml')) {
-    const r = await mammoth.extractRawText({ buffer: buf });
-    return r.value;
-  }
-  if (lower.match(/\.(txt|md|csv|json|html?)$/) || mime.startsWith('text/')) return buf.toString('utf8');
-  throw new Error('unsupported file type');
-}
-
-async function importCanonical(c, body, fileName, mime, b64, text) {
-  const originalBytes = b64 ? Buffer.from(b64, 'base64') : Buffer.from(text, 'utf8');
-  const repository = new PostgresSourceIngestionRepository(c);
-  const result = await ingestCanonicalSource({
-    db: c,
-    repository,
-    input: {
-      originalBytes,
-      extractedText: text,
-      fileName,
-      mimeType: mime,
-      title: String(body.title || fileName.replace(/\.[^.]+$/, '')),
-      author: String(body.author || ''),
-      originalUri: body.sourceUrl ? String(body.sourceUrl) : null,
-    },
-  });
-  return {
-    ok: true,
-    canonical: true,
-    deduplicated: result.deduplicated,
-    source: result.source,
-    fragmentCount: result.fragments.length,
-    preservedCharacters: text.length,
-  };
-}
-
-async function importLegacy(c, body, fileName, mime, b64, text) {
-  await ensureLegacy(c);
-  const raw = b64 ? Buffer.from(b64, 'base64') : Buffer.from(text, 'utf8');
-  const sha = crypto.createHash('sha256').update(raw).digest('hex');
-  const existing = await c.query('SELECT id,title,file_name,created_at FROM source_documents WHERE sha256=$1 LIMIT 1', [sha]);
-  if (existing.rows[0]) return { status: 200, payload: { ok: true, deduplicated: true, document: existing.rows[0] } };
-
-  const map = taxonomy();
-  const analysis = classify(text, map);
-  const parts = chunkText(text);
-  await c.query('BEGIN');
-  try {
-    const title = String(body.title || fileName.replace(/\.[^.]+$/, ''));
-    const d = await c.query(
-      'INSERT INTO source_documents(title,file_name,mime_type,byte_size,sha256,original_text,original_file_base64,source_url,author,metadata) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING id,title,file_name,mime_type,byte_size,sha256,created_at',
-      [title, fileName, mime, raw.length, sha, text, b64, String(body.sourceUrl || ''), String(body.author || ''), { ingestion: 'lossless', paragraphs: text.split(/\n+/).filter(Boolean).length }],
-    );
-    const ids = [];
-    for (const x of parts) {
-      const r = await c.query('INSERT INTO document_chunks(source_document_id,chunk_index,content,start_char,end_char) VALUES($1,$2,$3,$4,$5) RETURNING id', [d.rows[0].id, x.index, x.content, x.start, x.end]);
-      ids.push(r.rows[0].id);
-    }
-    if (analysis.category) {
-      await c.query('INSERT INTO derived_knowledge(document_id,kind,content,category_id,confidence,source_chunk_ids) VALUES($1,$2,$3,$4,$5,$6)', [d.rows[0].id, 'CATEGORY', analysis.category.label, analysis.category.id, analysis.categories[0]?.confidence || 0, ids]);
-    }
-    for (const t of analysis.topics) {
-      await c.query('INSERT INTO derived_knowledge(document_id,kind,content,category_id,confidence,source_chunk_ids) VALUES($1,$2,$3,$4,$5,$6)', [d.rows[0].id, 'TOPIC', t, analysis.category?.id || null, 0.5, ids]);
-    }
-    await c.query('COMMIT');
-    return { status: 201, payload: { ok: true, document: d.rows[0], preservedCharacters: text.length, chunks: parts.length, analysis } };
-  } catch (error) {
-    await c.query('ROLLBACK');
-    throw error;
-  }
-}
-
-export default async function handler(req, res) {
-  if (req.method !== 'POST') return res.status(405).json({ ok: false, error: 'method not allowed' });
-  const c = db();
-  if (!c) return res.status(503).json({ ok: false, error: 'DATABASE_URL is not configured' });
-
-  try {
-    const body = req.body || {};
-    const fileName = String(body.fileName || body.sourceFilename || 'document.txt');
-    const mime = String(body.mimeType || 'text/plain');
-    const b64 = String(body.fileBase64 || '');
-    const text = await extract(fileName, mime, b64, body.text);
-    if (!text.trim()) return res.status(400).json({ ok: false, error: 'document contains no readable text' });
-
-    if (body.canonical === true || process.env.EIL_CANONICAL_INGESTION === 'true') {
-      try {
-        const payload = await importCanonical(c, body, fileName, mime, b64, text);
-        return res.status(payload.deduplicated ? 200 : 201).json(payload);
-      } catch (error) {
-        const message = error?.message || 'canonical import failed';
-        if (/relation .* does not exist/i.test(message) || /type .* does not exist/i.test(message)) {
-          return res.status(503).json({ ok: false, canonical: true, error: 'Knowledge migration 001 has not been applied yet.' });
-        }
-        throw error;
-      }
-    }
-
-    const legacy = await importLegacy(c, body, fileName, mime, b64, text);
-    return res.status(legacy.status).json(legacy.payload);
-  } catch (error) {
-    console.error(error);
-    return res.status(400).json({ ok: false, error: error?.message || 'import failed' });
-  }
-}
+export default withHardening(importHandler,{rateLimit:{limit:20,windowMs:60_000,keyPrefix:'import'},maxBytes:12_000_000});
