@@ -1,0 +1,28 @@
+.welcomeButtonStack {
+  width: min(390px, 82vw);
+  position: relative;
+  z-index: 6;
+  transform-style: preserve-3d;
+}
+
+.welcomeButtonStack::after {
+  content: "";
+  position: absolute;
+  left: 12%;
+  right: 12%;
+  bottom: -21px;
+  height: 27px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(69,225,232,.42), rgba(154,111,232,.34), rgba(237,144,105,.26));
+  filter: blur(13px);
+  opacity: .55;
+  z-index: -1;
+}
+
+.welcomeButtonDepth {
+  position: absolute;
+  inset: 12px 18px -14px;
+  border-radius: 999px;
+  background: linear-gradient(100deg, rgba(39,49,54,.3), rgba(57,207,215,.32) 30%, rgba(134,100,214,.29) 58%, rgba(225,139,103,.24) 82%, rgba(34,42,46,.26));
+  box-shadow: 0 22px 34px rgba(26,31,34,.3), -8px 8px 24px rgba(72,225,232,.18), 8px 8px 24px rgba(165,119,235,.16);
+}
