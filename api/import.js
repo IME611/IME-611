@@ -3,6 +3,7 @@ import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
 import mammoth from 'mammoth';
+import { PDFParse } from 'pdf-parse';
 import { ingestCanonicalSource } from '../server/knowledge/application/ingestion/ingest-source.js';
 import { PostgresSourceIngestionRepository } from '../server/knowledge/infrastructure/postgres/source-ingestion.repository.js';
 
@@ -72,6 +73,15 @@ async function extract(name, mime, b64, suppliedText) {
   if (suppliedText?.trim()) return String(suppliedText);
   const buf = Buffer.from(String(b64 || ''), 'base64');
   const lower = name.toLowerCase();
+  if (lower.endsWith('.pdf') || mime === 'application/pdf') {
+    const parser = new PDFParse({ data: buf });
+    try {
+      const result = await parser.getText();
+      return String(result.text || '');
+    } finally {
+      await parser.destroy();
+    }
+  }
   if (lower.endsWith('.docx') || mime.includes('wordprocessingml')) {
     const r = await mammoth.extractRawText({ buffer: buf });
     return r.value;

@@ -21,6 +21,7 @@
 @import './features/media-workspace.css';
 @import './features/cards.css';
 @import './features/crystals.css';
+@import './features/research.css';
 @import './features/errors.css';
 
 /* Glass material history — isolated and overridden by the canonical system below */
@@ -32,6 +33,7 @@
 
 /* Canonical material authority */
 @import './glass/system.css';
+@import './glass/prismatic.css';
 
 /* Stage 7 interaction authorities — responsive and a11y always win last */
 @import './responsive.css';
