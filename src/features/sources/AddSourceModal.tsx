@@ -14,7 +14,8 @@ export function AddSourceModal({open,onClose,onImported}:AddSourceModalProps){
  const[form,setForm]=useState<KnowledgeItem>({title:'',kind:'ידע',content:'',source:'',tags:[]});
  if(!open)return null;
 
- const close=()=>{if(busy)return;setFile(null);setForm({title:'',kind:'ידע',content:'',source:'',tags:[]});onClose()};
+ const reset=()=>{setFile(null);setForm({title:'',kind:'ידע',content:'',source:'',tags:[]})};
+ const close=()=>{if(busy)return;reset();onClose()};
  const submit=async()=>{
   if(!file&&!String(form.content||'').trim())return;
   setBusy(true);
@@ -31,7 +32,9 @@ export function AddSourceModal({open,onClose,onImported}:AddSourceModalProps){
    const payload=await response.json();
    if(!response.ok||!payload.ok)throw new Error(payload.error||'import failed');
    onImported(`המקור נשמר בשלמותו · ${Number(payload.preservedCharacters||0).toLocaleString()} תווים · ${Number(payload.fragmentCount||0)} כרטיסיות מקור`);
-   close();
+   setBusy(false);
+   reset();
+   onClose();
   }catch(error){onImported(`ייבוא נכשל: ${error instanceof Error?error.message:'שגיאה'}`)}finally{setBusy(false)}
  };
 
