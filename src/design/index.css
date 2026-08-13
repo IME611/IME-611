@@ -1,16 +1,8 @@
-/* E.I.L Design System entrypoint
-   All visual styling must enter the app through this file.
-   Product/domain code must not import individual CSS files directly. */
-
-/* Canonical design primitives */
+/* E.I.L Design System entrypoint */
 @import './primitives/tokens.css';
 @import './primitives/primitives.css';
-
-/* Foundations */
 @import './foundations/base.css';
 @import './foundations/progressive.css';
-
-/* Feature presentation */
 @import './features/shell.css';
 @import './features/sidebar.css';
 @import './features/navigation.css';
@@ -22,19 +14,14 @@
 @import './features/cards.css';
 @import './features/crystals.css';
 @import './features/research.css';
+@import './features/welcome.css';
 @import './features/errors.css';
-
-/* Glass material history — isolated and overridden by the canonical system below */
 @import './glass/legacy/base.css';
 @import './glass/legacy/pass-2.css';
 @import './glass/legacy/dashboard.css';
 @import './glass/legacy/pass-3.css';
 @import './glass/current.css';
-
-/* Canonical material authority */
 @import './glass/system.css';
 @import './glass/prismatic.css';
-
-/* Stage 7 interaction authorities — responsive and a11y always win last */
 @import './responsive.css';
 @import './accessibility.css';

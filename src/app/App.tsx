@@ -12,6 +12,7 @@ import{useAppNavigation}from'../features/navigation/useAppNavigation';
 import{pageByNavigationId}from'../features/navigation/navigation.config';
 import{CrystalCollectionDrawer}from'../features/crystals/CrystalCollectionDrawer';
 import{useCrystalCollection}from'../features/crystals/model/useCrystalCollection';
+import{WelcomeScreen}from'../features/welcome/WelcomeScreen';
 import{evolutionPages}from'./navigation';
 import type{Chapter}from'../core/types';
 import{readText,storageKeys,writeText}from'../core/storage';
@@ -38,6 +39,7 @@ export default function App(){
  const[sourceChapters,setSourceChapters]=useState<Chapter[]>([]);
  const[corpusStats,setCorpusStats]=useState({paragraphs:0,characters:0});
  const[corpusReady,setCorpusReady]=useState(false);
+ const[entered,setEntered]=useState(()=>{try{return sessionStorage.getItem('eil-welcome-entered')==='1'}catch{return false}});
  const{records:crystals}=useCrystalCollection();
 
  useEffect(()=>{
@@ -56,9 +58,12 @@ export default function App(){
  const openNew=()=>setEditor(true);
  const current=pageByNavigationId(page);
  const isEvolution=evoPageIds.includes(page);
+ const enterExperience=()=>{try{sessionStorage.setItem('eil-welcome-entered','1')}catch{}setEntered(true);nav('dashboard')};
  const Header=({title,sub}:{title:string;sub:string})=><div className="pageTitle"><div><span className="eyebrow">E.I.L / EVOLUTION OS</span><h1>{title}</h1><p>{sub}</p></div><button className="primary" onClick={openNew}>＋ הוסף מקור</button></div>;
  const Sources=()=> <><Header title="מה משפיע עליי?" sub="המקורות והסביבה שמזינים את המודל שלי. חומר הגלם נשמר בשלמותו, והסינתזה תמיד מצביעה חזרה למקור."/><section className="panel"><h2>מה נכנס למערכת?</h2><div className="pipeline"><b>מסמך / תמונה / מאמר</b><i>→</i><b>מקור מלא</b><i>→</i><b>כרטיסיות מקור</b><i>→</i><b>קשרים</b><i>→</i><b>תובנה</b></div><p className="muted">המטרה אינה לצבור ספרייה גדולה יותר, אלא לזהות מה משפיע על האופן שבו אני מבין ופועל — בלי לשכתב את המקור.</p><button className="primary" onClick={openNew}>הוסף מקור חדש</button></section></>;
  const Generic=()=> <><Header title={current.label} sub={`מרחב ${current.label} כחלק ממערכת ההתפתחות.`}/><div className="genericGrid"><section className="panel"><span className="eyebrow">AWARENESS FIRST</span><h2>התחל מכאן</h2><textarea className="bigInput" placeholder="כתוב מחשבה, שאלה או תובנה..."/><button className="primary">המשך</button></section><section className="panel"><span className="eyebrow">FROM KNOWING TO LIVING</span><h2>הידע הוא חומר גלם</h2><p className="muted">הערך נוצר כשהמערכת מחברת מקורות, מציפה דפוס, ומתרגמת אותו לצעד שאפשר לבדוק בחיים עצמם.</p></section></div></>;
+
+ if(!entered)return <WelcomeScreen onStart={enterExperience}/>;
 
  return <div className="app">
   <DesktopNavigation page={page} onNavigate={nav} onAdd={openNew} collapsed={collapsed} onCollapsedChange={setCollapsed} online={online}/>
