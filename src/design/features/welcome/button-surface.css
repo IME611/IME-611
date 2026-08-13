@@ -1,0 +1,32 @@
+.welcomeCta {
+  position: relative;
+  width: 100%;
+  min-height: 82px;
+  border: 1px solid rgba(255,255,255,.7);
+  border-radius: 999px;
+  padding: 0 78px 0 28px;
+  font: inherit;
+  font-size: 24px;
+  font-weight: 650;
+  color: #101417;
+  cursor: pointer;
+  background: linear-gradient(118deg, rgba(255,255,255,.4), rgba(173,228,232,.22) 33%, rgba(196,169,245,.2) 62%, rgba(242,184,156,.15));
+  backdrop-filter: blur(28px) saturate(185%);
+  box-shadow: inset 0 3px 1px rgba(255,255,255,.96), inset 0 -3px 4px rgba(38,48,53,.18), 0 18px 28px rgba(28,34,37,.2);
+  transform: translateZ(54px);
+  overflow: hidden;
+  text-shadow: 0 1px 0 rgba(255,255,255,.74);
+}
+
+.welcomeCta::before {
+  content: "";
+  position: absolute;
+  left: 12%;
+  right: 12%;
+  top: 3px;
+  height: 42%;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(255,255,255,.76), rgba(255,255,255,.04));
+  filter: blur(3px);
+  opacity: .92;
+}
