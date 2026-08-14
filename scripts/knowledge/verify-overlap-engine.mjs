@@ -7,6 +7,7 @@ const records=[
  {id:'belief',authority:'CANDIDATE',type:'CLAIM',text:'האמונות שלנו משפיעות על ההתנהגות שלנו.'},
  {id:'belief-neg',authority:'CANDIDATE',type:'CLAIM',text:'האמונות שלנו לא משפיעות על ההתנהגות שלנו.'},
  {id:'sleep',authority:'CANDIDATE',type:'CLAIM',text:'שינה עמוקה תומכת בתהליכי התאוששות.'},
+ {id:'ocean',authority:'CANDIDATE',type:'CONCEPT',text:'האוקיינוס'},
 ];
 
 assert.equal(normalizeKnowledgeText('  מַעֲרֶכֶת  העצבים! '),'מערכת העצבים');
@@ -27,7 +28,9 @@ const conflict=rankKnowledgeOverlap('האמונות שלנו לא משפיעות
 assert.equal(conflict.verdict,'CONFLICTS');
 assert.equal(conflict.matches[0].metrics.conflictSignal,true);
 
-const novel=rankKnowledgeOverlap('פוטוסינתזה בצמחי מנגרוב',records);
-assert.equal(novel.verdict,'NEW');
+const novel=rankKnowledgeOverlap('פוטוסינתזה בצמחי מנגרוב באוקיינוס הארקטי',records);
+assert.notEqual(novel.verdict,'EXISTS');
+assert.notEqual(novel.verdict,'EXTENDS','one generic contained corpus term must not make a novel input an extension');
+assert.ok(['NEW','UNCERTAIN','RELATED'].includes(novel.verdict));
 
 console.log('PASS overlap engine golden regression');
