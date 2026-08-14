@@ -8,22 +8,31 @@ const asArray=value=>[...value];
 function tokens(value){return new Set(normalizeKnowledgeText(value).match(/[\p{L}\p{N}]+/gu)||[])}
 function preferredLabel(labels){return [...labels.entries()].sort((a,b)=>b[1]-a[1]||a[0].length-b[0].length||a[0].localeCompare(b[0],'he'))[0]?.[0]||''}
 function percentage(part,total){return total?Number((part/total*100).toFixed(1)):0}
+function mapLabelFromCandidate(value){
+ const text=String(value||'').trim();
+ const dash=text.match(/^(.{2,80}?)\s+(?:—|–)\s+(.{10,})$/u);
+ if(dash)return dash[1].trim();
+ const colon=text.match(/^(.{2,70}?):\s+(.{15,})$/u);
+ if(colon)return colon[1].trim();
+ return text;
+}
 
 function buildConceptNodes(conceptRows){
  const byNormalized=new Map();
  for(const row of conceptRows){
-  const normalized=normalizeKnowledgeText(row.candidate_text);if(!normalized)continue;
+  const mapLabel=mapLabelFromCandidate(row.candidate_text),normalized=normalizeKnowledgeText(mapLabel);if(!normalized)continue;
   const node=byNormalized.get(normalized)||{
-   id:sha256(`concept:${normalized}`),normalized,labels:new Map(),candidateIds:[],sourceIds:new Set(),sourceFiles:new Set(),sections:new Set(),mappedAtomIds:new Set(),
+   id:sha256(`concept:${normalized}`),normalized,labels:new Map(),rawLabels:new Map(),candidateIds:[],sourceIds:new Set(),sourceFiles:new Set(),sections:new Set(),mappedAtomIds:new Set(),contextAtomIds:new Set(),
   };
-  node.labels.set(row.candidate_text,(node.labels.get(row.candidate_text)||0)+1);
+  node.labels.set(mapLabel,(node.labels.get(mapLabel)||0)+1);
+  node.rawLabels.set(row.candidate_text,(node.rawLabels.get(row.candidate_text)||0)+1);
   node.candidateIds.push(row.id);node.sourceIds.add(row.source_id);
   if(row.source_file)node.sourceFiles.add(row.source_file);
   if(row.section)node.sections.add(`${row.source_id}::${row.section}`);
   byNormalized.set(normalized,node);
  }
  const nodes=[...byNormalized.values()].map(node=>({
-  ...node,label:preferredLabel(node.labels),labelVariants:[...node.labels.entries()].map(([label,count])=>({label,count})),
+  ...node,label:preferredLabel(node.labels),labelVariants:[...node.labels.entries()].map(([label,count])=>({label,count})),rawCandidateVariants:[...node.rawLabels.entries()].map(([label,count])=>({label,count})),
   tokens:tokens(node.normalized),candidateCount:node.candidateIds.length,sourceCount:node.sourceIds.size,
  }));
  return{nodes,byNormalized:new Map(nodes.map(node=>[node.normalized,node]))};
@@ -60,14 +69,19 @@ function buildEdges(nodes,atomRows){
  for(const[sourceId,map]of nodesBySource)pairs([...map.values()],(a,b)=>addEdge(edges,a,b,{weight:.15,signal:'SOURCE_CONTEXT',sourceId}));
  for(const[sectionKey,map]of nodesBySection){const[sourceId,...rest]=sectionKey.split('::'),section=rest.join('::');pairs([...map.values()],(a,b)=>addEdge(edges,a,b,{weight:1.2,signal:'SECTION_CONTEXT',sourceId,section}))}
 
- let mappedAtoms=0;const unmappedSectionCounts=new Map();
+ let explicitMappedAtoms=0,contextualAtoms=0,connectedAtoms=0;const unmappedSectionCounts=new Map(),noExplicitSectionCounts=new Map();
  for(const atom of atomRows){
   if(atom.atom_type==='CONCEPT')continue;
-  const matched=mentionedNodes(atom,nodes);
-  if(matched.length){mappedAtoms+=1;for(const node of matched)node.mappedAtomIds.add(atom.id);pairs(matched,(a,b)=>addEdge(edges,a,b,{weight:2.2,signal:'CO_MENTION',sourceId:atom.source_id,section:atom.section||null,atomId:atom.id}))}
-  else{const key=`${atom.source_id}::${atom.section||'(no section)'}`;unmappedSectionCounts.set(key,(unmappedSectionCounts.get(key)||0)+1)}
+  const sectionKey=atom.section?`${atom.source_id}::${atom.section}`:null,contextNodes=sectionKey?nodesBySection.get(sectionKey):null;
+  const hasContext=Boolean(contextNodes?.size);
+  if(hasContext){contextualAtoms+=1;for(const node of contextNodes.values())node.contextAtomIds.add(atom.id)}
+  const matched=mentionedNodes(atom,nodes),hasExplicit=matched.length>0;
+  if(hasExplicit){explicitMappedAtoms+=1;for(const node of matched)node.mappedAtomIds.add(atom.id);pairs(matched,(a,b)=>addEdge(edges,a,b,{weight:2.2,signal:'CO_MENTION',sourceId:atom.source_id,section:atom.section||null,atomId:atom.id}))}
+  if(hasExplicit||hasContext)connectedAtoms+=1;
+  if(!hasExplicit){const key=`${atom.source_id}::${atom.section||'(no section)'}`;noExplicitSectionCounts.set(key,(noExplicitSectionCounts.get(key)||0)+1)}
+  if(!hasExplicit&&!hasContext){const key=`${atom.source_id}::${atom.section||'(no section)'}`;unmappedSectionCounts.set(key,(unmappedSectionCounts.get(key)||0)+1)}
  }
- return{edges:[...edges.values()],mappedAtoms,unmappedSectionCounts};
+ return{edges:[...edges.values()],explicitMappedAtoms,contextualAtoms,connectedAtoms,unmappedSectionCounts,noExplicitSectionCounts};
 }
 
 function edgeView(edge){return{...edge,weight:Number(edge.weight.toFixed(3)),sourceIds:asArray(edge.sourceIds),sections:asArray(edge.sections),supportAtomIds:asArray(edge.atomIds)}}
@@ -109,16 +123,17 @@ function buildCommunities(nodes,edges,{strongThreshold=1.2}={}){
  return communities.sort((a,b)=>b.size-a.size||b.sourceCount-a.sourceCount||a.derivedLabel.localeCompare(b.derivedLabel,'he'));
 }
 
+function sectionCountView(counts){return[...counts.entries()].map(([key,count])=>{const[sourceId,...rest]=key.split('::');return{sourceId,section:rest.join('::'),count}}).sort((a,b)=>b.count-a.count).slice(0,30)}
+
 export function buildEmergentCorpusMap({conceptRows,atomRows}){
- const{nodes}=buildConceptNodes(conceptRows),{edges,mappedAtoms,unmappedSectionCounts}=buildEdges(nodes,atomRows),edgeViews=edges.map(edgeView).sort((a,b)=>b.weight-a.weight||a.id.localeCompare(b.id)),communities=buildCommunities(nodes,edges);
+ const{nodes}=buildConceptNodes(conceptRows),{edges,explicitMappedAtoms,contextualAtoms,connectedAtoms,unmappedSectionCounts,noExplicitSectionCounts}=buildEdges(nodes,atomRows),edgeViews=edges.map(edgeView).sort((a,b)=>b.weight-a.weight||a.id.localeCompare(b.id)),communities=buildCommunities(nodes,edges);
  const knowledgeAtoms=atomRows.filter(row=>row.atom_type!=='CONCEPT').length,duplicateNodes=nodes.filter(node=>node.candidateCount>1).length,strongEdges=edgeViews.filter(edge=>edge.weight>=1.2).length;
- const unmappedSections=[...unmappedSectionCounts.entries()].map(([key,count])=>{const[sourceId,...rest]=key.split('::');return{sourceId,section:rest.join('::'),count}}).sort((a,b)=>b.count-a.count).slice(0,30);
- const nodeViews=nodes.map(node=>({id:node.id,label:node.label,normalized:node.normalized,candidateCount:node.candidateCount,sourceCount:node.sourceCount,sourceFiles:asArray(node.sourceFiles),sections:asArray(node.sections),mappedAtomCount:node.mappedAtomIds.size})).sort((a,b)=>b.mappedAtomCount-a.mappedAtomCount||b.sourceCount-a.sourceCount||a.label.localeCompare(b.label,'he'));
+ const nodeViews=nodes.map(node=>({id:node.id,label:node.label,normalized:node.normalized,candidateCount:node.candidateCount,sourceCount:node.sourceCount,sourceFiles:asArray(node.sourceFiles),sections:asArray(node.sections),explicitMappedAtomCount:node.mappedAtomIds.size,contextAtomCount:node.contextAtomIds.size,rawCandidateVariants:node.rawCandidateVariants})).sort((a,b)=>b.explicitMappedAtomCount-a.explicitMappedAtomCount||b.contextAtomCount-a.contextAtomCount||b.sourceCount-a.sourceCount||a.label.localeCompare(b.label,'he'));
  return{
-  ok:true,method:{version:'corpus-map-v0.1',basis:['exact-normalized-concepts','same-source-context','same-section-context','explicit-concept-co-mention'],semanticModel:false,partition:'hub-neighborhood-preview'},
-  summary:{conceptCandidates:conceptRows.length,conceptNodes:nodes.length,exactDuplicateNodes:duplicateNodes,knowledgeAtoms,mappedAtoms,unmappedAtoms:knowledgeAtoms-mappedAtoms,atomCoveragePercent:percentage(mappedAtoms,knowledgeAtoms),edges:edgeViews.length,strongEdges,communities:communities.length,singletonCommunities:communities.filter(community=>community.size===1).length},
-  nodes:nodeViews,edges:edgeViews,communities,unmappedSections,
-  policy:{canonicalWrites:false,derivedLabels:true,note:'Communities and labels are emergent preview structures derived from corpus context. They are not approved taxonomy categories.'},
+  ok:true,method:{version:'corpus-map-v0.2',basis:['map-labels-derived-from-exact-concept-candidates','same-source-context','same-section-context','explicit-concept-co-mention'],semanticModel:false,partition:'hub-neighborhood-preview'},
+  summary:{conceptCandidates:conceptRows.length,conceptNodes:nodes.length,mapCollapsedConceptCandidates:conceptRows.length-nodes.length,knowledgeAtoms,explicitMappedAtoms,explicitCoveragePercent:percentage(explicitMappedAtoms,knowledgeAtoms),contextualAtoms,contextCoveragePercent:percentage(contextualAtoms,knowledgeAtoms),connectedAtoms,connectedCoveragePercent:percentage(connectedAtoms,knowledgeAtoms),trulyUnmappedAtoms:knowledgeAtoms-connectedAtoms,edges:edgeViews.length,strongEdges,communities:communities.length,singletonCommunities:communities.filter(community=>community.size===1).length},
+  nodes:nodeViews,edges:edgeViews,communities,unmappedSections:sectionCountView(unmappedSectionCounts),noExplicitMentionSections:sectionCountView(noExplicitSectionCounts),
+  policy:{canonicalWrites:false,derivedLabels:true,note:'Map labels may shorten descriptive candidate lines for graph readability while raw candidate wording remains retained. Explicit mention coverage and structural section-context coverage are reported separately. Communities are preview structures, not approved taxonomy.'},
  };
 }
 
