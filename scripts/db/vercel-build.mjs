@@ -16,6 +16,10 @@ if (process.env.VERCEL_ENV === 'production') {
   run('npm', ['run', 'knowledge:bootstrap-extraction']);
 } else {
   console.log(`Skipping database migrations and extraction bootstrap for VERCEL_ENV=${process.env.VERCEL_ENV || 'local'}.`);
+  if (process.env.VERCEL_ENV === 'preview') {
+    console.log('Preview build: running read-only corpus map quality audit.');
+    run('node', ['scripts/knowledge/audit-corpus-map-preview.mjs']);
+  }
 }
 
 run('npm', ['run', 'build']);
