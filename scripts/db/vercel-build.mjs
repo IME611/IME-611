@@ -8,8 +8,12 @@ function run(command, args) {
 if (process.env.VERCEL_ENV === 'production') {
   console.log('Production build: applying canonical database migrations first.');
   run('npm', ['run', 'db:migrate']);
+  console.log('Production build: verifying database foundation including extraction candidate layer.');
+  run('npm', ['run', 'db:health']);
+  console.log('Production build: idempotently bootstrapping PENDING atomic extraction candidates.');
+  run('npm', ['run', 'knowledge:bootstrap-extraction']);
 } else {
-  console.log(`Skipping database migrations for VERCEL_ENV=${process.env.VERCEL_ENV || 'local'}.`);
+  console.log(`Skipping database migrations and extraction bootstrap for VERCEL_ENV=${process.env.VERCEL_ENV || 'local'}.`);
 }
 
 run('npm', ['run', 'build']);
