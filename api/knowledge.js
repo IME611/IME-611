@@ -1,5 +1,6 @@
 import{getDb}from'../server/shared/postgres.js';
 import{buildCorpusInventory}from'../server/knowledge/application/corpus/corpus-inventory.service.js';
+import{previewAtomicExtraction,previewCorpusExtraction}from'../server/knowledge/application/extraction/atomic-extraction-preview.service.js';
 import{withHardening,text,requestUrl}from'./_lib/hardening.js';
 
 const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -66,6 +67,15 @@ async function handleCorpusInventory(req,res,db){
  return res.status(200).json(await buildCorpusInventory(db));
 }
 
+async function handleAtomicPreview(req,res,db){
+ if(req.method!=='GET'){res.setHeader('Allow','GET');return res.status(405).json({ok:false,error:'method not allowed'})}
+ const id=param(req,'id'),scope=param(req,'scope')||'source';
+ if(scope==='corpus')return res.status(200).json(await previewCorpusExtraction(db,{samplePerSource:Number(param(req,'sample')||3)}));
+ if(!id||!UUID.test(id))return res.status(400).json({ok:false,error:'source UUID id is required'});
+ const result=await previewAtomicExtraction(db,id,{offset:Number(param(req,'offset')||0),limit:Number(param(req,'limit')||100)});
+ return result?res.status(200).json(result):res.status(404).json({ok:false,error:'source not found'});
+}
+
 async function knowledge(req,res){
  const db=getDb();const resource=param(req,'resource')||'sources';
  if(resource==='items')return handleItems(req,res,db);
@@ -74,6 +84,7 @@ async function knowledge(req,res){
  if(resource==='crystals')return handleCrystals(req,res,db);
  if(resource==='taxonomy')return handleTaxonomy(req,res,db);
  if(resource==='corpus-inventory')return handleCorpusInventory(req,res,db);
+ if(resource==='atomic-extraction-preview')return handleAtomicPreview(req,res,db);
  return res.status(404).json({ok:false,error:'unknown knowledge resource'});
 }
 
