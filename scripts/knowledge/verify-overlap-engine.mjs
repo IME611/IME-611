@@ -20,7 +20,8 @@ assert.equal(token.verdict,'EXISTS');
 assert.equal(token.matches[0].id,'plasticity');
 
 const extended=rankKnowledgeOverlap('מערכת העצבים משפיעה על הגוף, הרגש וההתנהגות דרך מנגנוני ויסות מורכבים',records);
-assert.ok(['RELATED','UNCERTAIN','NEW'].includes(extended.verdict),'weak lexical overlap must not be overclaimed as EXISTS');
+assert.notEqual(extended.verdict,'EXISTS','a longer statement that only contains a known concept must not be collapsed into an existing duplicate');
+assert.ok(['EXTENDS','RELATED','UNCERTAIN','NEW'].includes(extended.verdict));
 
 const conflict=rankKnowledgeOverlap('האמונות שלנו לא משפיעות על ההתנהגות שלנו.',[records[2]]);
 assert.equal(conflict.verdict,'CONFLICTS');
