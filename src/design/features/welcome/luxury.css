@@ -1,0 +1,472 @@
+@import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;700;900&display=swap');
+
+.welcomeScreen,
+.welcomeScreen * {
+  box-sizing: border-box;
+}
+
+.welcomeScreen {
+  --text-primary: #1e1a10;
+  --text-body: #3a3428;
+  --text-muted: #8a8070;
+  --warm-rim: rgba(255, 255, 255, 0.9);
+  --warm-shadow: 100, 90, 70;
+  --glass-rot-x: 0deg;
+  --glass-rot-y: 0deg;
+  --glass-shine-x: 18%;
+  --glass-shine-y: 10%;
+  position: fixed;
+  inset: 0;
+  min-height: 100dvh;
+  width: 100%;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  padding: clamp(26px, 5vw, 64px);
+  isolation: isolate;
+  font-family: 'Heebo', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: var(--text-primary);
+  background: #f0ebe0;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  animation: welcomeBreath 20s ease-in-out infinite alternate;
+}
+
+.welcomeScreen::before {
+  content: '';
+  position: absolute;
+  inset: -12%;
+  z-index: -5;
+  background:
+    radial-gradient(circle at 14% 16%, rgba(255, 253, 245, 0.88), transparent 32%),
+    radial-gradient(circle at 84% 18%, rgba(226, 217, 197, 0.48), transparent 34%),
+    linear-gradient(145deg, rgba(255, 253, 247, 0.78), rgba(224, 216, 200, 0.54));
+  filter: blur(38px);
+  transform: scale(1.08);
+  pointer-events: none;
+}
+
+.welcomeScreen::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background:
+    linear-gradient(124deg, rgba(255, 255, 255, 0.26), transparent 34% 68%, rgba(255, 250, 238, 0.18)),
+    radial-gradient(70% 22% at 50% 100%, rgba(124, 111, 86, 0.10), transparent 72%);
+  backdrop-filter: blur(5px);
+  pointer-events: none;
+}
+
+.welcomeOrb {
+  position: fixed;
+  z-index: -4;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.5;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+.welcomeOrbA {
+  width: 500px;
+  height: 500px;
+  top: -110px;
+  left: -110px;
+  background: #d4c9a8;
+  animation: floatA 22s ease-in-out infinite alternate;
+}
+
+.welcomeOrbB {
+  width: 410px;
+  height: 410px;
+  top: 31%;
+  right: -90px;
+  background: #e8e0cc;
+  animation: floatB 26s ease-in-out -6s infinite alternate;
+}
+
+.welcomeOrbC {
+  width: 450px;
+  height: 450px;
+  bottom: -100px;
+  left: 18%;
+  background: #c8bfaa;
+  animation: floatC 20s ease-in-out -12s infinite alternate;
+}
+
+.welcomeOrbGold {
+  width: 210px;
+  height: 210px;
+  top: 16%;
+  right: 21%;
+  background: #c9a84c;
+  filter: blur(64px);
+  opacity: 0.22;
+  animation: floatGold 18s ease-in-out -18s infinite alternate;
+}
+
+.welcomeBrand {
+  position: absolute;
+  top: clamp(24px, 4vw, 44px);
+  right: clamp(26px, 4.5vw, 54px);
+  z-index: 8;
+  direction: ltr;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.30em;
+  color: #5a5040;
+  text-shadow: 0 1px 0 rgba(255, 253, 245, 0.88);
+}
+
+.welcomeGlass {
+  position: relative;
+  width: min(760px, 90vw);
+  min-height: min(560px, 72dvh);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(28px, 4vw, 42px);
+  padding: clamp(38px, 5vw, 66px);
+  border-radius: clamp(32px, 4vw, 46px);
+  overflow: hidden;
+  background: rgba(255, 253, 248, 0.18);
+  backdrop-filter: blur(28px) saturate(140%) brightness(1.06);
+  -webkit-backdrop-filter: blur(28px) saturate(140%) brightness(1.06);
+  border-top: 1.5px solid rgba(255, 255, 255, 0.90);
+  border-left: 1px solid rgba(255, 255, 255, 0.70);
+  border-right: 1px solid rgba(200, 195, 185, 0.25);
+  border-bottom: 1px solid rgba(200, 195, 185, 0.20);
+  box-shadow:
+    0 2px 0 rgba(255, 255, 255, 0.80),
+    0 12px 40px rgba(var(--warm-shadow), 0.14),
+    0 3px 10px rgba(var(--warm-shadow), 0.08),
+    inset 0 2px 0 rgba(255, 255, 255, 0.85),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.20);
+  transform: perspective(1200px) rotateX(var(--glass-rot-x)) rotateY(var(--glass-rot-y)) translateZ(0);
+  transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: cardReveal 1.05s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.welcomeGlass::before,
+.welcomeMessagePlate::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(128deg, rgba(255, 255, 255, 0.60) 0%, rgba(255, 255, 255, 0.20) 25%, rgba(255, 255, 255, 0.04) 50%, transparent 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.welcomeGlass::after,
+.welcomeMessagePlate::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.55),
+    inset 0 2px 0 1px rgba(255, 255, 255, 0.95),
+    inset 0 -2px 0 1px rgba(240, 235, 220, 0.15);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.glassShine {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 3;
+  background: radial-gradient(ellipse 52% 42% at var(--glass-shine-x) var(--glass-shine-y), rgba(255, 255, 255, 0.72) 0%, rgba(255, 255, 255, 0.18) 36%, transparent 70%);
+  mix-blend-mode: screen;
+  transition: background 0.12s ease;
+}
+
+.glassRefraction {
+  position: absolute;
+  inset: 8px;
+  z-index: 0;
+  border-radius: calc(clamp(32px, 4vw, 46px) - 8px);
+  background:
+    linear-gradient(115deg, rgba(255, 253, 245, 0.18), transparent 28% 68%, rgba(212, 201, 168, 0.16)),
+    radial-gradient(52% 22% at 50% 0%, rgba(255, 255, 255, 0.48), transparent 78%);
+  filter: url(#liquid-refract);
+  opacity: 0.82;
+  pointer-events: none;
+}
+
+.welcomeMessagePlate {
+  position: relative;
+  z-index: 5;
+  width: min(610px, 100%);
+  padding: clamp(34px, 5vw, 54px) clamp(24px, 5vw, 52px);
+  overflow: hidden;
+  text-align: center;
+  border-radius: clamp(28px, 3.6vw, 38px);
+  background: rgba(255, 253, 250, 0.30);
+  backdrop-filter: blur(16px) saturate(130%) brightness(1.04);
+  -webkit-backdrop-filter: blur(16px) saturate(130%) brightness(1.04);
+  border-top: 1.5px solid rgba(255, 255, 255, 0.94);
+  border-left: 1px solid rgba(255, 255, 255, 0.74);
+  border-right: 1px solid rgba(200, 195, 185, 0.28);
+  border-bottom: 1px solid rgba(200, 195, 185, 0.22);
+  box-shadow:
+    0 18px 42px rgba(var(--warm-shadow), 0.14),
+    0 4px 12px rgba(var(--warm-shadow), 0.08),
+    inset 0 2px 0 rgba(255, 255, 255, 0.92),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.22);
+  transform: translateZ(54px) translateY(-3px);
+  animation: cardReveal 1.1s 0.18s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.glassShineNested {
+  opacity: 0.66;
+  z-index: 3;
+}
+
+.welcomeMessagePlate h1,
+.welcomeMessagePlate p,
+.welcomeGoldLine {
+  position: relative;
+  z-index: 4;
+}
+
+.welcomeMessagePlate h1 {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: clamp(28px, 4.4vw, 46px);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1.30;
+  text-shadow: 0 1px 0 rgba(255, 253, 245, 0.82);
+}
+
+.welcomeGoldLine {
+  width: min(260px, 62%);
+  height: 1px;
+  margin: clamp(24px, 3vw, 32px) auto;
+  background: linear-gradient(90deg, transparent 0%, rgba(201, 168, 76, 0.40) 20%, rgba(230, 200, 120, 0.55) 50%, rgba(201, 168, 76, 0.40) 80%, transparent 100%);
+  animation: goldPulse 4s ease-in-out infinite;
+}
+
+.welcomeMessagePlate p {
+  margin: 0 auto;
+  max-width: 520px;
+  color: var(--text-body);
+  font-size: clamp(16px, 2vw, 20px);
+  font-weight: 400;
+  line-height: 1.75;
+}
+
+.welcomeCta {
+  position: relative;
+  z-index: 6;
+  width: min(520px, 88%);
+  min-height: 56px;
+  padding: 0 32px;
+  border-radius: 999px;
+  background: linear-gradient(155deg, rgba(255, 255, 255, 0.72) 0%, rgba(255, 252, 242, 0.45) 100%);
+  backdrop-filter: blur(20px) saturate(130%);
+  -webkit-backdrop-filter: blur(20px) saturate(130%);
+  border-top: 1.5px solid rgba(255, 255, 255, 0.95);
+  border-left: 1px solid rgba(255, 255, 255, 0.80);
+  border-right: 1px solid rgba(220, 215, 200, 0.30);
+  border-bottom: 1px solid rgba(220, 215, 200, 0.25);
+  box-shadow:
+    0 6px 28px rgba(var(--warm-shadow), 0.13),
+    0 2px 8px rgba(var(--warm-shadow), 0.08),
+    inset 0 2px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.25);
+  color: #2a2418;
+  font: inherit;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transform: translateZ(68px);
+  filter: url(#btn-depth);
+  transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.28s cubic-bezier(0.4, 0, 0.2, 1), background 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.welcomeCta::before {
+  content: '';
+  position: absolute;
+  inset: 2px 10px auto;
+  height: 46%;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.62), transparent);
+  opacity: 0.84;
+  pointer-events: none;
+}
+
+.welcomeCta::after {
+  content: '';
+  position: absolute;
+  left: 9%;
+  right: 9%;
+  bottom: -16px;
+  height: 18px;
+  border-radius: 999px;
+  background: rgba(100, 90, 70, 0.10);
+  filter: blur(14px);
+  pointer-events: none;
+}
+
+.welcomeCta:focus-visible {
+  outline: 3px solid rgba(201, 168, 76, 0.34);
+  outline-offset: 5px;
+}
+
+.welcomeFilters {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .welcomeGlass:hover {
+    box-shadow:
+      0 2px 0 rgba(255, 255, 255, 0.86),
+      0 18px 54px rgba(var(--warm-shadow), 0.17),
+      0 5px 14px rgba(var(--warm-shadow), 0.09),
+      inset 0 2px 0 rgba(255, 255, 255, 0.90),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.22);
+  }
+
+  .welcomeCta:hover {
+    transform: translateZ(72px) translateY(-2px) scale(1.005);
+    background: linear-gradient(155deg, rgba(255, 255, 255, 0.82), rgba(255, 252, 242, 0.58));
+    box-shadow:
+      0 10px 36px rgba(var(--warm-shadow), 0.18),
+      0 3px 10px rgba(var(--warm-shadow), 0.10),
+      inset 0 2px 0 rgba(255, 255, 255, 0.98);
+  }
+
+  .welcomeCta:active {
+    transform: translateZ(66px) translateY(0) scale(0.998);
+  }
+}
+
+@media (max-width: 680px) {
+  .welcomeScreen {
+    place-items: center;
+    padding: 82px 18px 30px;
+  }
+
+  .welcomeBrand {
+    top: 24px;
+    right: 24px;
+  }
+
+  .welcomeGlass {
+    width: min(100%, 520px);
+    min-height: auto;
+    gap: 24px;
+    padding: 26px 18px 30px;
+    border-radius: 34px;
+  }
+
+  .welcomeMessagePlate {
+    padding: 34px 22px 36px;
+    border-radius: 30px;
+    transform: translateZ(32px);
+  }
+
+  .welcomeMessagePlate h1 {
+    font-size: clamp(27px, 8.6vw, 38px);
+  }
+
+  .welcomeMessagePlate p {
+    font-size: 16px;
+    line-height: 1.65;
+  }
+
+  .welcomeCta {
+    width: 92%;
+    min-height: 58px;
+    font-size: 18px;
+    transform: translateZ(38px);
+  }
+
+  .welcomeOrbA {
+    width: 360px;
+    height: 360px;
+  }
+
+  .welcomeOrbB {
+    width: 320px;
+    height: 320px;
+  }
+
+  .welcomeOrbC {
+    width: 340px;
+    height: 340px;
+  }
+}
+
+@media (max-height: 700px) and (min-width: 681px) {
+  .welcomeGlass {
+    min-height: auto;
+    padding-block: 34px;
+  }
+
+  .welcomeMessagePlate {
+    padding-block: 30px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .welcomeScreen,
+  .welcomeOrb,
+  .welcomeGlass,
+  .welcomeMessagePlate,
+  .welcomeGoldLine,
+  .welcomeCta {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .welcomeGlass {
+    transform: none !important;
+  }
+}
+
+@keyframes cardReveal {
+  from { opacity: 0; transform: translateY(20px) scale(0.97); }
+  to { opacity: 1; }
+}
+
+@keyframes goldPulse {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 0.85; }
+}
+
+@keyframes welcomeBreath {
+  from { filter: hue-rotate(-4deg) brightness(0.985); }
+  to { filter: hue-rotate(4deg) brightness(1.015); }
+}
+
+@keyframes floatA {
+  from { transform: translate(-14px, -8px) scale(0.97); opacity: 0.42; }
+  to { transform: translate(24px, 18px) scale(1.04); opacity: 0.58; }
+}
+
+@keyframes floatB {
+  from { transform: translate(18px, -14px) scale(1.02); opacity: 0.40; }
+  to { transform: translate(-22px, 22px) scale(0.96); opacity: 0.56; }
+}
+
+@keyframes floatC {
+  from { transform: translate(-18px, 14px) scale(0.98); opacity: 0.44; }
+  to { transform: translate(20px, -22px) scale(1.04); opacity: 0.60; }
+}
+
+@keyframes floatGold {
+  from { transform: translate(-10px, 8px) scale(0.96); opacity: 0.16; }
+  to { transform: translate(18px, -16px) scale(1.04); opacity: 0.28; }
+}
