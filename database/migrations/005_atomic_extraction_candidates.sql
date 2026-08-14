@@ -2,18 +2,8 @@ BEGIN;
 
 DO $$ BEGIN
   CREATE TYPE knowledge_atom_type AS ENUM (
-    'CLAIM',
-    'CONCEPT',
-    'DEFINITION',
-    'QUESTION',
-    'MODEL',
-    'EXAMPLE',
-    'PRACTICE',
-    'CREATOR_INSIGHT',
-    'WORLDVIEW_CLAIM',
-    'REFERENCE',
-    'TENSION',
-    'EDITORIAL_NOTE'
+    'CLAIM','CONCEPT','DEFINITION','QUESTION','MODEL','EXAMPLE','PRACTICE',
+    'CREATOR_INSIGHT','WORLDVIEW_CLAIM','REFERENCE','TENSION','EDITORIAL_NOTE'
   );
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
@@ -36,10 +26,12 @@ CREATE TABLE IF NOT EXISTS extraction_runs (
   error TEXT,
   started_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   completed_at TIMESTAMPTZ,
-  CHECK (completed_at IS NULL OR completed_at >= started_at)
+  CHECK (completed_at IS NULL OR completed_at >= started_at),
+  CHECK ((scope='SOURCE' AND source_id IS NOT NULL) OR (scope='CORPUS' AND source_id IS NULL))
 );
 CREATE INDEX IF NOT EXISTS extraction_runs_source_idx ON extraction_runs(source_id, started_at DESC);
 CREATE INDEX IF NOT EXISTS extraction_runs_status_idx ON extraction_runs(status, started_at DESC);
+CREATE INDEX IF NOT EXISTS extraction_runs_corpus_idx ON extraction_runs(scope,extractor_version,status,started_at DESC);
 
 CREATE TABLE IF NOT EXISTS extraction_candidates (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -68,7 +60,11 @@ CREATE TABLE IF NOT EXISTS extraction_candidates (
   CHECK (source_start >= 0),
   CHECK (source_end > source_start),
   CHECK (confidence >= 0 AND confidence <= 1),
-  CHECK ((review_status = 'PENDING' AND reviewed_at IS NULL) OR review_status <> 'PENDING'),
+  CHECK (
+    (review_status='PENDING' AND reviewed_at IS NULL AND reviewed_by IS NULL)
+    OR
+    (review_status<>'PENDING' AND reviewed_at IS NOT NULL AND length(trim(COALESCE(reviewed_by,'')))>0)
+  ),
   UNIQUE(candidate_key, extractor_version)
 );
 CREATE INDEX IF NOT EXISTS extraction_candidates_source_idx ON extraction_candidates(source_id, source_start, source_end);
