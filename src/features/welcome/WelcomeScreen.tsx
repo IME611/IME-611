@@ -15,8 +15,8 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
         <div className="welcomeMessageStack">
           <div className="welcomeMessageDepth" aria-hidden="true" />
           <div className="welcomeMessagePlate">
-            <h1 id="welcome-title">כשאנחנו מכוונים את המודעות שלנו אל מה שאנחנו באמת רוצים ליצור,</h1>
-            <p>משהו בתוכנו מתחיל להתארגן סביב האפשרות הזאת — ולחשוף יכולות שלא ידענו שיש בנו.</p>
+            <h1 id="welcome-title">כשאנחנו מכוונים את המודעות שלנו אל החזון והרצונות שלנו, רבדים רדומים בתוכנו מתחילים להתעורר.</h1>
+            <p>לפעמים די בכיוון נכון של תשומת הלב כדי לפתוח אפשרויות חדשות.</p>
           </div>
         </div>
         <div className="welcomeButtonStack">
