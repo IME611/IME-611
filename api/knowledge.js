@@ -100,6 +100,23 @@ async function handleConceptRegistryPreview(req,res,db){
  return res.status(200).json(await buildConceptRegistryPreview(db,{duplicatesOnly:param(req,'duplicatesOnly')==='1',limit:Number(param(req,'limit')||100)}));
 }
 
+async function handleOverlapHealth(req,res,db){
+ if(req.method!=='GET'){res.setHeader('Allow','GET');return res.status(405).json({ok:false,error:'method not allowed'})}
+ const fixtures=[
+  {name:'known-exact',text:'מדיטציה',allowed:['EXISTS']},
+  {name:'known-token',text:'נוירופלסטיות',allowed:['EXISTS','EXTENDS']},
+  {name:'known-extension',text:'מדיטציה יכולה להשפיע על תשומת הלב ועל דפוסי תרגול יומיומיים',allowed:['EXTENDS','RELATED','UNCERTAIN']},
+  {name:'novel-control',text:'פוטוסינתזה בצמחי מנגרוב באוקיינוס הארקטי',allowed:['NEW','UNCERTAIN']},
+ ];
+ const results=[];
+ for(const fixture of fixtures){
+  const match=await matchAgainstCorpus(db,fixture.text,{topK:3}),top=match.matches[0];
+  results.push({name:fixture.name,verdict:match.verdict,confidence:match.confidence,pass:fixture.allowed.includes(match.verdict),topScore:top?Number(top.score.toFixed(4)):null,topType:top?.type||null,topSourceFile:top?.sourceFile||null,indexed:match.indexed});
+ }
+ const pass=results.every(result=>result.pass);
+ return res.status(pass?200:503).json({ok:pass,engine:'overlap-v0.1',semanticModel:false,results});
+}
+
 async function knowledge(req,res){
  const db=getDb();const resource=param(req,'resource')||'sources';
  if(resource==='items')return handleItems(req,res,db);
@@ -112,6 +129,7 @@ async function knowledge(req,res){
  if(resource==='extraction-summary')return handleExtractionSummary(req,res,db);
  if(resource==='overlap-preview')return handleOverlapPreview(req,res,db);
  if(resource==='concept-registry-preview')return handleConceptRegistryPreview(req,res,db);
+ if(resource==='overlap-health')return handleOverlapHealth(req,res,db);
  return res.status(404).json({ok:false,error:'unknown knowledge resource'});
 }
 
