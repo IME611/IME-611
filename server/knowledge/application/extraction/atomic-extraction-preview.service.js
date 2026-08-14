@@ -85,7 +85,7 @@ function classifySentence(text){
  if(RULES.definitional.test(value))return{type:'DEFINITION',confidence:.9,claimType:'DEFINITIONAL',signals:['explicit-definition']};
  if(RULES.model.test(value))return{type:'MODEL',confidence:.74,claimType:claimTypeFor(value),signals:['model-language']};
  const factual=RULES.factualSignal.test(value);
- return{type:'CLAIM',confidence:factual?.76:.64,claimType:claimTypeFor(value),signals:[factual?'factual-signal':'declarative-default']};
+ return{type:'CLAIM',confidence:factual ? .76 : .64,claimType:claimTypeFor(value),signals:[factual?'factual-signal':'declarative-default']};
 }
 
 function evidenceForSpan(sourceText,fragments,start,end){
