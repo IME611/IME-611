@@ -42,25 +42,28 @@ function groupBy(rows, keyFn) {
 
 function verifyFragments(expectedText, fragments) {
   const issues = [];
-  if (!fragments.length) return { ok:false, issues:['NO_FRAGMENTS'], reconstructedHash:null, fragmentCount:0 };
-  let previousEnd = 0;
-  let reconstructed = '';
+  if (!fragments.length) return { ok:false, issues:['NO_FRAGMENTS'], fragmentCount:0, overlapCharacters:0 };
+  let coveredEnd = 0;
+  let overlapCharacters = 0;
   for (let index = 0; index < fragments.length; index += 1) {
     const fragment = fragments[index];
     if (Number(fragment.ordinal) !== index) issues.push('NON_SEQUENTIAL_ORDINALS');
     const start = Number(fragment.start_offset);
     const end = Number(fragment.end_offset);
-    if (start !== previousEnd) issues.push('FRAGMENT_GAP_OR_OVERLAP');
-    if (end < start) issues.push('INVALID_FRAGMENT_OFFSETS');
     const raw = String(fragment.raw_text || '');
+    if (!Number.isInteger(start) || !Number.isInteger(end) || start < 0 || end < start || end > expectedText.length) {
+      issues.push('INVALID_FRAGMENT_OFFSETS');
+      continue;
+    }
+    if (start > coveredEnd) issues.push('FRAGMENT_COVERAGE_GAP');
+    if (start < coveredEnd) overlapCharacters += Math.min(coveredEnd, end) - start;
+    if (raw.length !== end - start) issues.push('FRAGMENT_LENGTH_OFFSET_MISMATCH');
+    if (raw !== expectedText.slice(start,end)) issues.push('FRAGMENT_TEXT_OFFSET_MISMATCH');
     if (sha256(raw) !== fragment.content_hash) issues.push('FRAGMENT_HASH_MISMATCH');
-    reconstructed += raw;
-    previousEnd = end;
+    coveredEnd = Math.max(coveredEnd,end);
   }
-  if (previousEnd !== expectedText.length) issues.push('FRAGMENT_COVERAGE_MISMATCH');
-  const reconstructedHash = sha256(reconstructed);
-  if (reconstructedHash !== sha256(expectedText)) issues.push('RECONSTRUCTED_TEXT_MISMATCH');
-  return { ok:issues.length === 0, issues:[...new Set(issues)], reconstructedHash, fragmentCount:fragments.length };
+  if (Number(fragments[0]?.start_offset) !== 0 || coveredEnd !== expectedText.length) issues.push('FRAGMENT_COVERAGE_MISMATCH');
+  return { ok:issues.length === 0, issues:[...new Set(issues)], fragmentCount:fragments.length, overlapCharacters };
 }
 
 async function readLegacyFiles(db) {
@@ -158,6 +161,7 @@ export async function buildCorpusInventory(db) {
       paragraphCount:item.paragraphCount,
       characterCount:item.characterCount,
       fragmentCount:fragmentAudit.fragmentCount,
+      fragmentOverlapCharacters:fragmentAudit.overlapCharacters,
       fragmenterVersion:(fragmentsBySource.get(row.id) || [])[0]?.fragmenter_version || null,
       canonicalTextVerified:rawHash === item.expectedHash && raw === item.text,
       fragmentCoverageVerified:fragmentAudit.ok,
@@ -180,8 +184,8 @@ export async function buildCorpusInventory(db) {
   const hardFailures = inventory.filter(row => row.issues.some(issue => [
     'MISSING_SOURCE','DUPLICATE_CHAPTER_NUMBER','DUPLICATE_CONTENT_HASH','STORED_HASH_MISMATCH',
     'RAW_TEXT_HASH_MISMATCH','RAW_TEXT_NOT_EXACT','NO_FRAGMENTS','NON_SEQUENTIAL_ORDINALS',
-    'FRAGMENT_GAP_OR_OVERLAP','INVALID_FRAGMENT_OFFSETS','FRAGMENT_HASH_MISMATCH',
-    'FRAGMENT_COVERAGE_MISMATCH','RECONSTRUCTED_TEXT_MISMATCH',
+    'FRAGMENT_COVERAGE_GAP','INVALID_FRAGMENT_OFFSETS','FRAGMENT_LENGTH_OFFSET_MISMATCH',
+    'FRAGMENT_TEXT_OFFSET_MISMATCH','FRAGMENT_HASH_MISMATCH','FRAGMENT_COVERAGE_MISMATCH',
   ].includes(issue))).length;
 
   return {
@@ -204,6 +208,7 @@ export async function buildCorpusInventory(db) {
     notes:[
       'The seed number is inventory metadata only; it is not a learning-sequence or chapter contract.',
       'content_hash is calculated from canonical extracted UTF-8 text for repository-corpus-bootstrap-v1.',
+      'Overlapping source fragments are valid when their offsets and text match the canonical source.',
       'Original DOCX binary preservation is reported separately from canonical text preservation.',
     ],
   };
