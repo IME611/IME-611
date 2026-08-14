@@ -76,6 +76,29 @@ async function handleAtomicPreview(req,res,db){
  return result?res.status(200).json(result):res.status(404).json({ok:false,error:'source not found'});
 }
 
+async function handleExtractionSummary(req,res,db){
+ if(req.method!=='GET'){res.setHeader('Allow','GET');return res.status(405).json({ok:false,error:'method not allowed'})}
+ const tables=(await db.query(`SELECT to_regclass('public.extraction_candidates') AS candidates,to_regclass('public.extraction_candidate_evidence') AS evidence,to_regclass('public.extraction_runs') AS runs`)).rows[0];
+ if(!tables?.candidates||!tables?.evidence||!tables?.runs)return res.status(200).json({ok:true,schemaReady:false,summary:null});
+ const counts=(await db.query(`SELECT
+   COUNT(*)::int AS total,
+   COUNT(DISTINCT source_id)::int AS source_count,
+   COUNT(*) FILTER(WHERE review_status='PENDING')::int AS pending,
+   COUNT(*) FILTER(WHERE review_status='APPROVED')::int AS approved,
+   COUNT(*) FILTER(WHERE review_status='REJECTED')::int AS rejected,
+   COUNT(*) FILTER(WHERE exclude_from_knowledge)::int AS excluded
+  FROM extraction_candidates`)).rows[0];
+ const byType=(await db.query(`SELECT atom_type::text AS type,COUNT(*)::int AS count FROM extraction_candidates GROUP BY atom_type ORDER BY atom_type`)).rows;
+ const evidence=(await db.query(`SELECT
+   COUNT(*)::int AS edges,
+   COUNT(*) FILTER(WHERE NOT exact_quote_verified)::int AS unverified_edges,
+   (SELECT COUNT(*)::int FROM extraction_candidates c WHERE NOT EXISTS(SELECT 1 FROM extraction_candidate_evidence e WHERE e.candidate_id=c.id)) AS candidates_without_evidence
+  FROM extraction_candidate_evidence`)).rows[0];
+ const runs=(await db.query(`SELECT id,scope,extraction_method AS method,extractor_version AS version,status,stats,started_at AS "startedAt",completed_at AS "completedAt" FROM extraction_runs ORDER BY started_at DESC LIMIT 5`)).rows;
+ const healthy=Number(evidence.unverified_edges)===0&&Number(evidence.candidates_without_evidence)===0;
+ return res.status(200).json({ok:healthy,schemaReady:true,summary:{...counts,byType,evidence},runs});
+}
+
 async function knowledge(req,res){
  const db=getDb();const resource=param(req,'resource')||'sources';
  if(resource==='items')return handleItems(req,res,db);
@@ -85,6 +108,7 @@ async function knowledge(req,res){
  if(resource==='taxonomy')return handleTaxonomy(req,res,db);
  if(resource==='corpus-inventory')return handleCorpusInventory(req,res,db);
  if(resource==='atomic-extraction-preview')return handleAtomicPreview(req,res,db);
+ if(resource==='extraction-summary')return handleExtractionSummary(req,res,db);
  return res.status(404).json({ok:false,error:'unknown knowledge resource'});
 }
 
