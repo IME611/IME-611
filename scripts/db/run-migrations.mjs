@@ -22,6 +22,7 @@ const migrations = [
   'database/migrations/002_legacy_source_backfill.sql',
   'database/migrations/003_product_runtime_foundation.sql',
   'database/migrations/004_user_state_and_inbox.sql',
+  'database/migrations/005_atomic_extraction_candidates.sql',
 ];
 
 const sha256 = value => crypto.createHash('sha256').update(value).digest('hex');
