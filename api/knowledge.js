@@ -1,6 +1,7 @@
 import{getDb}from'../server/shared/postgres.js';
 import{buildCorpusInventory}from'../server/knowledge/application/corpus/corpus-inventory.service.js';
 import{previewAtomicExtraction,previewCorpusExtraction}from'../server/knowledge/application/extraction/atomic-extraction-preview.service.js';
+import{matchAgainstCorpus,buildConceptRegistryPreview}from'../server/knowledge/application/matching/knowledge-overlap.service.js';
 import{withHardening,text,requestUrl}from'./_lib/hardening.js';
 
 const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -80,23 +81,40 @@ async function handleExtractionSummary(req,res,db){
  if(req.method!=='GET'){res.setHeader('Allow','GET');return res.status(405).json({ok:false,error:'method not allowed'})}
  const tables=(await db.query(`SELECT to_regclass('public.extraction_candidates') AS candidates,to_regclass('public.extraction_candidate_evidence') AS evidence,to_regclass('public.extraction_runs') AS runs`)).rows[0];
  if(!tables?.candidates||!tables?.evidence||!tables?.runs)return res.status(200).json({ok:true,schemaReady:false,summary:null});
- const counts=(await db.query(`SELECT
-   COUNT(*)::int AS total,
-   COUNT(DISTINCT source_id)::int AS source_count,
-   COUNT(*) FILTER(WHERE review_status='PENDING')::int AS pending,
-   COUNT(*) FILTER(WHERE review_status='APPROVED')::int AS approved,
-   COUNT(*) FILTER(WHERE review_status='REJECTED')::int AS rejected,
-   COUNT(*) FILTER(WHERE exclude_from_knowledge)::int AS excluded
-  FROM extraction_candidates`)).rows[0];
+ const counts=(await db.query(`SELECT COUNT(*)::int AS total,COUNT(DISTINCT source_id)::int AS source_count,COUNT(*) FILTER(WHERE review_status='PENDING')::int AS pending,COUNT(*) FILTER(WHERE review_status='APPROVED')::int AS approved,COUNT(*) FILTER(WHERE review_status='REJECTED')::int AS rejected,COUNT(*) FILTER(WHERE exclude_from_knowledge)::int AS excluded FROM extraction_candidates`)).rows[0];
  const byType=(await db.query(`SELECT atom_type::text AS type,COUNT(*)::int AS count FROM extraction_candidates GROUP BY atom_type ORDER BY atom_type`)).rows;
- const evidence=(await db.query(`SELECT
-   COUNT(*)::int AS edges,
-   COUNT(*) FILTER(WHERE NOT exact_quote_verified)::int AS unverified_edges,
-   (SELECT COUNT(*)::int FROM extraction_candidates c WHERE NOT EXISTS(SELECT 1 FROM extraction_candidate_evidence e WHERE e.candidate_id=c.id)) AS candidates_without_evidence
-  FROM extraction_candidate_evidence`)).rows[0];
+ const evidence=(await db.query(`SELECT COUNT(*)::int AS edges,COUNT(*) FILTER(WHERE NOT exact_quote_verified)::int AS unverified_edges,(SELECT COUNT(*)::int FROM extraction_candidates c WHERE NOT EXISTS(SELECT 1 FROM extraction_candidate_evidence e WHERE e.candidate_id=c.id)) AS candidates_without_evidence FROM extraction_candidate_evidence`)).rows[0];
  const runs=(await db.query(`SELECT id,scope,extraction_method AS method,extractor_version AS version,status,stats,started_at AS "startedAt",completed_at AS "completedAt" FROM extraction_runs ORDER BY started_at DESC LIMIT 5`)).rows;
  const healthy=Number(evidence.unverified_edges)===0&&Number(evidence.candidates_without_evidence)===0;
  return res.status(200).json({ok:healthy,schemaReady:true,summary:{...counts,byType,evidence},runs});
+}
+
+async function handleOverlapPreview(req,res,db){
+ if(req.method!=='POST'){res.setHeader('Allow','POST');return res.status(405).json({ok:false,error:'method not allowed'})}
+ const input=text(req.body?.text,{max:20_000});if(input.length<2)return res.status(400).json({ok:false,error:'text is required'});
+ return res.status(200).json(await matchAgainstCorpus(db,input,{topK:Number(req.body?.topK||8)}));
+}
+
+async function handleConceptRegistryPreview(req,res,db){
+ if(req.method!=='GET'){res.setHeader('Allow','GET');return res.status(405).json({ok:false,error:'method not allowed'})}
+ return res.status(200).json(await buildConceptRegistryPreview(db,{duplicatesOnly:param(req,'duplicatesOnly')==='1',limit:Number(param(req,'limit')||100)}));
+}
+
+async function handleOverlapHealth(req,res,db){
+ if(req.method!=='GET'){res.setHeader('Allow','GET');return res.status(405).json({ok:false,error:'method not allowed'})}
+ const fixtures=[
+  {name:'known-exact',text:'מדיטציה',allowed:['EXISTS']},
+  {name:'known-token',text:'נוירופלסטיות',allowed:['EXISTS','EXTENDS']},
+  {name:'known-extension',text:'מדיטציה יכולה להשפיע על תשומת הלב ועל דפוסי תרגול יומיומיים',allowed:['EXTENDS','RELATED','UNCERTAIN']},
+  {name:'novel-control',text:'פוטוסינתזה בצמחי מנגרוב באוקיינוס הארקטי',allowed:['NEW','UNCERTAIN']},
+ ];
+ const results=[];
+ for(const fixture of fixtures){
+  const match=await matchAgainstCorpus(db,fixture.text,{topK:3}),top=match.matches[0];
+  results.push({name:fixture.name,verdict:match.verdict,confidence:match.confidence,pass:fixture.allowed.includes(match.verdict),topScore:top?Number(top.score.toFixed(4)):null,topType:top?.type||null,topSourceFile:top?.sourceFile||null,indexed:match.indexed});
+ }
+ const pass=results.every(result=>result.pass);
+ return res.status(pass?200:503).json({ok:pass,engine:'overlap-v0.1',semanticModel:false,results});
 }
 
 async function knowledge(req,res){
@@ -109,6 +127,9 @@ async function knowledge(req,res){
  if(resource==='corpus-inventory')return handleCorpusInventory(req,res,db);
  if(resource==='atomic-extraction-preview')return handleAtomicPreview(req,res,db);
  if(resource==='extraction-summary')return handleExtractionSummary(req,res,db);
+ if(resource==='overlap-preview')return handleOverlapPreview(req,res,db);
+ if(resource==='concept-registry-preview')return handleConceptRegistryPreview(req,res,db);
+ if(resource==='overlap-health')return handleOverlapHealth(req,res,db);
  return res.status(404).json({ok:false,error:'unknown knowledge resource'});
 }
 
