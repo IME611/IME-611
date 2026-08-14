@@ -2,7 +2,6 @@ import crypto from 'node:crypto';
 
 const sha256=value=>crypto.createHash('sha256').update(String(value)).digest('hex');
 const HEBREW_DIACRITICS=/[\u0591-\u05C7]/g;
-const FINAL_FORMS=new Map([['ך','כ'],['ם','מ'],['ן','נ'],['ף','פ'],['ץ','צ']]);
 const STOPWORDS=new Set([
  'של','על','אל','עם','את','זה','זו','זאת','הוא','היא','הם','הן','אני','אנחנו','אתה','אתם','אתן','גם','או','אם','כי','כל','לא','אין','יש','מה','מי','איך','למה','איפה','כמו','רק','יותר','פחות','אבל','אז','כך','כדי','יכול','יכולה','יכולים','יכולות','the','a','an','and','or','of','to','in','is','are','it','this','that','with','for','not','no'
 ]);
@@ -12,7 +11,6 @@ export function normalizeKnowledgeText(value){
  return String(value||'')
   .normalize('NFKC')
   .replace(HEBREW_DIACRITICS,'')
-  .split('').map(char=>FINAL_FORMS.get(char)||char).join('')
   .toLocaleLowerCase('he-IL')
   .replace(/[‐‑‒–—―]/g,'-')
   .replace(/[^\p{L}\p{N}]+/gu,' ')
@@ -57,7 +55,7 @@ function similarityMetrics(query,candidate){
 }
 
 function compareLength(query,candidate){
- const q=contentTokens(query).length,c=contentTokens(candidate).length;return{queryTokens:q,candidateTokens:c,ratio:c? q/c : q};
+ const q=contentTokens(query).length,c=contentTokens(candidate).length;return{queryTokens:q,candidateTokens:c,ratio:c?q/c:q};
 }
 
 export function rankKnowledgeOverlap(query,records,{topK=8}={}){
@@ -82,45 +80,20 @@ export function rankKnowledgeOverlap(query,records,{topK=8}={}){
 }
 
 function dbRecordFromCandidate(row){
- return{
-  id:row.id,
-  authority:'CANDIDATE',
-  type:row.atom_type,
-  text:row.candidate_text,
-  reviewStatus:row.review_status,
-  sourceId:row.source_id,
-  sourceTitle:row.source_title,
-  sourceFile:row.source_file||null,
-  section:row.section||null,
-  extractorVersion:row.extractor_version,
- };
+ return{id:row.id,authority:'CANDIDATE',type:row.atom_type,text:row.candidate_text,reviewStatus:row.review_status,sourceId:row.source_id,sourceTitle:row.source_title,sourceFile:row.source_file||null,section:row.section||null,extractorVersion:row.extractor_version};
 }
 
 export async function matchAgainstCorpus(db,text,{topK=8}={}){
  const candidateRows=(await db.query(`
   SELECT c.id,c.atom_type,c.candidate_text,c.review_status,c.source_id,c.extractor_version,
          c.metadata->>'section' AS section,s.title AS source_title,s.metadata->>'sourceFile' AS source_file
-  FROM extraction_candidates c
-  JOIN sources s ON s.id=c.source_id
+  FROM extraction_candidates c JOIN sources s ON s.id=c.source_id
   WHERE c.review_status<>'REJECTED' AND NOT c.exclude_from_knowledge
  `)).rows;
  const canonicalRows=(await db.query(`SELECT id,canonical_name,description FROM concepts`)).rows;
- const records=[
-  ...canonicalRows.map(row=>({id:row.id,authority:'CANONICAL',type:'CONCEPT',text:row.canonical_name,description:row.description||''})),
-  ...candidateRows.map(dbRecordFromCandidate),
- ];
+ const records=[...canonicalRows.map(row=>({id:row.id,authority:'CANONICAL',type:'CONCEPT',text:row.canonical_name,description:row.description||''})),...candidateRows.map(dbRecordFromCandidate)];
  const result=rankKnowledgeOverlap(text,records,{topK});
- return{
-  ok:true,
-  engine:{method:'deterministic-lexical',version:'overlap-v0.1',semanticModel:false},
-  input:{text:String(text).trim(),normalized:normalizeKnowledgeText(text)},
-  indexed:{canonicalConcepts:canonicalRows.length,reviewCandidates:candidateRows.length,total:records.length},
-  ...result,
-  policy:{
-   provisional:true,
-   note:'Verdicts use deterministic lexical evidence only. RELATED/UNCERTAIN and all conflict signals require later semantic or human review before canonical merge.'
-  }
- };
+ return{ok:true,engine:{method:'deterministic-lexical',version:'overlap-v0.1',semanticModel:false},input:{text:String(text).trim(),normalized:normalizeKnowledgeText(text)},indexed:{canonicalConcepts:canonicalRows.length,reviewCandidates:candidateRows.length,total:records.length},...result,policy:{provisional:true,note:'Verdicts use deterministic lexical evidence only. RELATED/UNCERTAIN and all conflict signals require later semantic or human review before canonical merge.'}};
 }
 
 export async function buildConceptRegistryPreview(db,{duplicatesOnly=false,limit=100}={}){
@@ -136,13 +109,7 @@ export async function buildConceptRegistryPreview(db,{duplicatesOnly=false,limit
   const cluster=groups.get(normalized)||{clusterKey:sha256(normalized),normalized,labels:new Map(),candidateIds:[],sourceIds:new Set(),sourceFiles:new Set()};
   cluster.labels.set(row.candidate_text,(cluster.labels.get(row.candidate_text)||0)+1);cluster.candidateIds.push(row.id);cluster.sourceIds.add(row.source_id);if(row.source_file)cluster.sourceFiles.add(row.source_file);groups.set(normalized,cluster);
  }
- const clusters=[...groups.values()].map(cluster=>({
-  clusterKey:cluster.clusterKey,normalized:cluster.normalized,
-  preferredLabel:[...cluster.labels.entries()].sort((a,b)=>b[1]-a[1]||a[0].length-b[0].length)[0]?.[0]||cluster.normalized,
-  labels:[...cluster.labels.entries()].map(([label,count])=>({label,count})),candidateCount:cluster.candidateIds.length,sourceCount:cluster.sourceIds.size,
-  candidateIds:cluster.candidateIds,sourceFiles:[...cluster.sourceFiles]
- })).sort((a,b)=>b.candidateCount-a.candidateCount||a.preferredLabel.localeCompare(b.preferredLabel,'he'));
- const duplicateClusters=clusters.filter(cluster=>cluster.candidateCount>1);
- const selected=(duplicatesOnly?duplicateClusters:clusters).slice(0,Math.max(1,Math.min(500,Number(limit)||100)));
+ const clusters=[...groups.values()].map(cluster=>({clusterKey:cluster.clusterKey,normalized:cluster.normalized,preferredLabel:[...cluster.labels.entries()].sort((a,b)=>b[1]-a[1]||a[0].length-b[0].length)[0]?.[0]||cluster.normalized,labels:[...cluster.labels.entries()].map(([label,count])=>({label,count})),candidateCount:cluster.candidateIds.length,sourceCount:cluster.sourceIds.size,candidateIds:cluster.candidateIds,sourceFiles:[...cluster.sourceFiles]})).sort((a,b)=>b.candidateCount-a.candidateCount||a.preferredLabel.localeCompare(b.preferredLabel,'he'));
+ const duplicateClusters=clusters.filter(cluster=>cluster.candidateCount>1),selected=(duplicatesOnly?duplicateClusters:clusters).slice(0,Math.max(1,Math.min(500,Number(limit)||100)));
  return{ok:true,mode:'preview',registry:{candidateConcepts:rows.length,exactClusters:clusters.length,duplicateClusters:duplicateClusters.length,singletonClusters:clusters.length-duplicateClusters.length},clusters:selected,policy:{canonicalWrites:false,note:'These are exact normalized concept proposals. No cluster is automatically promoted or merged into canonical concepts.'}};
 }
