@@ -54,6 +54,9 @@ function similarityMetrics(query,candidate){
  if(candidateInsideQuery&&normalizedCandidate.length>=5&&coverage>=.5&&candidateTokens.size>=2){
   score=Math.max(score,.82+.1*Math.min(1,normalizedCandidate.length/Math.max(normalizedQuery.length,normalizedCandidate.length)));
  }
+ if(candidateInsideQuery&&candidateTokens.size===1&&normalizedCandidate.length>=5){
+  score=Math.max(score,.36);
+ }
  if(singleToken&&[...queryTokens][0].length>=5)score=Math.max(score,.9);
  if(exact)score=1;
  const coreA=withoutNegations(query),coreB=withoutNegations(candidate),coreSimilarity=jaccard(coreA,coreB);
