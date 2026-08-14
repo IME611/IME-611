@@ -43,15 +43,22 @@ function similarityMetrics(query,candidate){
  const tokenJaccard=jaccard(queryTokens,candidateTokens),tokenContainment=containment(queryTokens,candidateTokens),coverage=queryCoverage(queryTokens,candidateTokens);
  const trigramJaccard=jaccard(trigrams(query),trigrams(candidate));
  const exact=Boolean(normalizedQuery)&&normalizedQuery===normalizedCandidate;
- const phrase=Boolean(normalizedQuery&&normalizedCandidate&&(normalizedCandidate.includes(normalizedQuery)||normalizedQuery.includes(normalizedCandidate)));
+ const queryInsideCandidate=Boolean(normalizedQuery&&normalizedCandidate&&normalizedCandidate.includes(normalizedQuery));
+ const candidateInsideQuery=Boolean(normalizedQuery&&normalizedCandidate&&normalizedQuery.includes(normalizedCandidate));
+ const phrase=queryInsideCandidate||candidateInsideQuery;
  const singleToken=queryTokens.size===1&&candidateTokens.has([...queryTokens][0]);
  let score=.44*tokenJaccard+.22*tokenContainment+.34*trigramJaccard;
- if(phrase&&Math.min(normalizedQuery.length,normalizedCandidate.length)>=5)score=Math.max(score,.88+.08*Math.min(1,Math.min(normalizedQuery.length,normalizedCandidate.length)/Math.max(normalizedQuery.length,normalizedCandidate.length)));
+ if(queryInsideCandidate&&normalizedQuery.length>=5){
+  score=Math.max(score,.88+.08*Math.min(1,normalizedQuery.length/Math.max(normalizedQuery.length,normalizedCandidate.length)));
+ }
+ if(candidateInsideQuery&&normalizedCandidate.length>=5&&coverage>=.5&&candidateTokens.size>=2){
+  score=Math.max(score,.82+.1*Math.min(1,normalizedCandidate.length/Math.max(normalizedQuery.length,normalizedCandidate.length)));
+ }
  if(singleToken&&[...queryTokens][0].length>=5)score=Math.max(score,.9);
  if(exact)score=1;
  const coreA=withoutNegations(query),coreB=withoutNegations(candidate),coreSimilarity=jaccard(coreA,coreB);
  const conflictSignal=coreA.size>=2&&coreB.size>=2&&coreSimilarity>=.82&&polarity(query)!==polarity(candidate);
- return{score:Math.min(1,score),exact,phrase,tokenJaccard,tokenContainment,queryCoverage:coverage,trigramJaccard,conflictSignal,coreSimilarity};
+ return{score:Math.min(1,score),exact,phrase,queryInsideCandidate,candidateInsideQuery,tokenJaccard,tokenContainment,queryCoverage:coverage,trigramJaccard,conflictSignal,coreSimilarity};
 }
 
 function compareLength(query,candidate){
@@ -71,8 +78,9 @@ export function rankKnowledgeOverlap(query,records,{topK=8}={}){
  if(conflict){verdict='CONFLICTS';confidence=Math.min(.9,.58+conflict.score*.35);reason='A highly similar statement with opposite explicit negation was found; human review is still required.'}
  else if(top?.metrics.exact||top?.score>=.95){verdict='EXISTS';confidence=Math.max(.9,top.score);reason='The same or nearly identical normalized idea is already represented.'}
  else if(top?.score>=.82){
-  if(top.length.ratio>=1.35&&top.metrics.tokenContainment>=.7){verdict='EXTENDS';confidence=Math.min(.94,.68+top.score*.25);reason='The input substantially contains an existing idea and adds additional material.'}
-  else{verdict='EXISTS';confidence=Math.min(.93,.7+top.score*.24);reason='A very strong lexical/phrase match is already represented.'}
+  if(top.length.ratio>=1.35&&top.metrics.queryCoverage>=.5&&top.metrics.tokenContainment>=.7){verdict='EXTENDS';confidence=Math.min(.94,.68+top.score*.25);reason='The input substantially contains an existing idea and adds additional material.'}
+  else if(top.metrics.queryInsideCandidate||top.metrics.queryCoverage>=.8){verdict='EXISTS';confidence=Math.min(.93,.7+top.score*.24);reason='A very strong lexical/phrase match is already represented.'}
+  else{verdict='RELATED';confidence=Math.min(.9,.55+top.score*.35);reason='A contained term is present, but it does not cover enough of the input to claim duplication or extension.'}
  }
  else if(top?.score>=.56){verdict='RELATED';confidence=Math.min(.9,.55+top.score*.35);reason='The input overlaps materially with existing knowledge but is not a duplicate.'}
  else if(top?.score>=.32){verdict='UNCERTAIN';confidence=.5+top.score*.2;reason='Some overlap exists, but deterministic matching is not strong enough to classify safely.'}
