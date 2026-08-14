@@ -1,18 +1,1 @@
-@media (max-width: 720px) {
-  .welcomeScreen { padding: 74px 14px 16px; }
-  .welcomeBrand { top: 24px; left: 24px; font-size: 17px; }
-  .welcomeBackdropA { width: 210px; height: 210px; left: -115px; top: 110px; }
-  .welcomeBackdropB { width: 190px; height: 190px; right: -105px; bottom: 80px; }
-  .welcomeGlass { width: 100%; min-height: calc(100dvh - 104px); gap: 23px; padding: 30px 18px 28px; border-radius: 38px; }
-  .welcomeSparkStack { width: 54px; height: 61px; }
-  .welcomeSparkDepth { width: 50px; height: 50px; top: 10px; }
-  .welcomeGlassOrb { height: 52px; font-size: 22px; }
-  .welcomeMessageDepth { inset: 10px 10px -13px; border-radius: 29px; }
-  .welcomeMessagePlate { padding: 30px 21px 32px; border-radius: 29px; }
-  .welcomeMessagePlate h1 { font-size: 28px; line-height: 1.22; }
-  .welcomeMessagePlate p { font-size: 17.5px; line-height: 1.52; margin-top: 18px; }
-  .welcomeButtonStack { width: min(330px, 90vw); }
-  .welcomeButtonDepth { inset: 10px 14px -12px; }
-  .welcomeCta { min-height: 72px; padding: 0 68px 0 20px; font-size: 21px; }
-  .welcomeArrowCap { width: 54px; height: 54px; left: 8px; font-size: 22px; }
-}
+@media(max-width:720px){.welcomeScreen{padding:72px 14px 18px}.welcomeBrand{top:24px;left:24px;font-size:17px}.welcomeGlass{width:100%;min-height:calc(100dvh - 104px);gap:28px;padding:36px 18px 30px;border-radius:38px}.welcomeMessageDepth{inset:10px 10px -14px;border-radius:30px}.welcomeMessagePlate{padding:34px 22px 36px;border-radius:30px}.welcomeMessagePlate h1{font-size:clamp(27px,7.8vw,36px);line-height:1.22}.welcomeMessagePlate p{font-size:clamp(17px,4.8vw,21px);line-height:1.52;margin-top:18px}.welcomeButtonStack{width:min(330px,88vw)}.welcomeButtonDepth{inset:10px 13px -13px}.welcomeCta{min-height:72px;padding:0 28px;font-size:21px}.welcomeArrow{display:none!important}}@media(max-height:720px) and (max-width:720px){.welcomeScreen{padding-top:62px}.welcomeGlass{min-height:calc(100dvh - 84px);gap:20px;padding:25px 16px 22px}.welcomeMessagePlate{padding:25px 18px 28px}.welcomeMessagePlate h1{font-size:26px}.welcomeMessagePlate p{font-size:17px;margin-top:14px}.welcomeCta{min-height:64px}}@media(prefers-reduced-motion:reduce){.welcomeCta{transition:none}}
