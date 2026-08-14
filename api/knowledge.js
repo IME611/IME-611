@@ -1,4 +1,5 @@
 import{getDb}from'../server/shared/postgres.js';
+import{buildCorpusInventory}from'../server/knowledge/application/corpus/corpus-inventory.service.js';
 import{withHardening,text,requestUrl}from'./_lib/hardening.js';
 
 const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -60,6 +61,11 @@ async function handleTaxonomy(req,res,db){
  res.setHeader('Allow','GET,PUT');return res.status(405).json({ok:false,error:'method not allowed'});
 }
 
+async function handleCorpusInventory(req,res,db){
+ if(req.method!=='GET'){res.setHeader('Allow','GET');return res.status(405).json({ok:false,error:'method not allowed'})}
+ return res.status(200).json(await buildCorpusInventory(db));
+}
+
 async function knowledge(req,res){
  const db=getDb();const resource=param(req,'resource')||'sources';
  if(resource==='items')return handleItems(req,res,db);
@@ -67,6 +73,7 @@ async function knowledge(req,res){
  if(resource==='sources'||resource==='documents')return handleSources(req,res,db);
  if(resource==='crystals')return handleCrystals(req,res,db);
  if(resource==='taxonomy')return handleTaxonomy(req,res,db);
+ if(resource==='corpus-inventory')return handleCorpusInventory(req,res,db);
  return res.status(404).json({ok:false,error:'unknown knowledge resource'});
 }
 
