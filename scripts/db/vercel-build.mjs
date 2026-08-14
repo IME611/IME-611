@@ -10,6 +10,8 @@ if (process.env.VERCEL_ENV === 'production') {
   run('npm', ['run', 'db:migrate']);
   console.log('Production build: verifying database foundation including extraction candidate layer.');
   run('npm', ['run', 'db:health']);
+  console.log('Production build: exercising extraction candidate persistence with a transactional verification fixture.');
+  run('npm', ['run', 'db:verify-extraction']);
   console.log('Production build: idempotently bootstrapping PENDING atomic extraction candidates.');
   run('npm', ['run', 'knowledge:bootstrap-extraction']);
 } else {
