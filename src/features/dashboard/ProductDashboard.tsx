@@ -17,8 +17,6 @@ export function ProductDashboard({onNav,onAdd}:ProductDashboardProps){
  const data=dashboard.state.data;
  const experiment=data.experiments.find(item=>item.status==='ACTIVE')??data.experiments.find(item=>item.status==='DRAFT')??data.experiments[0]??null;
  const supportedInsight=data.insights.find(item=>item.status==='SUPPORTED')??null;
- const isFirstSession=!dashboard.latestTransformation&&data.experiments.length===0&&data.reflections.length===0;
- if(isFirstSession)return <div className="pdDashboard pdFirstSession"><section className="pdFirstSessionHero"><span className="pdEyebrow">E.I.L / התחלה</span><p className="pdFirstSessionKicker">לא צריך להבין עכשיו את כל המערכת.</p><h1>מתחילים בשאלה אחת.</h1><p>{dashboard.activeStage.guidingQuestion}</p><button className="pdPrimary pdFirstSessionCta" onClick={()=>onNav('library')}>התחל את המסע: שכבה {String(dashboard.activeStage.order).padStart(2,'0')} — {dashboard.activeStage.title}</button><small>קודם לומדים ומנסחים הבנה. Evidence, Provenance וניסוי יופיעו רק כשיהיה להם הקשר אישי.</small></section></div>;
  const next=experiment&&experiment.status!=='COMPLETED'?{label:'חזור למה שאתה בודק עכשיו',description:'כבר יש ניסוי שמחובר לתובנה מבוססת מקור. אל תפתח כיוון חדש לפני שחזרת עם תצפית.',action:'פתח את הניסוי',page:'transformation'}:supportedInsight?{label:'הפוך הבנה לבדיקה בחיים',description:'יש תובנה מבוססת ראיות. השלב הבא הוא לא לקרוא עוד — אלא לבדוק מה היא משנה בהתנהגות או בתשומת הלב.',action:'צור ניסוי',page:'transformation'}:{label:'העמק בשאלה הבאה במסע',description:`השלב הפעיל הוא: ${dashboard.activeStage.guidingQuestion}`,action:'המשך ללמוד',page:'library'};
  const selected=provenance.state.status==='idle'?null:provenance.state.insightId;
  return <div className="pdDashboard">
