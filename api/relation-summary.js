@@ -18,10 +18,10 @@ async function summary(req,res){
   FROM relation_candidates`)).rows[0];
  const byType=(await db.query(`SELECT relation_type::text AS type,COUNT(*)::int AS count FROM relation_candidates GROUP BY relation_type ORDER BY relation_type`)).rows;
  const integrity=(await db.query(`SELECT
-   COUNT(*) FILTER(WHERE length(trim(from_label))=0 OR length(trim(to_label))=0)::int AS empty_endpoints,
-   COUNT(*) FILTER(WHERE from_node_key=to_node_key)::int AS same_endpoint,
-   COUNT(*) FILTER(WHERE evidence_mode<>'EXPLICIT_LINGUISTIC')::int AS non_explicit,
-   COUNT(*) FILTER(WHERE exact_quote<>c.candidate_text)::int AS quote_mismatch,
+   COUNT(*) FILTER(WHERE length(trim(r.from_label))=0 OR length(trim(r.to_label))=0)::int AS empty_endpoints,
+   COUNT(*) FILTER(WHERE r.from_node_key=r.to_node_key)::int AS same_endpoint,
+   COUNT(*) FILTER(WHERE r.evidence_mode<>'EXPLICIT_LINGUISTIC')::int AS non_explicit,
+   COUNT(*) FILTER(WHERE r.exact_quote<>c.candidate_text)::int AS quote_mismatch,
    COUNT(*) FILTER(WHERE NOT EXISTS(SELECT 1 FROM extraction_candidate_evidence e WHERE e.candidate_id=r.source_atom_id AND e.exact_quote_verified))::int AS missing_verified_fragment_evidence
   FROM relation_candidates r JOIN extraction_candidates c ON c.id=r.source_atom_id`)).rows[0];
  const canonicalConnections=Number((await db.query('SELECT COUNT(*)::int AS count FROM connections')).rows[0]?.count||0);

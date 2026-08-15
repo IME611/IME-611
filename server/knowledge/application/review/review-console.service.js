@@ -35,7 +35,13 @@ async function duplicateQueue(db,limit){
  if(!candidates.length)return[];const keys=candidates.map(item=>item.subjectKey),decided=new Set((await db.query(`SELECT DISTINCT subject_key FROM review_decisions WHERE queue_type='DUPLICATE' AND subject_key=ANY($1::text[])`,[keys])).rows.map(row=>row.subject_key));return candidates.filter(item=>!decided.has(item.subjectKey)).slice(0,limitValue(limit));
 }
 async function classificationQueue(db,limit){const rows=await extractionRows(db,`AND (c.confidence<0.78 OR c.atom_type IN ('WORLDVIEW_CLAIM','CREATOR_INSIGHT','TENSION'))`,[],limit);return rows.map(extractionView)}
-async function epistemicQueue(db,limit){const rows=await extractionRows(db,`AND (c.atom_type IN ('WORLDVIEW_CLAIM','CREATOR_INSIGHT') OR c.claim_type IN ('NORMATIVE','EXPERIENTIAL','INTERPRETIVE'))`,[],limit);return rows.map(extractionView)}
+async function epistemicQueue(db,limit){const rows=await extractionRows(db,`AND (
+ c.atom_type IN ('WORLDVIEW_CLAIM','CREATOR_INSIGHT')
+ OR c.claim_type IN ('NORMATIVE','EXPERIENTIAL','INTERPRETIVE')
+ OR COALESCE(c.metadata->>'section','') ~* '(חוקי?[ _]היקום|רוחני|הבורא|אלוהים|בריאה|נשמה|השגחה)'
+ OR COALESCE(s.metadata->>'sourceFile',s.metadata->>'originalFileName','') ~* '(חוקי?[ _]היקום|רוחני|הבורא|אלוהים|בריאה|נשמה|השגחה)'
+ OR c.candidate_text ~* '(הבורא|אלוהים|תכלית הבריאה|חוקי?[ _]היקום|חוק המשיכה|התודעה אינה נעלמת)'
+)`,[],limit);return rows.map(extractionView)}
 async function conflictQueue(db,limit){
  const atoms=(await extractionRows(db,`AND c.atom_type='TENSION'`,[],Math.ceil(limitValue(limit)/2))).map(row=>({kind:'ATOM',...extractionView(row)}));
  const relations=(await db.query(`SELECT r.id,r.relation_type,r.from_label,r.to_label,r.endpoint_resolution,r.cue,r.exact_quote,r.confidence,r.source_id,s.title source_title,COALESCE(s.metadata->>'sourceFile',s.metadata->>'originalFileName') source_file FROM relation_candidates r JOIN sources s ON s.id=r.source_id WHERE r.review_status='PENDING' AND r.relation_type='CONTRADICTS' ORDER BY r.confidence DESC,r.created_at LIMIT $1`,[Math.ceil(limitValue(limit)/2)])).rows.map(row=>({kind:'RELATION',id:row.id,type:row.relation_type,fromLabel:row.from_label,toLabel:row.to_label,endpointResolution:row.endpoint_resolution,cue:row.cue,quote:row.exact_quote,confidence:Number(row.confidence),sourceId:row.source_id,sourceTitle:row.source_title,sourceFile:row.source_file||null}));

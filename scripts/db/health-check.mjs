@@ -9,11 +9,13 @@ const requiredTables = [
   'sources','source_fragments','claims','concepts','evidence','connections',
   'insights','experiments','reflections','provenance_edges',
   'legacy_source_mappings','legacy_fragment_mappings','schema_migrations',
-  'extraction_runs','extraction_candidates','extraction_candidate_evidence'
+  'extraction_runs','extraction_candidates','extraction_candidate_evidence',
+  'relation_extraction_runs','relation_candidates','intake_submissions','review_decisions'
 ];
 const requiredEnums = [
   'source_type','claim_type','claim_status','evidence_relation','insight_status','experiment_status',
-  'knowledge_atom_type','extraction_review_status','extraction_run_status'
+  'knowledge_atom_type','extraction_review_status','extraction_run_status',
+  'knowledge_relation_type','relation_evidence_mode','relation_endpoint_kind','intake_review_status'
 ];
 
 async function main(){
@@ -35,6 +37,9 @@ async function main(){
       (SELECT COUNT(*)::int FROM extraction_runs) extraction_runs,
       (SELECT COUNT(*)::int FROM extraction_candidates) extraction_candidates,
       (SELECT COUNT(*)::int FROM extraction_candidate_evidence) extraction_candidate_evidence,
+      (SELECT COUNT(*)::int FROM relation_candidates) relation_candidates,
+      (SELECT COUNT(*)::int FROM intake_submissions) intake_submissions,
+      (SELECT COUNT(*)::int FROM review_decisions) review_decisions,
       (SELECT COUNT(*)::int FROM schema_migrations) migrations_applied`);
     console.log(JSON.stringify({ok:true,...counts.rows[0]},null,2));
   } finally { await client.end(); }
