@@ -6,6 +6,7 @@ import{PostgresSourceIngestionRepository}from'../../infrastructure/postgres/sour
 const METHOD='deterministic-rules';
 const VERSION='atomic-he-v0.2';
 const sha256=value=>crypto.createHash('sha256').update(value).digest('hex');
+const LIST_COLUMNS=`id,input_kind,title,source_url,file_name,mime_type,extracted_text_sha256,analysis,review_status,decision_overrides,reviewed_at,reviewed_by,review_note,approved_source_id,created_at,updated_at`;
 
 export async function intakeSchemaReady(db){return Boolean((await db.query(`SELECT to_regclass('public.intake_submissions') AS table_name`)).rows[0]?.table_name)}
 export async function stageIntakeSubmission(db,payload,analysis){
@@ -25,7 +26,7 @@ export async function getIntakeSubmission(db,id,{includeText=false}={}){
 }
 export async function listIntakeSubmissions(db,{status='PENDING',limit=50}={}){
  if(!await intakeSchemaReady(db))return{schemaReady:false,items:[]};const safeLimit=Math.max(1,Math.min(200,Number(limit)||50)),allowed=new Set(['PENDING','APPROVED','REJECTED','ALL']),normalized=String(status||'PENDING').toUpperCase(),filter=allowed.has(normalized)?normalized:'PENDING';
- const rows=filter==='ALL'?(await db.query(`SELECT * FROM intake_submissions ORDER BY created_at DESC LIMIT $1`,[safeLimit])).rows:(await db.query(`SELECT * FROM intake_submissions WHERE review_status=$1 ORDER BY created_at DESC LIMIT $2`,[filter,safeLimit])).rows;
+ const rows=filter==='ALL'?(await db.query(`SELECT ${LIST_COLUMNS} FROM intake_submissions ORDER BY created_at DESC LIMIT $1`,[safeLimit])).rows:(await db.query(`SELECT ${LIST_COLUMNS} FROM intake_submissions WHERE review_status=$1 ORDER BY created_at DESC LIMIT $2`,[filter,safeLimit])).rows;
  return{schemaReady:true,items:rows.map(row=>submissionView(row,{includeAnalysis:false}))};
 }
 export async function changeIntakeSubmission(db,id,{reviewedBy,overrides={},note=''}){
