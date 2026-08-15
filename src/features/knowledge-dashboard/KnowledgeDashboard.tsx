@@ -1,4 +1,4 @@
-import React,{useEffect,useMemo,useState}from'react';
+import React,{useEffect,useMemo,useRef,useState}from'react';
 
 type LibraryNode={
  id:string;
@@ -58,6 +58,7 @@ const orderLabel=(status:string)=>status==='CONSTRAINED'?'מיקום נתמך ב
 
 export function KnowledgeDashboard({query,onQueryChange,onAdd}:Props){
  const[state,setState]=useState<LoadState>({status:'loading'}),[learningState,setLearningState]=useState<LearningState>({status:'loading'}),[selectedId,setSelectedId]=useState<string|null>(null),[mode,setMode]=useState<'topics'|'concepts'>('topics');
+ const detailRef=useRef<HTMLElement|null>(null);
  useEffect(()=>{
   const controller=new AbortController();
   fetch('/api/corpus-map',{signal:controller.signal}).then(async response=>{
@@ -76,6 +77,11 @@ export function KnowledgeDashboard({query,onQueryChange,onAdd}:Props){
   }).catch(error=>{if(error?.name!=='AbortError')setLearningState({status:'error',message:error instanceof Error?error.message:'learning graph unavailable'})});
   return()=>controller.abort();
  },[]);
+ useEffect(()=>{
+  if(!selectedId)return;
+  const frame=requestAnimationFrame(()=>detailRef.current?.scrollIntoView({behavior:'smooth',block:'start'}));
+  return()=>cancelAnimationFrame(frame);
+ },[selectedId]);
 
  const data=state.status==='ready'?state.data:null,learning=learningState.status==='ready'?learningState.data:null;
  const nodes=data?.nodes||[],term=normalize(query);
@@ -126,12 +132,12 @@ export function KnowledgeDashboard({query,onQueryChange,onAdd}:Props){
     <label className="knowledgeSearch"><span>חיפוש בספרייה</span><input value={query} onChange={event=>onQueryChange(event.target.value)} placeholder="למשל: מוח, אמונות, סביבה, נוירופלסטיות…"/></label>
     <div className="knowledgeResultMeta" aria-live="polite">{term?`${visible.length} תוצאות מתאימות`:`מציג ${visible.length} פריטים מרכזיים מתוך ${base.length}`}</div>
     <div className="knowledgeCards">
-     {visible.map(node=><button key={node.id} type="button" className={selectedId===node.id?'knowledgeCard selected':'knowledgeCard'} onClick={()=>setSelectedId(current=>current===node.id?null:node.id)} aria-expanded={selectedId===node.id}><span>{kindLabel(node.kind)}</span><h3>{node.label}</h3><div><b>{node.contextAtomCount||node.candidateCount}</b> יחידות בהקשר · <b>{node.sourceCount}</b> מקורות</div></button>)}
+     {visible.map(node=><button key={node.id} type="button" className={selectedId===node.id?'knowledgeCard selected':'knowledgeCard'} onClick={()=>setSelectedId(node.id)} aria-expanded={selectedId===node.id} aria-controls="knowledge-detail"><span>{kindLabel(node.kind)}</span><h3>{node.label}</h3><div><b>{node.contextAtomCount||node.candidateCount}</b> יחידות בהקשר · <b>{node.sourceCount}</b> מקורות</div><small className="knowledgeCardAction">{selectedId===node.id?'פתוח עכשיו':'פתח נושא ←'}</small></button>)}
     </div>
     {!visible.length&&<div className="knowledgeEmpty"><b>עדיין אין התאמה במפה.</b><span>זה לא אומר שהנושא חדש בוודאות — מנגנון ה־intake הוא זה שבודק EXISTS / EXTENDS / RELATED / CONFLICTS / NEW.</span><button type="button" className="primary" onClick={onAdd}>בדוק תוכן חדש</button></div>}
    </section>
 
-   {selected&&<section className="knowledgeDetail" aria-labelledby="knowledge-detail-title">
+   {selected&&<section ref={detailRef} id="knowledge-detail" className="knowledgeDetail" aria-labelledby="knowledge-detail-title" tabIndex={-1}>
     <div><span className="eyebrow">{kindLabel(selected.kind)}</span><h2 id="knowledge-detail-title">{selected.label}</h2><p>הפריט הזה נוצר מתוך המפה הנוכחית של הקורפוס. הוא אינו קטגוריה קבועה, ויכול להתחבר או להתארגן אחרת כשהמאגר גדל.</p><dl><div><dt>מקורות</dt><dd>{selected.sourceCount}</dd></div><div><dt>יחידות בהקשר</dt><dd>{selected.contextAtomCount}</dd></div><div><dt>אזכורים מפורשים</dt><dd>{selected.explicitMappedAtomCount}</dd></div></dl></div>
     <div className="knowledgeConnections"><h3>קשרים חזקים במפה</h3>{related.length?related.map(({edge,node})=><button key={edge.id} type="button" onClick={()=>setSelectedId(node.id)}><span>{node.label}</span><small>עוצמת קשר {edge.weight.toFixed(1)}</small></button>):<p>עדיין לא זוהו קשרים חזקים לפריט הזה.</p>}</div>
     {selected.sourceFiles.length>0&&<div className="knowledgeSources"><h3>מקורות שבהם הוא מופיע</h3><ul>{selected.sourceFiles.map(file=><li key={file}>{file}</li>)}</ul></div>}
