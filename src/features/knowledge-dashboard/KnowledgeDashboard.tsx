@@ -14,7 +14,7 @@ type LibraryEdge={id:string;from:string;to:string;weight:number;signals:Record<s
 type CorpusMapPayload={
  ok:boolean;
  version:string;
- summary:{conceptNodes:number;sectionNodes:number;nonConceptAtoms:number;mappedAtoms:number;unmappedAtoms:number;graphCoverage:number};
+ summary:{conceptNodes:number;sectionTopicNodes:number;nonConceptAtoms:number;mappedAtoms:number;unmappedAtoms:number;graphCoverage:number};
  nodes:LibraryNode[];
  edges:LibraryEdge[];
  policy?:Record<string,unknown>;
@@ -66,7 +66,7 @@ export function KnowledgeDashboard({query,onQueryChange,onAdd}:Props){
 
   {data&&<>
    <section className="knowledgeStats" aria-label="מצב מפת הידע">
-    <article><strong>{data.summary.sectionNodes}</strong><span>נושאים שנצפו במקורות</span></article>
+    <article><strong>{data.summary.sectionTopicNodes}</strong><span>נושאים שנצפו במקורות</span></article>
     <article><strong>{data.summary.conceptNodes}</strong><span>מושגים במפה</span></article>
     <article><strong>{data.summary.nonConceptAtoms}</strong><span>יחידות ידע</span></article>
     <article><strong>{coverage}%</strong><span>מחוברות להקשר במפה</span></article>
