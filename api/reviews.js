@@ -2,12 +2,14 @@ import{getDb}from'../server/shared/postgres.js';
 import{resolveIntakeInput}from'../server/knowledge/application/intake/intake-input.service.js';
 import{analyzeIntake}from'../server/knowledge/application/intake/intake-analysis.service.js';
 import{stageIntakeSubmission,getIntakeSubmission,listIntakeSubmissions,changeIntakeSubmission,rejectIntakeSubmission,approveIntakeSubmission,intakeSchemaReady}from'../server/knowledge/application/intake/intake-review.service.js';
+import{reviewOverview,listReviewQueue,applyReviewDecision}from'../server/knowledge/application/review/review-console.service.js';
 import{withHardening,requestUrl}from'./_lib/hardening.js';
+import{requireEditor}from'./_lib/editor-auth.js';
 
 const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const param=(req,name)=>requestUrl(req).searchParams.get(name);
-const reviewer=req=>String(req.body?.reviewedBy||req.headers?.['x-eil-reviewer']||'').trim().slice(0,300);
-function sendError(res,error){const status=Number(error?.status)||500,code=String(error?.code||'INTAKE_FAILED');return res.status(status).json({ok:false,error:String(error?.message||'intake failed'),code})}
+const reviewer=req=>String(req.body?.reviewedBy||req.headers?.['x-eil-reviewer']||'creator').trim().slice(0,300)||'creator';
+function sendError(res,error){const status=Number(error?.status)||500,code=String(error?.code||'REVIEW_FAILED');return res.status(status).json({ok:false,error:String(error?.message||'review request failed').slice(0,500),code})}
 
 async function handleLegacyReviews(req,res,db){
  await db.query(`CREATE TABLE IF NOT EXISTS knowledge_reviews(id BIGSERIAL PRIMARY KEY,knowledge_item_id BIGINT REFERENCES knowledge_items(id) ON DELETE CASCADE,relation_type TEXT NOT NULL,chapter_id INTEGER,category_id TEXT,score NUMERIC(8,3) NOT NULL DEFAULT 0,status TEXT NOT NULL DEFAULT 'pending',note TEXT NOT NULL DEFAULT '',created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),reviewed_at TIMESTAMPTZ)`);
@@ -24,6 +26,7 @@ async function handleLegacyReviews(req,res,db){
 }
 
 async function handleIntake(req,res,db){
+ if(!requireEditor(req,res))return;
  const id=param(req,'id');
  if(req.method==='POST'){
   const payload=await resolveIntakeInput(req.body||{}),analysis=await analyzeIntake(db,payload),staging=await stageIntakeSubmission(db,payload,analysis);return res.status(200).json({...analysis,staging});
@@ -50,8 +53,21 @@ async function handleIntakeHealth(req,res,db){
  const pass=results.every(item=>item.pass&&item.decisionRequired===true&&item.canonicalWrites===false);return res.status(pass?200:503).json({ok:pass,analysisVersion:'intake-v0.1',schemaReady:await intakeSchemaReady(db),semanticMatching:false,results});
 }
 
+async function handleConsole(req,res,db){
+ if(!requireEditor(req,res))return;
+ const queue=String(param(req,'queue')||'overview').toLowerCase();
+ if(req.method==='GET'){
+  if(queue==='overview')return res.status(200).json(await reviewOverview(db));
+  const result=await listReviewQueue(db,{queue,limit:Number(param(req,'limit')||50)});return res.status(200).json({ok:true,...result});
+ }
+ if(req.method==='PATCH'){
+  const result=await applyReviewDecision(db,{queue,id:String(req.body?.id||param(req,'id')||''),subjectKey:String(req.body?.subjectKey||''),action:String(req.body?.action||''),payload:req.body?.payload||{},reviewer:reviewer(req)});return res.status(200).json({ok:true,queue,action:String(req.body?.action||'').toUpperCase(),result});
+ }
+ res.setHeader('Allow','GET,PATCH');return res.status(405).json({ok:false,error:'method not allowed'});
+}
+
 async function handler(req,res){
- try{const mode=param(req,'mode'),db=getDb();if(mode==='intake')return await handleIntake(req,res,db);if(mode==='intake-health')return await handleIntakeHealth(req,res,db);return await handleLegacyReviews(req,res,db)}catch(error){console.error(error);return sendError(res,error)}
+ try{const mode=param(req,'mode'),db=getDb();if(mode==='intake')return await handleIntake(req,res,db);if(mode==='intake-health')return await handleIntakeHealth(req,res,db);if(mode==='console')return await handleConsole(req,res,db);return await handleLegacyReviews(req,res,db)}catch(error){console.error(error);return sendError(res,error)}
 }
 
 export default withHardening(handler,{rateLimit:{limit:30,windowMs:60_000,keyPrefix:'reviews-intake'},maxBytes:12_000_000});
