@@ -13,8 +13,9 @@ async function health(req,res){
   {from:sectionDeep.id,to:conceptB.id,signals:{SECTION_MEMBERSHIP:1}},
  ]};
  const relations=[
-  {id:'r1',relation_type:'DEPENDS_ON',from_node_key:conceptB.id,to_node_key:conceptA.id,endpoint_resolution:'MAPPED',confidence:.95},
-  {id:'r2',relation_type:'DEPENDS_ON',from_node_key:'source-span',to_node_key:conceptA.id,endpoint_resolution:'PARTIAL',confidence:.7},
+  {id:'r1',relation_type:'DEPENDS_ON',from_node_key:conceptB.id,to_node_key:conceptA.id,endpoint_resolution:'MAPPED',confidence:.95,review_status:'APPROVED'},
+  {id:'r2',relation_type:'DEPENDS_ON',from_node_key:'source-span',to_node_key:conceptA.id,endpoint_resolution:'PARTIAL',confidence:.7,review_status:'APPROVED'},
+  {id:'r3',relation_type:'DEPENDS_ON',from_node_key:conceptA.id,to_node_key:conceptB.id,endpoint_resolution:'MAPPED',confidence:.99,review_status:'PENDING'},
  ];
  const graph=buildLearningDependencyGraph({map,relationRows:relations});
  const dep=graph.dependencies.find(item=>item.basis==='DEPENDS_ON');
@@ -23,8 +24,10 @@ async function health(req,res){
  const checks={
   noFixedChapterCount:graph.method.fixedChapterCount===false,
   sourceOrderUnused:graph.method.sourceOrderUsed===false,
-  dependencyDirection:dep?.prerequisiteNodeId===conceptA.id&&dep?.dependentNodeId===conceptB.id,
-  unresolvedEndpointIgnored:graph.summary.ignoredRelationCandidates.missingMapEndpoint>=1,
+  approvedRelationRequired:graph.method.requiresApprovedRelations===true&&graph.summary.ignoredRelationCandidates.pendingReview===1,
+  pendingMappedRelationIgnored:graph.dependencies.every(item=>item.sourceRelationId!=='r3'),
+  dependencyDirection:dep?.sourceRelationId==='r1'&&dep?.prerequisiteNodeId===conceptA.id&&dep?.dependentNodeId===conceptB.id,
+  partialEndpointIgnored:graph.summary.ignoredRelationCandidates.unresolved>=1,
   spiralDetected:spiral?.appearanceCount===2,
   introUsesLowerComplexity:spiral?.introduction?.unitId===intro?.id&&Number(intro?.complexity)<Number(deep?.complexity),
   noCycle:graph.summary.strictCycles===0,
