@@ -1,7 +1,6 @@
 import dns from'node:dns/promises';
 import net from'node:net';
 import mammoth from'mammoth';
-import{PDFParse}from'pdf-parse';
 
 const MAX_FILE_BYTES=12_000_000;
 const MAX_URL_BYTES=3_000_000;
@@ -60,12 +59,20 @@ async function fetchPublicArticle(value){
  }
  fail('URL_REDIRECT_LIMIT','too many redirects',422);
 }
+async function parsePdfText(bytes){
+ try{
+  const canvas=await import('@napi-rs/canvas');
+  if(!globalThis.DOMMatrix&&canvas.DOMMatrix)globalThis.DOMMatrix=canvas.DOMMatrix;
+  if(!globalThis.ImageData&&canvas.ImageData)globalThis.ImageData=canvas.ImageData;
+  if(!globalThis.Path2D&&canvas.Path2D)globalThis.Path2D=canvas.Path2D;
+  const{PDFParse}=await import('pdf-parse'),parser=new PDFParse({data:bytes});
+  try{const result=await parser.getText();return String(result.text||'')}finally{await parser.destroy()}
+ }catch(error){fail('PDF_EXTRACTION_FAILED',`PDF text extraction failed: ${String(error?.message||error)}`,422)}
+}
 async function extractFileText(fileName,mimeType,bytes){
  const lower=String(fileName||'').toLowerCase(),mime=String(mimeType||'application/octet-stream').toLowerCase();
  if(mime.startsWith('image/')||/\.(png|jpe?g|webp|gif)$/i.test(lower))return null;
- if(lower.endsWith('.pdf')||mime==='application/pdf'){
-  const parser=new PDFParse({data:bytes});try{const result=await parser.getText();return String(result.text||'')}finally{await parser.destroy()}
- }
+ if(lower.endsWith('.pdf')||mime==='application/pdf')return parsePdfText(bytes);
  if(lower.endsWith('.docx')||mime.includes('wordprocessingml')){const result=await mammoth.extractRawText({buffer:bytes});return result.value}
  if(lower.match(/\.(txt|md|csv|json|html?|xml)$/)||mime.startsWith('text/')||mime.includes('json')||mime.includes('xml')){
   const raw=bytes.toString('utf8');return lower.match(/\.html?$/)||mime.includes('html')?htmlToText(raw):raw;
