@@ -54,3 +54,24 @@ export function summarizeEndpointSuggestionHealth(relations,nodes){
  }
  return{relations:(relations||[]).length,unresolvedEndpoints,bands,bySide,strongShare:unresolvedEndpoints?Number((bands.STRONG/unresolvedEndpoints).toFixed(4)):0};
 }
+
+const bump=(counts,key)=>{counts[key]=(counts[key]||0)+1};
+function characterBucket(text){const length=text.length;if(!length)return'EMPTY';if(length<2)return'LT_2';if(length<=4)return'2_4';if(length<=12)return'5_12';if(length<=24)return'13_24';return'25_PLUS'}
+function tokenBucket(text){const count=text?text.split(/\s+/).filter(Boolean).length:0;if(!count)return'ZERO';if(count===1)return'ONE';if(count===2)return'TWO';if(count<=4)return'THREE_FOUR';return'FIVE_PLUS'}
+function scoreBucket(score){const value=Number(score)||0;if(value<=0)return'NO_MATCH';if(value<.32)return'0_15_0_31';if(value<.56)return'0_32_0_55';if(value<.78)return'0_56_0_77';if(value<.92)return'0_78_0_91';return'0_92_1_00'}
+function scoreStats(scores){if(!scores.length)return{matchedEndpoints:0,mean:0,median:0,p75:0,p90:0,max:0};const values=[...scores].sort((a,b)=>a-b),at=p=>values[Math.floor((values.length-1)*p)],mean=values.reduce((sum,value)=>sum+value,0)/values.length;return{matchedEndpoints:values.length,mean:Number(mean.toFixed(4)),median:Number(at(.5).toFixed(4)),p75:Number(at(.75).toFixed(4)),p90:Number(at(.9).toFixed(4)),max:Number(values.at(-1).toFixed(4))}}
+
+export function summarizeEndpointSuggestionDiagnostics(relations,nodes){
+ const characterLengths={},tokenCounts={},topScoreBuckets={},topMatchModes={},topNodeKinds={},topSameSource={YES:0,NO:0,NO_TOP_MATCH:0},noneReasons={EMPTY:0,SHORT:0,NO_MATCH:0},scores=[];let unresolvedEndpoints=0;
+ for(const relation of relations||[]){
+  for(const side of ['from','to']){
+   if(relation[`${side}_resolution`]==='MAPPED')continue;
+   unresolvedEndpoints+=1;
+   const endpointText=String(relation[`${side}_label`]||'').trim(),result=rankRelationEndpointSuggestions(endpointText,nodes,{sourceFile:relation.source_file||null,limit:5}),top=result.suggestions[0]||null;
+   bump(characterLengths,characterBucket(endpointText));bump(tokenCounts,tokenBucket(endpointText));bump(topScoreBuckets,scoreBucket(result.assessment.topScore));
+   if(top){scores.push(top.score);bump(topMatchModes,top.matchMode);bump(topNodeKinds,top.kind);topSameSource[top.sameSource?'YES':'NO']+=1}
+   else{topSameSource.NO_TOP_MATCH+=1;if(!endpointText)noneReasons.EMPTY+=1;else if(endpointText.length<2)noneReasons.SHORT+=1;else noneReasons.NO_MATCH+=1}
+  }
+ }
+ return{unresolvedEndpoints,characterLengths,tokenCounts,topScoreBuckets,topMatchModes,topNodeKinds,topSameSource,noneReasons,topScoreStats:scoreStats(scores),policy:{rawEndpointTextLogged:false,aggregateOnly:true}};
+}
