@@ -24,8 +24,10 @@ function assessmentFor(matches){
 
 export function rankRelationEndpointSuggestions(label,nodes,{sourceFile=null,limit=5}={}){
  const records=(nodes||[]).filter(node=>VALID_NODE_KINDS.has(node.kind)).map(node=>({id:node.id,authority:'MAP',type:node.kind,text:node.label,node}));
- if(!String(label||'').trim()||!records.length)return{assessment:{band:'NONE',topScore:0,margin:0,recommendedNodeId:null,reason:'No endpoint text or map nodes available.'},suggestions:[]};
- const ranked=rankKnowledgeOverlap(label,records,{topK:Math.max(8,Number(limit)||5)}).matches.filter(match=>match.score>=.15);
+ const endpointText=String(label||'').trim();
+ if(!endpointText||!records.length)return{assessment:{band:'NONE',topScore:0,margin:0,recommendedNodeId:null,reason:'No endpoint text or map nodes available.'},suggestions:[]};
+ if(endpointText.length<2)return{assessment:{band:'NONE',topScore:0,margin:0,recommendedNodeId:null,reason:'Endpoint text is too short for deterministic matching and requires creator review.'},suggestions:[]};
+ const ranked=rankKnowledgeOverlap(endpointText,records,{topK:Math.max(8,Number(limit)||5)}).matches.filter(match=>match.score>=.15);
  const assessment=assessmentFor(ranked);
  const suggestions=ranked.slice(0,Math.max(1,Math.min(10,Number(limit)||5))).map((match,index)=>({
   nodeId:match.id,
