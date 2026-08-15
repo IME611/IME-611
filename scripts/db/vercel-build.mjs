@@ -14,6 +14,8 @@ if (process.env.VERCEL_ENV === 'production') {
   run('npm', ['run', 'db:verify-extraction']);
   console.log('Production build: idempotently bootstrapping PENDING atomic extraction candidates.');
   run('npm', ['run', 'knowledge:bootstrap-extraction']);
+  console.log('Production build: idempotently bootstrapping evidence-backed relation candidates.');
+  run('node', ['scripts/knowledge/bootstrap-relations.mjs']);
   console.log('Production build: verifying intake CHANGE / REJECT / duplicate-safe APPROVE lifecycle.');
   run('node', ['scripts/knowledge/verify-intake-db.mjs']);
   console.log('Production build: enforcing corpus provenance, review, relation, and intake quality gates.');
