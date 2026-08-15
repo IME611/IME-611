@@ -1,6 +1,6 @@
 import{getDb}from'../../server/shared/postgres.js';
 import{buildEmergentCorpusMapPreview}from'../../server/knowledge/application/map/emergent-corpus-map.service.js';
-import{summarizeEndpointSuggestionHealth}from'../../server/knowledge/application/relations/relation-endpoint-suggestions.service.js';
+import{summarizeEndpointSuggestionDiagnostics,summarizeEndpointSuggestionHealth}from'../../server/knowledge/application/relations/relation-endpoint-suggestions.service.js';
 
 async function main(){
  const pool=getDb(),client=await pool.connect();
@@ -13,8 +13,8 @@ async function main(){
    ORDER BY r.created_at
   `)).rows;
   const map=await buildEmergentCorpusMapPreview(client,{communityLimit:300,nodeLimit:700,edgeLimit:1500});
-  const summary=summarizeEndpointSuggestionHealth(relations,map.nodes);
-  console.log(JSON.stringify({ok:true,mode:'read-only-endpoint-suggestion-audit',mapNodes:map.nodes.length,...summary,policy:{writes:false,autoResolution:false,creatorDecisionRequired:true}},null,2));
+  const summary=summarizeEndpointSuggestionHealth(relations,map.nodes),diagnostics=summarizeEndpointSuggestionDiagnostics(relations,map.nodes);
+  console.log(JSON.stringify({ok:true,mode:'read-only-endpoint-suggestion-audit',mapNodes:map.nodes.length,...summary,diagnostics,policy:{writes:false,autoResolution:false,creatorDecisionRequired:true,rawEndpointTextLogged:false}},null,2));
  }finally{client.release();await pool.end()}
 }
 
