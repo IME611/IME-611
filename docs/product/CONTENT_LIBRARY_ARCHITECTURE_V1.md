@@ -1,14 +1,16 @@
 # E.I.L — Content Library Architecture v1
 
+**Status:** Implemented in the learner-facing library. Parent/child hierarchy is intentionally separated from contextual graph relations.
+
 ## Product contract
 
 The learner-facing library separates three different relationships that must never be conflated:
 
 1. **DOMAIN → TOPIC** — hierarchical placement used for navigation.
-2. **RELATED** — concepts that appear in the same context or graph neighborhood.
+2. **RELATED** — an explicit relationship that must have supporting evidence and pass creator review before it appears to learners.
 3. **LEARNING DEPENDENCY** — prerequisite/revisit relationships used by the learning path.
 
-A graph edge is never sufficient evidence to create a parent/child relationship.
+A graph edge, co-occurrence, or shared source context is never sufficient evidence to create a parent/child relationship or learner-facing related link.
 
 ## Current hierarchy
 
@@ -30,8 +32,8 @@ Opening a domain/topic happens in the same library panel and exposes only source
 
 - key knowledge units from the canonical extraction layer
 - provenance/source labels
-- related concepts clearly marked as related, not children
+- approved related links only when evidence/review exists
 - an extractive Knowledge Card built from source-backed units
 - Save as Crystal using a stable `knowledge-card:<node>:v1` identifier
 
-Knowledge Card summaries are extractive in v1. They do not invent new canonical claims.
+Knowledge Card summaries are short and extractive in v1. They do not invent new canonical claims.
