@@ -1,122 +1,68 @@
 import React,{useEffect,useMemo,useRef,useState}from'react';
+import{CrystalButton}from'../crystals/CrystalButton';
+import type{CrystalRecord}from'../crystals/model/crystal.repository';
 
-type LibraryNode={
- id:string;
- kind:'SECTION_TOPIC'|'CONCEPT'|string;
- label:string;
- sourceCount:number;
- candidateCount:number;
- contextAtomCount:number;
- explicitMappedAtomCount:number;
- sourceFiles:string[];
-};
-type LibraryEdge={id:string;from:string;to:string;weight:number;signals:Record<string,number>};
-type CorpusMapPayload={
- ok:boolean;
- version:string;
- summary:{conceptNodes:number;sectionTopicNodes:number;nonConceptAtoms:number;mappedAtoms:number;unmappedAtoms:number;graphCoverage:number};
- nodes:LibraryNode[];
- edges:LibraryEdge[];
- policy?:Record<string,unknown>;
-};
-type LearningUnit={id:string;anchorNodeId:string;title:string;sourceFiles:string[];concepts?:string[];conceptCount:number;contextAtomCount:number;complexity:number;prerequisiteConceptIds:string[];orderStatus:string};
-type SpiralAppearance={conceptNodeId:string;conceptLabel:string;appearanceCount:number;introduction:{unitId:string;title:string;basis:string;confidence:number}|null;revisits:{unitId:string;title:string;complexity:number}[];appearances:{unitId:string;title:string;complexity:number}[]};
-type LearningGraphPayload={ok:boolean;method:{version:string;sourceOrderUsed:boolean;fixedChapterCount:boolean};summary:{learningUnits:number;hardDependencies:number;softDependencies:number;strictCycles:number;spiralConcepts:number;constrainedUnits:number;unconstrainedUnits:number};learningUnits:LearningUnit[];spiralAppearances:SpiralAppearance[];policy?:Record<string,unknown>};
+type LibraryTopic={id:string;label:string;sourceCount:number;unitCount:number;sourceFiles:string[]};
+type LibraryDomain={id:string;label:string;description:string;topics:LibraryTopic[]};
+type LibraryIndex={ok:boolean;version:string;summary:{domains:number;topics:number;unassignedTopics:number};domains:LibraryDomain[];unassignedTopics:LibraryTopic[]};
+type KeyPoint={id:string;type:string;claimType:string|null;text:string;sourceLabel:string;confidence:number};
+type TopicDetail={ok:boolean;id:string;kind:'DOMAIN'|'SECTION_TOPIC';label:string;domainId:string|null;domainLabel:string;description:string;keyPoints:KeyPoint[];relatedConcepts:{id:string;label:string;sourceCount:number}[];sources:{id:string|null;title:string}[];card:{id:string;title:string;summary:string;sourceLabel:string;provenanceLabel:string}};
 type Props={query:string;onQueryChange:(value:string)=>void;onAdd:()=>void};
-type LoadState={status:'loading'}|{status:'error';message:string}|{status:'ready';data:CorpusMapPayload};
-type LearningState={status:'loading'}|{status:'error';message:string}|{status:'ready';data:LearningGraphPayload};
-type TopicEntry={topic:LibraryNode;children:{node:LibraryNode;weight:number}[]};
+type IndexState={status:'loading'}|{status:'error';message:string}|{status:'ready';data:LibraryIndex};
+type DetailState={status:'idle'}|{status:'loading'}|{status:'error';message:string}|{status:'ready';data:TopicDetail};
 
 const normalize=(value:string)=>value.toLocaleLowerCase('he').replace(/[^\p{L}\p{N}\s]/gu,' ').replace(/\s+/g,' ').trim();
-const score=(node:LibraryNode)=>node.contextAtomCount*4+node.explicitMappedAtomCount*3+node.sourceCount*2+node.candidateCount;
-const kindLabel=(kind:string)=>kind==='CONCEPT'?'תת־נושא / מושג':'נושא';
-const orderLabel=(status:string)=>status==='CONSTRAINED'?'מיקום נתמך בתלויות':'המיקום עדיין לא מקובע';
-const matches=(node:LibraryNode,term:string)=>!term||normalize([node.label,...node.sourceFiles].join(' ')).includes(term);
+const matches=(value:string,term:string)=>!term||normalize(value).includes(term);
+const pointLabel=(type:string)=>({DEFINITION:'הגדרה',CLAIM:'רעיון',MODEL:'מודל',CREATOR_INSIGHT:'תובנה',WORLDVIEW_CLAIM:'תפיסת עולם',PRACTICE:'כלי',TENSION:'שאלה / מתח',REFERENCE:'מקור'} as Record<string,string>)[type]||'יחידת ידע';
 
 export function KnowledgeDashboard({query,onQueryChange,onAdd}:Props){
- const[state,setState]=useState<LoadState>({status:'loading'}),[learningState,setLearningState]=useState<LearningState>({status:'loading'});
+ const[indexState,setIndexState]=useState<IndexState>({status:'loading'}),[detailState,setDetailState]=useState<DetailState>({status:'idle'});
  const[selectedId,setSelectedId]=useState<string|null>(null),[expanded,setExpanded]=useState<Set<string>>(()=>new Set());
- const browseRef=useRef<HTMLElement|null>(null);
- useEffect(()=>{
-  const controller=new AbortController();
-  fetch('/api/corpus-map',{signal:controller.signal}).then(async response=>{const payload=await response.json().catch(()=>null);if(!response.ok||!payload?.ok)throw new Error(payload?.error||`corpus map unavailable (${response.status})`);setState({status:'ready',data:payload})}).catch(error=>{if(error?.name!=='AbortError')setState({status:'error',message:error instanceof Error?error.message:'corpus map unavailable'})});
-  return()=>controller.abort();
- },[]);
- useEffect(()=>{
-  const controller=new AbortController();
-  fetch('/api/learning-graph',{signal:controller.signal}).then(async response=>{const payload=await response.json().catch(()=>null);if(!response.ok||!payload?.ok)throw new Error(payload?.error||`learning graph unavailable (${response.status})`);setLearningState({status:'ready',data:payload})}).catch(error=>{if(error?.name!=='AbortError')setLearningState({status:'error',message:error instanceof Error?error.message:'learning graph unavailable'})});
-  return()=>controller.abort();
- },[]);
-
- const data=state.status==='ready'?state.data:null,learning=learningState.status==='ready'?learningState.data:null;
- const nodes=data?.nodes||[],term=normalize(query);
- const byId=useMemo(()=>new Map(nodes.map(node=>[node.id,node])),[nodes]);
- const topicEntries=useMemo<TopicEntry[]>(()=>{
-  if(!data)return[];
-  return nodes.filter(node=>node.kind==='SECTION_TOPIC').sort((a,b)=>score(b)-score(a)||a.label.localeCompare(b.label,'he')).map(topic=>{
-   const seen=new Set<string>();
-   const children=data.edges.filter(edge=>edge.from===topic.id||edge.to===topic.id).map(edge=>{const node=byId.get(edge.from===topic.id?edge.to:edge.from);return node?.kind==='CONCEPT'?{node,weight:edge.weight}:null}).filter((item):item is{node:LibraryNode;weight:number}=>Boolean(item)&&!seen.has(item!.node.id)&&Boolean(seen.add(item!.node.id))).sort((a,b)=>b.weight-a.weight||score(b.node)-score(a.node));
-   return{topic,children};
-  });
- },[data,nodes,byId]);
- const visibleTopics=useMemo(()=>topicEntries.filter(entry=>matches(entry.topic,term)||entry.children.some(child=>matches(child.node,term))),[topicEntries,term]);
- const selected=selectedId?byId.get(selectedId)??null:null;
- const related=useMemo(()=>{
-  if(!selected||!data)return[];
-  return data.edges.filter(edge=>edge.from===selected.id||edge.to===selected.id).sort((a,b)=>b.weight-a.weight).slice(0,8).map(edge=>({edge,node:byId.get(edge.from===selected.id?edge.to:edge.from)})).filter(item=>Boolean(item.node)) as{edge:LibraryEdge;node:LibraryNode}[];
- },[selected,data,byId]);
- const unitByAnchor=useMemo(()=>new Map((learning?.learningUnits||[]).map(unit=>[unit.anchorNodeId,unit])),[learning]);
- const unitById=useMemo(()=>new Map((learning?.learningUnits||[]).map(unit=>[unit.id,unit])),[learning]);
- const selectedUnit=selected?unitByAnchor.get(selected.id)??null:null;
- const selectedSpiral=selected&&learning?learning.spiralAppearances.find(item=>item.conceptNodeId===selected.id)??null:null;
- const coverage=data?Math.round((data.summary.graphCoverage<=1?data.summary.graphCoverage*100:data.summary.graphCoverage)*10)/10:0;
- const moveToLibraryTop=()=>requestAnimationFrame(()=>browseRef.current?.scrollIntoView({behavior:'smooth',block:'start'}));
- const openNode=(id:string)=>{setSelectedId(id);moveToLibraryTop()};
- const closeNode=()=>{setSelectedId(null);moveToLibraryTop()};
- const toggleTopic=(id:string)=>setExpanded(current=>{const next=new Set(current);next.has(id)?next.delete(id):next.add(id);return next});
- const openLearningUnit=(unitId:string)=>{const unit=unitById.get(unitId);if(unit)openNode(unit.anchorNodeId)};
+ const browseRef=useRef<HTMLElement|null>(null),term=normalize(query);
+ useEffect(()=>{const controller=new AbortController();fetch('/api/content-library',{signal:controller.signal}).then(async response=>{const payload=await response.json().catch(()=>null);if(!response.ok||!payload?.ok)throw new Error(payload?.error||'ספריית התוכן אינה זמינה');setIndexState({status:'ready',data:payload})}).catch(error=>{if(error?.name!=='AbortError')setIndexState({status:'error',message:error instanceof Error?error.message:'ספריית התוכן אינה זמינה'})});return()=>controller.abort()},[]);
+ useEffect(()=>{if(!selectedId){setDetailState({status:'idle'});return}const controller=new AbortController();setDetailState({status:'loading'});fetch(`/api/content-library?nodeId=${encodeURIComponent(selectedId)}`,{signal:controller.signal}).then(async response=>{const payload=await response.json().catch(()=>null);if(!response.ok||!payload?.ok)throw new Error(payload?.error||'הנושא לא נטען');setDetailState({status:'ready',data:payload})}).catch(error=>{if(error?.name!=='AbortError')setDetailState({status:'error',message:error instanceof Error?error.message:'הנושא לא נטען'})});return()=>controller.abort()},[selectedId]);
+ const index=indexState.status==='ready'?indexState.data:null;
+ const groups=useMemo(()=>{if(!index)return[];const domains=index.domains.map(domain=>({...domain,topics:domain.topics.filter(topic=>matches(`${topic.label} ${topic.sourceFiles.join(' ')}`,term))})).filter(domain=>matches(`${domain.label} ${domain.description}`,term)||domain.topics.length);if(index.unassignedTopics.length){const topics=index.unassignedTopics.filter(topic=>matches(`${topic.label} ${topic.sourceFiles.join(' ')}`,term));if(!term||topics.length)domains.push({id:'unassigned',label:'נושאים שעדיין בבדיקה',description:'חומרים שלא נכפו כרגע לתוך היררכיה עד שיהיו מספיק ראיות למיקום שלהם.',topics})}return domains},[index,term]);
+ const moveTop=()=>requestAnimationFrame(()=>browseRef.current?.scrollIntoView({behavior:'smooth',block:'start'}));
+ const openDetail=(id:string)=>{setSelectedId(id);moveTop()};
+ const backToIndex=()=>{setSelectedId(null);moveTop()};
+ const toggle=(id:string)=>setExpanded(current=>{const next=new Set(current);next.has(id)?next.delete(id):next.add(id);return next});
 
  return <div className="knowledgeDashboard" dir="rtl">
-  <header className="knowledgeHero"><div><span className="eyebrow">E.I.L / KNOWLEDGE MAP</span><h1>ספריית התוכן</h1><p>כל הנושאים במקום אחד. פתח נושא, הרחב את תתי־הנושאים שלו, ועבור ביניהם בלי לצאת מחלון הספרייה.</p></div><button className="primary knowledgeAdd" type="button" onClick={onAdd}>＋ הוסף תוכן</button></header>
-
-  {state.status==='loading'&&<section className="knowledgeState" aria-live="polite"><b>בונה את ספריית התוכן מהמפה החיה…</b><span>קורא נושאים, מושגים וקשרים מתוך המאגר.</span></section>}
-  {state.status==='error'&&<section className="knowledgeState error" role="alert"><b>ספריית התוכן לא נטענה.</b><span>{state.message}</span><button type="button" onClick={()=>location.reload()}>נסה שוב</button></section>}
-
-  {data&&<>
-   <section className="knowledgeStats" aria-label="מצב מפת הידע"><article><strong>{data.summary.sectionTopicNodes}</strong><span>נושאים במאגר</span></article><article><strong>{data.summary.conceptNodes}</strong><span>תתי־נושאים ומושגים</span></article><article><strong>{data.summary.nonConceptAtoms}</strong><span>יחידות ידע</span></article><article><strong>{coverage}%</strong><span>מחוברות להקשר</span></article></section>
-
+  <header className="knowledgeHero"><div><span className="eyebrow">E.I.L / CONTENT LIBRARY</span><h1>ספריית התוכן</h1><p>הספרייה בנויה עכשיו כהיררכיה: תחומים גדולים, ומתחתיהם הנושאים שנמצאו במקורות. קשר בין רעיונות לא הופך אותם אוטומטית לתת־נושא.</p></div><button className="primary knowledgeAdd" type="button" onClick={onAdd}>＋ הוסף תוכן</button></header>
+  {indexState.status==='loading'&&<section className="knowledgeState" aria-live="polite"><b>מסדר את ספריית התוכן…</b><span>בונה תחומים ונושאים מתוך הקורפוס.</span></section>}
+  {indexState.status==='error'&&<section className="knowledgeState error" role="alert"><b>ספריית התוכן לא נטענה.</b><span>{indexState.message}</span><button type="button" onClick={()=>location.reload()}>נסה שוב</button></section>}
+  {index&&<>
+   <section className="knowledgeStats" aria-label="מצב הספרייה"><article><strong>{index.summary.domains}</strong><span>תחומים גדולים</span></article><article><strong>{index.summary.topics}</strong><span>נושאים ותתי־נושאים</span></article><article><strong>{index.summary.unassignedTopics}</strong><span>עדיין בבדיקת מיקום</span></article></section>
    <section ref={browseRef} className="knowledgeBrowse" aria-labelledby="knowledge-browse-title">
-    {!selected&&<>
-     <div className="knowledgeBrowseHead"><div><span className="eyebrow">CONTENT INDEX</span><h2 id="knowledge-browse-title">כל הנושאים</h2><p>החץ פותח את תתי־הנושאים. לחיצה על שם פותחת את התוכן כאן, באותו חלון.</p></div></div>
-     <label className="knowledgeSearch"><span>חיפוש בספרייה</span><input value={query} onChange={event=>onQueryChange(event.target.value)} placeholder="למשל: מוח, אמונות, סביבה…"/></label>
-     <div className="knowledgeResultMeta" aria-live="polite">{term?`${visibleTopics.length} נושאים מתאימים`:`${visibleTopics.length} נושאים`}</div>
-     <div className="knowledgeTopicList">
-      {visibleTopics.map(({topic,children})=>{const isExpanded=term?true:expanded.has(topic.id);const shownChildren=term&&!matches(topic,term)?children.filter(child=>matches(child.node,term)):children;return <section key={topic.id} className="knowledgeTopicGroup">
-       <div className="knowledgeTopicRow"><button type="button" className="knowledgeTopicOpen" onClick={()=>openNode(topic.id)}><span><small>נושא</small><strong>{topic.label}</strong><em>{topic.contextAtomCount||topic.candidateCount} יחידות · {topic.sourceCount} מקורות</em></span></button><button type="button" className={isExpanded?'knowledgeTopicToggle open':'knowledgeTopicToggle'} onClick={()=>toggleTopic(topic.id)} aria-expanded={isExpanded} aria-label={`${isExpanded?'סגור':'פתח'} תתי־נושאים של ${topic.label}`}><span aria-hidden="true">⌄</span><small>{children.length}</small></button></div>
-       {isExpanded&&<div className="knowledgeSubtopics" aria-label={`תתי־נושאים של ${topic.label}`}>{shownChildren.length?shownChildren.map(({node,weight})=><button key={node.id} type="button" onClick={()=>openNode(node.id)}><span>{node.label}</span><small>{node.sourceCount} מקורות · קשר {weight.toFixed(1)}</small><b aria-hidden="true">←</b></button>):<p>עדיין אין תתי־נושאים מחוברים במפה.</p>}</div>}
-      </section>})}
-     </div>
-     {!visibleTopics.length&&<div className="knowledgeEmpty"><b>לא נמצאה התאמה.</b><span>אפשר לבדוק אם התוכן חדש דרך מנגנון ההוספה.</span><button type="button" className="primary" onClick={onAdd}>בדוק תוכן חדש</button></div>}
+    {!selectedId&&<>
+     <div className="knowledgeBrowseHead"><span className="eyebrow">KNOWLEDGE HIERARCHY</span><h2 id="knowledge-browse-title">הנושאים</h2><p>לחץ על החץ כדי לראות מה נמצא מתחת לתחום. לחץ על שם התחום או על נושא כדי לפתוח את המידע באותו חלון.</p></div>
+     <label className="knowledgeSearch"><span>חיפוש בספרייה</span><input value={query} onChange={event=>onQueryChange(event.target.value)} placeholder="למשל: מוח, DMT, אמונות, גוף…"/></label>
+     <div className="knowledgeTopicList">{groups.map(group=>{const isExpanded=term?true:expanded.has(group.id);return <section key={group.id} className="knowledgeTopicGroup">
+      <div className="knowledgeTopicRow"><button type="button" className="knowledgeTopicOpen" onClick={()=>group.id!=='unassigned'&&openDetail(`domain:${group.id}`)} disabled={group.id==='unassigned'}><span><small>נושא גדול</small><strong>{group.label}</strong><em>{group.topics.length} נושאים</em></span></button><button type="button" className={isExpanded?'knowledgeTopicToggle open':'knowledgeTopicToggle'} onClick={()=>toggle(group.id)} aria-expanded={isExpanded} aria-label={`${isExpanded?'סגור':'פתח'} את ${group.label}`}><span aria-hidden="true">⌄</span><small>{group.topics.length}</small></button></div>
+      {isExpanded&&<div className="knowledgeSubtopics" aria-label={`נושאים תחת ${group.label}`}>{group.topics.map(topic=><button key={topic.id} type="button" onClick={()=>openDetail(topic.id)}><span>{topic.label}</span><small>{topic.unitCount} יחידות ידע · {topic.sourceCount} מקורות</small><b aria-hidden="true">←</b></button>)}</div>}
+     </section>})}</div>
+     {!groups.length&&<div className="knowledgeEmpty"><b>לא נמצאה התאמה.</b><span>אפשר לבדוק תוכן חדש מול המאגר.</span><button className="primary" type="button" onClick={onAdd}>בדוק תוכן חדש</button></div>}
     </>}
-
-    {selected&&<div id="knowledge-detail" className="knowledgeDetailInline">
-     <div className="knowledgeDetailToolbar"><button type="button" className="knowledgeBack" onClick={closeNode}>→ כל הנושאים</button><span>{kindLabel(selected.kind)}</span></div>
-     <div className="knowledgeDetailGrid"><div className="knowledgeDetailIntro"><span className="eyebrow">{kindLabel(selected.kind)}</span><h2 id="knowledge-browse-title">{selected.label}</h2><p>הפריט הזה נוצר מתוך מפת הקורפוס הנוכחית ויכול להתארגן מחדש ככל שנוסיף ידע.</p><dl><div><dt>מקורות</dt><dd>{selected.sourceCount}</dd></div><div><dt>יחידות בהקשר</dt><dd>{selected.contextAtomCount}</dd></div><div><dt>אזכורים מפורשים</dt><dd>{selected.explicitMappedAtomCount}</dd></div></dl></div>
-      <div className="knowledgeConnections"><h3>קשרים במפה</h3>{related.length?related.map(({edge,node})=><button key={edge.id} type="button" onClick={()=>openNode(node.id)}><span>{node.label}</span><small>עוצמת קשר {edge.weight.toFixed(1)}</small></button>):<p>עדיין לא זוהו קשרים חזקים לפריט הזה.</p>}</div>
-      {selected.sourceFiles.length>0&&<div className="knowledgeSources"><h3>מקורות שבהם הוא מופיע</h3><ul>{selected.sourceFiles.map(file=><li key={file}>{file}</li>)}</ul></div>}
-      <div className="knowledgeLearning"><div className="knowledgeLearningHead"><div><span className="eyebrow">LEARNING CONTEXT</span><h3>איפה זה פוגש את מסלול הלמידה?</h3></div>{learning&&<small>{learning.summary.learningUnits} יחידות לימוד מועמדות · {learning.summary.spiralConcepts} מושגים עם חזרה ספירלית</small>}</div>
-       {learningState.status==='loading'&&<p>טוען את הקשר למסלול הלמידה…</p>}
-       {learningState.status==='error'&&<p>מסלול הלמידה לא זמין כרגע.</p>}
-       {learning&&selected.kind==='SECTION_TOPIC'&&selectedUnit&&<div className="knowledgeLearningUnit"><div><b>יחידת לימוד מועמדת</b><strong>{selectedUnit.title}</strong></div><dl><div><dt>מורכבות יחסית</dt><dd>{selectedUnit.complexity.toFixed(1)}</dd></div><div><dt>מצב סדר</dt><dd>{orderLabel(selectedUnit.orderStatus)}</dd></div><div><dt>תלויות מוקדמות מאומתות</dt><dd>{selectedUnit.prerequisiteConceptIds.length}</dd></div></dl>{selectedUnit.prerequisiteConceptIds.length===0&&<p>כרגע אין מספיק ראיות כדי לקבע מה חייב להילמד לפני הנושא הזה.</p>}</div>}
-       {learning&&selected.kind==='SECTION_TOPIC'&&!selectedUnit&&<p>הנושא קיים במפה, אבל עדיין אין לו יחידת לימוד ישירה.</p>}
-       {learning&&selected.kind==='CONCEPT'&&selectedSpiral&&<div className="knowledgeSpiral"><div><b>חזרה ספירלית זוהתה</b><strong>{selectedSpiral.appearanceCount} הופעות בהקשרים שונים</strong></div>{selectedSpiral.introduction&&<div className="knowledgeSpiralIntro"><span>הופעת פתיחה מוצעת</span><button type="button" onClick={()=>openLearningUnit(selectedSpiral.introduction!.unitId)}>{selectedSpiral.introduction.title}</button></div>}<div className="knowledgeRevisits"><span>חוזר בהמשך דרך</span>{selectedSpiral.revisits.map(item=><button key={item.unitId} type="button" onClick={()=>openLearningUnit(item.unitId)}><b>{item.title}</b><small>מורכבות {item.complexity.toFixed(1)}</small></button>)}</div></div>}
-       {learning&&selected.kind==='CONCEPT'&&!selectedSpiral&&<p>כרגע לא זוהו מספיק הופעות נפרדות כדי להגדיר חזרה ספירלית.</p>}
-      </div>
-     </div>
+    {selectedId&&<div className="knowledgeDetailInline">
+     <div className="knowledgeDetailToolbar"><button type="button" className="knowledgeBack" onClick={backToIndex}>→ חזרה לנושאים</button>{detailState.status==='ready'&&<span>{detailState.data.domainLabel}</span>}</div>
+     {detailState.status==='loading'&&<div className="knowledgeDetailLoading"><b>פותח את הנושא…</b></div>}
+     {detailState.status==='error'&&<div className="knowledgeState error"><b>הנושא לא נטען.</b><span>{detailState.message}</span></div>}
+     {detailState.status==='ready'&&<TopicView detail={detailState.data}/>} 
     </div>}
    </section>
-
-   <aside className="knowledgePolicy"><b>המפה נשארת חיה.</b><span>הנושאים ותתי־הנושאים נגזרים מהתוכן ומהקשרים במאגר, ולא מרשימת קטגוריות קשיחה.</span></aside>
+   <aside className="knowledgePolicy"><b>הפרדה חשובה:</b><span>תת־נושא הוא חלק מההיררכיה. רעיון שמופיע ליד נושא מוצג כ״מושג קשור״ בלבד — לא כילד שלו. כך מדיטציה, למשל, לא הופכת לתת־נושא של DMT רק בגלל שהם הופיעו באותו הקשר.</span></aside>
   </>}
+ </div>;
+}
+
+function TopicView({detail}:{detail:TopicDetail}){
+ const record:CrystalRecord={fragmentId:detail.card.id,conceptId:detail.id,topic:detail.domainLabel,subtopic:detail.kind==='SECTION_TOPIC'?detail.label:undefined,text:detail.card.summary,sourceLabel:detail.card.sourceLabel,provenanceLabel:detail.card.provenanceLabel,savedAt:new Date().toISOString()};
+ return <div className="knowledgeTopicDetail">
+  <header className="knowledgeDetailIntro"><span className="eyebrow">{detail.kind==='DOMAIN'?'נושא גדול':'נושא / תת־נושא'}</span><h2>{detail.label}</h2><p>{detail.description}</p></header>
+  <section className="knowledgeFacts"><h3>מה קיים במאגר על הנושא הזה?</h3>{detail.keyPoints.length?<div className="knowledgeFactList">{detail.keyPoints.map(point=><article key={point.id}><div><span>{pointLabel(point.type)}</span><small>{point.sourceLabel}</small></div><p>{point.text}</p></article>)}</div>:<p className="muted">עדיין אין מספיק יחידות ידע כדי להציג סיכום מהימן לנושא הזה.</p>}</section>
+  {detail.relatedConcepts.length>0&&<section className="knowledgeRelated"><h3>מושגים שמופיעים בהקשר</h3><p>אלה קשרים במפה — לא תתי־נושאים.</p><div>{detail.relatedConcepts.map(concept=><span key={concept.id}>{concept.label}</span>)}</div></section>}
+  {detail.sources.length>0&&<section className="knowledgeSources"><h3>מקורות</h3><ul>{detail.sources.map(source=><li key={source.id||source.title}>{source.title}</li>)}</ul></section>}
+  <section className="knowledgeSummaryCard"><div className="knowledgeSummaryHead"><div><span className="eyebrow">KNOWLEDGE CARD</span><h3>{detail.card.title}</h3></div><CrystalButton record={record}/></div><p>{detail.card.summary}</p><small>◆ שמירה כאן מוסיפה את הכרטיס ל״קריסטלים שלי״ · הסיכום מבוסס על יחידות הידע והמקורות השמורים.</small></section>
  </div>;
 }
