@@ -19,7 +19,7 @@ function membershipIndex(map){
 }
 
 function normalizeDependency(row){
- if(row.endpoint_resolution==='UNRESOLVED')return null;
+ if(row.endpoint_resolution!=='MAPPED')return null;
  const relation=row.relation_type;
  if(!HARD_RELATIONS.has(relation)&&!SOFT_RELATIONS.has(relation))return null;
  let prerequisite=row.from_node_key,dependent=row.to_node_key,basis=relation,strict=HARD_RELATIONS.has(relation),confidence=Number(row.confidence);
@@ -32,8 +32,9 @@ function normalizeDependency(row){
 }
 
 function dedupeDependencies(rows,nodeById){
- const best=new Map(),ignored={unresolved:0,unsupported:0,missingMapEndpoint:0,self:0};
+ const best=new Map(),ignored={pendingReview:0,unresolved:0,unsupported:0,missingMapEndpoint:0,self:0};
  for(const row of rows){
+  if(row.review_status!=='APPROVED'){ignored.pendingReview+=1;continue}
   if(!HARD_RELATIONS.has(row.relation_type)&&!SOFT_RELATIONS.has(row.relation_type)){ignored.unsupported+=1;continue}
   const dep=normalizeDependency(row);if(!dep){ignored.unresolved+=1;continue}
   if(dep.prerequisiteNodeId===dep.dependentNodeId){ignored.self+=1;continue}
@@ -87,7 +88,7 @@ function spiralAppearances(map,index,units){
 export function buildLearningDependencyGraph({map,relationRows}){
  const nodeById=nodeMap(map),index=membershipIndex(map),{dependencies,ignored}=dedupeDependencies(relationRows,nodeById),units=learningUnits(map,index,dependencies),spirals=spiralAppearances(map,index,units),strict=strictGraph(map.nodes,dependencies);
  const hard=dependencies.filter(item=>item.strict),soft=dependencies.filter(item=>!item.strict),constrainedUnits=units.filter(unit=>unit.orderStatus==='CONSTRAINED').length;
- return{ok:strict.cycleNodeIds.length===0,method:{version:'learning-dependencies-v0.1',sourceOrderUsed:false,fixedChapterCount:false},summary:{mapNodes:map.nodes.length,learningUnits:units.length,dependencyCandidates:dependencies.length,hardDependencies:hard.length,softDependencies:soft.length,ignoredRelationCandidates:ignored,strictCycles:strict.cycleNodeIds.length,spiralConcepts:spirals.length,constrainedUnits,unconstrainedUnits:units.length-constrainedUnits},dependencies,partialOrder:{nodeLayers:strict.layers,cycleNodeIds:strict.cycleNodeIds,note:'Only strict PREREQUISITE_FOR and mapped DEPENDS_ON evidence constrain this partial order. It is not a finished curriculum.'},learningUnits:units,spiralAppearances:spirals,policy:{canonicalWrites:false,topicLocationSeparateFromAppearance:true,note:'SECTION_TOPIC anchors are candidate learning units. Recurring Concepts generate spiral appearance candidates. Introduction placement uses a transparent low-complexity heuristic only when no stronger dependency evidence exists; no seed file number/order is used.'}};
+ return{ok:strict.cycleNodeIds.length===0,method:{version:'learning-dependencies-v0.2',sourceOrderUsed:false,fixedChapterCount:false,requiresApprovedRelations:true},summary:{mapNodes:map.nodes.length,learningUnits:units.length,dependencyCandidates:dependencies.length,hardDependencies:hard.length,softDependencies:soft.length,ignoredRelationCandidates:ignored,strictCycles:strict.cycleNodeIds.length,spiralConcepts:spirals.length,constrainedUnits,unconstrainedUnits:units.length-constrainedUnits},dependencies,partialOrder:{nodeLayers:strict.layers,cycleNodeIds:strict.cycleNodeIds,note:'Only creator-APPROVED, fully MAPPED PREREQUISITE_FOR and DEPENDS_ON evidence can constrain this partial order. RESOLVE alone and PENDING relations never change curriculum order.'},learningUnits:units,spiralAppearances:spirals,policy:{canonicalWrites:false,requiresApprovedRelations:true,topicLocationSeparateFromAppearance:true,note:'SECTION_TOPIC anchors are candidate learning units. Recurring Concepts generate spiral appearance candidates. Introduction placement uses a transparent low-complexity heuristic only when no stronger approved dependency evidence exists; no seed file number/order is used.'}};
 }
 
 export async function previewLearningDependencyGraph(db,{unitLimit=100,spiralLimit=100,dependencyLimit=200}={}){
