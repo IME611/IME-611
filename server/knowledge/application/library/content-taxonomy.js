@@ -1,39 +1,35 @@
 const normalize=value=>String(value||'').normalize('NFKC').replace(/\s+/g,' ').trim().toLocaleLowerCase('he-IL');
 
 export const LIBRARY_DOMAINS=[
- {id:'journey-question',label:'המסע והשאלה',description:'נקודת המוצא: מי אני, למה יצאתי לחקירה הזאת, ואילו שאלות הובילו אליה.'},
- {id:'human-body',label:'הגוף ומערכות האדם',description:'המבנה הפיזי, מערכות הגוף והאופן שבו הגוף פועל כמערכת אחת.'},
- {id:'brain-consciousness',label:'המוח, מערכת העצבים והתודעה',description:'המוח, מערכת ההפעלה הפנימית, גלי מוח, נוירופלסטיות ונושאים הקשורים לתודעה.'},
- {id:'frequency-sound',label:'תדרים, מוזיקה וצליל',description:'תדר, מוזיקה, צליל וההשפעות המתוארות במקורות.'},
- {id:'identity-emotion',label:'זהות, אמונות ורגשות',description:'אמונות, רגשות וזהות והאופן שבו הם משתלבים בתפיסה ובהתנהגות.'},
- {id:'human-world',label:'האדם והעולם',description:'המפגש בין האדם למערכת שמחוץ לו: מציאות, סביבה, השפעות וחוקים כפי שהם מתוארים במקורות.'},
- {id:'meaning-integration',label:'מטרות, משמעות ואינטגרציה',description:'יעדים, חזון, משמעות, קושי וחיבור התובנות לכדי תמונה רחבה יותר.'},
+ {id:'journey-question',label:'המסע והשאלה',description:'נקודת המוצא: למה יצאתי לחקירה הזאת, מי אני, ואילו שאלות פתחו את המסע.'},
+ {id:'human-body',label:'האדם פנימה — הגוף כמערכת',description:'הגוף, המערכות הפנימיות והאופן שבו האדם פועל כמערכת אחת.'},
+ {id:'brain-consciousness',label:'המוח, מערכת העצבים והתודעה',description:'המוח, מערכת ההפעלה הפנימית, מצבי מוח, למידה ותודעה.'},
+ {id:'frequency-sound',label:'תדרים, מוזיקה וצליל',description:'תדר, מוזיקה, צליל והקשרים שלהם לגוף ולחוויה כפי שהם מופיעים במקורות.'},
+ {id:'identity-emotion',label:'זהות, אמונות ורגשות',description:'אמונות, רגשות, דפוסים וזהות והאופן שבו הם משתלבים בתפיסה ובהתנהגות.'},
+ {id:'human-world',label:'האדם והעולם',description:'המערכת שמחוץ לאדם: סביבה, מציאות, השפעות וחוקים כפי שהם מתוארים במקורות.'},
+ {id:'meaning-integration',label:'שינוי, משמעות ואינטגרציה',description:'מטרות, חזון, שינוי פנימי, משמעות וחיבור התובנות לכדי תמונה רחבה יותר.'},
 ];
 
+// These are semantic learner-facing topics. The 18 seed files are evidence sources, not 18 chapters/topics.
 export const LIBRARY_TOPICS=[
- {id:'who-am-i-opening',domainId:'journey-question',order:1,label:'מי אני?',source:/מי_אני_פרק1/i},
- {id:'external-tool',domainId:'human-body',order:2,label:'הכלי החיצוני',source:/פרק2_הכלי_החיצוני/i},
- {id:'engineering-body',domainId:'human-body',order:3,label:'הפלא ההנדסי',source:/פרק3_הפלא_ההנדסי/i},
- {id:'operating-system',domainId:'brain-consciousness',order:4,label:'מערכת ההפעלה',source:/פרק4_מערכת_ההפעלה/i},
- {id:'brain',domainId:'brain-consciousness',order:5,label:'המוח',source:/פרק5_המוח_המפורט/i},
- {id:'brain-waves',domainId:'brain-consciousness',order:6,label:'גלי המוח',source:/פרק6_גלי_המוח/i},
- {id:'pineal-gland',domainId:'brain-consciousness',order:7,label:'בלוטת האצטרובל',source:/פרק7_בלוטת_האצטרובל/i},
- {id:'frequency-music-sound',domainId:'frequency-sound',order:8,label:'תדרים, מוזיקה וצליל',source:/פרק8_תדרים_מוזיקה_וצליל/i},
- {id:'body-as-frequency',domainId:'human-body',order:9,label:'הגוף כתדר',source:/פרק9_הגוף_כתדר/i},
- {id:'neuroplasticity',domainId:'brain-consciousness',order:10,label:'נוירופלסטיות',source:/פרק10_נוירופלסטיות/i},
- {id:'identity-beliefs',domainId:'identity-emotion',order:11,label:'זהויות ואמונות',source:/פרק11_זהויות_ואמונות/i},
- {id:'emotions-as-information',domainId:'identity-emotion',order:12,label:'רגשות כמידע',source:/פרק12_רגשות_כמידע/i},
- {id:'reality-creation',domainId:'human-world',order:13,label:'יצירת מציאות',source:/פרק13_יצירת_מציאות/i},
- {id:'universe-laws',domainId:'human-world',order:14,label:'12 חוקי היקום',source:/פרק14_12_חוקי_היקום/i},
- {id:'goals-vision',domainId:'meaning-integration',order:15,label:'יעדים וחזון',source:/פרק15_יעדים_וחזון/i},
- {id:'suffering-meaning',domainId:'meaning-integration',order:16,label:'סבל, קושי ומשמעות',source:/פרק16_סבל_קושי_ומשמעות/i},
- {id:'integration',domainId:'meaning-integration',order:17,label:'חיבור הכל',source:/פרק17_חיבור_הכל/i},
- {id:'who-am-i-answer',domainId:'meaning-integration',order:18,label:'מי אני? — תשובה',source:/פרק18_מי_אני_תשובה/i},
+ {id:'journey-origin',domainId:'journey-question',order:1,label:'למה יצאתי למסע?',source:/מי_אני_פרק1/i},
+ {id:'body-system',domainId:'human-body',order:2,label:'הגוף כמערכת',source:/פרק3_הפלא_ההנדסי/i,match:/(אני פנימה|הגוף כמערכת|חישה|בקרה ותקשורת|מבנה ותנועה|הגנה|ניקוי ותחזוקה)/i},
+ {id:'external-environment',domainId:'human-world',order:3,label:'הסביבה כמערכת תומכת',source:/פרק2_הכלי_החיצוני/i,match:/(אני החוצה|הכלי החיצוני|הסביבה כמערכת|אוויר ואטמוספירה|גיאופיזיקה|קרקע וגיאולוגיה|מים בעולם|מערכות הטבע|מחזורי זמן|מערכות נישתיות)/i},
+ {id:'brain-operating-system',domainId:'brain-consciousness',order:4,label:'המוח ומערכת ההפעלה',source:/(פרק4_מערכת_ההפעלה|פרק5_המוח_המפורט)/i},
+ {id:'brain-states-learning',domainId:'brain-consciousness',order:5,label:'מצבי מוח, גלי מוח ולמידה',source:/(פרק6_גלי_המוח|פרק10_נוירופלסטיות)/i},
+ {id:'pineal-gland',domainId:'brain-consciousness',order:6,label:'בלוטת האצטרובל',source:/פרק7_בלוטת_האצטרובל/i},
+ {id:'frequency-body',domainId:'frequency-sound',order:7,label:'תדרים, מוזיקה והגוף',source:/(פרק8_תדרים_מוזיקה_וצליל|פרק9_הגוף_כתדר)/i},
+ {id:'identity-beliefs',domainId:'identity-emotion',order:8,label:'זהות, אמונות ודפוסים',source:/פרק11_זהויות_ואמונות/i},
+ {id:'emotions-information',domainId:'identity-emotion',order:9,label:'רגשות כמידע',source:/פרק12_רגשות_כמידע/i},
+ {id:'human-reality',domainId:'human-world',order:10,label:'האדם מול המציאות והעולם',source:/(פרק13_יצירת_מציאות|פרק14_12_חוקי_היקום)/i},
+ {id:'goals-change',domainId:'meaning-integration',order:11,label:'מטרות, חזון וכלי שינוי',source:/פרק15_יעדים_וחזון/i},
+ {id:'meaning-integration',domainId:'meaning-integration',order:12,label:'משמעות, מסקנות ואינטגרציה',source:/(פרק16_סבל_קושי_ומשמעות|פרק17_חיבור_הכל|פרק18_מי_אני_תשובה)/i},
 ];
 
 const ALIASES=[
  {id:'dmt',label:'DMT',match:/\bdmt\b/i},
  {id:'meditation',label:'מדיטציה',match:/מדיטצי/i},
+ {id:'nervous-system',label:'מערכת העצבים',match:/מערכת העצבים/i},
  {id:'neuroplasticity',label:'נוירופלסטיות',match:/נוירופלסט/i},
  {id:'melatonin-serotonin',label:'מלטונין וסרוטונין',match:/(מלטונין|סרוטונין)/i},
  {id:'amygdala',label:'אמיגדלה',match:/אמיגדל/i},
@@ -81,6 +77,17 @@ const GENERIC=/^(?:מבוא|הקדמה|סיכום|לסיכום|השאלה|רגע
 const SENTENCE_START=/^(?:אבל\b|מה לעשות\b|שמור על\b|חזור ו\b|ערב\b|בוקר\b|שלב\s+\d+\b|2026\b)/i;
 
 export function topicForSourceFile(sourceFile){return LIBRARY_TOPICS.find(topic=>topic.source.test(String(sourceFile||'')))||null}
+
+export function topicForSectionNode(node){
+ const label=String(node?.label||'');
+ const explicit=LIBRARY_TOPICS.find(topic=>topic.match?.test(label));
+ if(explicit)return explicit;
+ const files=node?.sourceFiles||[];
+ const counts=new Map();
+ for(const file of files){const topic=topicForSourceFile(file);if(topic)counts.set(topic.id,(counts.get(topic.id)||0)+1)}
+ const winner=[...counts.entries()].sort((a,b)=>b[1]-a[1])[0]?.[0];
+ return LIBRARY_TOPICS.find(topic=>topic.id===winner)||null;
+}
 
 export function canonicalSubtopic(label){
  const text=String(label||'').trim();
