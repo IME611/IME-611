@@ -11,17 +11,16 @@ type LibraryNode={
  sourceFiles:string[];
 };
 type LibraryEdge={id:string;from:string;to:string;weight:number;signals:Record<string,number>};
-type LibraryIndex={
+type CorpusMapPayload={
  ok:boolean;
  version:string;
- generatedFrom:string;
- summary:{topics:number;concepts:number;knowledgeAtoms:number;connectedAtoms:number;unmappedAtoms:number;graphCoverage:number};
+ summary:{conceptNodes:number;sectionNodes:number;nonConceptAtoms:number;mappedAtoms:number;unmappedAtoms:number;graphCoverage:number};
  nodes:LibraryNode[];
  edges:LibraryEdge[];
- policy:{taxonomyFrozen:boolean;sourceOrderUsed:boolean;fixedChapterCount:boolean;labelsDerivedFromCorpus:boolean;note:string};
+ policy?:Record<string,unknown>;
 };
 type Props={query:string;onQueryChange:(value:string)=>void;onAdd:()=>void};
-type LoadState={status:'loading'}|{status:'error';message:string}|{status:'ready';data:LibraryIndex};
+type LoadState={status:'loading'}|{status:'error';message:string}|{status:'ready';data:CorpusMapPayload};
 
 const normalize=(value:string)=>value.toLocaleLowerCase('he').replace(/[^\p{L}\p{N}\s]/gu,' ').replace(/\s+/g,' ').trim();
 const score=(node:LibraryNode)=>node.contextAtomCount*4+node.explicitMappedAtomCount*3+node.sourceCount*2+node.candidateCount;
@@ -31,16 +30,16 @@ export function KnowledgeDashboard({query,onQueryChange,onAdd}:Props){
  const[state,setState]=useState<LoadState>({status:'loading'}),[selectedId,setSelectedId]=useState<string|null>(null),[mode,setMode]=useState<'topics'|'concepts'>('topics');
  useEffect(()=>{
   const controller=new AbortController();
-  fetch('/api/library-index',{signal:controller.signal}).then(async response=>{
+  fetch('/api/corpus-map',{signal:controller.signal}).then(async response=>{
    const payload=await response.json().catch(()=>null);
-   if(!response.ok||!payload?.ok)throw new Error(payload?.error||`library index unavailable (${response.status})`);
+   if(!response.ok||!payload?.ok)throw new Error(payload?.error||`corpus map unavailable (${response.status})`);
    setState({status:'ready',data:payload});
-  }).catch(error=>{if(error?.name!=='AbortError')setState({status:'error',message:error instanceof Error?error.message:'library index unavailable'})});
+  }).catch(error=>{if(error?.name!=='AbortError')setState({status:'error',message:error instanceof Error?error.message:'corpus map unavailable'})});
   return()=>controller.abort();
  },[]);
 
  const data=state.status==='ready'?state.data:null;
- const nodes=data?.nodes||[],edges=data?.edges||[],term=normalize(query);
+ const nodes=data?.nodes||[],term=normalize(query);
  const topics=useMemo(()=>nodes.filter(node=>node.kind==='SECTION_TOPIC').sort((a,b)=>score(b)-score(a)||a.label.localeCompare(b.label,'he')),[nodes]);
  const concepts=useMemo(()=>nodes.filter(node=>node.kind==='CONCEPT').sort((a,b)=>score(b)-score(a)||a.label.localeCompare(b.label,'he')),[nodes]);
  const base=mode==='topics'?topics:concepts;
@@ -67,9 +66,9 @@ export function KnowledgeDashboard({query,onQueryChange,onAdd}:Props){
 
   {data&&<>
    <section className="knowledgeStats" aria-label="מצב מפת הידע">
-    <article><strong>{data.summary.topics}</strong><span>נושאים שנצפו במקורות</span></article>
-    <article><strong>{data.summary.concepts}</strong><span>מושגים במפה</span></article>
-    <article><strong>{data.summary.knowledgeAtoms}</strong><span>יחידות ידע</span></article>
+    <article><strong>{data.summary.sectionNodes}</strong><span>נושאים שנצפו במקורות</span></article>
+    <article><strong>{data.summary.conceptNodes}</strong><span>מושגים במפה</span></article>
+    <article><strong>{data.summary.nonConceptAtoms}</strong><span>יחידות ידע</span></article>
     <article><strong>{coverage}%</strong><span>מחוברות להקשר במפה</span></article>
    </section>
 
