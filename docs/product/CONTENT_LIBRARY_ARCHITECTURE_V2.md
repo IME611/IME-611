@@ -1,10 +1,10 @@
 # E.I.L — Content Library Architecture v2
 
-**Status:** Implementation candidate
+**Status:** Implemented candidate
 
 ## Core rule
 
-The learner hierarchy has exactly three navigational levels:
+The learner hierarchy has three navigational levels:
 
 ```text
 DOMAIN
@@ -12,56 +12,51 @@ DOMAIN
     └── SUBTOPIC
 ```
 
+The 18 uploaded seed files are evidence and provenance. They are **not** 18 chapters and they are **not** 18 learner topics. Several files may feed one semantic topic, and one file may contain material that belongs in several topics.
+
 Graph relationships are not hierarchy. `RELATED`, co-occurrence, shared source context, and learning dependencies remain separate relationship types.
 
-## Canonical topics
+## Current semantic topics
 
-The seed corpus is represented by 18 canonical learner topics, grouped into the seven product domains. The chapter/source file is routing evidence for a topic bucket, not a learning-order requirement.
+The current corpus is organized into seven broad domains and twelve revisable semantic topics:
 
 ### המסע והשאלה
-- מי אני?
+- למה יצאתי למסע?
 
-### הגוף ומערכות האדם
-- הכלי החיצוני
-- הפלא ההנדסי
-- הגוף כתדר
+### האדם פנימה — הגוף כמערכת
+- הגוף כמערכת
 
 ### המוח, מערכת העצבים והתודעה
-- מערכת ההפעלה
-- המוח
-- גלי המוח
+- המוח ומערכת ההפעלה
+- מצבי תודעה, גלי מוח ולמידה
 - בלוטת האצטרובל
-- נוירופלסטיות
 
 ### תדרים, מוזיקה וצליל
-- תדרים, מוזיקה וצליל
+- תדרים, מוזיקה והגוף
 
 ### זהות, אמונות ורגשות
-- זהויות ואמונות
+- זהות, אמונות ודפוסים
 - רגשות כמידע
 
 ### האדם והעולם
-- יצירת מציאות
-- 12 חוקי היקום
+- הסביבה כמערכת תומכת
+- האדם מול המציאות והעולם
 
-### מטרות, משמעות ואינטגרציה
-- יעדים וחזון
-- סבל, קושי ומשמעות
-- חיבור הכל
-- מי אני? — תשובה
+### שינוי, משמעות ואינטגרציה
+- מטרות, חזון וכלי שינוי
+- משמעות, מסקנות ואינטגרציה
+
+This number is not a product limit. Topics may split, merge, or grow as the corpus grows.
 
 ## Subtopics
 
-Source-observed section headings are candidates for the SUBTOPIC layer, not automatic siblings of canonical topics. The learner taxonomy:
+Raw source headings do not automatically become navigation. A source heading is promoted to SUBTOPIC only when it names a meaningful concept worth exploring. Procedural steps, transitions, sentence fragments, and generic headings stay inside the parent topic as source-backed information rather than cluttering the hierarchy.
 
-- collapses repeated headings that clearly name the same concept (for example multiple DMT headings become one `DMT` subtopic)
-- keeps distinct concepts as siblings (for example `DMT` and `מדיטציה` can both live under `בלוטת האצטרובל` without one becoming the child of the other)
-- suppresses procedural/noisy headings such as chapter transitions, generic conclusions, and numbered execution steps from the learner navigation
-- keeps the raw source headings in provenance so no source information is lost
+Repeated headings that clearly name the same concept are collapsed. Raw headings and source files remain attached as provenance, so no source information is lost.
 
 ## Topic interaction
 
-Every DOMAIN, TOPIC, and SUBTOPIC can be opened in the same content panel. The detail view contains:
+Every DOMAIN, TOPIC, and promoted SUBTOPIC can be opened in the same content panel. The detail view contains:
 
 1. source-backed knowledge units
 2. source/provenance labels
@@ -69,23 +64,24 @@ Every DOMAIN, TOPIC, and SUBTOPIC can be opened in the same content panel. The d
 4. a short extractive Knowledge Card
 5. Save as Crystal
 
-Knowledge Cards use stable IDs derived from the hierarchy node, for example:
+Knowledge Cards use stable hierarchy-derived IDs, for example:
 
 ```text
 knowledge-card:subtopic:pineal-gland:dmt:v1
 ```
 
-A Crystal is the user's saved relationship to that Knowledge Card. The Knowledge Card remains canonical content; the Crystal remains personal state.
+A Crystal is the user's saved relationship to that Knowledge Card. The Knowledge Card remains system content; the Crystal remains personal state.
 
 ## DMT regression contract
 
-The following must remain true:
+DMT and meditation are not grouped merely because they occur in the same source.
 
 ```text
 המוח, מערכת העצבים והתודעה
+├── מצבי תודעה, גלי מוח ולמידה
+│   └── מדיטציה
 └── בלוטת האצטרובל
-    ├── DMT
-    └── מדיטציה
+    └── DMT
 ```
 
-`מדיטציה` must never become a child of `DMT` merely because both occur in the same source, section neighborhood, or graph context.
+A shared source, graph edge, or local co-occurrence is never enough to make one a child of the other or to force them into the same learner branch.
