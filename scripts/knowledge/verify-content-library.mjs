@@ -24,15 +24,17 @@ assert(pineal,'pineal gland must be a canonical topic');
 assert.equal(pineal.subtopics.filter(item=>item.label==='DMT').length,1,'multiple DMT headings must collapse into one DMT subtopic');
 const dmt=pineal.subtopics.find(item=>item.label==='DMT');
 assert.deepEqual(new Set(dmt?.nodeIds),new Set([dmtHow.id,dmtWhat.id]),'DMT subtopic must aggregate source-backed sections');
-const meditation=pineal.subtopics.find(item=>item.label==='מדיטציה');
-assert(meditation,'meditation may exist as its own sibling subtopic');
-assert.notEqual(dmt?.id,meditation.id,'DMT and meditation must remain siblings, never parent/child');
+assert(!pineal.subtopics.some(item=>item.label==='מדיטציה'),'meditation must not be grouped under DMT/pineal just because it appears in the same source');
 assert(!pineal.subtopics.some(item=>item.nodeIds.includes(meditationConcept.id)),'graph concepts must never enter hierarchy as children');
+const states=brain.topics.find(topic=>topic.id==='topic:brain-states-learning');
+assert(states?.subtopics.some(item=>item.label==='מדיטציה'),'meditation should route by meaning to states/consciousness practice');
 
 const operating=brain.topics.find(topic=>topic.id==='topic:brain-operating-system');
 assert(operating,'brain and operating-system seed sources should merge into one semantic topic');
 assert(!operating.subtopics.some(item=>item.nodeIds.includes(noisyStep.id)),'instructional step headings should be suppressed from learner taxonomy');
 
+const journey=hierarchy.domains.find(domain=>domain.id==='journey-question');
+assert(journey?.topics.some(topic=>topic.id==='topic:journey-origin'),'the journey/introduction topic must remain visible even when its source also contains later themes');
 const body=hierarchy.domains.find(domain=>domain.id==='human-body');
 const bodySystem=body?.topics.find(topic=>topic.id==='topic:body-system');
 assert(bodySystem?.subtopics.some(item=>item.label==='חישה'),'body sections should remain reachable under the semantic body topic');
@@ -44,4 +46,4 @@ assert(environment?.subtopics.some(item=>item.nodeIds.includes(environmentFromOp
 const card=buildExtractiveCard('DMT',[{text:'יחידת ידע ראשונה המבוססת על המקור ונשמרת ללא המצאת טענה חדשה.'},{text:'יחידת ידע שנייה ממשיכה את הסיכום מתוך החומר הקיים.'}], [{title:'פרק7_בלוטת_האצטרובל.docx'}],'subtopic:pineal-gland:dmt');
 assert.equal(card.id,'knowledge-card:subtopic:pineal-gland:dmt:v1');
 assert(card.summary.includes('יחידת ידע ראשונה'),'knowledge card must be built from supplied source-backed points');
-console.log('PASS content library v2 (sources ≠ topics; semantic hierarchy; DMT ≠ meditation; source-backed card stable)');
+console.log('PASS content library v2 (sources ≠ topics; semantic hierarchy; DMT separate from meditation; source-backed card stable)');
