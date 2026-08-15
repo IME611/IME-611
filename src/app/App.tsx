@@ -3,7 +3,7 @@ import{chapters as fallbackChapters}from'../data/chapters';
 import SpiralLibrary from'../features/journey/SpiralLibrary';
 import EvolutionWorkspace from'../features/evolution/EvolutionWorkspace';
 import TransformationWorkspace from'../features/transformation/TransformationWorkspace';
-import{ProductDashboard}from'../features/dashboard/ProductDashboard';
+import{KnowledgeDashboard}from'../features/knowledge-dashboard/KnowledgeDashboard';
 import{MediaWorkspace}from'../features/media/MediaWorkspace';
 import{ResearchWorkbench}from'../features/research/ResearchWorkbench';
 import{AddSourceModal}from'../features/sources/AddSourceModal';
@@ -73,10 +73,10 @@ export default function App(){
   <DesktopNavigation page={page} onNavigate={nav} onAdd={openNew} collapsed={collapsed} onCollapsedChange={setCollapsed} online={online}/>
   <MobileNavigation page={page} onNavigate={nav} onAdd={openNew} online={online}/>
   <main>
-   <div className="topbar"><div className="globalSearch">⌕<input value={q} onChange={event=>setQ(event.target.value)} placeholder="חפש רעיון, מקור, קשר או תובנה..."/></div></div>
-   {page!=='dashboard'&&<div className="pageBack"><button onClick={goBack}>→ חזרה</button><button onClick={()=>nav('dashboard')}>⌂ לדשבורד</button></div>}
+   {page!=='dashboard'&&<div className="topbar"><div className="globalSearch">⌕<input value={q} onChange={event=>setQ(event.target.value)} placeholder="חפש רעיון, מקור, קשר או תובנה..."/></div></div>}
+   {page!=='dashboard'&&<div className="pageBack"><button onClick={goBack}>→ חזרה</button><button onClick={()=>nav('dashboard')}>⌂ לספריית התוכן</button></div>}
    {notice&&<div className="notice" onClick={()=>setNotice('')}>{notice}</div>}
-   {page==='dashboard'&&<ProductDashboard onNav={nav} onAdd={openNew}/>} 
+   {page==='dashboard'&&<KnowledgeDashboard query={q} onQueryChange={setQ} onAdd={openNew}/>} 
    {page==='library'&&<SpiralLibrary chapters={allChapters} query={q} setQuery={setQ} corpusReady={corpusReady} paragraphs={corpusStats.paragraphs} characters={corpusStats.characters}/>} 
    {page==='sources'&&<Sources/>}
    {page==='transformation'&&<TransformationWorkspace chapters={allChapters}/>} 
@@ -86,7 +86,7 @@ export default function App(){
    {!['dashboard','library','sources','transformation','media','research',...evoPageIds].includes(page)&&<Generic/>}
    <AddSourceModal open={editor} onClose={()=>setEditor(false)} onImported={message=>{setNotice(message);setOnline(!message.startsWith('ייבוא נכשל'))}}/>
   </main>
-  <button className="crystalLauncher" onClick={()=>setCrystalsOpen(true)} aria-label="פתח את אוסף הקריסטלים"><span>◆</span><b>הקריסטלים שלי</b><em>{crystals.length}</em></button>
+  {page!=='dashboard'&&<button className="crystalLauncher" onClick={()=>setCrystalsOpen(true)} aria-label="פתח את אוסף הקריסטלים"><span>◆</span><b>הקריסטלים שלי</b><em>{crystals.length}</em></button>}
   <CrystalCollectionDrawer open={crystalsOpen} onClose={()=>setCrystalsOpen(false)}/>
  </div>;
 }
