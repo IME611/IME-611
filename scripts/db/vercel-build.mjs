@@ -6,9 +6,9 @@ function run(command, args) {
 }
 
 if (process.env.VERCEL_ENV === 'production') {
-  console.log('Production build: ensuring migrations 001-007 before verification.');
+  console.log('Production build: ensuring migrations 001-008 before verification.');
   run('node', ['scripts/db/ensure-production-migrations.mjs']);
-  console.log('Production build: verifying database foundation including extraction candidate layer.');
+  console.log('Production build: verifying database foundation including extraction/relation/intake/review layers.');
   run('npm', ['run', 'db:health']);
   console.log('Production build: exercising extraction candidate persistence with a transactional verification fixture.');
   run('npm', ['run', 'db:verify-extraction']);
@@ -16,8 +16,10 @@ if (process.env.VERCEL_ENV === 'production') {
   run('npm', ['run', 'knowledge:bootstrap-extraction']);
   console.log('Production build: verifying intake CHANGE / REJECT / duplicate-safe APPROVE lifecycle.');
   run('node', ['scripts/knowledge/verify-intake-db.mjs']);
+  console.log('Production build: enforcing corpus provenance, review, relation, and intake quality gates.');
+  run('node', ['scripts/knowledge/verify-quality-gates.mjs']);
 } else {
-  console.log(`Skipping database migrations and extraction/intake DB verification for VERCEL_ENV=${process.env.VERCEL_ENV || 'local'}.`);
+  console.log(`Skipping database migrations and production DB quality verification for VERCEL_ENV=${process.env.VERCEL_ENV || 'local'}.`);
 }
 
 run('npm', ['run', 'build']);
