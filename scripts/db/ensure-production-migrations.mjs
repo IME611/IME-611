@@ -12,6 +12,8 @@ if(process.env.VERCEL_ENV==='production'){
  run('node',['scripts/db/apply-relation-migration.mjs']);
  console.log('Production prebuild: ensuring intake migration 007.');
  run('node',['scripts/db/apply-intake-migration.mjs']);
+ console.log('Production prebuild: ensuring creator review migration 008.');
+ run('node',['scripts/db/apply-review-migration.mjs']);
 }else{
  console.log(`Skipping production migrations for VERCEL_ENV=${process.env.VERCEL_ENV||'local'}.`);
 }

@@ -15,6 +15,7 @@
 @import './features/crystals.css';
 @import './features/research.css';
 @import './features/welcome.css';
+@import './features/review-console.css';
 @import './features/errors.css';
 @import './glass/legacy/base.css';
 @import './glass/legacy/pass-2.css';
