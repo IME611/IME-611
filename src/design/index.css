@@ -10,6 +10,7 @@
 @import './features/journey.css';
 @import './features/dashboard.css';
 @import './features/knowledge-dashboard.css';
+@import './features/content-taxonomy.css';
 @import './features/media.css';
 @import './features/media-workspace.css';
 @import './features/cards.css';
