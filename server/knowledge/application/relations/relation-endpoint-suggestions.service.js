@@ -75,3 +75,29 @@ export function summarizeEndpointSuggestionDiagnostics(relations,nodes){
  }
  return{unresolvedEndpoints,characterLengths,tokenCounts,topScoreBuckets,topMatchModes,topNodeKinds,topSameSource,noneReasons,topScoreStats:scoreStats(scores),policy:{rawEndpointTextLogged:false,aggregateOnly:true}};
 }
+
+function candidateCountBucket(count){if(!count)return'ZERO';if(count===1)return'ONE';if(count<=4)return'TWO_FOUR';if(count<=10)return'FIVE_TEN';return'ELEVEN_PLUS'}
+function inExactSection(node,sectionKey){return Boolean(sectionKey&&(node.sections||[]).includes(sectionKey))}
+function inSameSource(node,{sourceId,sourceFile}){
+ if(sourceFile&&(node.sourceFiles||[]).includes(sourceFile))return true;
+ if(!sourceId)return false;const prefix=`${sourceId}::`;return(node.sections||[]).some(section=>String(section).startsWith(prefix));
+}
+
+export function summarizeEndpointContextCoverage(relations,nodes){
+ const eligible=(nodes||[]).filter(node=>VALID_NODE_KINDS.has(node.kind));
+ const sectionCandidateCounts={},sameSourceCandidateCounts={};let unresolvedEndpoints=0,sourceSectionAvailable=0,sourceFileAvailable=0,withExactSectionContext=0,withSectionConceptCandidates=0,withSectionTopicCandidates=0,withSameSourceContext=0,withSameSourceConceptCandidates=0,withSameSourceTopicCandidates=0;
+ for(const relation of relations||[]){
+  for(const side of ['from','to']){
+   if(relation[`${side}_resolution`]==='MAPPED')continue;
+   unresolvedEndpoints+=1;
+   const sourceId=String(relation.source_id||''),sourceFile=relation.source_file||null,sourceSection=String(relation.source_section||'').trim(),sectionKey=sourceId&&sourceSection?`${sourceId}::${sourceSection}`:null;
+   if(sectionKey)sourceSectionAvailable+=1;if(sourceFile)sourceFileAvailable+=1;
+   const sectionCandidates=sectionKey?eligible.filter(node=>inExactSection(node,sectionKey)):[],sameSourceCandidates=(sourceId||sourceFile)?eligible.filter(node=>inSameSource(node,{sourceId,sourceFile})):[];
+   const sectionConcepts=sectionCandidates.filter(node=>node.kind==='CONCEPT').length,sectionTopics=sectionCandidates.filter(node=>node.kind==='SECTION_TOPIC').length,sourceConcepts=sameSourceCandidates.filter(node=>node.kind==='CONCEPT').length,sourceTopics=sameSourceCandidates.filter(node=>node.kind==='SECTION_TOPIC').length;
+   bump(sectionCandidateCounts,candidateCountBucket(sectionCandidates.length));bump(sameSourceCandidateCounts,candidateCountBucket(sameSourceCandidates.length));
+   if(sectionCandidates.length)withExactSectionContext+=1;if(sectionConcepts)withSectionConceptCandidates+=1;if(sectionTopics)withSectionTopicCandidates+=1;if(sameSourceCandidates.length)withSameSourceContext+=1;if(sourceConcepts)withSameSourceConceptCandidates+=1;if(sourceTopics)withSameSourceTopicCandidates+=1;
+  }
+ }
+ const share=value=>unresolvedEndpoints?Number((value/unresolvedEndpoints).toFixed(4)):0;
+ return{unresolvedEndpoints,sourceSectionAvailable,sourceFileAvailable,withExactSectionContext,withSectionConceptCandidates,withSectionTopicCandidates,withSameSourceContext,withSameSourceConceptCandidates,withSameSourceTopicCandidates,coverage:{exactSection:share(withExactSectionContext),sectionConcept:share(withSectionConceptCandidates),sectionTopic:share(withSectionTopicCandidates),sameSource:share(withSameSourceContext),sameSourceConcept:share(withSameSourceConceptCandidates),sameSourceTopic:share(withSameSourceTopicCandidates)},sectionCandidateCounts,sameSourceCandidateCounts,policy:{contextIsNotSemanticProof:true,autoResolution:false,rawEndpointTextLogged:false,rawSectionTextLogged:false,aggregateOnly:true}};
+}
