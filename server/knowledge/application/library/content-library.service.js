@@ -16,7 +16,7 @@ export function domainForSourceFiles(sourceFiles=[]){
 }
 
 function groupSubtopics(topicDef,nodes){
- const matching=nodes.filter(node=>topicForSectionNode(node)?.id===topicDef.id);
+ const matching=nodes.filter(node=>topicForSectionNode(node)?.id===topicDef.id),evidenceFiles=unique(nodes.flatMap(node=>(node.sourceFiles||[]).filter(file=>topicDef.source.test(String(file)))));
  const groups=new Map(),suppressed=[];
  for(const node of matching){
   const canonical=canonicalSubtopic(node.label);
@@ -26,7 +26,7 @@ function groupSubtopics(topicDef,nodes){
   current.nodeIds.push(node.id);current.sections.push(...rawSections(node));current.sourceFiles.push(...topicFiles);current.unitCount+=Number(node.contextAtomCount||node.candidateCount||0);groups.set(key,current);
  }
  const subtopics=[...groups.values()].map(item=>({...item,nodeIds:unique(item.nodeIds),sections:unique(item.sections),sourceFiles:unique(item.sourceFiles),sourceCount:unique(item.sourceFiles).length})).sort((a,b)=>b.unitCount-a.unitCount||a.label.localeCompare(b.label,'he'));
- const sourceFiles=unique(matching.flatMap(node=>node.sourceFiles||[]));
+ const sourceFiles=unique([...matching.flatMap(node=>node.sourceFiles||[]),...(topicDef.always?evidenceFiles:[])]);
  return{matching,subtopics,suppressed,sourceFiles};
 }
 
@@ -34,7 +34,7 @@ export function buildLibraryHierarchyFromMap(map){
  const sectionNodes=(map?.nodes||[]).filter(node=>node.kind==='SECTION_TOPIC'),claimed=new Set(),topicViews=[];
  for(const topicDef of LIBRARY_TOPICS){
   const grouped=groupSubtopics(topicDef,sectionNodes);for(const node of grouped.matching)claimed.add(node.id);
-  if(!grouped.matching.length)continue;
+  if(!grouped.matching.length&&!grouped.sourceFiles.length)continue;
   topicViews.push({id:`topic:${topicDef.id}`,key:topicDef.id,label:topicDef.label,domainId:topicDef.domainId,order:topicDef.order,sourceFiles:grouped.sourceFiles,sourceCount:grouped.sourceFiles.length,unitCount:grouped.matching.reduce((sum,node)=>sum+Number(node.contextAtomCount||node.candidateCount||0),0),subtopics:grouped.subtopics,suppressedSectionCount:grouped.suppressed.length});
  }
  const domains=LIBRARY_DOMAINS.map(domain=>({id:domain.id,label:domain.label,description:domain.description,topics:topicViews.filter(topic=>topic.domainId===domain.id).sort((a,b)=>a.order-b.order)})).filter(domain=>domain.topics.length);
