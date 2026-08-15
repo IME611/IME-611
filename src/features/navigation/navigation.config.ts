@@ -2,16 +2,15 @@ export type NavigationItem={id:string;label:string;question?:string;icon:string;
 export type NavigationGroup={id:string;label:string;items:NavigationItem[]};
 
 export const primaryNavigation:NavigationItem[]=[
- {id:'dashboard',label:'היום',question:'איפה אני עכשיו?',icon:'⌂'},
- {id:'library',label:'המסע',question:'איפה אני במסע?',icon:'◌'},
+ {id:'dashboard',label:'ספריית התוכן',question:'מפת הידע החיה',icon:'⌂'},
 ];
 
 export const mentalModelNavigation:NavigationGroup[]=[
- {id:'model',label:'המודל שלי',items:[
-  {id:'sources',label:'מה משפיע עליי?',question:'מקורות · סביבה · קלט',icon:'↗'},
-  {id:'insights',label:'מה אני מבין?',question:'טענות · ראיות · תובנות',icon:'✧'},
-  {id:'transformation',label:'מה אני בודק בחיים?',question:'ניסוי · תצפית · שינוי',icon:'✓'},
-  {id:'media',label:'איך זה נראה ומתחבר?',question:'מפות · תדרים · המחשות',icon:'◫'},
+ {id:'model',label:'כלי עבודה',items:[
+  {id:'sources',label:'מקורות',question:'חומר הגלם והמקור המלא',icon:'↗',ownerOnly:true},
+  {id:'insights',label:'תובנות',question:'טענות · ראיות · תובנות',icon:'✧',ownerOnly:true},
+  {id:'transformation',label:'בדיקה בחיים',question:'ניסוי · תצפית · שינוי',icon:'✓',ownerOnly:true},
+  {id:'media',label:'מפות והמחשות',question:'קשרים · תדרים · המחשות',icon:'◫',ownerOnly:true},
  ]},
  {id:'deeper',label:'כלים עמוקים',items:[
   {id:'atlas',label:'מפת הקשרים',icon:'◉',ownerOnly:true},
