@@ -13,6 +13,7 @@ import{pageByNavigationId}from'../features/navigation/navigation.config';
 import{CrystalCollectionDrawer}from'../features/crystals/CrystalCollectionDrawer';
 import{useCrystalCollection}from'../features/crystals/model/useCrystalCollection';
 import{WelcomeScreen}from'../features/welcome/WelcomeScreen';
+import{ReviewConsole}from'../features/editor/ReviewConsole';
 import{evolutionPages}from'./navigation';
 import type{Chapter}from'../core/types';
 import{readText,storageKeys,writeText}from'../core/storage';
@@ -41,8 +42,10 @@ export default function App(){
  const[corpusReady,setCorpusReady]=useState(false);
  const[entered,setEntered]=useState(()=>{try{return sessionStorage.getItem('eil-welcome-entered')==='1'}catch{return false}});
  const{records:crystals}=useCrystalCollection();
+ const reviewMode=typeof window!=='undefined'&&new URLSearchParams(window.location.search).get('editor')==='review';
 
  useEffect(()=>{
+  if(reviewMode)return;
   fetch('/api/knowledge?resource=items').then(response=>{setOnline(response.ok)}).catch(()=>setOnline(false));
   fetch('/api/chapters').then(response=>response.ok?response.json():Promise.reject()).then(data=>{
    if(data.total===18&&Array.isArray(data.chapters)){
@@ -51,8 +54,8 @@ export default function App(){
     setCorpusReady(data.sourceMode==='lossless-docx-text');
    }
   }).catch(()=>{});
- },[]);
- useEffect(()=>writeText(storageKeys.railCollapsed,collapsed?'1':'0'),[collapsed]);
+ },[reviewMode]);
+ useEffect(()=>{if(!reviewMode)writeText(storageKeys.railCollapsed,collapsed?'1':'0')},[collapsed,reviewMode]);
 
  const allChapters=sourceChapters.length===18?sourceChapters:fallback;
  const openNew=()=>setEditor(true);
@@ -63,6 +66,7 @@ export default function App(){
  const Sources=()=> <><Header title="מה משפיע עליי?" sub="המקורות והסביבה שמזינים את המודל שלי. חומר הגלם נשמר בשלמותו, והסינתזה תמיד מצביעה חזרה למקור."/><section className="panel"><h2>מה נכנס למערכת?</h2><div className="pipeline"><b>מסמך / תמונה / מאמר</b><i>→</i><b>מקור מלא</b><i>→</i><b>כרטיסיות מקור</b><i>→</i><b>קשרים</b><i>→</i><b>תובנה</b></div><p className="muted">המטרה אינה לצבור ספרייה גדולה יותר, אלא לזהות מה משפיע על האופן שבו אני מבין ופועל — בלי לשכתב את המקור.</p><button className="primary" onClick={openNew}>הוסף מקור חדש</button></section></>;
  const Generic=()=> <><Header title={current.label} sub={`מרחב ${current.label} כחלק ממערכת ההתפתחות.`}/><div className="genericGrid"><section className="panel"><span className="eyebrow">AWARENESS FIRST</span><h2>התחל מכאן</h2><textarea className="bigInput" placeholder="כתוב מחשבה, שאלה או תובנה..."/><button className="primary">המשך</button></section><section className="panel"><span className="eyebrow">FROM KNOWING TO LIVING</span><h2>הידע הוא חומר גלם</h2><p className="muted">הערך נוצר כשהמערכת מחברת מקורות, מציפה דפוס, ומתרגמת אותו לצעד שאפשר לבדוק בחיים עצמם.</p></section></div></>;
 
+ if(reviewMode)return <ReviewConsole/>;
  if(!entered)return <WelcomeScreen onStart={enterExperience}/>;
 
  return <div className="app">
