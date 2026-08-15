@@ -24,13 +24,19 @@ const weak=rankRelationEndpointSuggestions('תופעה שלא קיימת במפ�
 assert.ok(['WEAK','NONE'].includes(weak.assessment.band));
 assert.equal(weak.assessment.recommendedNodeId,null);
 
+const short=rankRelationEndpointSuggestions('א',nodes);
+assert.equal(short.assessment.band,'NONE','one-character endpoints must be reviewable data, not matcher errors');
+assert.equal(short.assessment.recommendedNodeId,null);
+assert.deepEqual(short.suggestions,[]);
+
 const health=summarizeEndpointSuggestionHealth([
  {from_resolution:'UNRESOLVED',from_label:'ויסות רגשי',to_resolution:'MAPPED',to_label:'מערכת העצבים',source_file:'a.docx'},
  {from_resolution:'UNRESOLVED',from_label:'מערכת העצבים',to_resolution:'UNRESOLVED',to_label:'תופעה שלא קיימת במפה',source_file:'b.docx'},
+ {from_resolution:'UNRESOLVED',from_label:'א',to_resolution:'MAPPED',to_label:'ויסות רגשי',source_file:'c.docx'},
 ],nodes);
-assert.equal(health.unresolvedEndpoints,3);
+assert.equal(health.unresolvedEndpoints,4);
 assert.equal(health.bands.STRONG,1);
 assert.equal(health.bands.AMBIGUOUS,1);
-assert.equal(health.bands.WEAK+health.bands.NONE,1);
+assert.equal(health.bands.WEAK+health.bands.NONE,2);
 
-console.log(`PASS relation endpoint suggestion regression (${health.unresolvedEndpoints} unresolved fixture endpoints)`);
+console.log(`PASS relation endpoint suggestion regression (${health.unresolvedEndpoints} unresolved fixture endpoints; short labels safe)`);
