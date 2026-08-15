@@ -1,5 +1,10 @@
 import assert from'node:assert/strict';
 import{buildLibraryHierarchyFromMap,buildExtractiveCard}from'../../server/knowledge/application/library/content-library.service.js';
+import{LIBRARY_TOPICS,topicForSourceFile}from'../../server/knowledge/application/library/content-taxonomy.js';
+
+assert(LIBRARY_TOPICS.length<18,'18 seed files must not become 18 learner-facing topics');
+assert.equal(topicForSourceFile('פרק4_מערכת_ההפעלה.docx')?.id,topicForSourceFile('פרק5_המוח_המפורט.docx')?.id,'multiple seed files may feed one semantic topic');
+assert.equal(topicForSourceFile('פרק16_סבל_קושי_ומשמעות.docx')?.id,topicForSourceFile('פרק18_מי_אני_תשובה.docx')?.id,'late seed files may feed one integration topic');
 
 const dmtHow={id:'section-dmt-how',kind:'SECTION_TOPIC',label:'כיצד לשחרר DMT באופן טבעי',sourceCount:1,candidateCount:9,contextAtomCount:9,sourceFiles:['פרק7_בלוטת_האצטרובל.docx'],sections:['source-7::כיצד לשחרר DMT באופן טבעי']};
 const dmtWhat={id:'section-dmt-what',kind:'SECTION_TOPIC',label:'DMT — מולקולת הנשמה',sourceCount:1,candidateCount:2,contextAtomCount:2,sourceFiles:['פרק7_בלוטת_האצטרובל.docx'],sections:['source-7::DMT — מולקולת הנשמה']};
@@ -7,30 +12,36 @@ const meditationSection={id:'section-meditation',kind:'SECTION_TOPIC',label:'ב�
 const meditationConcept={id:'concept-meditation',kind:'CONCEPT',label:'מדיטציה',sourceCount:2,candidateCount:2,contextAtomCount:2,sourceFiles:['פרק4_מערכת_ההפעלה.docx','פרק7_בלוטת_האצטרובל.docx']};
 const noisyStep={id:'section-step',kind:'SECTION_TOPIC',label:'שלב 4 — חזרה עם רגש, בחלונות הנכונים',sourceCount:1,candidateCount:8,contextAtomCount:8,sourceFiles:['פרק4_מערכת_ההפעלה.docx'],sections:['source-4::שלב 4 — חזרה עם רגש, בחלונות הנכונים']};
 const senses={id:'section-senses',kind:'SECTION_TOPIC',label:'חישה',sourceCount:1,candidateCount:10,contextAtomCount:10,sourceFiles:['פרק3_הפלא_ההנדסי.docx'],sections:['source-3::חישה']};
-const map={nodes:[dmtHow,dmtWhat,meditationSection,meditationConcept,noisyStep,senses],edges:[{id:'edge-dmt-meditation',from:dmtHow.id,to:meditationConcept.id,weight:2.8,signals:{SECTION_MEMBERSHIP:1}}]};
+const bodyFromOpening={id:'section-body-opening',kind:'SECTION_TOPIC',label:'אני פנימה — הגוף כמערכת',sourceCount:1,candidateCount:4,contextAtomCount:4,sourceFiles:['מי_אני_פרק1_v6.docx'],sections:['source-1::אני פנימה — הגוף כמערכת']};
+const environmentFromOpening={id:'section-env-opening',kind:'SECTION_TOPIC',label:'אני החוצה — הסביבה כמערכת תומכת',sourceCount:1,candidateCount:3,contextAtomCount:3,sourceFiles:['מי_אני_פרק1_v6.docx'],sections:['source-1::אני החוצה — הסביבה כמערכת תומכת']};
+const map={nodes:[dmtHow,dmtWhat,meditationSection,meditationConcept,noisyStep,senses,bodyFromOpening,environmentFromOpening],edges:[{id:'edge-dmt-meditation',from:dmtHow.id,to:meditationConcept.id,weight:2.8,signals:{SECTION_MEMBERSHIP:1}}]};
 const hierarchy=buildLibraryHierarchyFromMap(map);
 
 const brain=hierarchy.domains.find(domain=>domain.id==='brain-consciousness');
 assert(brain,'brain/consciousness domain must exist');
 const pineal=brain.topics.find(topic=>topic.id==='topic:pineal-gland');
 assert(pineal,'pineal gland must be a canonical topic');
-assert.equal(pineal.subtopics.filter(item=>item.label==='DMT').length,1,'multiple DMT source headings must collapse into one DMT subtopic');
+assert.equal(pineal.subtopics.filter(item=>item.label==='DMT').length,1,'multiple DMT headings must collapse into one DMT subtopic');
 const dmt=pineal.subtopics.find(item=>item.label==='DMT');
-assert.deepEqual(new Set(dmt?.nodeIds),new Set([dmtHow.id,dmtWhat.id]),'DMT subtopic must aggregate its source-backed sections');
+assert.deepEqual(new Set(dmt?.nodeIds),new Set([dmtHow.id,dmtWhat.id]),'DMT subtopic must aggregate source-backed sections');
 const meditation=pineal.subtopics.find(item=>item.label==='מדיטציה');
-assert(meditation,'meditation may exist as its own subtopic when a source section exists');
+assert(meditation,'meditation may exist as its own sibling subtopic');
 assert.notEqual(dmt?.id,meditation.id,'DMT and meditation must remain siblings, never parent/child');
 assert(!pineal.subtopics.some(item=>item.nodeIds.includes(meditationConcept.id)),'graph concepts must never enter hierarchy as children');
 
-const operating=brain.topics.find(topic=>topic.id==='topic:operating-system');
-assert(operating,'operating system canonical topic should exist from its source');
+const operating=brain.topics.find(topic=>topic.id==='topic:brain-operating-system');
+assert(operating,'brain and operating-system seed sources should merge into one semantic topic');
 assert(!operating.subtopics.some(item=>item.nodeIds.includes(noisyStep.id)),'instructional step headings should be suppressed from learner taxonomy');
 
 const body=hierarchy.domains.find(domain=>domain.id==='human-body');
-const engineering=body?.topics.find(topic=>topic.id==='topic:engineering-body');
-assert(engineering?.subtopics.some(item=>item.label==='חישה'),'source-observed body section should remain reachable as a subtopic');
+const bodySystem=body?.topics.find(topic=>topic.id==='topic:body-system');
+assert(bodySystem?.subtopics.some(item=>item.label==='חישה'),'body sections should remain reachable under the semantic body topic');
+assert(bodySystem?.subtopics.some(item=>item.nodeIds.includes(bodyFromOpening.id)),'opening-file body material should route by meaning, not by file number');
+const world=hierarchy.domains.find(domain=>domain.id==='human-world');
+const environment=world?.topics.find(topic=>topic.id==='topic:external-environment');
+assert(environment?.subtopics.some(item=>item.nodeIds.includes(environmentFromOpening.id)),'opening-file environment material should route to the external system topic');
 
 const card=buildExtractiveCard('DMT',[{text:'יחידת ידע ראשונה המבוססת על המקור ונשמרת ללא המצאת טענה חדשה.'},{text:'יחידת ידע שנייה ממשיכה את הסיכום מתוך החומר הקיים.'}], [{title:'פרק7_בלוטת_האצטרובל.docx'}],'subtopic:pineal-gland:dmt');
 assert.equal(card.id,'knowledge-card:subtopic:pineal-gland:dmt:v1');
 assert(card.summary.includes('יחידת ידע ראשונה'),'knowledge card must be built from supplied source-backed points');
-console.log('PASS content library v2 hierarchy (DOMAIN → TOPIC → SUBTOPIC; DMT ≠ meditation; source-backed card stable)');
+console.log('PASS content library v2 (sources ≠ topics; semantic hierarchy; DMT ≠ meditation; source-backed card stable)');
