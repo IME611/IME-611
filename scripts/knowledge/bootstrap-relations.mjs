@@ -30,17 +30,20 @@ async function main(){
   if(!extractionFingerprint)throw new Error('Completed corpus extraction fingerprint is required');
   const fingerprint=sha256(`${extractionFingerprint}|${VERSION}`);
   const existing=(await client.query(`
-   SELECT id FROM relation_extraction_runs
-   WHERE scope='CORPUS' AND extraction_method=$1 AND extractor_version=$2 AND status='COMPLETED'
-     AND stats->>'relationFingerprint'=$3
-   ORDER BY completed_at DESC LIMIT 1
+   SELECT r.id,
+          (SELECT COUNT(*)::int FROM relation_candidates c WHERE c.run_id=r.id) AS candidate_count
+   FROM relation_extraction_runs r
+   WHERE r.scope='CORPUS' AND r.extraction_method=$1 AND r.extractor_version=$2 AND r.status='COMPLETED'
+     AND r.stats->>'relationFingerprint'=$3
+   ORDER BY r.completed_at DESC LIMIT 1
   `,[METHOD,VERSION,fingerprint])).rows[0];
-  if(existing){console.log(`SKIP relation extraction ${VERSION}: fingerprint already completed in run ${existing.id}`);return}
+  if(existing&&Number(existing.candidate_count)>0){console.log(`SKIP relation extraction ${VERSION}: fingerprint already completed in run ${existing.id} with ${existing.candidate_count} candidates`);return}
+  if(existing){console.warn(`RECOVER relation extraction ${VERSION}: completed run ${existing.id} has no candidate rows; rebuilding safely`)}
 
   runId=(await client.query(`
    INSERT INTO relation_extraction_runs(scope,extraction_method,extractor_version,status,stats)
    VALUES('CORPUS',$1,$2,'RUNNING',$3::jsonb) RETURNING id
-  `,[METHOD,VERSION,JSON.stringify({relationFingerprint:fingerprint,extractionFingerprint})])).rows[0].id;
+  `,[METHOD,VERSION,JSON.stringify({relationFingerprint:fingerprint,extractionFingerprint,recoveryOfEmptyRun:existing?.id||null})])).rows[0].id;
 
   const preview=await previewExplicitRelations(client,{limit:1000}),relations=preview.relations;
   if(!relations.length)throw new Error('Relation extractor produced zero review candidates');
