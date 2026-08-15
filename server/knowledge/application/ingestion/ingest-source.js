@@ -9,7 +9,7 @@ function sourceType(mimeType, fileName = '') {
   return 'DOCUMENT';
 }
 
-export async function ingestCanonicalSource({ db, repository, input }) {
+export async function ingestCanonicalSource({ db, repository, input, manageTransaction = true }) {
   const originalBytes = input.originalBytes;
   if (!Buffer.isBuffer(originalBytes) || !originalBytes.length) {
     throw new Error('Canonical ingestion requires the original source bytes.');
@@ -26,7 +26,7 @@ export async function ingestCanonicalSource({ db, repository, input }) {
   }
 
   const fragments = fragmentText(input.extractedText, { sourceContentHash: contentHash });
-  await db.query('BEGIN');
+  if (manageTransaction) await db.query('BEGIN');
   try {
     const source = await repository.insertSource({
       type: sourceType(input.mimeType, input.fileName),
@@ -44,10 +44,10 @@ export async function ingestCanonicalSource({ db, repository, input }) {
       },
     });
     const storedFragments = await repository.insertFragments(source.id, fragments);
-    await db.query('COMMIT');
+    if (manageTransaction) await db.query('COMMIT');
     return { deduplicated: false, source, fragments: storedFragments };
   } catch (error) {
-    await db.query('ROLLBACK');
+    if (manageTransaction) await db.query('ROLLBACK');
     throw error;
   }
 }
