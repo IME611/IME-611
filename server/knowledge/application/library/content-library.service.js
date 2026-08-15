@@ -1,5 +1,5 @@
 import{buildEmergentCorpusMapPreview}from'../map/emergent-corpus-map.service.js';
-import{LIBRARY_DOMAINS,LIBRARY_TOPICS,canonicalSubtopic,normalizeTaxonomyLabel,topicForSourceFile}from'./content-taxonomy.js';
+import{LIBRARY_DOMAINS,LIBRARY_TOPICS,canonicalSubtopic,normalizeTaxonomyLabel,topicForSectionNode,topicForSourceFile}from'./content-taxonomy.js';
 
 const compact=value=>String(value||'').replace(/\s+/g,' ').trim();
 const unique=values=>[...new Set(values.filter(Boolean))];
@@ -16,17 +16,17 @@ export function domainForSourceFiles(sourceFiles=[]){
 }
 
 function groupSubtopics(topicDef,nodes){
- const matching=nodes.filter(node=>(node.sourceFiles||[]).some(file=>topicDef.source.test(String(file))));
+ const matching=nodes.filter(node=>topicForSectionNode(node)?.id===topicDef.id);
  const groups=new Map(),suppressed=[];
  for(const node of matching){
   const canonical=canonicalSubtopic(node.label);
   if(!canonical){suppressed.push(node);continue}
-  const topicFiles=(node.sourceFiles||[]).filter(file=>topicDef.source.test(String(file)));
+  const topicFiles=node.sourceFiles||[];
   const key=canonical.id||node.id,current=groups.get(key)||{id:`subtopic:${topicDef.id}:${key}`,label:canonical.label,nodeIds:[],sections:[],sourceFiles:[],sourceCount:0,unitCount:0};
   current.nodeIds.push(node.id);current.sections.push(...rawSections(node));current.sourceFiles.push(...topicFiles);current.unitCount+=Number(node.contextAtomCount||node.candidateCount||0);groups.set(key,current);
  }
  const subtopics=[...groups.values()].map(item=>({...item,nodeIds:unique(item.nodeIds),sections:unique(item.sections),sourceFiles:unique(item.sourceFiles),sourceCount:unique(item.sourceFiles).length})).sort((a,b)=>b.unitCount-a.unitCount||a.label.localeCompare(b.label,'he'));
- const sourceFiles=unique(matching.flatMap(node=>(node.sourceFiles||[]).filter(file=>topicDef.source.test(String(file)))));
+ const sourceFiles=unique(matching.flatMap(node=>node.sourceFiles||[]));
  return{matching,subtopics,suppressed,sourceFiles};
 }
 
@@ -55,7 +55,7 @@ function allSubtopics(hierarchy){return allTopics(hierarchy).flatMap(topic=>topi
 async function mapForLibrary(db){return buildEmergentCorpusMapPreview(db,{communityLimit:1,nodeLimit:500,edgeLimit:1000})}
 export async function buildContentLibraryIndex(db){
  const map=await mapForLibrary(db),hierarchy=buildLibraryHierarchyFromMap(map),topics=allTopics(hierarchy),subtopics=allSubtopics(hierarchy);
- return{ok:true,version:'content-library-v2',summary:{domains:hierarchy.domains.length,topics:topics.length,subtopics:subtopics.length,unassignedSections:hierarchy.unassigned.length,unassignedTopics:hierarchy.unassigned.length},domains:hierarchy.domains,unassignedTopics:hierarchy.unassigned,policy:{levels:['DOMAIN','TOPIC','SUBTOPIC'],hierarchyUsesGraphEdges:false,relatedIsNotHierarchy:true,sourceFilesDefineTopicBuckets:true,sourceSectionHeadingsAreLeafCandidates:true,noisySectionHeadingsSuppressed:true,fixedChapterCount:false}};
+ return{ok:true,version:'content-library-v2',summary:{domains:hierarchy.domains.length,topics:topics.length,subtopics:subtopics.length,unassignedSections:hierarchy.unassigned.length,unassignedTopics:hierarchy.unassigned.length},domains:hierarchy.domains,unassignedTopics:hierarchy.unassigned,policy:{levels:['DOMAIN','TOPIC','SUBTOPIC'],hierarchyUsesGraphEdges:false,relatedIsNotHierarchy:true,seedFilesAreEvidenceNotTopics:true,sourceFilesDefineTopicBuckets:false,sourceSectionHeadingsAreLeafCandidates:true,noisySectionHeadingsSuppressed:true,fixedChapterCount:false}};
 }
 
 export async function buildContentLibraryDetail(db,nodeId){
@@ -68,7 +68,7 @@ export async function buildContentLibraryDetail(db,nodeId){
  if(String(nodeId).startsWith('topic:')){
   const topic=topics.find(item=>item.id===nodeId);if(!topic)return null;const domain=LIBRARY_DOMAINS.find(item=>item.id===topic.domainId);
   const rows=await candidateRows(db,{sourceTitles:topic.sourceFiles}),keyPoints=selectKeyPoints(rows),sources=sourceViews(rows,topic.sourceFiles.map(title=>({title})));
-  return{ok:true,id:topic.id,kind:'TOPIC',label:topic.label,domainId:topic.domainId,domainLabel:domain?.label||'',parentTopicLabel:null,description:'זהו נושא מרכזי בספרייה. המידע שלו נאסף מיחידות הידע במקור המשויך אליו, ותתי־הנושאים שמתחתיו הם חלוקה ניווטית — לא קשרי גרף.',keyPoints,relatedConcepts:[],sources,card:buildExtractiveCard(topic.label,keyPoints,sources,topic.id),policy:{summaryMode:'extractive',canonicalTruthInvented:false,relationsRequireReview:true}};
+  return{ok:true,id:topic.id,kind:'TOPIC',label:topic.label,domainId:topic.domainId,domainLabel:domain?.label||'',parentTopicLabel:null,description:'זהו נושא מרכזי בספרייה. הוא מאגד ידע לפי משמעות משותפת; קובצי המקור נשארים ראיות ו־provenance ולא מגדירים את מבנה הלמידה.',keyPoints,relatedConcepts:[],sources,card:buildExtractiveCard(topic.label,keyPoints,sources,topic.id),policy:{summaryMode:'extractive',canonicalTruthInvented:false,relationsRequireReview:true}};
  }
  if(String(nodeId).startsWith('subtopic:')){
   const entry=subtopics.find(item=>item.id===nodeId);if(!entry)return null;const topic=entry.parentTopic,domain=LIBRARY_DOMAINS.find(item=>item.id===topic.domainId);
