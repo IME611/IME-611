@@ -14,9 +14,10 @@ const operatingSection={id:'section-operating',kind:'SECTION_TOPIC',label:'מע�
 const noisyStep={id:'section-step',kind:'SECTION_TOPIC',label:'שלב 4 — חזרה עם רגש, בחלונות הנכונים',sourceCount:1,candidateCount:8,contextAtomCount:8,sourceFiles:['פרק4_מערכת_ההפעלה.docx'],sections:['source-4::שלב 4 — חזרה עם רגש, בחלונות הנכונים']};
 const senses={id:'section-senses',kind:'SECTION_TOPIC',label:'חישה',sourceCount:1,candidateCount:10,contextAtomCount:10,sourceFiles:['פרק3_הפלא_ההנדסי.docx'],sections:['source-3::חישה']};
 const journeyOpening={id:'section-journey-opening',kind:'SECTION_TOPIC',label:'למה יצאתי למסע?',sourceCount:1,candidateCount:3,contextAtomCount:3,sourceFiles:['מי_אני_פרק1_v6.docx'],sections:['source-1::למה יצאתי למסע?']};
+const laterWhoAmI={id:'section-later-who-am-i',kind:'SECTION_TOPIC',label:'מי אני?',sourceCount:1,candidateCount:6,contextAtomCount:6,sourceFiles:['פרק18_מי_אני_תשובה.docx'],sections:['source-18::מי אני?']};
 const bodyFromOpening={id:'section-body-opening',kind:'SECTION_TOPIC',label:'אני פנימה — הגוף כמערכת',sourceCount:1,candidateCount:4,contextAtomCount:4,sourceFiles:['מי_אני_פרק1_v6.docx'],sections:['source-1::אני פנימה — הגוף כמערכת']};
 const environmentFromOpening={id:'section-env-opening',kind:'SECTION_TOPIC',label:'אני החוצה — הסביבה כמערכת תומכת',sourceCount:1,candidateCount:3,contextAtomCount:3,sourceFiles:['מי_אני_פרק1_v6.docx'],sections:['source-1::אני החוצה — הסביבה כמערכת תומכת']};
-const map={nodes:[dmtHow,dmtWhat,meditationSection,meditationConcept,operatingSection,noisyStep,senses,journeyOpening,bodyFromOpening,environmentFromOpening],edges:[{id:'edge-dmt-meditation',from:dmtHow.id,to:meditationConcept.id,weight:2.8,signals:{SECTION_MEMBERSHIP:1}}]};
+const map={nodes:[dmtHow,dmtWhat,meditationSection,meditationConcept,operatingSection,noisyStep,senses,journeyOpening,laterWhoAmI,bodyFromOpening,environmentFromOpening],edges:[{id:'edge-dmt-meditation',from:dmtHow.id,to:meditationConcept.id,weight:2.8,signals:{SECTION_MEMBERSHIP:1}}]};
 const hierarchy=buildLibraryHierarchyFromMap(map);
 
 const brain=hierarchy.domains.find(domain=>domain.id==='brain-consciousness');
@@ -39,6 +40,8 @@ const journey=hierarchy.domains.find(domain=>domain.id==='journey-question');
 const journeyTopic=journey?.topics.find(topic=>topic.id==='topic:journey-origin');
 assert(journeyTopic,'the journey/introduction topic must remain visible even when its source also contains later themes');
 assert(journeyTopic.sections.includes('למה יצאתי למסע?'),'journey topic must retain its own observed section scope');
+assert(!journeyTopic.sections.includes('מי אני?'),'a later integration section with similar wording must not be pulled into the opening learning unit');
+assert(!journeyTopic.sourceFiles.includes('פרק18_מי_אני_תשובה.docx'),'opening topic must not claim a later source merely because its heading contains “מי אני”');
 const body=hierarchy.domains.find(domain=>domain.id==='human-body');
 const bodySystem=body?.topics.find(topic=>topic.id==='topic:body-system');
 assert(bodySystem?.subtopics.some(item=>item.label==='חישה'),'body sections should remain reachable under the semantic body topic');
@@ -50,12 +53,12 @@ assert(environment?.subtopics.some(item=>item.nodeIds.includes(environmentFromOp
 const sharedSourceRows=[
  {id:'journey-row',section:'למה יצאתי למסע?',text:'יצאתי למסע כדי להבין מי אני ומהי המערכת שבתוכה אני חי.',atomType:'CLAIM',excludeFromKnowledge:false},
  {id:'body-row',section:'אני פנימה — הגוף כמערכת',text:'206 עצמות מרכיבות את מסגרת השלד וכ־600 שרירים מניעים אותה.',atomType:'CLAIM',excludeFromKnowledge:false},
+ {id:'keyword-row',section:'זהות והרגלים',text:'מי אני רוצה להיות ומה הזהות שאני בונה?',atomType:'PRACTICE',excludeFromKnowledge:false},
 ];
-const journeyDef=LIBRARY_TOPICS.find(topic=>topic.id==='journey-origin');
-const journeyScoped=selectTopicScopedRows(sharedSourceRows,{sections:journeyTopic.sections,match:journeyDef.match});
-assert.deepEqual(journeyScoped.map(row=>row.id),['journey-row'],'a topic must never inherit unrelated text merely because it lives in the same source file');
+const journeyScoped=selectTopicScopedRows(sharedSourceRows,{sections:journeyTopic.sections});
+assert.deepEqual(journeyScoped.map(row=>row.id),['journey-row'],'topic content must come from observed assigned sections only; text keywords cannot pull in another topic');
 
 const card=buildExtractiveCard('DMT',[{text:'יחידת ידע ראשונה המבוססת על המקור ונשמרת ללא המצאת טענה חדשה.'},{text:'יחידת ידע שנייה ממשיכה את הסיכום מתוך החומר הקיים.'}], [{title:'פרק7_בלוטת_האצטרובל.docx'}],'subtopic:pineal-gland:dmt');
 assert.equal(card.id,'knowledge-card:subtopic:pineal-gland:dmt:v2');
 assert(card.summary.includes('יחידת ידע ראשונה'),'knowledge card must be built from supplied source-backed points');
-console.log('PASS content library v3 (hierarchy ≠ sequence; topic text is scoped; DMT separate from meditation; card matches its learning unit)');
+console.log('PASS content library v3.1 (hierarchy ≠ sequence; observed-section-only text; DMT separate from meditation; card matches its learning unit)');
