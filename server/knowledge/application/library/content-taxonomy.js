@@ -62,6 +62,7 @@ const SUBTOPICS=[
  {id:'sleep-dreaming',label:'שינה וחלימה',match:/(שינה|חלימה צלולה)/i},
  {id:'learning-memory',label:'למידה וזיכרון',match:/(למידה|זיכרון|אינטגרציה של מידע)/i},
  {id:'pineal-overview',label:'בלוטת האצטרובל',match:/בלוטת האצטרובל/i},
+ {id:'dmt-practice',label:'טענות ותרגולים סביב DMT',match:/(כיצד|איך|שחרר|שחרור|הפעל|תרגול).*(?:\bdmt\b)|(?:\bdmt\b).*(כיצד|איך|שחרר|שחרור|הפעל|תרגול)/i},
  {id:'dmt',label:'DMT',match:/\bdmt\b/i},
  {id:'melatonin-serotonin',label:'מלטונין וסרוטונין',match:/(מלטונין|סרוטונין)/i},
  {id:'third-eye',label:'העין השלישית',match:/(עין השלישית|ajna)/i},
