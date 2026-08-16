@@ -9,6 +9,9 @@ const nodeScore=node=>(Number(node.contextAtomCount)||0)*4+(Number(node.sourceCo
 const TOPIC_SOURCE_SPANS={
  'journey-origin':{type:'SOURCE_SPAN',sourceFile:'מי_אני_פרק1_v6.docx',startAt:0,beforeSection:'אני פנימה — הגוף כמערכת',reason:'פתיחת המסע נמצאת לפני כותרת הגוף הראשונה, ולכן היא תחומה לפי מיקום במקור ולא לפי מילת מפתח.'},
 };
+const LEARNER_EPISTEMIC_FRAMES={
+ 'dmt-practice':{id:'SOURCE_PRACTICE_CLAIMS',displayType:'REFERENCE',displayClaimType:'SOURCE_CLAIM',notice:'הפריטים ביחידה הזאת הם טענות והמלצות כפי שהופיעו במקור. הם אינם מסומנים אוטומטית כעובדה מדעית מאומתת.',cardProvenance:'Knowledge Card v2 · סיכום טענות והמלצות כפי שהופיעו במקור · לא סימון כעובדה מאומתת'},
+};
 
 export{LIBRARY_DOMAINS};
 
@@ -55,6 +58,14 @@ const priority={DEFINITION:0,CLAIM:1,MODEL:2,CREATOR_INSIGHT:3,WORLDVIEW_CLAIM:4
 function selectKeyPoints(rows,limit=7,{sourceOrder=false}={}){const seen=new Set();return rows.filter(row=>row.atomType!=='EDITORIAL_NOTE'&&!row.excludeFromKnowledge).sort((a,b)=>sourceOrder?Number(a.sourceStart)-Number(b.sourceStart):(priority[a.atomType]??50)-(priority[b.atomType]??50)||Number(b.confidence)-Number(a.confidence)||Number(a.sourceStart)-Number(b.sourceStart)).filter(row=>{const key=normalizeTaxonomyLabel(row.text);if(key.length<20||seen.has(key))return false;seen.add(key);return true}).slice(0,limit).map(row=>({id:row.id,type:row.atomType,claimType:row.claimType||null,text:compact(row.text),sourceLabel:row.sourceTitle,confidence:Number(row.confidence)}))}
 function shortExtract(value,max=520){const text=compact(value);if(text.length<=max)return text;const slice=text.slice(0,max+1),cut=slice.lastIndexOf(' ');return`${slice.slice(0,cut>max*.75?cut:max).trim()}…`}
 export function buildExtractiveCard(label,keyPoints,sources,nodeId){const summary=shortExtract(keyPoints.slice(0,2).map(point=>point.text).join(' '));return{id:`knowledge-card:${nodeId}:v2`,title:label,summary:summary||`עדיין אין מספיק יחידות ידע ממוקדות כדי לסכם את ${label} בלי לערבב תוכן מנושאים אחרים.`,sourceLabel:sources.map(source=>source.title).slice(0,4).join(' · '),provenanceLabel:'Knowledge Card v2 · סיכום חילוצי מתוך אותה יחידת לימוד'}}
+
+function epistemicFrameForSubtopic(entry){const key=String(entry?.id||'').split(':').at(-1);return LEARNER_EPISTEMIC_FRAMES[key]||null}
+export function frameSubtopicForLearner(entry,keyPoints,card){
+ const frame=epistemicFrameForSubtopic(entry);
+ if(!frame)return{epistemicFrame:null,epistemicNotice:null,keyPoints:[...(keyPoints||[])],card};
+ const framedPoints=(keyPoints||[]).map(point=>({...point,sourceType:point.type,sourceClaimType:point.claimType||null,type:frame.displayType,claimType:frame.displayClaimType}));
+ return{epistemicFrame:frame.id,epistemicNotice:frame.notice,keyPoints:framedPoints,card:{...card,provenanceLabel:frame.cardProvenance}};
+}
 
 async function candidateRows(db,{sections=[],sourceTitles=[],limit=240}={}){const params=[],where=[`c.exclude_from_knowledge=FALSE`];if(sections.length){params.push(sections);where.push(`c.metadata->>'section'=ANY($${params.length}::text[])`)}if(sourceTitles.length){params.push(sourceTitles);where.push(`COALESCE(s.metadata->>'sourceFile',s.title)=ANY($${params.length}::text[])`)}params.push(Math.max(20,Math.min(500,Number(limit)||240)));const{rows}=await db.query(`SELECT c.id,c.atom_type::text AS "atomType",c.claim_type::text AS "claimType",c.candidate_text AS text,c.confidence,c.source_start AS "sourceStart",c.source_end AS "sourceEnd",c.exclude_from_knowledge AS "excludeFromKnowledge",c.metadata->>'section' AS section,s.id AS "sourceId",COALESCE(s.metadata->>'sourceFile',s.title) AS "sourceTitle" FROM extraction_candidates c JOIN sources s ON s.id=c.source_id WHERE ${where.join(' AND ')} ORDER BY c.source_start,c.confidence DESC LIMIT $${params.length}`,params);return rows}
 function sourceViews(rows){const map=new Map();for(const row of rows)map.set(row.sourceTitle,{id:row.sourceId,title:row.sourceTitle});return[...map.values()]}
@@ -105,7 +116,7 @@ function domainLearningUnit(domain){return{level:'DOMAIN',goal:`לבנות תמ�
 async function mapForLibrary(db){return buildEmergentCorpusMapPreview(db,{communityLimit:1,nodeLimit:500,edgeLimit:1000})}
 export async function buildContentLibraryIndex(db){
  const map=await mapForLibrary(db),hierarchy=buildLibraryHierarchyFromMap(map),topics=allTopics(hierarchy),subtopics=allSubtopics(hierarchy);
- return{ok:true,version:'content-library-v3.2',summary:{domains:hierarchy.domains.length,topics:topics.length,subtopics:subtopics.length,unassignedSections:hierarchy.unassigned.length,unassignedTopics:hierarchy.unassigned.length},domains:hierarchy.domains.map(domain=>({...domain,topics:domain.topics.map(({sectionNodeIds,sections,...topic})=>topic)})),unassignedTopics:hierarchy.unassigned,policy:{levels:['DOMAIN','TOPIC','SUBTOPIC'],hierarchyUsesGraphEdges:false,relatedIsNotHierarchy:true,seedFilesAreEvidenceNotTopics:true,sourceFilesDefineTopicBuckets:false,topicTextScopeModes:['OBSERVED_SECTIONS','SOURCE_SPAN'],textKeywordFallback:false,sourceOnlyFallbackForTopicText:false,knowledgeMapSeparateFromLearningSequence:true,learningUnitCardUsesSameScopedRows:true,noisySectionHeadingsSuppressed:true,fixedChapterCount:false}};
+ return{ok:true,version:'content-library-v3.4',summary:{domains:hierarchy.domains.length,topics:topics.length,subtopics:subtopics.length,unassignedSections:hierarchy.unassigned.length,unassignedTopics:hierarchy.unassigned.length},domains:hierarchy.domains.map(domain=>({...domain,topics:domain.topics.map(({sectionNodeIds,sections,...topic})=>topic)})),unassignedTopics:hierarchy.unassigned,policy:{levels:['DOMAIN','TOPIC','SUBTOPIC'],hierarchyUsesGraphEdges:false,relatedIsNotHierarchy:true,seedFilesAreEvidenceNotTopics:true,sourceFilesDefineTopicBuckets:false,topicTextScopeModes:['OBSERVED_SECTIONS','SOURCE_SPAN'],textKeywordFallback:false,sourceOnlyFallbackForTopicText:false,knowledgeMapSeparateFromLearningSequence:true,learningUnitCardUsesSameScopedRows:true,learnerEpistemicFramesDoNotRewriteCanonicalAtoms:true,noisySectionHeadingsSuppressed:true,fixedChapterCount:false}};
 }
 
 export async function buildContentLibraryDetail(db,nodeId){
@@ -121,8 +132,9 @@ export async function buildContentLibraryDetail(db,nodeId){
  }
  if(String(nodeId).startsWith('subtopic:')){
   const entry=subtopics.find(item=>item.id===nodeId);if(!entry)return null;const topic=entry.parentTopic,domain=LIBRARY_DOMAINS.find(item=>item.id===topic.domainId);
-  const rows=await candidateRows(db,{sections:entry.sections,sourceTitles:entry.sourceFiles}),keyPoints=selectKeyPoints(rows),sources=sourceViews(rows);
-  return{ok:true,id:entry.id,kind:'SUBTOPIC',label:entry.label,domainId:topic.domainId,domainLabel:domain?.label||'',parentTopicLabel:topic.label,description:`המידע כאן מוגבל ליחידות הידע שנמצאו תחת הסעיפים המקוריים ששויכו ל„${entry.label}”.`,learningUnit:subtopicLearningUnit(entry,topic),keyPoints,relatedConcepts:[],sources,card:buildExtractiveCard(entry.label,keyPoints,sources,entry.id),policy:{summaryMode:'extractive-bounded',canonicalTruthInvented:false,contextualGraphNeighborsHidden:true,relationsRequireReview:true,sourceOnlyFallback:false,textKeywordFallback:false}};
+  const rows=await candidateRows(db,{sections:entry.sections,sourceTitles:entry.sourceFiles}),rawKeyPoints=selectKeyPoints(rows),sources=sourceViews(rows),baseCard=buildExtractiveCard(entry.label,rawKeyPoints,sources,entry.id),framed=frameSubtopicForLearner(entry,rawKeyPoints,baseCard);
+  const baseDescription=`המידע כאן מוגבל ליחידות הידע שנמצאו תחת הסעיפים המקוריים ששויכו ל„${entry.label}”.`;
+  return{ok:true,id:entry.id,kind:'SUBTOPIC',label:entry.label,domainId:topic.domainId,domainLabel:domain?.label||'',parentTopicLabel:topic.label,description:framed.epistemicNotice?`${baseDescription} ${framed.epistemicNotice}`:baseDescription,epistemicFrame:framed.epistemicFrame,epistemicNotice:framed.epistemicNotice,learningUnit:subtopicLearningUnit(entry,topic),keyPoints:framed.keyPoints,relatedConcepts:[],sources,card:framed.card,policy:{summaryMode:'extractive-bounded',canonicalTruthInvented:false,contextualGraphNeighborsHidden:true,relationsRequireReview:true,sourceOnlyFallback:false,textKeywordFallback:false,learnerEpistemicFrame:framed.epistemicFrame,canonicalAtomTypesUnchanged:true}};
  }
  const legacyNode=(map.nodes||[]).find(item=>item.id===nodeId&&item.kind==='SECTION_TOPIC');if(!legacyNode)return null;
  const domain=domainForSourceFiles(legacyNode.sourceFiles||[]),rows=await candidateRows(db,{sections:rawSections(legacyNode),sourceTitles:legacyNode.sourceFiles||[]}),keyPoints=selectKeyPoints(rows),sources=sourceViews(rows);
