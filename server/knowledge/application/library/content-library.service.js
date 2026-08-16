@@ -1,5 +1,6 @@
 import{buildEmergentCorpusMapPreview}from'../map/emergent-corpus-map.service.js';
 import{LIBRARY_DOMAINS,LIBRARY_TOPICS,canonicalSubtopic,normalizeTaxonomyLabel,topicForSectionNode,topicForSourceFile}from'./content-taxonomy.js';
+import{PEDAGOGIC_FLOW_VERSION,pedagogicFlowForTopic}from'./pedagogic-flow.js';
 
 const compact=value=>String(value||'').replace(/\s+/g,' ').trim();
 const unique=values=>[...new Set(values.filter(Boolean))];
@@ -109,14 +110,19 @@ async function scopedRowsForDomain(db,domain){
 }
 function orderedTopics(hierarchy){return allTopics(hierarchy).sort((a,b)=>a.order-b.order||a.label.localeCompare(b.label,'he'))}
 function navItem(topic){if(!topic)return null;return{id:topic.id,label:topic.label,domainId:topic.domainId}}
-function topicLearningUnit(topic,hierarchy){const ordered=orderedTopics(hierarchy),index=ordered.findIndex(item=>item.id===topic.id),previous=index>0?ordered[index-1]:null,next=index>=0&&index<ordered.length-1?ordered[index+1]:null,domain=LIBRARY_DOMAINS.find(item=>item.id===topic.domainId);return{level:'TOPIC',goal:`להבין את ${topic.label} בתוך התמונה הרחבה של ${domain?.label||'המסע'}, באמצעות יחידות ידע ששויכו ישירות לנושא.`,whyNow:previous?`הנושא מגיע אחרי „${previous.label}” כחלק ממסלול למידה מדורג${next?`, ולפני המעבר ל„${next.label}”`:''}.`:`זו נקודת הפתיחה של מסלול הלמידה: מתחילים בשאלות שמניעות את החקירה, ורק אחר כך עוברים למערכות ולפרטים.`,position:index>=0?index+1:null,total:ordered.length,previous:navItem(previous),next:navItem(next),sequenceBasis:'CURATED_PEDAGOGIC_V0_1',sequenceIsHierarchy:false}}
+export function topicLearningUnit(topic,hierarchy){
+ const ordered=orderedTopics(hierarchy),index=ordered.findIndex(item=>item.id===topic.id),previous=index>0?ordered[index-1]:null,next=index>=0&&index<ordered.length-1?ordered[index+1]:null,domain=LIBRARY_DOMAINS.find(item=>item.id===topic.domainId),flow=pedagogicFlowForTopic(topic.key);
+ const fallbackGoal=`להבין את ${topic.label} בתוך התמונה הרחבה של ${domain?.label||'המסע'}, באמצעות יחידות ידע ששויכו ישירות לנושא.`;
+ const fallbackWhy=previous?`הנושא מגיע אחרי „${previous.label}” כחלק ממסלול למידה מדורג${next?`, ולפני המעבר ל„${next.label}”`:''}.`:`זו נקודת הפתיחה של מסלול הלמידה: מתחילים בשאלות שמניעות את החקירה, ורק אחר כך עוברים למערכות ולפרטים.`;
+ return{level:'TOPIC',stageId:flow?.stageId||null,stageLabel:flow?.stageLabel||null,learningQuestion:flow?.question||null,goal:flow?`${flow.question} ${flow.objective}`:fallbackGoal,whyNow:flow?`${flow.bridge} ${flow.handoff}`:fallbackWhy,position:index>=0?index+1:null,total:ordered.length,previous:navItem(previous),next:navItem(next),sequenceBasis:flow?PEDAGOGIC_FLOW_VERSION:'CURATED_PEDAGOGIC_FALLBACK',sequenceIsHierarchy:false};
+}
 function subtopicLearningUnit(entry,topic){return{level:'SUBTOPIC',goal:`להבין את ${entry.label} כחלק ממוקד בתוך הנושא „${topic.label}”.`,whyNow:`זהו פירוט של „${topic.label}”. הוא שייך לתוכן של הנושא, אך אינו יוצר לבדו סדר מחייב מול תתי־נושאים אחרים.`,position:null,total:topic.subtopics.length,previous:null,next:null,sequenceBasis:'PARENT_TOPIC_CONTEXT',sequenceIsHierarchy:false}}
 function domainLearningUnit(domain){return{level:'DOMAIN',goal:`לבנות תמונה של ${domain.label} דרך הנושאים המרכזיים שבתוכו.`,whyNow:'התחום הוא מיקום במפת הידע. סדר הלמידה נקבע ברמת יחידות הלימוד ואינו נגזר מעצם ההיררכיה.',position:null,total:domain.topics.length,previous:null,next:null,sequenceBasis:'KNOWLEDGE_MAP_LOCATION',sequenceIsHierarchy:false}}
 
 async function mapForLibrary(db){return buildEmergentCorpusMapPreview(db,{communityLimit:1,nodeLimit:500,edgeLimit:1000})}
 export async function buildContentLibraryIndex(db){
  const map=await mapForLibrary(db),hierarchy=buildLibraryHierarchyFromMap(map),topics=allTopics(hierarchy),subtopics=allSubtopics(hierarchy);
- return{ok:true,version:'content-library-v3.4',summary:{domains:hierarchy.domains.length,topics:topics.length,subtopics:subtopics.length,unassignedSections:hierarchy.unassigned.length,unassignedTopics:hierarchy.unassigned.length},domains:hierarchy.domains.map(domain=>({...domain,topics:domain.topics.map(({sectionNodeIds,sections,...topic})=>topic)})),unassignedTopics:hierarchy.unassigned,policy:{levels:['DOMAIN','TOPIC','SUBTOPIC'],hierarchyUsesGraphEdges:false,relatedIsNotHierarchy:true,seedFilesAreEvidenceNotTopics:true,sourceFilesDefineTopicBuckets:false,topicTextScopeModes:['OBSERVED_SECTIONS','SOURCE_SPAN'],textKeywordFallback:false,sourceOnlyFallbackForTopicText:false,knowledgeMapSeparateFromLearningSequence:true,learningUnitCardUsesSameScopedRows:true,learnerEpistemicFramesDoNotRewriteCanonicalAtoms:true,noisySectionHeadingsSuppressed:true,fixedChapterCount:false}};
+ return{ok:true,version:'content-library-v3.5',summary:{domains:hierarchy.domains.length,topics:topics.length,subtopics:subtopics.length,unassignedSections:hierarchy.unassigned.length,unassignedTopics:hierarchy.unassigned.length},domains:hierarchy.domains.map(domain=>({...domain,topics:domain.topics.map(({sectionNodeIds,sections,...topic})=>topic)})),unassignedTopics:hierarchy.unassigned,policy:{levels:['DOMAIN','TOPIC','SUBTOPIC'],hierarchyUsesGraphEdges:false,relatedIsNotHierarchy:true,seedFilesAreEvidenceNotTopics:true,sourceFilesDefineTopicBuckets:false,topicTextScopeModes:['OBSERVED_SECTIONS','SOURCE_SPAN'],textKeywordFallback:false,sourceOnlyFallbackForTopicText:false,knowledgeMapSeparateFromLearningSequence:true,learningUnitCardUsesSameScopedRows:true,learnerEpistemicFramesDoNotRewriteCanonicalAtoms:true,explicitPedagogicFlow:true,pedagogicFlowVersion:PEDAGOGIC_FLOW_VERSION,noisySectionHeadingsSuppressed:true,fixedChapterCount:false}};
 }
 
 export async function buildContentLibraryDetail(db,nodeId){
