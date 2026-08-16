@@ -5,7 +5,6 @@ const compact=value=>String(value||'').replace(/\s+/g,' ').trim();
 const unique=values=>[...new Set(values.filter(Boolean))];
 const rawSections=node=>(node.sections||[]).map(value=>{const parts=String(value).split('::');return parts.length>1?parts.slice(1).join('::'):String(value)}).filter(Boolean);
 const nodeScore=node=>(Number(node.contextAtomCount)||0)*4+(Number(node.sourceCount)||0)*2+(Number(node.candidateCount)||0);
-const regexMatches=(pattern,value)=>{if(!pattern)return false;pattern.lastIndex=0;return pattern.test(String(value||''))};
 
 export{LIBRARY_DOMAINS};
 
@@ -16,8 +15,16 @@ export function domainForSourceFiles(sourceFiles=[]){
  return LIBRARY_DOMAINS.find(domain=>domain.id===winner)||null;
 }
 
+function sectionBelongsToTopic(node,topicDef){
+ if(topicForSectionNode(node)?.id!==topicDef.id)return false;
+ // "מי אני" recurs later as identity/integration language. The opening-question topic
+ // only owns observed sections from its opening source; later appearances stay in their own topics.
+ if(topicDef.id==='journey-origin')return(node.sourceFiles||[]).some(file=>topicDef.source.test(String(file)));
+ return true;
+}
+
 function groupSubtopics(topicDef,nodes){
- const matching=nodes.filter(node=>topicForSectionNode(node)?.id===topicDef.id),evidenceFiles=unique(nodes.flatMap(node=>(node.sourceFiles||[]).filter(file=>topicDef.source.test(String(file)))));
+ const matching=nodes.filter(node=>sectionBelongsToTopic(node,topicDef)),evidenceFiles=unique(nodes.flatMap(node=>(node.sourceFiles||[]).filter(file=>topicDef.source.test(String(file)))));
  const groups=new Map(),suppressed=[];
  for(const node of matching){
   const canonical=canonicalSubtopic(node.label);
@@ -53,19 +60,20 @@ function sourceViews(rows,extra=[]){const map=new Map();for(const source of extr
 function allTopics(hierarchy){return hierarchy.domains.flatMap(domain=>domain.topics)}
 function allSubtopics(hierarchy){return allTopics(hierarchy).flatMap(topic=>topic.subtopics.map(subtopic=>({...subtopic,parentTopic:topic})))}
 
-export function selectTopicScopedRows(rows,{sections=[],match=null}={}){
+export function selectTopicScopedRows(rows,{sections=[]}={}){
  const sectionSet=new Set((sections||[]).map(String));
- return(rows||[]).filter(row=>sectionSet.has(String(row.section||''))||regexMatches(match,row.section)||regexMatches(match,row.text));
+ if(!sectionSet.size)return[];
+ return(rows||[]).filter(row=>sectionSet.has(String(row.section||'')));
 }
 
 async function scopedRowsForTopic(db,topic){
- const def=LIBRARY_TOPICS.find(item=>item.id===topic.key);if(!def)return[];
+ if(!topic.sections.length||!topic.sourceFiles.length)return[];
  const rows=await candidateRows(db,{sourceTitles:topic.sourceFiles,limit:400});
- return selectTopicScopedRows(rows,{sections:topic.sections,match:def.match});
+ return selectTopicScopedRows(rows,{sections:topic.sections});
 }
 async function scopedRowsForDomain(db,domain){
  const sourceTitles=unique(domain.topics.flatMap(topic=>topic.sourceFiles)),rows=await candidateRows(db,{sourceTitles,limit:500}),selected=new Map();
- for(const topic of domain.topics){const def=LIBRARY_TOPICS.find(item=>item.id===topic.key),allowedSources=new Set(topic.sourceFiles);for(const row of selectTopicScopedRows(rows.filter(item=>allowedSources.has(item.sourceTitle)),{sections:topic.sections,match:def?.match||null}))selected.set(row.id,row)}
+ for(const topic of domain.topics){const allowedSources=new Set(topic.sourceFiles);for(const row of selectTopicScopedRows(rows.filter(item=>allowedSources.has(item.sourceTitle)),{sections:topic.sections}))selected.set(row.id,row)}
  return[...selected.values()];
 }
 function orderedTopics(hierarchy){return allTopics(hierarchy).sort((a,b)=>a.order-b.order||a.label.localeCompare(b.label,'he'))}
@@ -80,7 +88,7 @@ function domainLearningUnit(domain){return{level:'DOMAIN',goal:`לבנות תמ�
 async function mapForLibrary(db){return buildEmergentCorpusMapPreview(db,{communityLimit:1,nodeLimit:500,edgeLimit:1000})}
 export async function buildContentLibraryIndex(db){
  const map=await mapForLibrary(db),hierarchy=buildLibraryHierarchyFromMap(map),topics=allTopics(hierarchy),subtopics=allSubtopics(hierarchy);
- return{ok:true,version:'content-library-v3',summary:{domains:hierarchy.domains.length,topics:topics.length,subtopics:subtopics.length,unassignedSections:hierarchy.unassigned.length,unassignedTopics:hierarchy.unassigned.length},domains:hierarchy.domains.map(domain=>({...domain,topics:domain.topics.map(({sectionNodeIds,sections,...topic})=>topic)})),unassignedTopics:hierarchy.unassigned,policy:{levels:['DOMAIN','TOPIC','SUBTOPIC'],hierarchyUsesGraphEdges:false,relatedIsNotHierarchy:true,seedFilesAreEvidenceNotTopics:true,sourceFilesDefineTopicBuckets:false,topicTextRequiresDirectScope:true,sourceOnlyFallbackForTopicText:false,knowledgeMapSeparateFromLearningSequence:true,learningUnitCardUsesSameScopedRows:true,noisySectionHeadingsSuppressed:true,fixedChapterCount:false}};
+ return{ok:true,version:'content-library-v3.1',summary:{domains:hierarchy.domains.length,topics:topics.length,subtopics:subtopics.length,unassignedSections:hierarchy.unassigned.length,unassignedTopics:hierarchy.unassigned.length},domains:hierarchy.domains.map(domain=>({...domain,topics:domain.topics.map(({sectionNodeIds,sections,...topic})=>topic)})),unassignedTopics:hierarchy.unassigned,policy:{levels:['DOMAIN','TOPIC','SUBTOPIC'],hierarchyUsesGraphEdges:false,relatedIsNotHierarchy:true,seedFilesAreEvidenceNotTopics:true,sourceFilesDefineTopicBuckets:false,topicTextRequiresObservedSection:true,textKeywordFallback:false,sourceOnlyFallbackForTopicText:false,knowledgeMapSeparateFromLearningSequence:true,learningUnitCardUsesSameScopedRows:true,noisySectionHeadingsSuppressed:true,fixedChapterCount:false}};
 }
 
 export async function buildContentLibraryDetail(db,nodeId){
@@ -88,19 +96,19 @@ export async function buildContentLibraryDetail(db,nodeId){
  if(String(nodeId).startsWith('domain:')){
   const id=String(nodeId).slice(7),domain=hierarchy.domains.find(item=>item.id===id);if(!domain)return null;
   const rows=await scopedRowsForDomain(db,domain),keyPoints=selectKeyPoints(rows),sources=sourceViews(rows);
-  return{ok:true,id:`domain:${domain.id}`,kind:'DOMAIN',label:domain.label,domainId:domain.id,domainLabel:domain.label,parentTopicLabel:null,description:domain.description,learningUnit:domainLearningUnit(domain),keyPoints,relatedConcepts:[],sources,card:buildExtractiveCard(domain.label,keyPoints,sources,`domain:${domain.id}`),policy:{summaryMode:'extractive-scoped',canonicalTruthInvented:false,relationsRequireReview:true,sourceOnlyFallback:false}};
+  return{ok:true,id:`domain:${domain.id}`,kind:'DOMAIN',label:domain.label,domainId:domain.id,domainLabel:domain.label,parentTopicLabel:null,description:domain.description,learningUnit:domainLearningUnit(domain),keyPoints,relatedConcepts:[],sources,card:buildExtractiveCard(domain.label,keyPoints,sources,`domain:${domain.id}`),policy:{summaryMode:'extractive-section-scoped',canonicalTruthInvented:false,relationsRequireReview:true,sourceOnlyFallback:false,textKeywordFallback:false}};
  }
  if(String(nodeId).startsWith('topic:')){
   const topic=topics.find(item=>item.id===nodeId);if(!topic)return null;const domain=LIBRARY_DOMAINS.find(item=>item.id===topic.domainId);
   const rows=await scopedRowsForTopic(db,topic),keyPoints=selectKeyPoints(rows),sources=sourceViews(rows);
-  return{ok:true,id:topic.id,kind:'TOPIC',label:topic.label,domainId:topic.domainId,domainLabel:domain?.label||'',parentTopicLabel:null,description:'יחידת לימוד מרכזית. המידע והכרטיס נבנים רק מיחידות ידע ששויכו ישירות לנושא לפי סעיף או התאמה סמנטית־טקסונומית קיימת.',learningUnit:topicLearningUnit(topic,hierarchy),keyPoints,relatedConcepts:[],sources,card:buildExtractiveCard(topic.label,keyPoints,sources,topic.id),policy:{summaryMode:'extractive-scoped',canonicalTruthInvented:false,relationsRequireReview:true,sourceOnlyFallback:false,learningSequenceSeparateFromHierarchy:true}};
+  return{ok:true,id:topic.id,kind:'TOPIC',label:topic.label,domainId:topic.domainId,domainLabel:domain?.label||'',parentTopicLabel:null,description:'יחידת לימוד מרכזית. המידע והכרטיס נבנים רק מיחידות ידע שנמצאות בסעיפים שנצפו ושויכו ישירות לנושא.',learningUnit:topicLearningUnit(topic,hierarchy),keyPoints,relatedConcepts:[],sources,card:buildExtractiveCard(topic.label,keyPoints,sources,topic.id),policy:{summaryMode:'extractive-section-scoped',canonicalTruthInvented:false,relationsRequireReview:true,sourceOnlyFallback:false,textKeywordFallback:false,learningSequenceSeparateFromHierarchy:true}};
  }
  if(String(nodeId).startsWith('subtopic:')){
   const entry=subtopics.find(item=>item.id===nodeId);if(!entry)return null;const topic=entry.parentTopic,domain=LIBRARY_DOMAINS.find(item=>item.id===topic.domainId);
   const rows=await candidateRows(db,{sections:entry.sections,sourceTitles:entry.sourceFiles}),keyPoints=selectKeyPoints(rows),sources=sourceViews(rows);
-  return{ok:true,id:entry.id,kind:'SUBTOPIC',label:entry.label,domainId:topic.domainId,domainLabel:domain?.label||'',parentTopicLabel:topic.label,description:`המידע כאן מוגבל ליחידות הידע שנמצאו תחת הסעיפים המקוריים ששויכו ל„${entry.label}”.`,learningUnit:subtopicLearningUnit(entry,topic),keyPoints,relatedConcepts:[],sources,card:buildExtractiveCard(entry.label,keyPoints,sources,entry.id),policy:{summaryMode:'extractive-scoped',canonicalTruthInvented:false,contextualGraphNeighborsHidden:true,relationsRequireReview:true,sourceOnlyFallback:false}};
+  return{ok:true,id:entry.id,kind:'SUBTOPIC',label:entry.label,domainId:topic.domainId,domainLabel:domain?.label||'',parentTopicLabel:topic.label,description:`המידע כאן מוגבל ליחידות הידע שנמצאו תחת הסעיפים המקוריים ששויכו ל„${entry.label}”.`,learningUnit:subtopicLearningUnit(entry,topic),keyPoints,relatedConcepts:[],sources,card:buildExtractiveCard(entry.label,keyPoints,sources,entry.id),policy:{summaryMode:'extractive-section-scoped',canonicalTruthInvented:false,contextualGraphNeighborsHidden:true,relationsRequireReview:true,sourceOnlyFallback:false,textKeywordFallback:false}};
  }
  const legacyNode=(map.nodes||[]).find(item=>item.id===nodeId&&item.kind==='SECTION_TOPIC');if(!legacyNode)return null;
  const domain=domainForSourceFiles(legacyNode.sourceFiles||[]),rows=await candidateRows(db,{sections:rawSections(legacyNode),sourceTitles:legacyNode.sourceFiles||[]}),keyPoints=selectKeyPoints(rows),sources=sourceViews(rows);
- return{ok:true,id:legacyNode.id,kind:'SECTION_TOPIC',label:legacyNode.label,domainId:domain?.id||null,domainLabel:domain?.label||'נושא שעדיין לא סווג',parentTopicLabel:null,description:'תצוגת תאימות לכותרת מקור ישנה. היא אינה מגדירה יותר את ההיררכיה הראשית של הספרייה.',learningUnit:{level:'LEGACY',goal:`לעיין ביחידות הידע של ${legacyNode.label}.`,whyNow:'תצוגה ישנה ללא מיקום מאושר במסלול הלמידה.',position:null,total:null,previous:null,next:null,sequenceBasis:'UNRESOLVED',sequenceIsHierarchy:false},keyPoints,relatedConcepts:[],sources,card:buildExtractiveCard(legacyNode.label,keyPoints,sources,legacyNode.id),policy:{summaryMode:'extractive-scoped',contextualGraphNeighborsHidden:true,relationsRequireReview:true,canonicalTruthInvented:false,sourceOnlyFallback:false}};
+ return{ok:true,id:legacyNode.id,kind:'SECTION_TOPIC',label:legacyNode.label,domainId:domain?.id||null,domainLabel:domain?.label||'נושא שעדיין לא סווג',parentTopicLabel:null,description:'תצוגת תאימות לכותרת מקור ישנה. היא אינה מגדירה יותר את ההיררכיה הראשית של הספרייה.',learningUnit:{level:'LEGACY',goal:`לעיין ביחידות הידע של ${legacyNode.label}.`,whyNow:'תצוגה ישנה ללא מיקום מאושר במסלול הלמידה.',position:null,total:null,previous:null,next:null,sequenceBasis:'UNRESOLVED',sequenceIsHierarchy:false},keyPoints,relatedConcepts:[],sources,card:buildExtractiveCard(legacyNode.label,keyPoints,sources,legacyNode.id),policy:{summaryMode:'extractive-section-scoped',contextualGraphNeighborsHidden:true,relationsRequireReview:true,canonicalTruthInvented:false,sourceOnlyFallback:false,textKeywordFallback:false}};
 }
