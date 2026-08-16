@@ -1,5 +1,5 @@
 import assert from'node:assert/strict';
-import{buildLibraryHierarchyFromMap,buildExtractiveCard,selectTopicScopedRows}from'../../server/knowledge/application/library/content-library.service.js';
+import{buildLibraryHierarchyFromMap,buildExtractiveCard,learningUnitScopeForTopic,selectSourceSpanRows,selectTopicScopedRows}from'../../server/knowledge/application/library/content-library.service.js';
 import{LIBRARY_TOPICS,topicForSourceFile}from'../../server/knowledge/application/library/content-taxonomy.js';
 
 assert(LIBRARY_TOPICS.length<18,'18 seed files must not become 18 learner-facing topics');
@@ -31,7 +31,6 @@ assert(!pineal.subtopics.some(item=>item.label==='מדיטציה'),'meditation m
 assert(!pineal.subtopics.some(item=>item.nodeIds.includes(meditationConcept.id)),'graph concepts must never enter hierarchy as children');
 const states=brain.topics.find(topic=>topic.id==='topic:brain-states-learning');
 assert(states?.subtopics.some(item=>item.label==='מדיטציה'),'meditation should route by meaning to states/consciousness practice');
-
 const operating=brain.topics.find(topic=>topic.id==='topic:brain-operating-system');
 assert(operating?.subtopics.some(item=>item.nodeIds.includes(operatingSection.id)),'brain and operating-system content should route to one semantic topic');
 assert(!hierarchy.domains.flatMap(domain=>domain.topics).flatMap(topic=>topic.subtopics).some(item=>item.nodeIds.includes(noisyStep.id)),'instructional step headings should be suppressed from learner taxonomy');
@@ -39,9 +38,33 @@ assert(!hierarchy.domains.flatMap(domain=>domain.topics).flatMap(topic=>topic.su
 const journey=hierarchy.domains.find(domain=>domain.id==='journey-question');
 const journeyTopic=journey?.topics.find(topic=>topic.id==='topic:journey-origin');
 assert(journeyTopic,'the journey/introduction topic must remain visible even when its source also contains later themes');
-assert(journeyTopic.sections.includes('למה יצאתי למסע?'),'journey topic must retain its own observed section scope');
 assert(!journeyTopic.sections.includes('מי אני?'),'a later integration section with similar wording must not be pulled into the opening learning unit');
 assert(!journeyTopic.sourceFiles.includes('פרק18_מי_אני_תשובה.docx'),'opening topic must not claim a later source merely because its heading contains “מי אני”');
+const journeyScope=learningUnitScopeForTopic(journeyTopic);
+assert.equal(journeyScope.type,'SOURCE_SPAN','opening learning unit must use a positional source span');
+assert.equal(journeyScope.sourceFile,'מי_אני_פרק1_v6.docx');
+assert.equal(journeyScope.beforeSection,'אני פנימה — הגוף כמערכת');
+
+const openingRows=[
+ {id:'opening-question',sourceTitle:'מי_אני_פרק1_v6.docx',sourceStart:0,section:null,text:'מי אני? איפה אני? למה אני פה?',atomType:'QUESTION',excludeFromKnowledge:false},
+ {id:'opening-observer',sourceTitle:'מי_אני_פרק1_v6.docx',sourceStart:82,section:'השאלה',text:'כשאנחנו שואלים מי אני אפשר להתחיל להסתכל כצופה מהצד ולבחון את הנתונים.',atomType:'CLAIM',excludeFromKnowledge:false},
+ {id:'opening-split',sourceTitle:'מי_אני_פרק1_v6.docx',sourceStart:159,section:'השאלה',text:'נפריד בין שני פנים: האני הפנימי והאני החיצוני.',atomType:'CLAIM',excludeFromKnowledge:false},
+ {id:'body-start',sourceTitle:'מי_אני_פרק1_v6.docx',sourceStart:270,section:'אני פנימה — הגוף כמערכת',text:'לפני מחשבות, רגשות או זהות — יש מכונה.',atomType:'CLAIM',excludeFromKnowledge:false},
+ {id:'bones',sourceTitle:'מי_אני_פרק1_v6.docx',sourceStart:2818,section:'מבנה ותנועה',text:'206 עצמות מרכיבות את מסגרת השלד וכ־600 שרירים מניעים אותה.',atomType:'DEFINITION',excludeFromKnowledge:false},
+ {id:'late-identity',sourceTitle:'פרק18_מי_אני_תשובה.docx',sourceStart:100,section:'מי אני?',text:'סוף המסע ותשובה מסונתזת.',atomType:'CLAIM',excludeFromKnowledge:false},
+];
+const openingSpan=selectSourceSpanRows(openingRows,journeyScope);
+assert.deepEqual(openingSpan.map(row=>row.id),['opening-question','opening-observer','opening-split'],'source-span scope must capture the real opening and stop before the body unit');
+assert(!openingSpan.some(row=>/206|600|סוף המסע/.test(row.text)),'opening source span must exclude body facts and later identity material');
+
+const sharedSourceRows=[
+ {id:'journey-row',section:'למה יצאתי למסע?',text:'יצאתי למסע כדי להבין מי אני ומהי המערכת שבתוכה אני חי.',atomType:'CLAIM',excludeFromKnowledge:false},
+ {id:'body-row',section:'אני פנימה — הגוף כמערכת',text:'206 עצמות מרכיבות את מסגרת השלד וכ־600 שרירים מניעים אותה.',atomType:'CLAIM',excludeFromKnowledge:false},
+ {id:'keyword-row',section:'זהות והרגלים',text:'מי אני רוצה להיות ומה הזהות שאני בונה?',atomType:'PRACTICE',excludeFromKnowledge:false},
+];
+const sectionScoped=selectTopicScopedRows(sharedSourceRows,{sections:['למה יצאתי למסע?']});
+assert.deepEqual(sectionScoped.map(row=>row.id),['journey-row'],'observed-section scope must not use raw text keyword fallback');
+
 const body=hierarchy.domains.find(domain=>domain.id==='human-body');
 const bodySystem=body?.topics.find(topic=>topic.id==='topic:body-system');
 assert(bodySystem?.subtopics.some(item=>item.label==='חישה'),'body sections should remain reachable under the semantic body topic');
@@ -50,15 +73,7 @@ const world=hierarchy.domains.find(domain=>domain.id==='human-world');
 const environment=world?.topics.find(topic=>topic.id==='topic:external-environment');
 assert(environment?.subtopics.some(item=>item.nodeIds.includes(environmentFromOpening.id)),'opening-file environment material should route to the external system topic');
 
-const sharedSourceRows=[
- {id:'journey-row',section:'למה יצאתי למסע?',text:'יצאתי למסע כדי להבין מי אני ומהי המערכת שבתוכה אני חי.',atomType:'CLAIM',excludeFromKnowledge:false},
- {id:'body-row',section:'אני פנימה — הגוף כמערכת',text:'206 עצמות מרכיבות את מסגרת השלד וכ־600 שרירים מניעים אותה.',atomType:'CLAIM',excludeFromKnowledge:false},
- {id:'keyword-row',section:'זהות והרגלים',text:'מי אני רוצה להיות ומה הזהות שאני בונה?',atomType:'PRACTICE',excludeFromKnowledge:false},
-];
-const journeyScoped=selectTopicScopedRows(sharedSourceRows,{sections:journeyTopic.sections});
-assert.deepEqual(journeyScoped.map(row=>row.id),['journey-row'],'topic content must come from observed assigned sections only; text keywords cannot pull in another topic');
-
 const card=buildExtractiveCard('DMT',[{text:'יחידת ידע ראשונה המבוססת על המקור ונשמרת ללא המצאת טענה חדשה.'},{text:'יחידת ידע שנייה ממשיכה את הסיכום מתוך החומר הקיים.'}], [{title:'פרק7_בלוטת_האצטרובל.docx'}],'subtopic:pineal-gland:dmt');
 assert.equal(card.id,'knowledge-card:subtopic:pineal-gland:dmt:v2');
 assert(card.summary.includes('יחידת ידע ראשונה'),'knowledge card must be built from supplied source-backed points');
-console.log('PASS content library v3.1 (hierarchy ≠ sequence; observed-section-only text; DMT separate from meditation; card matches its learning unit)');
+console.log('PASS content library v3.2 (section + source-span learning scopes; opening journey bounded before body; DMT separate from meditation; card matches unit)');
