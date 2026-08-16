@@ -1,5 +1,5 @@
 import assert from'node:assert/strict';
-import{buildLibraryHierarchyFromMap,buildExtractiveCard,frameSubtopicForLearner,learningUnitScopeForTopic,selectSourceSpanRows,selectTopicScopedRows,topicLearningUnit}from'../../server/knowledge/application/library/content-library.service.js';
+import{buildLibraryHierarchyFromMap,buildExtractiveCard,frameSubtopicForLearner,frameTopicRowsForLearner,learningUnitScopeForTopic,selectKeyPoints,selectSourceSpanRows,selectTopicScopedRows,topicLearningUnit}from'../../server/knowledge/application/library/content-library.service.js';
 import{LIBRARY_TOPICS,topicForSourceFile}from'../../server/knowledge/application/library/content-taxonomy.js';
 import{PEDAGOGIC_FLOW,PEDAGOGIC_FLOW_VERSION,pedagogicFlowForTopic}from'../../server/knowledge/application/library/pedagogic-flow.js';
 
@@ -46,6 +46,20 @@ assert.equal(pinealUnit.sequenceBasis,PEDAGOGIC_FLOW_VERSION,'central topics mus
 assert.equal(pinealUnit.stageLabel,'מקרי מבחן והבחנה בין סוגי ידע');
 assert.match(pinealUnit.goal,/עובדה.*פרשנות.*טענה|פרשנות.*טענה/,'pineal learning goal must teach epistemic distinction, not just placement');
 assert.match(pinealUnit.whyNow,/מקרה מבחן/,'topic bridge must explain why the unit appears in the journey');
+
+const topicAggregationRows=[
+ {id:'practice-high-confidence',section:'כיצד לשחרר DMT באופן טבעי',atomType:'DEFINITION',claimType:'DEFINITIONAL',text:'המנעו ממי ברז ובחרו במים מסוננים כפי שמומלץ במקור הזה.',sourceTitle:'פרק7_בלוטת_האצטרובל.docx',sourceStart:10,confidence:.99,excludeFromKnowledge:false},
+ {id:'concept-core',section:'DMT — מולקולת הנשמה',atomType:'DEFINITION',claimType:'DEFINITIONAL',text:'במקור DMT מתואר כחומר מסוג טריפטמין הקשור לדיון בבלוטת האצטרובל.',sourceTitle:'פרק7_בלוטת_האצטרובל.docx',sourceStart:20,confidence:.72,excludeFromKnowledge:false},
+];
+const learnerTopicRows=frameTopicRowsForLearner(pineal,topicAggregationRows);
+const framedPracticeRow=learnerTopicRows.find(row=>row.id==='practice-high-confidence');
+assert.equal(framedPracticeRow.atomType,'REFERENCE','source-practice rows must stay framed when aggregated into their parent topic');
+assert.equal(framedPracticeRow.claimType,'SOURCE_CLAIM');
+assert.equal(framedPracticeRow.sourceAtomType,'DEFINITION','parent-topic framing must preserve original extractor type for provenance');
+assert.equal(topicAggregationRows[0].atomType,'DEFINITION','parent-topic framing must not mutate canonical/extracted rows');
+const aggregatedPoints=selectKeyPoints(learnerTopicRows,2);
+assert.equal(aggregatedPoints[0].id,'concept-core','core topic knowledge must outrank higher-confidence source practice claims in the parent summary');
+assert.equal(aggregatedPoints[1].type,'REFERENCE','source practice claims may remain visible but must stay secondary and framed');
 
 const rawPracticePoint={id:'practice-claim',type:'DEFINITION',claimType:'DEFINITIONAL',text:'המלצה שמופיעה במקור.',sourceLabel:'פרק7_בלוטת_האצטרובל.docx',confidence:.92};
 const practiceCard=buildExtractiveCard(dmtPractice.label,[rawPracticePoint],[{title:'פרק7_בלוטת_האצטרובל.docx'}],dmtPractice.id);
@@ -106,4 +120,4 @@ assert(environment?.subtopics.some(item=>item.nodeIds.includes(environmentFromOp
 const card=buildExtractiveCard('DMT',[{text:'יחידת ידע ראשונה המבוססת על המקור ונשמרת ללא המצאת טענה חדשה.'},{text:'יחידת ידע שנייה ממשיכה את הסיכום מתוך החומר הקיים.'}], [{title:'פרק7_בלוטת_האצטרובל.docx'}],'subtopic:pineal-gland:dmt');
 assert.equal(card.id,'knowledge-card:subtopic:pineal-gland:dmt:v2');
 assert(card.summary.includes('יחידת ידע ראשונה'),'knowledge card must be built from supplied source-backed points');
-console.log('PASS content library v3.5 (explicit pedagogic flow; topic scope coherent; epistemic framing preserved; card matches unit)');
+console.log('PASS content library v3.6 (explicit flow; parent-topic summaries respect epistemic frames; topic scope coherent; card matches unit)');
