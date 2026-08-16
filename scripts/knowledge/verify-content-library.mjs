@@ -1,5 +1,5 @@
 import assert from'node:assert/strict';
-import{buildLibraryHierarchyFromMap,buildExtractiveCard,learningUnitScopeForTopic,selectSourceSpanRows,selectTopicScopedRows}from'../../server/knowledge/application/library/content-library.service.js';
+import{buildLibraryHierarchyFromMap,buildExtractiveCard,frameSubtopicForLearner,learningUnitScopeForTopic,selectSourceSpanRows,selectTopicScopedRows}from'../../server/knowledge/application/library/content-library.service.js';
 import{LIBRARY_TOPICS,topicForSourceFile}from'../../server/knowledge/application/library/content-taxonomy.js';
 
 assert(LIBRARY_TOPICS.length<18,'18 seed files must not become 18 learner-facing topics');
@@ -37,6 +37,20 @@ assert(states?.subtopics.some(item=>item.label==='מדיטציה'),'meditation s
 const operating=brain.topics.find(topic=>topic.id==='topic:brain-operating-system');
 assert(operating?.subtopics.some(item=>item.nodeIds.includes(operatingSection.id)),'brain and operating-system content should route to one semantic topic');
 assert(!hierarchy.domains.flatMap(domain=>domain.topics).flatMap(topic=>topic.subtopics).some(item=>item.nodeIds.includes(noisyStep.id)),'instructional step headings should be suppressed from learner taxonomy');
+
+const rawPracticePoint={id:'practice-claim',type:'DEFINITION',claimType:'DEFINITIONAL',text:'המלצה שמופיעה במקור.',sourceLabel:'פרק7_בלוטת_האצטרובל.docx',confidence:.92};
+const practiceCard=buildExtractiveCard(dmtPractice.label,[rawPracticePoint],[{title:'פרק7_בלוטת_האצטרובל.docx'}],dmtPractice.id);
+const framedPractice=frameSubtopicForLearner(dmtPractice,[rawPracticePoint],practiceCard);
+assert.equal(framedPractice.epistemicFrame,'SOURCE_PRACTICE_CLAIMS','practice/source-claim units must receive a learner-facing epistemic frame');
+assert.equal(framedPractice.keyPoints[0].type,'REFERENCE','source practice claims must not render as definitions/facts');
+assert.equal(framedPractice.keyPoints[0].claimType,'SOURCE_CLAIM');
+assert.equal(framedPractice.keyPoints[0].sourceType,'DEFINITION','original extractor classification remains available for provenance');
+assert.equal(rawPracticePoint.type,'DEFINITION','learner framing must not mutate the canonical/extracted atom');
+assert.match(framedPractice.epistemicNotice,/אינם מסומנים.*עובדה/,'learner must be told that source claims are not automatically verified facts');
+assert.match(framedPractice.card.provenanceLabel,/לא סימון כעובדה מאומתת/,'saved card must preserve the source-claim epistemic frame');
+const unframedDmt=frameSubtopicForLearner(dmt,[{...rawPracticePoint,type:'DEFINITION'}],buildExtractiveCard('DMT',[rawPracticePoint],[{title:'פרק7_בלוטת_האצטרובל.docx'}],dmt.id));
+assert.equal(unframedDmt.epistemicFrame,null,'concept-focused DMT unit must not inherit the practice/source-claim frame');
+assert.equal(unframedDmt.keyPoints[0].type,'DEFINITION');
 
 const journey=hierarchy.domains.find(domain=>domain.id==='journey-question');
 const journeyTopic=journey?.topics.find(topic=>topic.id==='topic:journey-origin');
@@ -79,4 +93,4 @@ assert(environment?.subtopics.some(item=>item.nodeIds.includes(environmentFromOp
 const card=buildExtractiveCard('DMT',[{text:'יחידת ידע ראשונה המבוססת על המקור ונשמרת ללא המצאת טענה חדשה.'},{text:'יחידת ידע שנייה ממשיכה את הסיכום מתוך החומר הקיים.'}], [{title:'פרק7_בלוטת_האצטרובל.docx'}],'subtopic:pineal-gland:dmt');
 assert.equal(card.id,'knowledge-card:subtopic:pineal-gland:dmt:v2');
 assert(card.summary.includes('יחידת ידע ראשונה'),'knowledge card must be built from supplied source-backed points');
-console.log('PASS content library v3.3 (topic scope coherent; DMT concept separated from DMT practice/source claims; meditation separate; card matches unit)');
+console.log('PASS content library v3.4 (topic scope coherent; DMT concept/practice separated; source claims are framed without rewriting canonical atoms; card matches unit)');
