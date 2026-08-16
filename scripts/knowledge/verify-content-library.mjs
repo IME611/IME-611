@@ -1,8 +1,11 @@
 import assert from'node:assert/strict';
-import{buildLibraryHierarchyFromMap,buildExtractiveCard,frameSubtopicForLearner,learningUnitScopeForTopic,selectSourceSpanRows,selectTopicScopedRows}from'../../server/knowledge/application/library/content-library.service.js';
+import{buildLibraryHierarchyFromMap,buildExtractiveCard,frameSubtopicForLearner,learningUnitScopeForTopic,selectSourceSpanRows,selectTopicScopedRows,topicLearningUnit}from'../../server/knowledge/application/library/content-library.service.js';
 import{LIBRARY_TOPICS,topicForSourceFile}from'../../server/knowledge/application/library/content-taxonomy.js';
+import{PEDAGOGIC_FLOW,PEDAGOGIC_FLOW_VERSION,pedagogicFlowForTopic}from'../../server/knowledge/application/library/pedagogic-flow.js';
 
 assert(LIBRARY_TOPICS.length<18,'18 seed files must not become 18 learner-facing topics');
+assert.equal(PEDAGOGIC_FLOW.length,LIBRARY_TOPICS.length,'every current central learner topic must have explicit pedagogic framing');
+for(const topic of LIBRARY_TOPICS){const flow=pedagogicFlowForTopic(topic.id);assert(flow,`missing pedagogic flow for ${topic.id}`);assert(flow.question&&flow.objective&&flow.bridge&&flow.handoff,`pedagogic flow must explain question, objective, bridge and handoff for ${topic.id}`)}
 assert.equal(topicForSourceFile('פרק4_מערכת_ההפעלה.docx')?.id,topicForSourceFile('פרק5_המוח_המפורט.docx')?.id,'multiple seed files may feed one semantic topic');
 assert.equal(topicForSourceFile('פרק16_סבל_קושי_ומשמעות.docx')?.id,topicForSourceFile('פרק18_מי_אני_תשובה.docx')?.id,'late seed files may feed one integration topic');
 
@@ -38,6 +41,12 @@ const operating=brain.topics.find(topic=>topic.id==='topic:brain-operating-syste
 assert(operating?.subtopics.some(item=>item.nodeIds.includes(operatingSection.id)),'brain and operating-system content should route to one semantic topic');
 assert(!hierarchy.domains.flatMap(domain=>domain.topics).flatMap(topic=>topic.subtopics).some(item=>item.nodeIds.includes(noisyStep.id)),'instructional step headings should be suppressed from learner taxonomy');
 
+const pinealUnit=topicLearningUnit(pineal,hierarchy);
+assert.equal(pinealUnit.sequenceBasis,PEDAGOGIC_FLOW_VERSION,'central topics must use explicit pedagogic flow rather than generic ordering copy');
+assert.equal(pinealUnit.stageLabel,'מקרי מבחן והבחנה בין סוגי ידע');
+assert.match(pinealUnit.goal,/עובדה.*פרשנות.*טענה|פרשנות.*טענה/,'pineal learning goal must teach epistemic distinction, not just placement');
+assert.match(pinealUnit.whyNow,/מקרה מבחן/,'topic bridge must explain why the unit appears in the journey');
+
 const rawPracticePoint={id:'practice-claim',type:'DEFINITION',claimType:'DEFINITIONAL',text:'המלצה שמופיעה במקור.',sourceLabel:'פרק7_בלוטת_האצטרובל.docx',confidence:.92};
 const practiceCard=buildExtractiveCard(dmtPractice.label,[rawPracticePoint],[{title:'פרק7_בלוטת_האצטרובל.docx'}],dmtPractice.id);
 const framedPractice=frameSubtopicForLearner(dmtPractice,[rawPracticePoint],practiceCard);
@@ -57,6 +66,10 @@ const journeyTopic=journey?.topics.find(topic=>topic.id==='topic:journey-origin'
 assert(journeyTopic,'the journey/introduction topic must remain visible even when its source also contains later themes');
 assert(!journeyTopic.sections.includes('מי אני?'),'a later integration section with similar wording must not be pulled into the opening learning unit');
 assert(!journeyTopic.sourceFiles.includes('פרק18_מי_אני_תשובה.docx'),'opening topic must not claim a later source merely because its heading contains “מי אני”');
+const journeyUnit=topicLearningUnit(journeyTopic,hierarchy);
+assert.equal(journeyUnit.sequenceBasis,PEDAGOGIC_FLOW_VERSION);
+assert.match(journeyUnit.goal,/מה אנחנו מנסים להבין/,'journey opening must begin with a genuine learner question');
+assert.match(journeyUnit.whyNow,/הגוף כמערכת/,'opening handoff must prepare the next system-level learning move');
 const journeyScope=learningUnitScopeForTopic(journeyTopic);
 assert.equal(journeyScope.type,'SOURCE_SPAN','opening learning unit must use a positional source span');
 assert.equal(journeyScope.sourceFile,'מי_אני_פרק1_v6.docx');
@@ -93,4 +106,4 @@ assert(environment?.subtopics.some(item=>item.nodeIds.includes(environmentFromOp
 const card=buildExtractiveCard('DMT',[{text:'יחידת ידע ראשונה המבוססת על המקור ונשמרת ללא המצאת טענה חדשה.'},{text:'יחידת ידע שנייה ממשיכה את הסיכום מתוך החומר הקיים.'}], [{title:'פרק7_בלוטת_האצטרובל.docx'}],'subtopic:pineal-gland:dmt');
 assert.equal(card.id,'knowledge-card:subtopic:pineal-gland:dmt:v2');
 assert(card.summary.includes('יחידת ידע ראשונה'),'knowledge card must be built from supplied source-backed points');
-console.log('PASS content library v3.4 (topic scope coherent; DMT concept/practice separated; source claims are framed without rewriting canonical atoms; card matches unit)');
+console.log('PASS content library v3.5 (explicit pedagogic flow; topic scope coherent; epistemic framing preserved; card matches unit)');
