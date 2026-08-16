@@ -7,7 +7,9 @@ type LibraryTopic={id:string;key:string;label:string;sourceCount:number;unitCoun
 type LibraryDomain={id:string;label:string;description:string;topics:LibraryTopic[]};
 type LibraryIndex={ok:boolean;version:string;summary:{domains:number;topics:number;subtopics:number;unassignedSections:number};domains:LibraryDomain[];unassignedTopics:LibrarySubtopic[]};
 type KeyPoint={id:string;type:string;claimType:string|null;text:string;sourceLabel:string;confidence:number};
-type TopicDetail={ok:boolean;id:string;kind:'DOMAIN'|'TOPIC'|'SUBTOPIC'|'SECTION_TOPIC';label:string;domainId:string|null;domainLabel:string;parentTopicLabel:string|null;description:string;keyPoints:KeyPoint[];relatedConcepts:{id:string;label:string;sourceCount:number}[];sources:{id:string|null;title:string}[];card:{id:string;title:string;summary:string;sourceLabel:string;provenanceLabel:string}};
+type LearningNav={id:string;label:string;domainId:string}|null;
+type LearningUnit={level:string;goal:string;whyNow:string;position:number|null;total:number|null;previous:LearningNav;next:LearningNav;sequenceBasis:string;sequenceIsHierarchy:boolean};
+type TopicDetail={ok:boolean;id:string;kind:'DOMAIN'|'TOPIC'|'SUBTOPIC'|'SECTION_TOPIC';label:string;domainId:string|null;domainLabel:string;parentTopicLabel:string|null;description:string;learningUnit:LearningUnit;keyPoints:KeyPoint[];relatedConcepts:{id:string;label:string;sourceCount:number}[];sources:{id:string|null;title:string}[];card:{id:string;title:string;summary:string;sourceLabel:string;provenanceLabel:string}};
 type Props={query:string;onQueryChange:(value:string)=>void;onAdd:()=>void};
 type IndexState={status:'loading'}|{status:'error';message:string}|{status:'ready';data:LibraryIndex};
 type DetailState={status:'idle'}|{status:'loading'}|{status:'error';message:string}|{status:'ready';data:TopicDetail};
@@ -31,14 +33,14 @@ export function KnowledgeDashboard({query,onQueryChange,onAdd}:Props){
  const toggle=(id:string)=>setExpanded(current=>{const next=new Set(current);next.has(id)?next.delete(id):next.add(id);return next});
 
  return <div className="knowledgeDashboard" dir="rtl">
-  <header className="knowledgeHero"><div><span className="eyebrow">E.I.L / CONTENT LIBRARY</span><h1>ספריית התוכן</h1><p>הספרייה מחולקת עכשיו לשלוש שכבות ברורות: תחום, נושא מרכזי ותת־נושא. קשרים במפת הידע אינם יוצרים היררכיה אוטומטית.</p></div><button className="primary knowledgeAdd" type="button" onClick={onAdd}>＋ הוסף תוכן</button></header>
+  <header className="knowledgeHero"><div><span className="eyebrow">E.I.L / CONTENT LIBRARY</span><h1>ספריית התוכן</h1><p>מפת הידע אומרת איפה נושא שייך. יחידת הלימוד אומרת מה לומדים עכשיו, למה עכשיו, ומה שומרים בסוף.</p></div><button className="primary knowledgeAdd" type="button" onClick={onAdd}>＋ הוסף תוכן</button></header>
   {indexState.status==='loading'&&<section className="knowledgeState" aria-live="polite"><b>מסדר את ספריית התוכן…</b><span>בונה תחומים, נושאים ותתי־נושאים מתוך הקורפוס.</span></section>}
   {indexState.status==='error'&&<section className="knowledgeState error" role="alert"><b>ספריית התוכן לא נטענה.</b><span>{indexState.message}</span><button type="button" onClick={()=>location.reload()}>נסה שוב</button></section>}
   {index&&<>
    <section className="knowledgeStats" aria-label="מצב הספרייה"><article><strong>{index.summary.domains}</strong><span>תחומים</span></article><article><strong>{index.summary.topics}</strong><span>נושאים מרכזיים</span></article><article><strong>{index.summary.subtopics}</strong><span>תתי־נושאים</span></article></section>
    <section ref={browseRef} className="knowledgeBrowse" aria-labelledby="knowledge-browse-title">
     {!selectedId&&<>
-     <div className="knowledgeBrowseHead"><span className="eyebrow">KNOWLEDGE HIERARCHY</span><h2 id="knowledge-browse-title">הנושאים</h2><p>פתח תחום כדי לראות את הנושאים המרכזיים שלו. כל נושא יכול להיפתח למידע שלו או להתרחב לתת־נושאים מדויקים יותר.</p></div>
+     <div className="knowledgeBrowseHead"><span className="eyebrow">KNOWLEDGE HIERARCHY</span><h2 id="knowledge-browse-title">הנושאים</h2><p>פתח תחום כדי לראות את הנושאים שלו. פתיחת נושא מעבירה לאותה תצוגה ליחידת לימוד ממוקדת — לא לאוסף טקסטים מאותו קובץ.</p></div>
      <label className="knowledgeSearch"><span>חיפוש בספרייה</span><input value={query} onChange={event=>onQueryChange(event.target.value)} placeholder="למשל: מוח, DMT, אמונות, גוף…"/></label>
      <div className="knowledgeTopicList">{groups.map(group=>{const domainKey=`domain:${group.id}`,isExpanded=term?true:expanded.has(domainKey);return <section key={group.id} className="knowledgeTopicGroup">
       <div className="knowledgeTopicRow"><button type="button" className="knowledgeTopicOpen" onClick={()=>openDetail(domainKey)}><span><small>תחום</small><strong>{group.label}</strong><em>{group.topics.length} נושאים מרכזיים</em></span></button><button type="button" className={isExpanded?'knowledgeTopicToggle open':'knowledgeTopicToggle'} onClick={()=>toggle(domainKey)} aria-expanded={isExpanded} aria-label={`${isExpanded?'סגור':'פתח'} את ${group.label}`}><span aria-hidden="true">⌄</span><small>{group.topics.length}</small></button></div>
@@ -53,21 +55,22 @@ export function KnowledgeDashboard({query,onQueryChange,onAdd}:Props){
      <div className="knowledgeDetailToolbar"><button type="button" className="knowledgeBack" onClick={backToIndex}>→ חזרה לנושאים</button>{detailState.status==='ready'&&<span>{detailState.data.parentTopicLabel?`${detailState.data.domainLabel} · ${detailState.data.parentTopicLabel}`:detailState.data.domainLabel}</span>}</div>
      {detailState.status==='loading'&&<div className="knowledgeDetailLoading"><b>פותח את הנושא…</b></div>}
      {detailState.status==='error'&&<div className="knowledgeState error"><b>הנושא לא נטען.</b><span>{detailState.message}</span></div>}
-     {detailState.status==='ready'&&<TopicView detail={detailState.data}/>} 
+     {detailState.status==='ready'&&<TopicView detail={detailState.data} onNavigate={openDetail}/>} 
     </div>}
    </section>
-   <aside className="knowledgePolicy"><b>כלל היררכי:</b><span>תחום מכיל נושאים מרכזיים; נושא מכיל תתי־נושאים. ״קשור ל־״ הוא סוג קשר אחר לחלוטין ואינו יוצר ילד בהיררכיה. לכן DMT ומדיטציה יכולים להופיע באותו נושא מרכזי בלי שאחד יהיה תחת השני.</span></aside>
+   <aside className="knowledgePolicy"><b>שלושה דברים שונים:</b><span>היררכיה אומרת איפה הידע נמצא; קשרים אומרים מה קשור למה; מסלול הלמידה אומר מה כדאי ללמוד לפני ואחרי. תוכן וכרטיס סיכום חייבים להגיע מאותה יחידת לימוד.</span></aside>
   </>}
  </div>;
 }
 
-function TopicView({detail}:{detail:TopicDetail}){
+function TopicView({detail,onNavigate}:{detail:TopicDetail;onNavigate:(id:string)=>void}){
  const record:CrystalRecord={fragmentId:detail.card.id,conceptId:detail.id,topic:detail.domainLabel,subtopic:detail.kind==='DOMAIN'?undefined:detail.parentTopicLabel?`${detail.parentTopicLabel} / ${detail.label}`:detail.label,text:detail.card.summary,sourceLabel:detail.card.sourceLabel,provenanceLabel:detail.card.provenanceLabel,savedAt:new Date().toISOString()};
  return <div className="knowledgeTopicDetail">
   <header className="knowledgeDetailIntro"><span className="eyebrow">{kindLabel(detail.kind)}</span><h2>{detail.label}</h2><p>{detail.description}</p></header>
-  <section className="knowledgeFacts"><h3>מה קיים במאגר על הנושא הזה?</h3>{detail.keyPoints.length?<div className="knowledgeFactList">{detail.keyPoints.map(point=><article key={point.id}><div><span>{pointLabel(point.type)}</span><small>{point.sourceLabel}</small></div><p>{point.text}</p></article>)}</div>:<p className="muted">עדיין אין מספיק יחידות ידע כדי להציג סיכום מהימן לנושא הזה.</p>}</section>
+  <section className="knowledgeFacts"><h3>מה לומדים כאן?</h3><p>{detail.learningUnit.goal}</p><h3>איך זה מתחבר למסע?</h3><p>{detail.learningUnit.whyNow}</p>{detail.learningUnit.position&&detail.learningUnit.total&&<small>יחידת לימוד {detail.learningUnit.position} מתוך {detail.learningUnit.total} במפת המסלול הנוכחית.</small>}{(detail.learningUnit.previous||detail.learningUnit.next)&&<div className="knowledgeDetailToolbar">{detail.learningUnit.previous&&<button type="button" className="knowledgeBack" onClick={()=>onNavigate(detail.learningUnit.previous!.id)}>→ {detail.learningUnit.previous.label}</button>}{detail.learningUnit.next&&<button type="button" className="knowledgeBack" onClick={()=>onNavigate(detail.learningUnit.next!.id)}>{detail.learningUnit.next.label} ←</button>}</div>}</section>
+  <section className="knowledgeFacts"><h3>הידע של היחידה</h3>{detail.keyPoints.length?<div className="knowledgeFactList">{detail.keyPoints.map(point=><article key={point.id}><div><span>{pointLabel(point.type)}</span><small>{point.sourceLabel}</small></div><p>{point.text}</p></article>)}</div>:<p className="muted">עדיין אין מספיק יחידות ידע ששויכו ישירות לנושא. המערכת לא תמלא את החסר בטקסט מנושא אחר.</p>}</section>
   {detail.relatedConcepts.length>0&&<section className="knowledgeRelated"><h3>קשרים מאושרים</h3><div>{detail.relatedConcepts.map(concept=><span key={concept.id}>{concept.label}</span>)}</div></section>}
-  {detail.sources.length>0&&<section className="knowledgeSources"><h3>מקורות</h3><ul>{detail.sources.map(source=><li key={source.id||source.title}>{source.title}</li>)}</ul></section>}
-  <section className="knowledgeSummaryCard"><div className="knowledgeSummaryHead"><div><span className="eyebrow">KNOWLEDGE CARD</span><h3>{detail.card.title}</h3></div><CrystalButton record={record}/></div><p>{detail.card.summary}</p><small>◆ שמירה כאן מוסיפה את הכרטיס ל״קריסטלים שלי״ · הסיכום מבוסס על יחידות הידע והמקורות השמורים.</small></section>
+  {detail.sources.length>0&&<section className="knowledgeSources"><h3>מקורות של היחידה</h3><ul>{detail.sources.map(source=><li key={source.id||source.title}>{source.title}</li>)}</ul></section>}
+  <section className="knowledgeSummaryCard"><div className="knowledgeSummaryHead"><div><span className="eyebrow">KNOWLEDGE CARD</span><h3>{detail.card.title}</h3></div><CrystalButton record={record}/></div><p>{detail.card.summary}</p><small>◆ הכרטיס מסכם רק את יחידת הלימוד שמעליו. שמירה מוסיפה אותו ל״קריסטלים שלי״.</small></section>
  </div>;
 }
