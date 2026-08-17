@@ -142,7 +142,7 @@ export default function SpiralLibrary({ chapters, query, setQuery }: Props) {
   const pct       = Math.round((doneCount / 18) * 100);
 
   const chapter = activeNum ? chapters.find(c => c.number === activeNum) ?? null : null;
-  const layer   = chapter   ? LAYERS.find(l => l.nums.includes(chapter.number as any)) ?? LAYERS[0] : LAYERS[0];
+  const layer   = chapter   ? LAYERS.find(l => (l.nums as readonly number[]).includes(chapter.number)) ?? LAYERS[0] : LAYERS[0];
 
   const handleComplete = (reflection: string) => {
     if (!chapter) return;
@@ -195,7 +195,7 @@ export default function SpiralLibrary({ chapters, query, setQuery }: Props) {
 
       <div className="spiralLayers">
         {LAYERS.map(l => {
-          const layerChaps = chapters.filter(c => l.nums.includes(c.number as any) && visible(c.number));
+          const layerNums = l.nums as readonly number[]; const layerChaps = chapters.filter(c => layerNums.includes(c.number) && visible(c.number));
           const layerDone  = layerChaps.filter(c => completed(c.number)).length;
           const isOpen     = openLayer === l.id;
 
