@@ -26,5 +26,18 @@
   --glass-radius-lg:30px;
   --glass-radius-pill:999px;
   --glass-transition:220ms cubic-bezier(.2,.8,.2,1);
+  --liquid-bg-x:50%;
+  --liquid-bg-y:50%;
+  --liquid-specular-x:24%;
+  --liquid-specular-y:14%;
+  --liquid-glass-frost:.10;
+  --liquid-glass-saturate:1.22;
+  --liquid-filter:url("#eil-liquid-glass-filter");
+  --liquid-rim:rgba(255,255,255,.60);
+  --liquid-rim-soft:rgba(180,225,255,.22);
+  --liquid-cyan:rgba(101,225,255,.16);
+  --liquid-violet:rgba(181,132,255,.13);
+  --liquid-peach:rgba(255,173,126,.13);
+  --liquid-shadow:0 34px 90px rgba(0,4,23,.46);
   --content-max:1180px;
 }
