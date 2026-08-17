@@ -1,43 +1,241 @@
-import React,{useMemo,useState}from'react';
-import{MicroCardGrid}from'../cards/MicroCardGrid';
-import{getJourneyBands,getJourneyStageByNumber,journeyPath,stageLabels,worldLabels}from'./model/journey-stage';
-import{useLearningProgress}from'./model/useLearningProgress';
+import React, { useState } from 'react';
+import { useLearningProgress } from './model/useLearningProgress';
+import { journeyPath } from './model/journey-stage';
 
-type Chapter={number:number;title:string;subtitle:string;sourceFile:string;paragraphs:string[];paragraphCount?:number;characterCount?:number};
-type Props={chapters:Chapter[];query:string;setQuery:(value:string)=>void;corpusReady:boolean;paragraphs:number;characters:number};
-type ViewMode='owner'|'journey';
-const clean=(value:string)=>value.replace(/^פרק\s*\d+[:：]?\s*/,'');
-const isOwner=()=>{try{return localStorage.getItem('eil-access-mode')!=='journey'}catch{return true}};
-const compact=(value:string)=>value.replace(/\s+/g,' ').trim();
+type Chapter = { number: number; title: string; subtitle: string; sourceFile: string; paragraphs: string[]; paragraphCount?: number; characterCount?: number };
+type Props = { chapters: Chapter[]; query: string; setQuery: (v: string) => void; corpusReady: boolean; paragraphs: number; characters: number };
 
-function ContinuousSource({chapter}:{chapter:Chapter}){return <article className="learningSource">{chapter.paragraphs.map((text,index)=>{const value=text.trim();if(!value)return null;if((/^פרק\s*\d+/u.test(value)||/^\d+\.\s+/u.test(value))&&value.length<100)return <h3 key={index}>{value}</h3>;if(/^[-•✓→]/u.test(value))return <div className="sourceBullet" key={index}><span>•</span><p>{value.replace(/^[-•✓→]\s*/u,'')}</p></div>;return <p key={index}>{value}</p>})}</article>}
-function SourceText({chapter,topic,concepts}:{chapter:Chapter;topic:string;concepts:string[]}){return <><MicroCardGrid chapterNumber={chapter.number} sourceLabel={chapter.sourceFile} paragraphs={chapter.paragraphs} topic={topic} concepts={concepts}/><details className="sourceContinuous"><summary>פתח גם את המקור הרציף · ללא שינוי</summary><ContinuousSource chapter={chapter}/></details></>}
+const LAYERS = [
+  { id: 'A', label: 'שכבה א׳ — הכלי הפיזי', color: '#1E3A5F', accent: '#4A90C4', chapters: [1,2,3], why: 'לפני שנשאל "מי אני" — נראה ממה אנחנו בנויים. הגוף הוא נקודת המוצא.' },
+  { id: 'B', label: 'שכבה ב׳ — מערכת ההפעלה', color: '#4A235A', accent: '#9B59B6', chapters: [4,5,6], why: 'הגוף הוא החומרה. עכשיו נבין מי מריץ את התוכנה.' },
+  { id: 'C', label: 'שכבה ג׳ — האנרגיה והתדר', color: '#7D6608', accent: '#D4AC0D', chapters: [7,8,9], why: 'המוח פועל בגלים. כל הגוף רוטט בתדרים. הצליל בונה צורה.' },
+  { id: 'D', label: 'שכבה ד׳ — כלי השינוי', color: '#922B21', accent: '#E74C3C', chapters: [10,11,12,13], why: 'הבנתי מה אני. האם אני יכול לשנות? — כן. כך עושים את זה.' },
+  { id: 'E', label: 'שכבה ה׳ — המשמעות והתכלית', color: '#1A5276', accent: '#2E86C1', chapters: [14,15,16,17,18], why: 'חוקי המשחק, כיוון, התמודדות עם קושי — וחזרה לשאלה הראשונה עם תשובה אמיתית.' },
+];
 
-function SpiralCue({number}:{number:number}){return <div className="conceptVisual" aria-label="מחזור הלמידה"><div className="visualCore"><b>{String(number).padStart(2,'0')}</b><span>מודעות</span></div><i className="orbit o1">לראות</i><i className="orbit o2">להבין</i><i className="orbit o3">לבדוק</i><i className="orbit o4">לחזור</i></div>}
+function clean(t: string) { return t.replace(/^פרק\s*\d+[:：]?\s*/, ''); }
 
-export default function SpiralLibrary({chapters,query,setQuery,corpusReady,paragraphs}:Props){
- const owner=isOwner();
- const[active,setActive]=useState<number|null>(null);
- const[mode,setMode]=useState<ViewMode>(owner?'owner':'journey');
- const[sourceOpen,setSourceOpen]=useState(false);
- const[reflection,setReflection]=useState('');
- const learning=useLearningProgress(journeyPath);
- const filtered=useMemo(()=>{const needle=query.trim().toLowerCase();return needle?chapters.filter(chapter=>(chapter.title+' '+chapter.subtitle+' '+chapter.paragraphs.join(' ')).toLowerCase().includes(needle)):chapters},[chapters,query]);
- const chapter=active?chapters.find(item=>item.number===active):null;
- const stageInfo=chapter?getJourneyStageByNumber(chapter.number):null;
- const accessible=(number:number)=>{const info=getJourneyStageByNumber(number);return owner&&mode==='owner'||Boolean(info&&learning.isUnlocked(info.stage))};
- const open=(number:number)=>{const info=getJourneyStageByNumber(number);if(!info||!accessible(number))return;setActive(number);setSourceOpen(false);setReflection(learning.reflectionFor(info.stage.id));scrollTo({top:0,behavior:'smooth'})};
- const complete=()=>{if(!chapter||!stageInfo)return;if(mode==='journey'&&compact(reflection).length<20)return;learning.complete(stageInfo.stage.id,reflection);const next=journeyPath.stages.find(stage=>stage.order===chapter.number+1);if(next){setActive(next.order);setReflection(learning.reflectionFor(next.id));setSourceOpen(false);scrollTo({top:0,behavior:'smooth'})}else setActive(null)};
+function ChapterCard({ chapter, layer, isUnlocked, isCompleted, isActive, onClick }: {
+  chapter: Chapter; layer: typeof LAYERS[0]; isUnlocked: boolean; isCompleted: boolean; isActive: boolean; onClick: () => void;
+}) {
+  return (
+    <button
+      className={`spiralCard ${isCompleted ? 'spiralCard--done' : ''} ${isActive ? 'spiralCard--active' : ''} ${!isUnlocked ? 'spiralCard--locked' : ''}`}
+      onClick={onClick}
+      disabled={!isUnlocked}
+      style={{ '--layer-color': layer.color, '--layer-accent': layer.accent } as React.CSSProperties}
+    >
+      <div className="spiralCardNum">{String(chapter.number).padStart(2, '0')}</div>
+      <div className="spiralCardBody">
+        <div className="spiralCardTitle">{clean(chapter.title)}</div>
+        <div className="spiralCardSub">{chapter.subtitle}</div>
+      </div>
+      <div className="spiralCardStatus">
+        {isCompleted ? '✓' : isUnlocked ? '←' : '🔒'}
+      </div>
+    </button>
+  );
+}
 
- if(chapter&&stageInfo){
-  const{stage,presentation}=stageInfo;
-  const previous=getJourneyStageByNumber(chapter.number-1)?.presentation;
-  const canComplete=mode==='owner'||compact(reflection).length>=20;
-  return <div className="learningChapter"><div className="learningTop"><button className="textButton" onClick={()=>setActive(null)}>← חזרה למסע</button><span className="chapterPosition">{chapter.number} / {journeyPath.stages.length}</span></div><section className="chapterCover"><div><span className="eyebrow">{worldLabels[presentation.world]} · {stageLabels[presentation.stage]}</span><h1>{clean(chapter.title)}</h1><p>{presentation.goal}</p><div className="chapterBadges"><span>{presentation.accent}</span><span>{chapter.paragraphCount??chapter.paragraphs.length} פסקאות מקור</span><span>{stage.introducedConceptRefs.slice(0,2).join(' · ')}</span></div></div><div className="chapterOrb"><b>{String(chapter.number).padStart(2,'0')}</b><small>{stageLabels[presentation.stage]}</small></div></section><section className="chapterQuestion"><span>השאלה שמחזיקים בפרונט</span><h2>{stage.guidingQuestion}</h2><p>{presentation.bridge}</p>{presentation.revisit&&<blockquote>{presentation.revisit}</blockquote>}</section><div className="learningRail" aria-label="שלבי הלמידה"><span className="done">לראות</span><span>להבין</span><span>לבדוק</span><span>לחבר</span><span>להתבונן</span><span>להמשיך</span></div><section className="learningFlow"><article className="learningStep visual"><span>01 · לראות</span><h2>קודם המפה, אחר כך הפרטים.</h2><p>השכבה נפתחת בשאלה ולא במסקנה. המטרה היא לדעת מה אנחנו מנסים להבין לפני שנכנסים למקור.</p><SpiralCue number={chapter.number}/></article><article className="learningStep concept"><span>02 · להבין</span><h2>{chapter.subtitle||clean(chapter.title)}</h2><p>{stage.objectives[0]?.statement||presentation.goal}</p><div className="insightPrompt"><b>רעיון להחזיק — לא אמת לקבל</b><span>{compact(chapter.paragraphs.find(text=>text.trim().length>90)||presentation.goal).slice(0,300)}</span></div></article><article className="learningStep apply"><span>03 · לבדוק</span><h2>מה מתוך זה משנה את דרך ההסתכלות?</h2><p>אנחנו מפרידים בין טענה, ראיה, פרשנות וחוויה. רק מה שמחובר למקור יכול להפוך בהמשך לתובנה נתמכת.</p><div className="learningEvidenceRule"><b>כלל המסע</b><span>מקור → Claim → Evidence → Insight → Experiment → Reflection</span></div></article><article className="learningStep connect"><span>04 · לחבר</span><h2>{chapter.number===1?'מכאן מתחילה הספירלה':'למה זה מגיע דווקא עכשיו?'}</h2><p>{presentation.bridge}</p><div className="connectionLine"><span>{chapter.number===1?journeyPath.entryQuestion:previous?.accent}</span><i>→</i><b>{presentation.accent}</b><i>→</i><span>{chapter.number===18?'מי אני — עכשיו?':'השאלה הבאה'}</span></div></article><article className="learningStep apply"><span>05 · להתבונן</span><h2>מה השתנה במודל שלי?</h2><p>לא מסכמים את הפרק. מנסחים שינוי אחד באופן שבו אתה רואה את השאלה. במסע הציבורי, הרפלקציה היא חלק מהפתיחה של השכבה הבאה.</p><textarea value={reflection} onChange={event=>setReflection(event.target.value)} placeholder={stage.guidingQuestion}/>{mode==='journey'&&compact(reflection).length<20&&<small className="reflectionHint">עוד כמה מילים שלך לפני שממשיכים — לפחות 20 תווים.</small>}</article><article className="learningStep reflect"><span>06 · להמשיך</span><h2>סגור את הסיבוב, לא את השאלה.</h2><p>{presentation.revisit||'השכבה הבאה תשתמש במה שנבנה כאן ותבחן את אותה שאלה מזווית עמוקה יותר.'}</p><button className="primary" disabled={!canComplete} onClick={complete}>{chapter.number===18?'סיים את הסיבוב וחזור לשאלה':'סיימתי · פתח את השכבה הבאה'}</button></article></section><section className="sourceGate"><div><span className="eyebrow">SOURCE OF TRUTH</span><h2>המקור תמיד זמין — עכשיו גם בכרטיסיות.</h2><p>ברירת המחדל היא Micro-Cards מילה במילה. המקור הרציף נשאר זמין תמיד, והכרטיסיות אינן מחליפות אותו או משכתבות אותו.</p></div><button className="secondary" onClick={()=>setSourceOpen(value=>!value)}>{sourceOpen?'סגור כרטיסיות מקור':'פתח כרטיסיות מקור'}</button></section>{sourceOpen&&<><div className="sourceDivider"><div><span className="eyebrow">{stage.sourceRefs[0]||chapter.sourceFile}</span><h2>כרטיסיות המקור</h2></div><span className="sourcePill">SOURCE · VERBATIM</span></div><SourceText chapter={chapter} topic={presentation.accent} concepts={stage.introducedConceptRefs}/></>}</div>
- }
+function ChapterView({ chapter, layer, onBack, onComplete, isOwner }: {
+  chapter: Chapter; layer: typeof LAYERS[0]; onBack: () => void; onComplete: () => void; isOwner: boolean;
+}) {
+  const [reflection, setReflection] = useState('');
+  const stage = journeyPath.stages.find(s => s.order === chapter.number);
+  const pathChapter = journeyPath.stages.find(s => s.order === chapter.number);
+  
+  // Find why this chapter comes here from learning path
+  const chapterMeta = {
+    why: stage ? (pathChapter as any)?.bridge || layer.why : layer.why,
+    question: (pathChapter as any)?.question || '',
+  };
 
- const completed=learning.state.completedStageIds.length;
- const currentOrder=learning.currentStage?.order??journeyPath.stages.length;
- const bands=getJourneyBands();
- return <div className="journeyLibrary"><div className="journeyHeader"><div><span className="eyebrow">E.I.L / SPIRAL LEARNING</span><h1>18 שכבות. אותה שאלה, כל פעם עמוק יותר.</h1><p>{journeyPath.purpose}</p></div>{owner&&<div className="modeSwitch"><button className={mode==='owner'?'active':''} onClick={()=>setMode('owner')}>יוצר · הכל פתוח</button><button className={mode==='journey'?'active':''} onClick={()=>setMode('journey')}>תצוגת מסע · לפי הסדר</button></div>}</div><section className="journeyContract"><div><b>השאלה</b><span>{journeyPath.entryQuestion}</span></div><i>→</i><div><b>לימוד</b><span>מקור לפני מסקנה</span></div><i>→</i><div><b>חיבור</b><span>ידע חדש נשען על קודם</span></div><i>→</i><div><b>יישום</b><span>מה אפשר לבדוק בחיים?</span></div></section><div className="journeyProgress"><div><span>המסע שלך</span><b>{owner&&mode==='owner'?'כל הידע פתוח':`${completed} מתוך ${journeyPath.stages.length} הושלמו`}</b></div><div className="journeyProgressBar"><i style={{width:`${owner&&mode==='owner'?100:Math.max(5,completed/journeyPath.stages.length*100)}%`}}/></div><small>לא צוברים פרקים. בונים מודל, בודקים אותו, וחוזרים לשאלה עם יותר הבחנות.</small></div><div className="sourceStatus"><span className={corpusReady?'sourceDot ready':'sourceDot'}/><strong>{corpusReady?'18 מקורות מלאים מחוברים':'מקורות נטענים'}</strong><small>{paragraphs.toLocaleString()} פסקאות · המקור נשמר בשלמותו</small></div><div className="journeySearch"><span>⌕</span><input value={query} onChange={event=>setQuery(event.target.value)} placeholder="חפש רעיון בתוך המסע..."/></div>{query.trim()?<section className="searchJourneyResults">{filtered.map(item=><button key={item.number} disabled={!accessible(item.number)} onClick={()=>open(item.number)}><b>{String(item.number).padStart(2,'0')}</b><div><strong>{clean(item.title)}</strong><small>{getJourneyStageByNumber(item.number)?.stage.guidingQuestion||item.subtitle}</small></div></button>)}</section>:<div className="spiralMap">{bands.map(({world,label,entries})=><section className={'worldBand world-'+world.toLowerCase()} key={world}><div className="worldIntro"><span>{label}</span><small>{entries.length} תחנות</small></div><div className="worldTrack">{entries.map(({presentation,stage},index)=>{const item=chapters.find(chapter=>chapter.number===presentation.number),locked=!accessible(presentation.number),current=stage.order===currentOrder&&mode==='journey';return <React.Fragment key={stage.id}><button className={'journeyNode '+(locked?'locked ':'')+(current?'current':'')} disabled={locked} onClick={()=>open(presentation.number)} aria-current={current?'step':undefined}><span className="nodeNumber">{String(presentation.number).padStart(2,'0')}</span><div><small>{stageLabels[presentation.stage]}</small><strong>{item?clean(item.title):`פרק ${presentation.number}`}</strong><em>{stage.guidingQuestion}</em></div>{locked&&<i>נעול</i>}</button>{index<entries.length-1&&<span className="trackLine">→</span>}</React.Fragment>})}</div></section>)}</div>}<section className="spiralLegend"><div><b>לראות</b><span>מה השאלה?</span></div><div><b>להבין</b><span>מה נטען?</span></div><div><b>לבדוק</b><span>מה הראיה?</span></div><div><b>לחבר</b><span>למה עכשיו?</span></div><div><b>להתבונן</b><span>מה השתנה?</span></div><div><b>להמשיך</b><span>מה נפתח?</span></div></section></div>;
+  const canComplete = isOwner || reflection.trim().length >= 20;
+
+  return (
+    <div className="spiralChapter" dir="rtl">
+      <div className="spiralChapterTop">
+        <button className="spiralBack" onClick={onBack}>← חזרה למסע</button>
+        <span className="spiralChapterPos" style={{ color: layer.accent }}>
+          {layer.label}
+        </span>
+      </div>
+
+      <header className="spiralChapterHeader" style={{ borderColor: layer.color }}>
+        <div className="spiralChapterNum" style={{ background: layer.color }}>
+          {String(chapter.number).padStart(2, '0')}
+        </div>
+        <div>
+          <h1 className="spiralChapterTitle">{clean(chapter.title)}</h1>
+          <p className="spiralChapterSub">{chapter.subtitle}</p>
+        </div>
+      </header>
+
+      {chapterMeta.question && (
+        <div className="spiralQuestion" style={{ borderColor: layer.accent }}>
+          <span className="spiralQuestionLabel">השאלה שהפרק עונה עליה</span>
+          <p>{chapterMeta.question}</p>
+        </div>
+      )}
+
+      <div className="spiralWhy" style={{ background: `${layer.color}18` }}>
+        <span className="spiralWhyLabel">למה הפרק הזה כאן — בדיוק בנקודה הזו</span>
+        <p>{chapterMeta.why}</p>
+      </div>
+
+      <article className="spiralContent">
+        {chapter.paragraphs.map((text, i) => {
+          const t = text.trim();
+          if (!t) return null;
+          if ((/^פרק\s*\d+/u.test(t) || /^\d+\.\s+/u.test(t)) && t.length < 120)
+            return <h3 key={i} className="spiralContentH3">{t}</h3>;
+          if (/^[-•✓→]/u.test(t))
+            return <div className="spiralBullet" key={i}><span style={{ color: layer.accent }}>•</span><p>{t.replace(/^[-•✓→]\s*/u, '')}</p></div>;
+          return <p key={i} className="spiralPara">{t}</p>;
+        })}
+      </article>
+
+      <div className="spiralReflect">
+        <h3 className="spiralReflectTitle">הרהור לפני שממשיכים</h3>
+        <p className="spiralReflectHint">מה לקחת מהפרק הזה? כתוב משהו — גם משפט אחד מספיק.</p>
+        <textarea
+          className="spiralReflectInput"
+          value={reflection}
+          onChange={e => setReflection(e.target.value)}
+          placeholder="מה נגע בך? מה תרצה לזכור?"
+          rows={4}
+        />
+        <button
+          className="spiralComplete"
+          style={{ background: layer.color, opacity: canComplete ? 1 : 0.5 }}
+          onClick={onComplete}
+          disabled={!canComplete}
+        >
+          סיימתי פרק זה — המשך ←
+        </button>
+      </div>
+    </div>
+  );
+}
+
+export default function SpiralLibrary({ chapters, query, setQuery, corpusReady, paragraphs }: Props) {
+  const learning = useLearningProgress(journeyPath);
+  const [activeChapter, setActiveChapter] = useState<number | null>(null);
+  const [openLayer, setOpenLayer] = useState<string | null>('A');
+  const isOwner = (() => { try { return localStorage.getItem('eil-access-mode') !== 'journey'; } catch { return true; } })();
+
+  const isUnlocked = (num: number) => {
+    if (isOwner) return true;
+    const stage = journeyPath.stages.find(s => s.order === num);
+    return stage ? learning.isUnlocked(stage) : false;
+  };
+
+  const isCompleted = (num: number) => {
+    const stage = journeyPath.stages.find(s => s.order === num);
+    return stage ? learning.isCompleted?.(stage.id) ?? false : false;
+  };
+
+  const completedCount = chapters.filter(c => isCompleted(c.number)).length;
+  const percent = Math.round((completedCount / 18) * 100);
+
+  const chapter = activeChapter ? chapters.find(c => c.number === activeChapter) : null;
+  const chapterLayer = chapter ? LAYERS.find(l => l.chapters.includes(chapter.number))! : null;
+
+  const handleComplete = () => {
+    if (!chapter || !chapterLayer) return;
+    const stage = journeyPath.stages.find(s => s.order === chapter.number);
+    if (stage) learning.complete(stage.id, '');
+    const next = chapter.number + 1;
+    if (next <= 18) setActiveChapter(next);
+    else setActiveChapter(null);
+    scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  if (chapter && chapterLayer) {
+    return (
+      <ChapterView
+        chapter={chapter}
+        layer={chapterLayer}
+        onBack={() => setActiveChapter(null)}
+        onComplete={handleComplete}
+        isOwner={isOwner}
+      />
+    );
+  }
+
+  return (
+    <div className="spiralLibrary" dir="rtl">
+      <div className="spiralHeader">
+        <h1 className="spiralTitle">מסע הלמידה</h1>
+        <p className="spiralSubtitle">18 פרקים · 5 שכבות · מבפנים החוצה</p>
+
+        <div className="spiralProgress">
+          <div className="spiralProgressBar">
+            <div className="spiralProgressFill" style={{ width: `${percent}%` }} />
+          </div>
+          <span className="spiralProgressText">{completedCount} / 18 פרקים הושלמו</span>
+        </div>
+
+        <div className="spiralSearch">
+          <input
+            value={query}
+            onChange={e => setQuery(e.target.value)}
+            placeholder="⌕ חפש בתוכן הפרקים..."
+            className="spiralSearchInput"
+          />
+        </div>
+      </div>
+
+      <div className="spiralLayers">
+        {LAYERS.map(layer => {
+          const layerChapters = chapters.filter(c => layer.chapters.includes(c.number));
+          const doneInLayer = layerChapters.filter(c => isCompleted(c.number)).length;
+          const isOpen = openLayer === layer.id;
+
+          return (
+            <div key={layer.id} className={`spiralLayer ${isOpen ? 'spiralLayer--open' : ''}`}>
+              <button
+                className="spiralLayerHeader"
+                style={{ borderColor: layer.color, background: isOpen ? `${layer.color}12` : 'transparent' }}
+                onClick={() => setOpenLayer(isOpen ? null : layer.id)}
+              >
+                <div className="spiralLayerLeft">
+                  <div className="spiralLayerDot" style={{ background: layer.color }} />
+                  <div>
+                    <div className="spiralLayerLabel" style={{ color: layer.color }}>{layer.label}</div>
+                    <div className="spiralLayerWhy">{layer.why.substring(0, 60)}...</div>
+                  </div>
+                </div>
+                <div className="spiralLayerRight">
+                  <span className="spiralLayerCount" style={{ color: layer.accent }}>
+                    {doneInLayer}/{layerChapters.length}
+                  </span>
+                  <span className="spiralLayerChevron" style={{ transform: isOpen ? 'rotate(180deg)' : 'none' }}>▾</span>
+                </div>
+              </button>
+
+              {isOpen && (
+                <div className="spiralLayerBody">
+                  <p className="spiralLayerFullWhy">{layer.why}</p>
+                  <div className="spiralCards">
+                    {layerChapters.map(ch => (
+                      <ChapterCard
+                        key={ch.number}
+                        chapter={ch}
+                        layer={layer}
+                        isUnlocked={isUnlocked(ch.number)}
+                        isCompleted={isCompleted(ch.number)}
+                        isActive={activeChapter === ch.number}
+                        onClick={() => { setActiveChapter(ch.number); scrollTo({ top: 0, behavior: 'smooth' }); }}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
 }
