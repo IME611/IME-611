@@ -95,9 +95,9 @@
 .welcomeCta {
   width: 100%;
   padding: 16px 24px;
-  background: #006039;
-  color: #fff;
-  border: none;
+  background: #FAF6EE;
+  color: #8A6A1A;
+  border: 1.5px solid rgba(184,150,46,.55);
   border-radius: 16px;
   font-size: 17px;
   font-weight: 700;
@@ -106,11 +106,13 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
-  box-shadow: 0 6px 20px rgba(0,96,57,.28);
-  transition: opacity .18s, transform .15s;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.90),
+    0 4px 16px rgba(184,150,46,.18);
+  transition: background .18s, transform .15s;
   letter-spacing: -.01em;
 }
-.welcomeCta:hover { opacity: .88; transform: translateY(-1px) }
+.welcomeCta:hover { background: #FFF8E8; transform: translateY(-1px) }
 .welcomeArrow { font-size: 20px; opacity: .80 }
 
 /* Bottom hint */
