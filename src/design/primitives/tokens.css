@@ -1,44 +1,54 @@
 :root{
   --eil-font:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
-  --eil-bg-0:#061126;
-  --eil-bg-1:#0a1a38;
-  --eil-bg-2:#0d2448;
-  --eil-text:#f7f9ff;
-  --eil-text-rgb:247,249,255;
-  --eil-text-soft:rgba(237,243,255,.72);
-  --eil-text-faint:rgba(226,236,255,.5);
-  --glass-fill:rgba(255,255,255,.10);
-  --glass-fill-strong:rgba(255,255,255,.15);
-  --glass-fill-soft:rgba(190,220,255,.055);
-  --glass-border:rgba(236,248,255,.28);
-  --glass-border-strong:rgba(248,253,255,.5);
-  --glass-highlight:rgba(255,255,255,.72);
-  --glass-cyan:rgba(97,216,255,.17);
-  --glass-violet:rgba(171,124,255,.13);
-  --glass-pink:rgba(255,145,198,.12);
-  --glass-amber:rgba(255,182,105,.11);
-  --glass-shadow:0 28px 70px rgba(0,5,26,.44);
-  --glass-shadow-soft:0 14px 36px rgba(0,7,28,.28);
-  --glass-inset:inset 0 1px 0 rgba(255,255,255,.62),inset 0 -1px 0 rgba(105,190,255,.12);
+
+  /* === PALETTE: Cream + Gold + Rolex Green === */
+  --eil-bg-0:#F5F0E8;
+  --eil-bg-1:#EDE8DE;
+  --eil-bg-2:#E4DDD0;
+  --eil-text:#1A1A18;
+  --eil-text-rgb:26,26,24;
+  --eil-text-soft:rgba(26,26,24,.70);
+  --eil-text-faint:rgba(26,26,24,.45);
+
+  /* Gold */
+  --eil-gold:#B8962E;
+  --eil-gold-light:#D4AE4A;
+  --eil-gold-pale:rgba(184,150,46,.15);
+
+  /* Rolex Green */
+  --eil-green:#006039;
+  --eil-green-mid:#008050;
+  --eil-green-pale:rgba(0,96,57,.12);
+
+  /* Glass — cream tones */
+  --glass-fill:rgba(255,255,255,.55);
+  --glass-fill-strong:rgba(255,255,255,.75);
+  --glass-fill-soft:rgba(255,252,244,.40);
+  --glass-border:rgba(184,150,46,.25);
+  --glass-border-strong:rgba(184,150,46,.45);
+  --glass-highlight:rgba(255,255,255,.90);
+  --glass-shadow:0 28px 70px rgba(26,20,8,.18);
+  --glass-shadow-soft:0 14px 36px rgba(26,20,8,.10);
+  --glass-inset:inset 0 1px 0 rgba(255,255,255,.80),inset 0 -1px 0 rgba(184,150,46,.15);
   --glass-blur:32px;
-  --glass-saturate:170%;
+  --glass-saturate:130%;
   --glass-radius-sm:16px;
   --glass-radius-md:22px;
   --glass-radius-lg:30px;
   --glass-radius-pill:999px;
   --glass-transition:220ms cubic-bezier(.2,.8,.2,1);
+
+  /* Liquid glass */
   --liquid-bg-x:50%;
   --liquid-bg-y:50%;
   --liquid-specular-x:24%;
   --liquid-specular-y:14%;
-  --liquid-glass-frost:.10;
-  --liquid-glass-saturate:1.22;
+  --liquid-glass-frost:.08;
+  --liquid-glass-saturate:1.15;
   --liquid-filter:url("#eil-liquid-glass-filter");
-  --liquid-rim:rgba(255,255,255,.60);
-  --liquid-rim-soft:rgba(180,225,255,.22);
-  --liquid-cyan:rgba(101,225,255,.16);
-  --liquid-violet:rgba(181,132,255,.13);
-  --liquid-peach:rgba(255,173,126,.13);
-  --liquid-shadow:0 34px 90px rgba(0,4,23,.46);
+  --liquid-rim:rgba(255,255,255,.70);
+  --liquid-rim-soft:rgba(184,150,46,.20);
+  --liquid-shadow:0 34px 90px rgba(26,20,8,.20);
+
   --content-max:1180px;
 }
