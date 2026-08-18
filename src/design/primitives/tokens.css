@@ -1,54 +1,35 @@
-:root{
-  --eil-font:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+:root {
+  /* Typography */
+  --eil-font: "Segoe UI", Inter, -apple-system, BlinkMacSystemFont, Arial, sans-serif;
 
-  /* === PALETTE: Cream + Gold + Rolex Green === */
-  --eil-bg-0:#F5F0E8;
-  --eil-bg-1:#EDE8DE;
-  --eil-bg-2:#E4DDD0;
-  --eil-text:#1A1A18;
-  --eil-text-rgb:26,26,24;
-  --eil-text-soft:rgba(26,26,24,.70);
-  --eil-text-faint:rgba(26,26,24,.45);
+  /* Cream palette */
+  --eil-bg-0: #F8F3EA;
+  --eil-bg-1: #EDE8DE;
+  --eil-bg-2: #E8F0EC;
+
+  /* Text */
+  --eil-text: #1A1A18;
+  --eil-text-rgb: 26,26,24;
 
   /* Gold */
-  --eil-gold:#B8962E;
-  --eil-gold-light:#D4AE4A;
-  --eil-gold-pale:rgba(184,150,46,.15);
+  --eil-gold: #B8962E;
+  --eil-gold-light: #D4AE4A;
 
   /* Rolex Green */
-  --eil-green:#006039;
-  --eil-green-mid:#008050;
-  --eil-green-pale:rgba(0,96,57,.12);
+  --eil-green: #006039;
+  --eil-green-mid: #007a48;
 
-  /* Glass — cream tones */
-  --glass-fill:rgba(255,255,255,.55);
-  --glass-fill-strong:rgba(255,255,255,.75);
-  --glass-fill-soft:rgba(255,252,244,.40);
-  --glass-border:rgba(184,150,46,.25);
-  --glass-border-strong:rgba(184,150,46,.45);
-  --glass-highlight:rgba(255,255,255,.90);
-  --glass-shadow:0 28px 70px rgba(26,20,8,.18);
-  --glass-shadow-soft:0 14px 36px rgba(26,20,8,.10);
-  --glass-inset:inset 0 1px 0 rgba(255,255,255,.80),inset 0 -1px 0 rgba(184,150,46,.15);
-  --glass-blur:32px;
-  --glass-saturate:130%;
-  --glass-radius-sm:16px;
-  --glass-radius-md:22px;
-  --glass-radius-lg:30px;
-  --glass-radius-pill:999px;
-  --glass-transition:220ms cubic-bezier(.2,.8,.2,1);
+  /* Glass */
+  --glass-fill: rgba(255,255,255,.65);
+  --glass-border: rgba(184,150,46,.22);
+  --glass-shadow: 0 16px 48px rgba(26,20,8,.10);
+  --glass-blur: 20px;
+  --glass-radius: 20px;
 
-  /* Liquid glass */
-  --liquid-bg-x:50%;
-  --liquid-bg-y:50%;
-  --liquid-specular-x:24%;
-  --liquid-specular-y:14%;
-  --liquid-glass-frost:.08;
-  --liquid-glass-saturate:1.15;
-  --liquid-filter:url("#eil-liquid-glass-filter");
-  --liquid-rim:rgba(255,255,255,.70);
-  --liquid-rim-soft:rgba(184,150,46,.20);
-  --liquid-shadow:0 34px 90px rgba(26,20,8,.20);
-
-  --content-max:1180px;
+  /* Layer colors */
+  --layer-a: #1E3A5F;
+  --layer-b: #4A235A;
+  --layer-c: #7D6608;
+  --layer-d: #922B21;
+  --layer-e: #1A5276;
 }
