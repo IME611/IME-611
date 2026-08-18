@@ -3,36 +3,36 @@
 .spiralLibrary{max-width:860px;margin:0 auto;padding:24px 20px 60px;direction:rtl}
 .spiralHeader{margin-bottom:32px}
 .spiralTitle{font-size:clamp(26px,3.5vw,36px);font-weight:700;color:var(--eil-text);margin:0 0 4px}
-.spiralSubtitle{font-size:15px;color:rgba(var(--eil-text-rgb),.55);margin:0 0 20px}
+.spiralSubtitle{font-size:15px;color:rgba(26,26,24,.55);margin:0 0 20px}
 .spiralProgress{margin-bottom:16px}
-.spiralProgressBar{height:6px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;margin-bottom:8px}
-.spiralProgressFill{height:100%;border-radius:999px;background:linear-gradient(90deg,#4A90C4,#9B59B6);transition:width .5s ease}
-.spiralProgressText{font-size:13px;color:rgba(var(--eil-text-rgb),.55)}
-.spiralSearchInput{width:100%;padding:10px 16px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);color:var(--eil-text);font:inherit;font-size:15px;outline:none;margin-bottom:8px}
-.spiralSearchInput::placeholder{color:rgba(var(--eil-text-rgb),.35)}
+.spiralProgressBar{height:6px;border-radius:999px;background:rgba(26,26,24,.08);overflow:hidden;margin-bottom:8px}
+.spiralProgressFill{height:100%;border-radius:999px;background:linear-gradient(90deg,#006039,#B8962E);transition:width .5s ease}
+.spiralProgressText{font-size:13px;color:rgba(26,26,24,.55)}
+.spiralSearchInput{width:100%;padding:10px 16px;border-radius:12px;border:1px solid rgba(184,150,46,.20);background:rgba(255,255,255,.55);color:var(--eil-text);font:inherit;font-size:15px;outline:none;margin-bottom:8px}
+.spiralSearchInput::placeholder{color:rgba(26,26,24,.35)}
 
 /* LAYERS */
 .spiralLayers{display:flex;flex-direction:column;gap:12px}
-.spiralLayer{border-radius:18px;border:1px solid rgba(255,255,255,.08);overflow:hidden;transition:border-color .2s}
-.spiralLayer--open{border-color:rgba(255,255,255,.18)}
+.spiralLayer{border-radius:18px;border:1px solid rgba(26,26,24,.08);overflow:hidden;transition:border-color .2s}
+.spiralLayer--open{border-color:rgba(184,150,46,.30)}
 .spiralLayerHeader{width:100%;display:flex;align-items:center;justify-content:space-between;padding:16px 20px;background:transparent;border:none;border-bottom:1px solid transparent;cursor:pointer;transition:background .2s;text-align:right}
 .spiralLayerLeft{display:flex;align-items:center;gap:14px}
 .spiralLayerDot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
 .spiralLayerLabel{font-size:15px;font-weight:700;margin-bottom:3px}
-.spiralLayerWhy{font-size:12px;color:rgba(var(--eil-text-rgb),.45);max-width:360px;text-align:right}
+.spiralLayerWhy{font-size:12px;color:rgba(26,26,24,.45);max-width:360px;text-align:right}
 .spiralLayerRight{display:flex;align-items:center;gap:10px;flex-shrink:0}
 .spiralLayerCount{font-size:14px;font-weight:700}
 .spiralLayerChevron{font-size:18px;color:rgba(var(--eil-text-rgb),.4);transition:transform .25s}
 .spiralLayerBody{padding:0 20px 20px}
-.spiralLayerFullWhy{font-size:14px;color:rgba(var(--eil-text-rgb),.60);margin:12px 0 16px;line-height:1.65;border-right:3px solid rgba(255,255,255,.1);padding-right:12px}
+.spiralLayerFullWhy{font-size:14px;color:rgba(26,26,24,.60);margin:12px 0 16px;line-height:1.65;border-right:3px solid rgba(255,255,255,.1);padding-right:12px}
 
 /* CARDS */
 .spiralCards{display:flex;flex-direction:column;gap:8px}
-.spiralCard{width:100%;display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:14px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);cursor:pointer;text-align:right;transition:background .18s,border-color .18s,transform .15s;color:var(--eil-text)}
-.spiralCard:hover:not(:disabled){background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.18);transform:translateX(-2px)}
-.spiralCard--active{border-color:var(--layer-accent,#4A90C4);background:rgba(255,255,255,.07)}
+.spiralCard{width:100%;display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:14px;border:1px solid rgba(26,26,24,.08);background:rgba(255,255,255,.55);cursor:pointer;text-align:right;transition:background .18s,border-color .18s,transform .15s;color:var(--eil-text)}
+.spiralCard:hover:not(:disabled){background:rgba(255,255,255,.70);border-color:rgba(184,150,46,.30);transform:translateX(-2px)}
+.spiralCard--active{border-color:var(--layer-accent,#4A90C4);background:rgba(255,255,255,.70)}
 .spiralCard--done{opacity:.7}
-.spiralCard--done .spiralCardStatus{color:#4CAF50}
+.spiralCard--done .spiralCardStatus{color:#006039}
 .spiralCard--locked{opacity:.4;cursor:not-allowed}
 .spiralCardNum{font-size:20px;font-weight:800;color:var(--layer-color,#4A90C4);min-width:32px;font-variant-numeric:tabular-nums}
 .spiralCardBody{flex:1;min-width:0}
@@ -44,28 +44,28 @@
 .spiralChapter{max-width:740px;margin:0 auto;padding:24px 20px 80px;direction:rtl}
 .spiralChapterTop{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
 .spiralBack{background:none;border:none;color:rgba(var(--eil-text-rgb),.6);cursor:pointer;font:inherit;font-size:14px;padding:8px 0}
-.spiralBack:hover{color:var(--eil-text)}
+.spiralBack:hover{color:#1A1A18}
 .spiralChapterPos{font-size:13px;font-weight:700;letter-spacing:.05em}
 .spiralChapterHeader{display:flex;align-items:center;gap:16px;padding-bottom:20px;border-bottom:2px solid;margin-bottom:24px}
 .spiralChapterNum{width:52px;height:52px;border-radius:14px;display:grid;place-items:center;font-size:22px;font-weight:800;color:#fff;flex-shrink:0}
 .spiralChapterTitle{font-size:clamp(22px,3vw,30px);font-weight:700;margin:0 0 4px}
-.spiralChapterSub{font-size:15px;color:rgba(var(--eil-text-rgb),.55);margin:0}
-.spiralQuestion{border-right:4px solid;padding:16px 18px;border-radius:0 14px 14px 0;margin-bottom:20px;background:rgba(255,255,255,.04)}
-.spiralQuestionLabel{display:block;font-size:11px;font-weight:700;letter-spacing:.12em;color:rgba(var(--eil-text-rgb),.45);margin-bottom:8px;text-transform:uppercase}
+.spiralChapterSub{font-size:15px;color:rgba(26,26,24,.55);margin:0}
+.spiralQuestion{border-right:4px solid;padding:16px 18px;border-radius:0 14px 14px 0;margin-bottom:20px;background:rgba(255,255,255,.45)}
+.spiralQuestionLabel{display:block;font-size:11px;font-weight:700;letter-spacing:.12em;color:rgba(26,26,24,.45);margin-bottom:8px;text-transform:uppercase}
 .spiralQuestion p{margin:0;font-size:17px;font-weight:600;line-height:1.6;color:var(--eil-text)}
 .spiralWhy{border-radius:14px;padding:16px 18px;margin-bottom:28px}
-.spiralWhyLabel{display:block;font-size:11px;font-weight:700;letter-spacing:.12em;color:rgba(var(--eil-text-rgb),.45);margin-bottom:8px;text-transform:uppercase}
-.spiralWhy p{margin:0;font-size:15px;line-height:1.7;color:rgba(var(--eil-text-rgb),.75)}
+.spiralWhyLabel{display:block;font-size:11px;font-weight:700;letter-spacing:.12em;color:rgba(26,26,24,.45);margin-bottom:8px;text-transform:uppercase}
+.spiralWhy p{margin:0;font-size:15px;line-height:1.7;color:rgba(26,26,24,.75)}
 .spiralContent{margin-bottom:36px}
-.spiralContent p,.spiralPara{font-size:17px;line-height:1.8;color:rgba(var(--eil-text-rgb),.85);margin:0 0 18px}
+.spiralContent p,.spiralPara{font-size:17px;line-height:1.8;color:rgba(26,26,24,.85);margin:0 0 18px}
 .spiralContentH3{font-size:18px;font-weight:700;margin:32px 0 12px;color:var(--eil-text)}
 .spiralBullet{display:flex;gap:12px;margin-bottom:12px;align-items:flex-start}
 .spiralBullet span{font-size:18px;flex-shrink:0;line-height:1.8}
-.spiralBullet p{margin:0;font-size:16px;line-height:1.75;color:rgba(var(--eil-text-rgb),.80)}
+.spiralBullet p{margin:0;font-size:16px;line-height:1.75;color:rgba(26,26,24,.80)}
 .spiralReflect{border-top:1px solid rgba(255,255,255,.1);padding-top:28px}
 .spiralReflectTitle{font-size:18px;font-weight:700;margin:0 0 8px}
 .spiralReflectHint{font-size:14px;color:rgba(var(--eil-text-rgb),.5);margin:0 0 14px}
-.spiralReflectInput{width:100%;padding:14px 16px;border-radius:14px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);color:var(--eil-text);font:inherit;font-size:16px;line-height:1.7;resize:vertical;outline:none;box-sizing:border-box;margin-bottom:16px}
+.spiralReflectInput{background:rgba(255,255,255,.70);color:#1A1A18;width:100%;padding:14px 16px;border-radius:14px;border:1px solid rgba(184,150,46,.20);background:rgba(255,255,255,.55);color:var(--eil-text);font:inherit;font-size:16px;line-height:1.7;resize:vertical;outline:none;box-sizing:border-box;margin-bottom:16px}
 .spiralReflectInput::placeholder{color:rgba(var(--eil-text-rgb),.3)}
 .spiralComplete{width:100%;padding:16px;border-radius:14px;border:none;color:#fff;font:inherit;font-size:17px;font-weight:700;cursor:pointer;transition:opacity .2s,transform .15s}
 .spiralComplete:hover:not(:disabled){transform:translateY(-2px)}
@@ -73,11 +73,11 @@
 @media(max-width:640px){.spiralLayerHeader{padding:14px 14px}.spiralLayerWhy{display:none}.spiralLayerBody{padding:0 12px 16px}.spiralCard{padding:12px 12px}.spiralChapter{padding:16px 14px 60px}}
 
 /* Dark mode safety — journey */
-.spiralLibrary,.spiralChapter{color:var(--eil-text)}
-.spiralTitle{color:var(--eil-text)}
-.spiralChapterTitle{color:var(--eil-text)}
-.spiralContentH3{color:var(--eil-text)}
-.spiralReflectTitle{color:var(--eil-text)}
-.spiralReflectInput{color:var(--eil-text)}
-.spiralBack:hover{color:var(--eil-text)}
-.spiralCard{color:var(--eil-text)}
+.spiralLibrary,.spiralChapter{color:#1A1A18}
+.spiralTitle{color:#1A1A18}
+.spiralChapterTitle{color:#1A1A18}
+.spiralContentH3{color:#1A1A18}
+.spiralReflectTitle{color:#1A1A18}
+.spiralReflectInput{background:rgba(255,255,255,.70);color:#1A1A18;color:var(--eil-text)}
+.spiralBack:hover{color:#1A1A18}
+.spiralCard{color:#1A1A18}
