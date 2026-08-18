@@ -1,30 +1,13 @@
-/* E.I.L Design System entrypoint */
+/* E.I.L Design System — v2 Luxury Cream */
 @import './primitives/tokens.css';
-@import './primitives/primitives.css';
-@import './foundations/base.css';
-@import './foundations/progressive.css';
+@import './foundations/eil-base.css';
 @import './features/shell.css';
-@import './features/sidebar.css';
 @import './features/navigation.css';
-@import './features/evolution.css';
 @import './features/journey.css';
-@import './features/dashboard.css';
 @import './features/knowledge-dashboard.css';
-@import './features/content-taxonomy.css';
-@import './features/media.css';
-@import './features/media-workspace.css';
+@import './features/welcome.css';
 @import './features/cards.css';
 @import './features/crystals.css';
-@import './features/research.css';
-@import './features/welcome.css';
-@import './features/review-console.css';
 @import './features/errors.css';
-@import './glass/legacy/base.css';
-@import './glass/legacy/pass-2.css';
-@import './glass/legacy/dashboard.css';
-@import './glass/legacy/pass-3.css';
-@import './glass/current.css';
-@import './glass/system.css';
-@import './glass/prismatic.css';
 @import './responsive.css';
 @import './accessibility.css';
