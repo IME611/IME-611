@@ -20,62 +20,55 @@ const LAYER_LABELS=['','שכבה א׳ — הכלי הפיזי','שכבה ב׳ �
 const LAYER_COLORS=['','#1E3A5F','#4A235A','#7D6608','#922B21','#1A5276'];
 function layerOf(order:number){return order<=3?1:order<=6?2:order<=9?3:order<=13?4:5;}
 
+const SPIRAL_OVERVIEW=[
+  {layer:'א',color:'#1E3A5F',label:'הכלי הפיזי',chapters:'1–3'},
+  {layer:'ב',color:'#4A235A',label:'מערכת ההפעלה',chapters:'4–6'},
+  {layer:'ג',color:'#7D6608',label:'האנרגיה והתדר',chapters:'7–9'},
+  {layer:'ד',color:'#922B21',label:'כלי השינוי',chapters:'10–13'},
+  {layer:'ה',color:'#1A5276',label:'המשמעות',chapters:'14–18'},
+];
+
 function JourneyCards({onGoToJourney}:{onGoToJourney?:()=>void}){
   const learning=useLearningProgress(journeyPath);
-  const{state,currentStage}=learning;
+  const{state}=learning;
   const done=state.completedStageIds.length;
   const total=journeyPath.stages.length;
   const pct=Math.round((done/total)*100);
-  const layerNum=layerOf(currentStage.order);
-  const layerColor=LAYER_COLORS[layerNum];
-  const layerLabel=LAYER_LABELS[layerNum];
-  const prevStage=done>0?journeyPath.stages.find(s=>s.id===state.completedStageIds[state.completedStageIds.length-1]):null;
 
   return(
-    <section className="dashJourneyCards" aria-label="סיכום מסע הלמידה">
-      {/* Progress card */}
-      <div className="dashCard dashCard--progress">
-        <span className="dashCardEye">המסע שלי</span>
-        <div className="dashCardBig">{done}<span>/{total}</span></div>
-        <div className="dashCardLabel">פרקים הושלמו</div>
-        <div className="dashProgressBar"><div className="dashProgressFill" style={{width:`${pct}%`}}/></div>
-        <div className="dashProgressPct">{pct}% הושלם</div>
+    <section className="dashOverview" aria-label="מסע הלמידה">
+      <div className="dashOverviewHeader">
+        <div className="dashOverviewTitle">מסע הלמידה</div>
+        <div className="dashOverviewMeta">{done}/{total} פרקים · {pct}%</div>
       </div>
-
-      {/* Current layer card */}
-      <div className="dashCard dashCard--layer" style={{'--lc':layerColor} as React.CSSProperties}>
-        <span className="dashCardEye">שכבה נוכחית</span>
-        <div className="dashCardLayerDot" style={{background:layerColor}}/>
-        <div className="dashCardLayerLabel" style={{color:layerColor}}>{layerLabel}</div>
-        <div className="dashCardLabel">פרקים {layerNum===1?'1–3':layerNum===2?'4–6':layerNum===3?'7–9':layerNum===4?'10–13':'14–18'}</div>
+      <div className="dashOverviewBar">
+        <div className="dashOverviewFill" style={{width:`${pct}%`}}/>
       </div>
-
-      {/* Next chapter card */}
-      <div className="dashCard dashCard--next" style={{'--lc':layerColor} as React.CSSProperties}>
-        <span className="dashCardEye">הפרק הבא</span>
-        <div className="dashCardNextNum" style={{color:layerColor}}>
-          {String(currentStage.order).padStart(2,'0')}
-        </div>
-        <div className="dashCardNextTitle">{currentStage.title.replace(/^פרק\s*\d+[:：]?\s*/,'')}</div>
-        <div className="dashCardNextSub">{currentStage.guidingQuestion}</div>
-        {onGoToJourney&&(
-          <button className="dashCardCta" style={{background:layerColor}} onClick={onGoToJourney}>
-            המשך →
-          </button>
-        )}
+      <div className="dashOverviewLayers">
+        {SPIRAL_OVERVIEW.map(l=>{
+          const layerDone=journeyPath.stages.filter(s=>{
+            const n=s.order;
+            const inLayer=l.layer==='א'?n<=3:l.layer==='ב'?n<=6:l.layer==='ג'?n<=9:l.layer==='ד'?n<=13:true;
+            return inLayer&&state.completedStageIds.includes(s.id);
+          }).length;
+          const layerTotal=l.layer==='א'?3:l.layer==='ב'?3:l.layer==='ג'?3:l.layer==='ד'?4:5;
+          const layerPct=Math.round((layerDone/layerTotal)*100);
+          return(
+            <div key={l.layer} className="dashLayer" onClick={onGoToJourney} style={{'--lc':l.color} as React.CSSProperties}>
+              <div className="dashLayerDot" style={{background:l.color}}/>
+              <div className="dashLayerInfo">
+                <span className="dashLayerName">{l.label}</span>
+                <span className="dashLayerChapters">פרקים {l.chapters}</span>
+              </div>
+              <div className="dashLayerBar">
+                <div className="dashLayerFill" style={{width:`${layerPct}%`,background:l.color}}/>
+              </div>
+              <span className="dashLayerPct" style={{color:l.color}}>{layerPct}%</span>
+            </div>
+          );
+        })}
       </div>
-
-      {/* Last completed */}
-      {prevStage&&(
-        <div className="dashCard dashCard--done">
-          <span className="dashCardEye">פרק אחרון שהושלם</span>
-          <div className="dashCardDoneNum">✓ {String(prevStage.order).padStart(2,'0')}</div>
-          <div className="dashCardNextTitle">{prevStage.title.replace(/^פרק\s*\d+[:：]?\s*/,'')}</div>
-          {state.reflections[prevStage.id]&&(
-            <p className="dashCardReflection">"{state.reflections[prevStage.id].text}"</p>
-          )}
-        </div>
-      )}
+      {onGoToJourney&&<button className="dashStartBtn" onClick={onGoToJourney}>התחל את המסע ←</button>}
     </section>
   );
 }
@@ -100,14 +93,14 @@ export function KnowledgeDashboard({query,onQueryChange,onAdd}:Props){
 
  return <div className="knowledgeDashboard" dir="rtl">
   <JourneyCards/>
-  <header className="knowledgeHero"><div><span className="eyebrow">E.I.L / CONTENT LIBRARY</span><h1>ספריית התוכן</h1><p>מפת הידע אומרת איפה נושא שייך. יחידת הלימוד אומרת מה לומדים עכשיו, למה עכשיו, ומה שומרים בסוף.</p></div><button className="primary knowledgeAdd" type="button" onClick={onAdd}>＋ הוסף תוכן</button></header>
+  <header className="knowledgeHero"><div><span className="eyebrow">E.I.L / CONTENT LIBRARY</span><h1>ספריית התוכן</h1></div><button className="primary knowledgeAdd" type="button" onClick={onAdd}>＋ הוסף תוכן</button></header>
   {indexState.status==='loading'&&<section className="knowledgeState" aria-live="polite"><b>מסדר את ספריית התוכן…</b><span>בונה תחומים, נושאים ותתי־נושאים מתוך הקורפוס.</span></section>}
   {indexState.status==='error'&&<section className="knowledgeState error" role="alert"><b>ספריית התוכן לא נטענה.</b><span>{indexState.message}</span><button type="button" onClick={()=>location.reload()}>נסה שוב</button></section>}
   {index&&<>
    <section className="knowledgeStats" aria-label="מצב הספרייה"><article><strong>{index.summary.domains}</strong><span>תחומים</span></article><article><strong>{index.summary.topics}</strong><span>נושאים מרכזיים</span></article><article><strong>{index.summary.subtopics}</strong><span>תתי־נושאים</span></article></section>
    <section ref={browseRef} className="knowledgeBrowse" aria-labelledby="knowledge-browse-title">
     {!selectedId&&<>
-     <div className="knowledgeBrowseHead"><span className="eyebrow">KNOWLEDGE HIERARCHY</span><h2 id="knowledge-browse-title">הנושאים</h2><p>פתח תחום כדי לראות את הנושאים שלו. פתיחת נושא מעבירה לאותה תצוגה ליחידת לימוד ממוקדת — לא לאוסף טקסטים מאותו קובץ.</p></div>
+     <div className="knowledgeBrowseHead"><span className="eyebrow">KNOWLEDGE HIERARCHY</span><h2 id="knowledge-browse-title">הנושאים</h2></div>
      <label className="knowledgeSearch"><span>חיפוש בספרייה</span><input value={query} onChange={event=>onQueryChange(event.target.value)} placeholder="למשל: מוח, DMT, אמונות, גוף…"/></label>
      <div className="knowledgeTopicList">{groups.map(group=>{const domainKey=`domain:${group.id}`,isExpanded=term?true:expanded.has(domainKey);return <section key={group.id} className="knowledgeTopicGroup">
       <div className="knowledgeTopicRow"><button type="button" className="knowledgeTopicOpen" onClick={()=>openDetail(domainKey)}><span><small>תחום</small><strong>{group.label}</strong><em>{group.topics.length} נושאים מרכזיים</em></span></button><button type="button" className={isExpanded?'knowledgeTopicToggle open':'knowledgeTopicToggle'} onClick={()=>toggle(domainKey)} aria-expanded={isExpanded} aria-label={`${isExpanded?'סגור':'פתח'} את ${group.label}`}><span aria-hidden="true">⌄</span><small>{group.topics.length}</small></button></div>
@@ -125,7 +118,7 @@ export function KnowledgeDashboard({query,onQueryChange,onAdd}:Props){
      {detailState.status==='ready'&&<TopicView detail={detailState.data} onNavigate={openDetail}/>} 
     </div>}
    </section>
-   <aside className="knowledgePolicy"><b>שלושה דברים שונים:</b><span>היררכיה אומרת איפה הידע נמצא; קשרים אומרים מה קשור למה; מסלול הלמידה אומר מה כדאי ללמוד לפני ואחרי. תוכן וכרטיס סיכום חייבים להגיע מאותה יחידת לימוד.</span></aside>
+   
   </>}
  </div>;
 }
