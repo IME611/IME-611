@@ -1,5 +1,7 @@
 import React,{useEffect,useMemo,useRef,useState}from'react';
 import{CrystalButton}from'../crystals/CrystalButton';
+import{useLearningProgress}from'../journey/model/useLearningProgress';
+import{journeyPath}from'../journey/model/journey-stage';
 import type{CrystalRecord}from'../crystals/model/crystal.repository';
 
 type LibrarySubtopic={id:string;label:string;sourceCount:number;unitCount:number;sourceFiles:string[]};
@@ -13,6 +15,70 @@ type TopicDetail={ok:boolean;id:string;kind:'DOMAIN'|'TOPIC'|'SUBTOPIC'|'SECTION
 type Props={query:string;onQueryChange:(value:string)=>void;onAdd:()=>void};
 type IndexState={status:'loading'}|{status:'error';message:string}|{status:'ready';data:LibraryIndex};
 type DetailState={status:'idle'}|{status:'loading'}|{status:'error';message:string}|{status:'ready';data:TopicDetail};
+
+const LAYER_LABELS=['','שכבה א׳ — הכלי הפיזי','שכבה ב׳ — מערכת ההפעלה','שכבה ג׳ — האנרגיה','שכבה ד׳ — כלי השינוי','שכבה ה׳ — המשמעות'];
+const LAYER_COLORS=['','#1E3A5F','#4A235A','#7D6608','#922B21','#1A5276'];
+function layerOf(order:number){return order<=3?1:order<=6?2:order<=9?3:order<=13?4:5;}
+
+function JourneyCards({onGoToJourney}:{onGoToJourney?:()=>void}){
+  const learning=useLearningProgress(journeyPath);
+  const{state,currentStage}=learning;
+  const done=state.completedStageIds.length;
+  const total=journeyPath.stages.length;
+  const pct=Math.round((done/total)*100);
+  const layerNum=layerOf(currentStage.order);
+  const layerColor=LAYER_COLORS[layerNum];
+  const layerLabel=LAYER_LABELS[layerNum];
+  const prevStage=done>0?journeyPath.stages.find(s=>s.id===state.completedStageIds[state.completedStageIds.length-1]):null;
+
+  return(
+    <section className="dashJourneyCards" aria-label="סיכום מסע הלמידה">
+      {/* Progress card */}
+      <div className="dashCard dashCard--progress">
+        <span className="dashCardEye">המסע שלי</span>
+        <div className="dashCardBig">{done}<span>/{total}</span></div>
+        <div className="dashCardLabel">פרקים הושלמו</div>
+        <div className="dashProgressBar"><div className="dashProgressFill" style={{width:`${pct}%`}}/></div>
+        <div className="dashProgressPct">{pct}% הושלם</div>
+      </div>
+
+      {/* Current layer card */}
+      <div className="dashCard dashCard--layer" style={{'--lc':layerColor} as React.CSSProperties}>
+        <span className="dashCardEye">שכבה נוכחית</span>
+        <div className="dashCardLayerDot" style={{background:layerColor}}/>
+        <div className="dashCardLayerLabel" style={{color:layerColor}}>{layerLabel}</div>
+        <div className="dashCardLabel">פרקים {layerNum===1?'1–3':layerNum===2?'4–6':layerNum===3?'7–9':layerNum===4?'10–13':'14–18'}</div>
+      </div>
+
+      {/* Next chapter card */}
+      <div className="dashCard dashCard--next" style={{'--lc':layerColor} as React.CSSProperties}>
+        <span className="dashCardEye">הפרק הבא</span>
+        <div className="dashCardNextNum" style={{color:layerColor}}>
+          {String(currentStage.order).padStart(2,'0')}
+        </div>
+        <div className="dashCardNextTitle">{currentStage.title.replace(/^פרק\s*\d+[:：]?\s*/,'')}</div>
+        <div className="dashCardNextSub">{currentStage.guidingQuestion}</div>
+        {onGoToJourney&&(
+          <button className="dashCardCta" style={{background:layerColor}} onClick={onGoToJourney}>
+            המשך →
+          </button>
+        )}
+      </div>
+
+      {/* Last completed */}
+      {prevStage&&(
+        <div className="dashCard dashCard--done">
+          <span className="dashCardEye">פרק אחרון שהושלם</span>
+          <div className="dashCardDoneNum">✓ {String(prevStage.order).padStart(2,'0')}</div>
+          <div className="dashCardNextTitle">{prevStage.title.replace(/^פרק\s*\d+[:：]?\s*/,'')}</div>
+          {state.reflections[prevStage.id]&&(
+            <p className="dashCardReflection">"{state.reflections[prevStage.id].text}"</p>
+          )}
+        </div>
+      )}
+    </section>
+  );
+}
 
 const normalize=(value:string)=>value.toLocaleLowerCase('he').replace(/[^\p{L}\p{N}\s]/gu,' ').replace(/\s+/g,' ').trim();
 const matches=(value:string,term:string)=>!term||normalize(value).includes(term);
@@ -33,6 +99,7 @@ export function KnowledgeDashboard({query,onQueryChange,onAdd}:Props){
  const toggle=(id:string)=>setExpanded(current=>{const next=new Set(current);next.has(id)?next.delete(id):next.add(id);return next});
 
  return <div className="knowledgeDashboard" dir="rtl">
+  <JourneyCards/>
   <header className="knowledgeHero"><div><span className="eyebrow">E.I.L / CONTENT LIBRARY</span><h1>ספריית התוכן</h1><p>מפת הידע אומרת איפה נושא שייך. יחידת הלימוד אומרת מה לומדים עכשיו, למה עכשיו, ומה שומרים בסוף.</p></div><button className="primary knowledgeAdd" type="button" onClick={onAdd}>＋ הוסף תוכן</button></header>
   {indexState.status==='loading'&&<section className="knowledgeState" aria-live="polite"><b>מסדר את ספריית התוכן…</b><span>בונה תחומים, נושאים ותתי־נושאים מתוך הקורפוס.</span></section>}
   {indexState.status==='error'&&<section className="knowledgeState error" role="alert"><b>ספריית התוכן לא נטענה.</b><span>{indexState.message}</span><button type="button" onClick={()=>location.reload()}>נסה שוב</button></section>}
