@@ -128,3 +128,32 @@
   .welcomeGlass { padding: 24px 18px 28px }
   .welcomeHook { font-size: 20px }
 }
+
+/* EIL centered label above kicker */
+.welcomeEilLabel {
+  display: block;
+  text-align: center;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: .35em;
+  color: rgba(184,150,46,.70);
+  margin-bottom: 6px;
+}
+
+/* 4-line hook */
+.welcomeHook {
+  font-size: clamp(20px, 4.5vw, 28px);
+  font-weight: 800;
+  line-height: 1.38;
+  letter-spacing: -.02em;
+  color: #1A1A18;
+  text-align: center;
+  margin: 0 0 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+.welcomeHook span {
+  display: block;
+}
