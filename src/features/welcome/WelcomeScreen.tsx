@@ -6,17 +6,17 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
       <div className="welcomeBrand" aria-label="E.I.L">E . I . L</div>
 
       <section className="welcomeGlass" aria-labelledby="welcome-hook">
+        <span className="welcomeEilLabel" aria-hidden="true">E · I · L</span>
         <span className="welcomeKicker">תחילת המחקר</span>
 
         <h1 id="welcome-hook" className="welcomeHook">
-          רגע של מודעות אמיתית יכול לשנות את כל מה שאתה חושב שאתה יודע על עצמך.
+          <span>רגע של מודעות אמיתית</span>
+          <span>יכול לשנות</span>
+          <span>את כל מה שאתה חושב</span>
+          <span>שאתה יודע על עצמך.</span>
         </h1>
 
         <div className="welcomeGoldLine" aria-hidden="true" />
-
-        <p className="welcomeSubHook">
-          לפעמים די בכיוון נכון של תשומת הלב כדי לפתוח אפשרויות חדשות.
-        </p>
 
         <button className="welcomeCta" type="button" onClick={onStart}>
           <span>בואו נתחיל</span>
