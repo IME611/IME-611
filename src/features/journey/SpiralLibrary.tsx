@@ -7,11 +7,11 @@ type Chapter = { number: number; title: string; subtitle: string; sourceFile: st
 type Props = { chapters: Chapter[]; query: string; setQuery: (v: string) => void; corpusReady: boolean; paragraphs: number; characters: number };
 
 const LAYERS = [
-  { id: 'A', label: 'שכבה א׳ — הכלי הפיזי',       color: '#1E3A5F', accent: '#4A90C4', nums: [1,2,3],      why: 'לפני שנשאל "מי אני" — נראה ממה אנחנו בנויים. הגוף הוא נקודת המוצא.' },
-  { id: 'B', label: 'שכבה ב׳ — מערכת ההפעלה',     color: '#4A235A', accent: '#9B59B6', nums: [4,5,6],      why: 'הגוף הוא החומרה. עכשיו נבין מי מריץ את התוכנה — מודע, תת-מודע, על-מודע.' },
-  { id: 'C', label: 'שכבה ג׳ — האנרגיה והתדר',    color: '#7D6608', accent: '#D4AC0D', nums: [7,8,9],      why: 'המוח פועל בגלים. הגוף כולו רוטט בתדרים. הצליל בונה צורה פיזית.' },
-  { id: 'D', label: 'שכבה ד׳ — כלי השינוי',        color: '#922B21', accent: '#E74C3C', nums: [10,11,12,13], why: 'הבנתי מה אני. האם אני יכול לשנות? כן — כך עושים את זה.' },
-  { id: 'E', label: 'שכבה ה׳ — המשמעות והתכלית',  color: '#1A5276', accent: '#2E86C1', nums: [14,15,16,17,18], why: 'חוקי המשחק, כיוון, קושי — וחזרה לשאלה הראשונה עם תשובה אמיתית.' },
+  { id: 'A', label: 'שכבה ראשונה — הכלי הפיזי',    color: '#006039', accent: '#006039', nums: [1,2,3],       why: 'לפני שנשאל "מי אני" — נראה ממה אנחנו בנויים. הגוף הוא נקודת המוצא.' },
+  { id: 'B', label: 'שכבה שנייה — מערכת ההפעלה',  color: '#006039', accent: '#006039', nums: [4,5,6],       why: 'הגוף הוא החומרה. עכשיו נבין מי מריץ את התוכנה — מודע, תת-מודע, על-מודע.' },
+  { id: 'C', label: 'שכבה שלישית — האנרגיה והתדר', color: '#006039', accent: '#006039', nums: [7,8,9],       why: 'המוח פועל בגלים. הגוף כולו רוטט בתדרים. הצליל בונה צורה פיזית.' },
+  { id: 'D', label: 'שכבה רביעית — כלי השינוי',    color: '#006039', accent: '#006039', nums: [10,11,12,13], why: 'הבנתי מה אני. האם אני יכול לשנות? כן — כך עושים את זה.' },
+  { id: 'E', label: 'שכבה חמישית — המשמעות',       color: '#006039', accent: '#006039', nums: [14,15,16,17,18], why: 'חוקי המשחק, כיוון, קושי — וחזרה לשאלה הראשונה עם תשובה אמיתית.' },
 ] as const;
 
 function clean(t: string) { return t.replace(/^פרק\s*\d+[:：]?\s*/, ''); }
@@ -40,7 +40,7 @@ function ChapterCard({ chapter, layer, unlocked, completed, onClick }: {
       <span className="spiralCardNum">{String(chapter.number).padStart(2, '0')}</span>
       <span className="spiralCardBody">
         <span className="spiralCardTitle">{clean(chapter.title)}</span>
-        <span className="spiralCardSub">{chapter.subtitle}</span>
+        
       </span>
       <span className="spiralCardIcon">{completed ? '✓' : unlocked ? '←' : '🔒'}</span>
     </button>
@@ -106,8 +106,7 @@ function ChapterView({ chapter, layer, onBack, onComplete, isOwner }: {
       </article>
 
       <div className="spiralReflect">
-        <h3 className="spiralReflectTitle">הרהור לפני שממשיכים</h3>
-        <p className="spiralReflectHint">מה לקחת מהפרק הזה? גם משפט אחד מספיק.</p>
+        <p className="spiralReflectHint">רוצה לכתוב משהו נוסף כדי להזכיר לעצמך בהמשך?</p>
         <textarea
           className="spiralReflectInput"
           value={reflection}
@@ -117,7 +116,7 @@ function ChapterView({ chapter, layer, onBack, onComplete, isOwner }: {
         />
         <button
           className="spiralComplete"
-          style={{ background: layer.color, opacity: canComplete ? 1 : 0.5 }}
+          style={{ background: canComplete ? "#006039" : "rgba(26,26,24,.20)", color: canComplete ? "#fff" : "rgba(26,26,24,.40)", opacity: 1 }}
           onClick={() => onComplete(reflection)}
           disabled={!canComplete}
         >
@@ -175,7 +174,7 @@ export default function SpiralLibrary({ chapters, query, setQuery }: Props) {
   return (
     <div className="spiralLibrary" dir="rtl">
       <div className="spiralHeader">
-        <h1 className="spiralTitle">מסע הלמידה</h1>
+        <h1 className="spiralTitle">ההתקדמות שלי במסע</h1>
         <p className="spiralSubtitle">18 פרקים · 5 שכבות · מבפנים החוצה</p>
 
         <div className="spiralProgress">
@@ -210,7 +209,7 @@ export default function SpiralLibrary({ chapters, query, setQuery }: Props) {
                   <div className="spiralLayerDot" style={{ background: l.color }} />
                   <div>
                     <div className="spiralLayerLabel" style={{ color: l.color }}>{l.label}</div>
-                    <div className="spiralLayerWhy">{l.why.substring(0, 58)}…</div>
+                    
                   </div>
                 </div>
                 <div className="spiralLayerRight">
