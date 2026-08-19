@@ -520,3 +520,16 @@
   .knowledgeHero h1 { font-size: 20px }
   .dashOverview { padding: 16px 14px }
 }
+
+/* Welcome text */
+.dashWelcome { margin-bottom: 18px }
+.dashWelcomeText {
+  font-size: 15px;
+  line-height: 1.70;
+  color: rgba(26,26,24,.68);
+  background: rgba(255,255,255,.55);
+  border: 1px solid rgba(184,150,46,.18);
+  border-radius: 16px;
+  padding: 16px 18px;
+}
+.dashWelcomeText strong { color: #1A1A18; font-weight: 700 }
