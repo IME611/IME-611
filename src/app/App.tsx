@@ -65,9 +65,9 @@ export default function App(){
  const current=pageByNavigationId(page);
  const isEvolution=evoPageIds.includes(page);
  const enterExperience=()=>{try{sessionStorage.setItem('eil-welcome-entered','1')}catch{}setEntered(true);nav('dashboard')};
- const Header=({title,sub}:{title:string;sub:string})=><div className="pageTitle"><div><span className="eyebrow">E.I.L / EVOLUTION OS</span><h1>{title}</h1><p>{sub}</p></div><button className="primary" onClick={openNew}>＋ הוסף מקור</button></div>;
- const Sources=()=> <><Header title="מה משפיע עליי?" sub="המקורות והסביבה שמזינים את המודל שלי. חומר הגלם נשמר בשלמותו, והסינתזה תמיד מצביעה חזרה למקור."/><section className="panel"><h2>מה נכנס למערכת?</h2><div className="pipeline"><b>מסמך / תמונה / מאמר</b><i>→</i><b>מקור מלא</b><i>→</i><b>כרטיסיות מקור</b><i>→</i><b>קשרים</b><i>→</i><b>תובנה</b></div><p className="muted">המטרה אינה לצבור ספרייה גדולה יותר, אלא לזהות מה משפיע על האופן שבו אני מבין ופועל — בלי לשכתב את המקור.</p><button className="primary" onClick={openNew}>הוסף מקור חדש</button></section></>;
- const Generic=()=> <><Header title={current.label} sub={`מרחב ${current.label} כחלק ממערכת ההתפתחות.`}/><div className="genericGrid"><section className="panel"><span className="eyebrow">AWARENESS FIRST</span><h2>התחל מכאן</h2><textarea className="bigInput" placeholder="כתוב מחשבה, שאלה או תובנה..."/><button className="primary">המשך</button></section><section className="panel"><span className="eyebrow">FROM KNOWING TO LIVING</span><h2>הידע הוא חומר גלם</h2><p className="muted">הערך נוצר כשהמערכת מחברת מקורות, מציפה דפוס, ומתרגמת אותו לצעד שאפשר לבדוק בחיים עצמם.</p></section></div></>;
+ const Header=({title,sub}:{title:string;sub:string})=><div className="pageTitle"><div><span className="eyebrow">E.I.L</span><h1>{title}</h1>{sub&&<p>{sub}</p>}</div></div>;
+ const Sources=()=><div className="genericPage"><h2 className="genericTitle">מקורות</h2><p className="muted">18 המסמכים שהועלו — בקרוב.</p><button className="primary" onClick={openNew}>+ הוסף מקור</button></div>;
+ const Generic=()=><div className="genericPage"><h2 className="genericTitle">{current.label}</h2><p className="muted">דף זה בפיתוח.</p></div>;
 
  if(reviewMode)return <><LiquidGlassFilter/><ReviewConsole/></>;
  if(!entered)return <><LiquidGlassFilter/><WelcomeScreen onStart={enterExperience}/></>;
@@ -77,7 +77,7 @@ export default function App(){
   <MobileNavigation page={page} onNavigate={nav} onAdd={openNew} online={online}/>
   <main>
    {page!=='dashboard'&&<div className="topbar"><div className="globalSearch">⌕<input value={q} onChange={event=>setQ(event.target.value)} placeholder="חפש רעיון, מקור, קשר או תובנה..."/></div></div>}
-   {page!=='dashboard'&&<div className="pageBack"><button onClick={goBack}>→ חזרה</button><button onClick={()=>nav('dashboard')}>⌂ לספריית התוכן</button></div>}
+   {page!=='dashboard'&&<div className="pageBack"><button onClick={goBack}>→ חזרה</button></div>}
    {notice&&<div className="notice" onClick={()=>setNotice('')}>{notice}</div>}
    {page==='dashboard'&&<KnowledgeDashboard query={q} onQueryChange={setQ} onAdd={openNew}/>} 
    {page==='library'&&<SpiralLibrary chapters={allChapters} query={q} setQuery={setQ} corpusReady={corpusReady} paragraphs={corpusStats.paragraphs} characters={corpusStats.characters}/>} 
