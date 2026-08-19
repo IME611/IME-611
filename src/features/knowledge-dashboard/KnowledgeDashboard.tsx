@@ -93,15 +93,15 @@ export function KnowledgeDashboard({query,onQueryChange,onAdd}:Props){
 
  return <div className="knowledgeDashboard" dir="rtl">
   <JourneyCards/>
-  <header className="knowledgeHero"><div><span className="eyebrow">E.I.L / CONTENT LIBRARY</span><h1>ספריית התוכן</h1></div><button className="primary knowledgeAdd" type="button" onClick={onAdd}>＋ הוסף תוכן</button></header>
+  
   {indexState.status==='loading'&&<section className="knowledgeState" aria-live="polite"><b>מסדר את ספריית התוכן…</b><span>בונה תחומים, נושאים ותתי־נושאים מתוך הקורפוס.</span></section>}
   {indexState.status==='error'&&<section className="knowledgeState error" role="alert"><b>ספריית התוכן לא נטענה.</b><span>{indexState.message}</span><button type="button" onClick={()=>location.reload()}>נסה שוב</button></section>}
   {index&&<>
    
    <section ref={browseRef} className="knowledgeBrowse" aria-label="נושאי המסע">
     {!selectedId&&<>
-     <div className="knowledgeBrowseHead"><span className="eyebrow">KNOWLEDGE HIERARCHY</span><h2 id="knowledge-browse-title">הנושאים</h2></div>
-     <label className="knowledgeSearch"><span>חיפוש בספרייה</span><input value={query} onChange={event=>onQueryChange(event.target.value)} placeholder="למשל: מוח, DMT, אמונות, גוף…"/></label>
+     <div className="knowledgeBrowseHead"></div>
+     
      <div className="knowledgeTopicList">{groups.map(group=>{const domainKey=`domain:${group.id}`,isExpanded=term?true:expanded.has(domainKey);return <section key={group.id} className="knowledgeTopicGroup">
       <div className="knowledgeTopicRow"><button type="button" className="knowledgeTopicOpen" onClick={()=>toggle(domainKey)}><span><strong>{group.label}</strong></span></button><button type="button" className={isExpanded?'knowledgeTopicToggle open':'knowledgeTopicToggle'} onClick={()=>toggle(domainKey)} aria-expanded={isExpanded} aria-label={`${isExpanded?'סגור':'פתח'} את ${group.label}`}><span aria-hidden="true">⌄</span><small>{group.topics.length}</small></button></div>
       {isExpanded&&<div className="knowledgeCanonicalTopics" aria-label={`נושאים תחת ${group.label}`}>{group.topics.map(topic=>{const topicKey=topic.id,isTopicExpanded=term?true:expanded.has(topicKey);return <section key={topic.id} className="knowledgeCanonicalTopic">
