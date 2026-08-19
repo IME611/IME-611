@@ -36,9 +36,9 @@ function JourneyCards({onGoToJourney}:{onGoToJourney?:()=>void}){
   const pct=Math.round((done/total)*100);
 
   return(
-    <section className="dashOverview" aria-label="מסע הלמידה">
+    <section className="dashOverview" aria-label="מסע הלמידה"><div className="dashWelcome"><p className="dashWelcomeText">ברוך הבא ל-<strong>E.I.L</strong> — פלטפורמה שתוביל אותך למסע של מודעות כלפי עצמך וכלפי הסביבה, ותיתן לך כלים כדי להפוך לאדם שאתה רוצה להיות. מאחל לך שתהנה, תחכים ותהפוך לקריסטל הכי טוב שאתה יכול.</p></div>
       <div className="dashOverviewHeader">
-        <div className="dashOverviewTitle">מסע הלמידה</div>
+        <div className="dashOverviewTitle">ההתקדמות שלי במסע</div>
         <div className="dashOverviewMeta">{done}/{total} פרקים · {pct}%</div>
       </div>
       <div className="dashOverviewBar">
@@ -98,7 +98,7 @@ export function KnowledgeDashboard({query,onQueryChange,onAdd}:Props){
   {indexState.status==='error'&&<section className="knowledgeState error" role="alert"><b>ספריית התוכן לא נטענה.</b><span>{indexState.message}</span><button type="button" onClick={()=>location.reload()}>נסה שוב</button></section>}
   {index&&<>
    
-   <section ref={browseRef} className="knowledgeBrowse" aria-labelledby="knowledge-browse-title">
+   <section ref={browseRef} className="knowledgeBrowse" aria-label="נושאי המסע">
     {!selectedId&&<>
      <div className="knowledgeBrowseHead"><span className="eyebrow">KNOWLEDGE HIERARCHY</span><h2 id="knowledge-browse-title">הנושאים</h2></div>
      <label className="knowledgeSearch"><span>חיפוש בספרייה</span><input value={query} onChange={event=>onQueryChange(event.target.value)} placeholder="למשל: מוח, DMT, אמונות, גוף…"/></label>
