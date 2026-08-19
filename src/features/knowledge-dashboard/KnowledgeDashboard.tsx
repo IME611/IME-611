@@ -97,15 +97,7 @@ export function KnowledgeDashboard({query,onQueryChange,onAdd}:Props){
   
   
   
-    {selectedId&&<div className="knowledgeDetailInline">
-     <div className="knowledgeDetailToolbar"><button type="button" className="knowledgeBack" onClick={backToIndex}>→ חזרה לנושאים</button>{detailState.status==='ready'&&<span>{detailState.data.parentTopicLabel?`${detailState.data.domainLabel} · ${detailState.data.parentTopicLabel}`:detailState.data.domainLabel}</span>}</div>
-     {detailState.status==='loading'&&<div className="knowledgeDetailLoading"><b>פותח את הנושא…</b></div>}
-     {detailState.status==='error'&&<div className="knowledgeState error"><b>הנושא לא נטען.</b><span>{detailState.message}</span></div>}
-     {detailState.status==='ready'&&<TopicView detail={detailState.data} onNavigate={openDetail}/>} 
-    </div>}
-   </section>
-   
-  </>}
+    
  </div>;
 }
 
