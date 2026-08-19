@@ -65,9 +65,9 @@ export default function App(){
  const current=pageByNavigationId(page);
  const isEvolution=evoPageIds.includes(page);
  const enterExperience=()=>{try{sessionStorage.setItem('eil-welcome-entered','1')}catch{}setEntered(true);nav('dashboard')};
- const Header=({title,sub}:{title:string;sub:string})=><div className="pageTitle"><div><span className="eyebrow">E.I.L</span><h1>{title}</h1>{sub&&<p>{sub}</p>}</div></div>;
+ const Header=({title,sub}:{title:string;sub?:string})=><div className="pageTitle"><div><span className="eyebrow">E.I.L</span><h1>{title}</h1>{sub&&<p>{sub}</p>}</div></div>;
  const Sources=()=><div className="genericPage"><h2 className="genericTitle">מקורות</h2><p className="muted">18 המסמכים שהועלו — בקרוב.</p><button className="primary" onClick={openNew}>+ הוסף מקור</button></div>;
- const Generic=()=><div className="genericPage"><h2 className="genericTitle">{current.label}</h2><p className="muted">דף זה בפיתוח.</p></div>;
+ const Generic=()=><div className="genericPage"><h2 className="genericTitle">{pageByNavigationId(page).label}</h2><p className="muted">דף זה בפיתוח.</p></div>;
 
  if(reviewMode)return <><LiquidGlassFilter/><ReviewConsole/></>;
  if(!entered)return <><LiquidGlassFilter/><WelcomeScreen onStart={enterExperience}/></>;
