@@ -123,6 +123,42 @@ function ChapterView({ chapter, layer, onBack, onComplete, isOwner }: {
           סיימתי פרק זה — המשך ←
         </button>
       </div>
+
+      <div className="crystalSaveCard">
+        <div className="crystalSaveHeader">
+          <span className="crystalSaveIcon">◆</span>
+          <div>
+            <div className="crystalSaveTitle">שמור כקריסטל</div>
+            <div className="crystalSaveSub">תובנה שתישמר ב"המרחב האישי" שלך</div>
+          </div>
+        </div>
+        <textarea
+          className="crystalSaveInput"
+          id={`crystal-input-${chapter.number}`}
+          placeholder="כתוב תובנה שתרצה לשמור מהפרק הזה..."
+          rows={3}
+        />
+        <button className="crystalSaveBtn" onClick={() => {
+          const input = document.getElementById(`crystal-input-${chapter.number}`) as HTMLTextAreaElement;
+          const text = input?.value?.trim();
+          if (!text) return;
+          try {
+            const existing = JSON.parse(localStorage.getItem('eil-crystals') || '[]');
+            existing.unshift({
+              text,
+              topic: chapter.title.replace(/^פרק\s*\d+[:：]?\s*/, ''),
+              chapterNum: chapter.number,
+              date: new Date().toISOString()
+            });
+            localStorage.setItem('eil-crystals', JSON.stringify(existing));
+            input.value = '';
+            input.placeholder = '✓ נשמר בקריסטלים שלך!';
+            setTimeout(() => { input.placeholder = 'כתוב תובנה שתרצה לשמור מהפרק הזה...' }, 2500);
+          } catch {}
+        }}>
+          ◆ שמור קריסטל
+        </button>
+      </div>
     </div>
   );
 }
