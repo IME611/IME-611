@@ -3,21 +3,21 @@ export type NavigationGroup={id:string;label:string;items:NavigationItem[]};
 
 export const primaryNavigation:NavigationItem[]=[
  {id:'dashboard',label:'דף הבית',icon:'⌂'},
- {id:'library',label:'מסע הלמידה',icon:'◎'},
+ {id:'library',label:'ההתקדמות שלי במסע',icon:'◎'},
 ];
 
 export const mentalModelNavigation:NavigationGroup[]=[
- {id:'content',label:'תוכן',items:[
-  {id:'add-content',label:'הוסף תוכן',icon:'＋',ownerOnly:true},
-  {id:'sources',label:'מקורות',icon:'↗',ownerOnly:true},
-  {id:'research',label:'חקירה',icon:'⌕',ownerOnly:true},
+ {id:'personal',label:'המרחב האישי',items:[
+  {id:'crystals',label:'הקריסטלים שלי',icon:'◆'},
+  {id:'add-learning',label:'הוסף משהו שלמדת',icon:'✎'},
  ]},
- {id:'tools',label:'כלים',items:[
-  {id:'transformation',label:'בדיקה בחיים',icon:'✓',ownerOnly:true},
-  {id:'media',label:'מפות והמחשות',icon:'◫',ownerOnly:true},
+ {id:'content',label:'תוכן',items:[
+  {id:'sources',label:'המקורות שלי',icon:'↗'},
+  {id:'add-source',label:'הוסף מקור',icon:'＋'},
+  {id:'research',label:'חקירה',icon:'⌕'},
  ]},
  {id:'system',label:'מערכת',items:[
-  {id:'settings',label:'הגדרות',icon:'⚙',ownerOnly:true},
+  {id:'settings',label:'הגדרות',icon:'⚙'},
  ]},
 ];
 
