@@ -81,3 +81,68 @@
 .spiralReflectInput{background:rgba(255,255,255,.70);color:#1A1A18;color:var(--eil-text)}
 .spiralBack:hover{color:#1A1A18}
 .spiralCard{color:#1A1A18}
+
+/* ===== CRYSTAL SAVE CARD ===== */
+.crystalSaveCard {
+  margin-top: 24px;
+  background: rgba(255,255,255,.65);
+  border: 1px solid rgba(184,150,46,.28);
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 0 6px 20px rgba(26,20,8,.08);
+}
+.crystalSaveHeader {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.crystalSaveIcon {
+  font-size: 22px;
+  color: rgba(184,150,46,.80);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.crystalSaveTitle {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1A1A18;
+  margin-bottom: 2px;
+}
+.crystalSaveSub {
+  font-size: 12px;
+  color: rgba(26,26,24,.48);
+}
+.crystalSaveInput {
+  width: 100%;
+  padding: 12px 14px;
+  background: rgba(255,255,255,.70);
+  border: 1px solid rgba(184,150,46,.22);
+  border-radius: 12px;
+  font: inherit;
+  font-size: 14px;
+  line-height: 1.65;
+  color: #1A1A18;
+  resize: vertical;
+  outline: none;
+  box-sizing: border-box;
+  margin-bottom: 10px;
+  direction: rtl;
+}
+.crystalSaveInput::placeholder { color: rgba(26,26,24,.35) }
+.crystalSaveInput:focus { border-color: rgba(184,150,46,.50) }
+.crystalSaveBtn {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg, #B8962E, #8A6A1A);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(184,150,46,.30);
+  transition: opacity .18s, transform .15s;
+}
+.crystalSaveBtn:hover { opacity: .88; transform: translateY(-1px) }
