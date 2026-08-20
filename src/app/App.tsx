@@ -1,5 +1,5 @@
 import React,{useEffect,useState}from'react';
-import{chapters as fallbackChapters}from'../data/chapters';
+import{chapters as embeddedChapters}from'../data/chapters-embedded';
 import SpiralLibrary from'../features/journey/SpiralLibrary';
 import EvolutionWorkspace from'../features/evolution/EvolutionWorkspace';
 import TransformationWorkspace from'../features/transformation/TransformationWorkspace';
@@ -20,7 +20,7 @@ import{evolutionPages}from'./navigation';
 import type{Chapter}from'../core/types';
 import{readText,storageKeys,writeText}from'../core/storage';
 
-const fallback:Chapter[]=fallbackChapters.map((chapter:any)=>({
+const fallback:Chapter[]=embeddedChapters.map((chapter:any)=>({
  number:chapter.number,
  title:chapter.title,
  subtitle:chapter.subtitle,
@@ -60,7 +60,7 @@ export default function App(){
  useEffect(()=>{if(!reviewMode)writeText(storageKeys.railCollapsed,collapsed?'1':'0')},[collapsed,reviewMode]);
  useEffect(()=>{if(reviewMode)return;return bindLiquidGlassPointerTracking()},[reviewMode]);
 
- const allChapters=sourceChapters.length===18?sourceChapters:fallback;
+ const allChapters=sourceChapters.length===18?sourceChapters:embeddedChapters;
  const openNew=()=>setEditor(true);
  const current=pageByNavigationId(page);
  const isEvolution=evoPageIds.includes(page);
