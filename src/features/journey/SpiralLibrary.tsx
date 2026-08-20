@@ -92,15 +92,19 @@ function ChapterView({ chapter, layer, onBack, onComplete, isOwner }: {
         {chapter.paragraphs.map((text, i) => {
           const t = text.trim();
           if (!t) return null;
+          if (t.startsWith('##TITLE##')) return <h1 key={i} className="chTitle">{t.replace('##TITLE##','').trim()}</h1>;
+          if (t.startsWith('##SUBTITLE##')) return <p key={i} className="chSubtitle">{t.replace('##SUBTITLE##','').trim()}</p>;
+          if (t.startsWith('##SECTION##')) return <h2 key={i} className="chSection">{t.replace('##SECTION##','').trim()}</h2>;
+          if (t.startsWith('##QUESTION##')) return <div key={i} className="chQuestion">{t.replace('##QUESTION##','').trim()}</div>;
+          if (t.startsWith('##HIGHLIGHT##')) return <div key={i} className="chHighlight">{t.replace('##HIGHLIGHT##','').trim()}</div>;
+          if (t.startsWith('##BIG##')) return <div key={i} className="chBig">{t.replace('##BIG##','').trim()}</div>;
+          if (t.startsWith('##GROUP##')) return <div key={i} className="chGroup">{t.replace('##GROUP##','').trim()}</div>;
+          if (t.startsWith('##SYSTEM##')) return <div key={i} className="chSystem"><span className="chSystemDot" style={{background:layer.color}}/>  <span>{t.replace('##SYSTEM##','').trim()}</span></div>;
+          if (t.startsWith('##WINK##')) return <div key={i} className="chWink">{t.replace('##WINK##','').trim()}</div>;
           if ((/^פרק\s*\d+/u.test(t) || /^\d+\.\s+/u.test(t)) && t.length < 120)
             return <h3 key={i} className="spiralContentH3">{t}</h3>;
           if (/^[-•✓→]/u.test(t))
-            return (
-              <div className="spiralBullet" key={i}>
-                <span style={{ color: layer.accent }}>•</span>
-                <p>{t.replace(/^[-•✓→]\s*/u, '')}</p>
-              </div>
-            );
+            return <div className="spiralBullet" key={i}><span style={{color:layer.accent}}>•</span><p>{t.replace(/^[-•✓→]\s*/u,'')}</p></div>;
           return <p key={i} className="spiralPara">{t}</p>;
         })}
       </article>
