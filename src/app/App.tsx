@@ -66,8 +66,104 @@ export default function App(){
  const isEvolution=evoPageIds.includes(page);
  const enterExperience=()=>{try{sessionStorage.setItem('eil-welcome-entered','1')}catch{}setEntered(true);nav('dashboard')};
  const Header=({title,sub}:{title:string;sub?:string})=><div className="pageTitle"><div><span className="eyebrow">E.I.L</span><h1>{title}</h1>{sub&&<p>{sub}</p>}</div></div>;
- const Sources=()=><div className="genericPage"><h2 className="genericTitle">מקורות</h2><p className="muted">18 המסמכים שהועלו — בקרוב.</p><button className="primary" onClick={openNew}>+ הוסף מקור</button></div>;
- const Generic=()=><div className="genericPage"><h2 className="genericTitle">{pageByNavigationId(page).label}</h2><p className="muted">דף זה בפיתוח.</p></div>;
+ 
+ 
+/* ===== PAGE COMPONENTS ===== */
+
+const Crystals=()=>{
+ const saved=useCrystals();
+ return <div className="simplePage" dir="rtl">
+  <h2 className="simplePageTitle">◆ הקריסטלים שלי</h2>
+  <p className="simplePageSub">תובנות ששמרת מתוך המסע</p>
+  {saved.length===0?<div className="emptyState"><p>עוד לא שמרת קריסטלים</p><span>כשתקרא פרק ותסמן תובנה — היא תופיע כאן</span></div>:
+  <div className="crystalList">{saved.map((c:any,i:number)=><div key={i} className="crystalItem"><div className="crystalItemTitle">{c.topic||c.title||'תובנה'}</div><p className="crystalItemText">{c.text||c.summary}</p><span className="crystalItemSource">{c.sourceLabel||''}</span></div>)}</div>}
+ </div>;
+};
+
+const AddLearning=()=>{
+ const[text,setText]=React.useState('');
+ const[saved,setSaved]=React.useState(false);
+ const save=()=>{if(!text.trim())return;const items=JSON.parse(localStorage.getItem('eil-learnings')||'[]');items.unshift({text:text.trim(),date:new Date().toISOString()});localStorage.setItem('eil-learnings',JSON.stringify(items));setSaved(true);setTimeout(()=>{setText('');setSaved(false)},2000)};
+ return <div className="simplePage" dir="rtl">
+  <h2 className="simplePageTitle">✎ הוסף משהו שלמדת</h2>
+  <p className="simplePageSub">כתוב תובנה, מחשבה, או קשר שגילית</p>
+  <textarea className="learningInput" value={text} onChange={e=>setText(e.target.value)} placeholder="מה למדת היום?" rows={5}/>
+  <button className="primaryBtn" onClick={save} disabled={!text.trim()}>{saved?'✓ נשמר!':'שמור'}</button>
+ </div>;
+};
+
+const Sources=()=>{
+ const srcs=[
+  {num:1,name:'פרק 1 — התבוננות',file:'מי_אני_פרק1_v6.docx'},
+  {num:2,name:'פרק 2 — הכלי החיצוני',file:'פרק2_הכלי_החיצוני.docx'},
+  {num:3,name:'פרק 3 — הפלא ההנדסי',file:'פרק3_הפלא_ההנדסי.docx'},
+  {num:4,name:'פרק 4 — מערכת ההפעלה',file:'פרק4_מערכת_ההפעלה.docx'},
+  {num:5,name:'פרק 5 — המוח המפורט',file:'פרק5_המוח_המפורט.docx'},
+  {num:6,name:'פרק 6 — גלי המוח',file:'פרק6_גלי_המוח.docx'},
+  {num:7,name:'פרק 7 — בלוטת האצטרובל',file:'פרק7_בלוטת_האצטרובל.docx'},
+  {num:8,name:'פרק 8 — תדרים ומוזיקה',file:'פרק8_תדרים_מוזיקה_וצליל.docx'},
+  {num:9,name:'פרק 9 — הגוף כתדר',file:'פרק9_הגוף_כתדר.docx'},
+  {num:10,name:'פרק 10 — נוירופלסטיות',file:'פרק10_נוירופלסטיות.docx'},
+  {num:11,name:'פרק 11 — זהויות ואמונות',file:'פרק11_זהויות_ואמונות.docx'},
+  {num:12,name:'פרק 12 — רגשות כמידע',file:'פרק12_רגשות_כמידע.docx'},
+  {num:13,name:'פרק 13 — יצירת מציאות',file:'פרק13_יצירת_מציאות.docx'},
+  {num:14,name:'פרק 14 — 12 חוקי היקום',file:'פרק14_12_חוקי_היקום.docx'},
+  {num:15,name:'פרק 15 — יעדים וחזון',file:'פרק15_יעדים_וחזון.docx'},
+  {num:16,name:'פרק 16 — סבל וקושי',file:'פרק16_סבל_קושי_ומשמעות.docx'},
+  {num:17,name:'פרק 17 — חיבור הכל',file:'פרק17_חיבור_הכל.docx'},
+  {num:18,name:'פרק 18 — מי אני? תשובה',file:'פרק18_מי_אני_תשובה.docx'},
+ ];
+ return <div className="simplePage" dir="rtl">
+  <h2 className="simplePageTitle">↗ המקורות שלי</h2>
+  <p className="simplePageSub">18 המסמכים שהועלו לפלטפורמה</p>
+  <div className="sourceList">{srcs.map(s=><div key={s.num} className="sourceItem">
+   <span className="sourceNum">{String(s.num).padStart(2,'0')}</span>
+   <div className="sourceInfo"><div className="sourceName">{s.name}</div><div className="sourceFile">{s.file}</div></div>
+  </div>)}</div>
+ </div>;
+};
+
+const AddSource=()=>{
+ return <div className="simplePage" dir="rtl">
+  <h2 className="simplePageTitle">＋ הוסף מקור</h2>
+  <p className="simplePageSub">העלה מסמך, מאמר, סרטון או כל חומר גלם</p>
+  <button className="primaryBtn" onClick={openNew}>+ העלה מקור / PDF</button>
+ </div>;
+};
+
+const Settings=()=>{
+ const[form,setForm]=React.useState({name:'',email:'',phone:''});
+ React.useEffect(()=>{try{const s=JSON.parse(localStorage.getItem('eil-settings')||'{}');setForm(f=>({...f,...s}))}catch{};},[]);
+ const save=()=>{localStorage.setItem('eil-settings',JSON.stringify(form));alert('נשמר ✓')};
+ const field=(label:string,key:'name'|'email'|'phone',type='text')=><div className="settingField"><label className="settingLabel">{label}</label><input className="settingInput" type={type} value={form[key]} onChange={e=>setForm(f=>({...f,[key]:e.target.value}))}/></div>;
+ return <div className="simplePage" dir="rtl">
+  <h2 className="simplePageTitle">⚙ הגדרות</h2>
+  <div className="settingForm">
+   {field('שם מלא','name')}
+   {field('אימייל','email','email')}
+   {field('טלפון','phone','tel')}
+   <button className="primaryBtn" onClick={save}>שמור הגדרות</button>
+  </div>
+ </div>;
+};
+
+const Research=()=><div className="simplePage" dir="rtl">
+ <h2 className="simplePageTitle">⌕ חקירה</h2>
+ <p className="simplePageSub">חפש וקשר תוכן מתוך המקורות שלך</p>
+ <div className="emptyState"><p>בפיתוח</p><span>בקרוב תוכל לחפש, לקשר ולשייך תוכן לפרקים</span></div>
+</div>;
+
+const Generic=()=><div className="simplePage" dir="rtl">
+ <h2 className="simplePageTitle">{pageByNavigationId(page).label}</h2>
+ <p className="muted">דף זה בפיתוח.</p>
+</div>;
+
+function useCrystals(){
+ const[items,setItems]=React.useState<any[]>([]);
+ React.useEffect(()=>{try{const s=JSON.parse(localStorage.getItem('eil-crystals')||'[]');setItems(s)}catch{};},[]);
+ return items;
+}
+
 
  if(reviewMode)return <><LiquidGlassFilter/><ReviewConsole/></>;
  if(!entered)return <><LiquidGlassFilter/><WelcomeScreen onStart={enterExperience}/></>;
@@ -80,6 +176,12 @@ export default function App(){
    {page!=='dashboard'&&<div className="pageBack"><button onClick={goBack}>→ חזרה</button></div>}
    {notice&&<div className="notice" onClick={()=>setNotice('')}>{notice}</div>}
    {page==='dashboard'&&<KnowledgeDashboard query={q} onQueryChange={setQ} onAdd={openNew}/>} 
+   {page==='crystals'&&<Crystals/>}
+   {page==='add-learning'&&<AddLearning/>}
+   {page==='sources'&&<Sources/>}
+   {page==='add-source'&&<AddSource/>}
+   {page==='research'&&<Research/>}
+   {page==='settings'&&<Settings/>}
    {page==='library'&&<SpiralLibrary chapters={allChapters} query={q} setQuery={setQ} corpusReady={corpusReady} paragraphs={corpusStats.paragraphs} characters={corpusStats.characters}/>} 
    {page==='sources'&&<Sources/>}
    {page==='transformation'&&<TransformationWorkspace chapters={allChapters}/>} 
