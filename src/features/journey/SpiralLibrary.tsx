@@ -19,7 +19,7 @@ function stageForNum(num: number): LearningStage | undefined {
   return journeyPath.stages.find(s => s.order === num);
 }
 function isOwnerMode(): boolean {
-  try { return localStorage.getItem('eil-access-mode') !== 'journey'; } catch { return true; }
+  try { return localStorage.getItem('eil-access-mode') === 'owner'; } catch { return true; }
 }
 
 /* ── Card ── */
