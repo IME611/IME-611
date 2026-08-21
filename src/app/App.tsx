@@ -183,12 +183,10 @@ function useCrystals(){
    {page==='research'&&<Research/>}
    {page==='settings'&&<Settings/>}
    {page==='library'&&<SpiralLibrary chapters={allChapters} query={q} setQuery={setQ} corpusReady={corpusReady} paragraphs={corpusStats.paragraphs} characters={corpusStats.characters}/>} 
-   {page==='sources'&&<Sources/>}
    {page==='transformation'&&<TransformationWorkspace chapters={allChapters}/>} 
    {page==='media'&&<MediaWorkspace/>} 
-   {page==='research'&&<ResearchWorkbench chapters={allChapters} onAdd={openNew}/>} 
    {isEvolution&&<EvolutionWorkspace page={page} onNav={nav}/>} 
-   {!['dashboard','library','sources','transformation','media','research',...evoPageIds].includes(page)&&<Generic/>}
+   {!['dashboard','library','sources','transformation','media','research','crystals','add-learning','add-source','settings',...evoPageIds].includes(page)&&<Generic/>}
    <AddSourceModal open={editor} onClose={()=>setEditor(false)} onImported={message=>{setNotice(message);setOnline(!message.startsWith('ייבוא נכשל'))}}/>
   </main>
   <button className="crystalLauncher" onClick={()=>setCrystalsOpen(true)} aria-label="פתח את אוסף הקריסטלים"><span>◆</span><b>הקריסטלים שלי</b><em>{crystals.length}</em></button>
