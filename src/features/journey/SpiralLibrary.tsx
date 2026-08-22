@@ -60,6 +60,8 @@ function ChapterView({ chapter, layer, onBack, onComplete, onPrevious, onNext, c
   isOwner: boolean;
 }) {
   const [reflection, setReflection] = useState('');
+  const [crystalText, setCrystalText] = useState('');
+  const [crystalSaved, setCrystalSaved] = useState(false);
   const stage = stageForNum(chapter.number);
   const canComplete = isOwner || reflection.trim().length >= 20;
 
@@ -134,29 +136,28 @@ function ChapterView({ chapter, layer, onBack, onComplete, onPrevious, onNext, c
         </div>
         <textarea
           className="crystalSaveInput"
-          id={`crystal-input-${chapter.number}`}
-          placeholder="כתוב תובנה שתרצה לשמור מהפרק הזה..."
+          value={crystalText}
+          onChange={e=>setCrystalText(e.target.value)}
+          placeholder={crystalSaved?"✓ נשמר בקריסטלים שלך!":"כתוב תובנה שתרצה לשמור מהפרק הזה..."}
           rows={3}
         />
-        <button className="crystalSaveBtn" onClick={() => {
-          const input = document.getElementById(`crystal-input-${chapter.number}`) as HTMLTextAreaElement;
-          const text = input?.value?.trim();
-          if (!text) return;
+        <button className="crystalSaveBtn" disabled={!crystalText.trim()} onClick={() => {
+          if (!crystalText.trim()) return;
           try {
             const existing = JSON.parse(localStorage.getItem('eil-crystals') || '[]');
             existing.unshift({
-              text,
-              topic: chapter.title.replace(/^פרק\s*\d+[:：]?\s*/, ''),
+              text: crystalText.trim(),
+              topic: chapter.title.replace(/^פרק\s*\d+[::]?\s*/u, ''),
               chapterNum: chapter.number,
               date: new Date().toISOString()
             });
             localStorage.setItem('eil-crystals', JSON.stringify(existing));
-            input.value = '';
-            input.placeholder = '✓ נשמר בקריסטלים שלך!';
-            setTimeout(() => { input.placeholder = 'כתוב תובנה שתרצה לשמור מהפרק הזה...' }, 2500);
+            setCrystalText('');
+            setCrystalSaved(true);
+            setTimeout(() => setCrystalSaved(false), 3000);
           } catch {}
         }}>
-          ◆ שמור קריסטל
+          {crystalSaved ? "✓ נשמר בקריסטלים!" : "◆ שמור קריסטל"}
         </button>
       </div>
 
