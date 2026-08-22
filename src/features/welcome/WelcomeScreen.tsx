@@ -1,3 +1,5 @@
+import{chapters as embeddedChapters}from'../../data/chapters-embedded';
+
 interface WelcomeScreenProps { onStart: () => void }
 
 export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
@@ -24,7 +26,7 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
         </button>
       </section>
 
-      <p className="welcomeHint">18 פרקים · 5 שכבות · מסע מבפנים החוצה</p>
+      <p className="welcomeHint">{embeddedChapters.length} פרקים · 5 שכבות · מסע מבפנים החוצה</p>
     </main>
   )
 }
