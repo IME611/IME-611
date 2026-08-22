@@ -56,8 +56,19 @@
 .spiralWhy{border-radius:14px;padding:16px 18px;margin-bottom:28px}
 .spiralWhyLabel{display:block;font-size:11px;font-weight:700;letter-spacing:.12em;color:rgba(26,26,24,.45);margin-bottom:8px;text-transform:uppercase}
 .spiralWhy p{margin:0;font-size:15px;line-height:1.7;color:rgba(26,26,24,.75)}
-.spiralContent{margin-bottom:36px}
-.spiralContent p,.spiralPara{font-size:17px;line-height:1.8;color:rgba(26,26,24,.85);margin:0 0 18px}
+.spiralContent{
+  margin-bottom:36px;
+  max-width:620px;
+  margin-right:auto;
+  margin-left:auto;
+}
+.spiralPara{
+  font-size:18px;
+  line-height:1.85;
+  color:rgba(26,26,24,.82);
+  margin:0 0 22px;
+  text-align:right;
+}
 .spiralContentH3{font-size:18px;font-weight:700;margin:32px 0 12px;color:var(--eil-text)}
 .spiralBullet{display:flex;gap:12px;margin-bottom:12px;align-items:flex-start}
 .spiralBullet span{font-size:18px;flex-shrink:0;line-height:1.8}
@@ -157,11 +168,40 @@
 /* ===== STRUCTURED CHAPTER ELEMENTS ===== */
 .chTitle{font-size:clamp(26px,5vw,34px);font-weight:800;color:#1A1A18;margin:0 0 6px;text-align:center}
 .chSubtitle{font-size:15px;color:rgba(26,26,24,.50);text-align:center;margin:0 0 28px}
-.chSection{font-size:clamp(18px,3vw,22px);font-weight:700;color:#1A1A18;margin:36px 0 14px;padding-bottom:8px;border-bottom:2px solid rgba(184,150,46,.30)}
+.chSection{
+  font-size:clamp(18px,3vw,22px);
+  font-weight:700;
+  color:#1A1A18;
+  margin:36px 0 14px;
+  padding-top:4px;
+  padding-bottom:8px;
+  border-bottom:2px solid rgba(184,150,46,.30);
+}
 .chQuestion{font-size:clamp(20px,4vw,26px);font-weight:800;color:#006039;text-align:center;margin:28px 0 16px;padding:16px;background:rgba(0,96,57,.06);border-radius:14px;border-right:4px solid #006039}
 .chHighlight{font-size:clamp(17px,2.5vw,20px);font-weight:700;color:#1A1A18;margin:24px 0 14px;padding:14px 18px;background:rgba(184,150,46,.10);border-radius:12px;border-right:3px solid rgba(184,150,46,.60);text-align:right}
 .chBig{font-size:clamp(20px,4vw,26px);font-weight:800;color:#1A1A18;text-align:center;margin:32px auto;padding:20px;background:linear-gradient(135deg,rgba(184,150,46,.08),rgba(0,96,57,.06));border-radius:18px;border:1px solid rgba(184,150,46,.25);max-width:520px;line-height:1.35}
-.chGroup{font-size:clamp(17px,2.5vw,20px);font-weight:800;color:#006039;text-align:center;margin:32px 0 12px;padding:12px;background:rgba(0,96,57,.06);border-radius:12px}
-.chSystem{display:flex;align-items:flex-start;gap:10px;margin:8px 0;padding:10px 14px;background:rgba(255,255,255,.55);border:1px solid rgba(26,26,24,.07);border-radius:10px;font-size:14px;color:#1A1A18;line-height:1.5}
+.chGroup{
+  font-size:clamp(17px,2.5vw,20px);
+  font-weight:800;
+  color:#006039;
+  text-align:center;
+  margin:36px 0 12px;
+  padding:12px;
+  background:rgba(0,96,57,.06);
+  border-radius:12px;
+}
+.chSystem{
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+  margin:0 0 8px;
+  padding:10px 14px;
+  background:rgba(255,255,255,.55);
+  border:1px solid rgba(26,26,24,.07);
+  border-radius:10px;
+  font-size:14px;
+  color:#1A1A18;
+  line-height:1.5;
+}
 .chSystemDot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px}
 .chWink{font-size:clamp(16px,2.5vw,19px);font-weight:700;color:rgba(184,150,46,.85);text-align:center;margin:32px 0 8px;font-style:italic}
