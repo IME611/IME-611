@@ -41,6 +41,21 @@
 .settingLabel{font-size:13px;font-weight:600;color:rgba(26,26,24,.60)}
 .settingInput{padding:12px 14px;background:rgba(255,255,255,.70);border:1px solid rgba(184,150,46,.22);border-radius:12px;font:inherit;font-size:15px;color:#1A1A18;outline:none;direction:rtl}
 .settingInput:focus{border-color:rgba(184,150,46,.50)}
+.dangerBtn{width:100%;padding:12px 14px;border:1px solid #842828;border-radius:12px;background:#a33232;color:#fff;font:inherit;font-weight:700;cursor:pointer}
+.dangerBtn:hover{background:#842828}
+.dangerBtn:focus-visible{outline:3px solid rgba(163,50,50,.24);outline-offset:2px}
+.settingStatus{margin:0;color:#006039;font-size:13px;text-align:center}
+
+/* Research */
+.researchLabel{display:block;margin-bottom:6px;color:rgba(26,26,24,.65);font-size:13px;font-weight:700}
+.researchInput{width:100%;box-sizing:border-box;padding:14px 16px;border:1px solid rgba(184,150,46,.30);border-radius:14px;background:rgba(255,255,255,.72);color:#1A1A18;font:inherit;font-size:16px;outline:none}
+.researchInput:focus{border-color:#006039;box-shadow:0 0 0 3px rgba(0,96,57,.10)}
+.researchResults{display:grid;gap:10px;margin-top:18px}
+.researchResult{display:grid;gap:7px;width:100%;padding:16px;border:1px solid rgba(184,150,46,.20);border-radius:14px;background:rgba(255,255,255,.66);color:#1A1A18;text-align:right;font:inherit;cursor:pointer}
+.researchResult:hover{border-color:rgba(0,96,57,.36);background:rgba(0,96,57,.04)}
+.researchResult:focus-visible{outline:3px solid rgba(0,96,57,.20);outline-offset:2px}
+.researchResult strong{color:#006039;font-size:14px}
+.researchResult span{font-size:14px;line-height:1.65;color:rgba(26,26,24,.72)}
 
 /* Generic page */
 .genericPage{max-width:640px;margin:0 auto;padding:24px 20px 80px;direction:rtl}
