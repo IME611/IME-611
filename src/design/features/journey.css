@@ -70,7 +70,14 @@
 .spiralComplete{width:100%;padding:16px;border-radius:14px;border:none;color:#fff;font:inherit;font-size:17px;font-weight:700;cursor:pointer;transition:opacity .2s,transform .15s}
 .spiralComplete:hover:not(:disabled){transform:translateY(-2px)}
 .spiralComplete:disabled{cursor:not-allowed}
+.spiralChapterNav{display:grid;grid-template-columns:minmax(0,1fr) minmax(180px,1.25fr) minmax(0,1fr);align-items:center;gap:12px;margin-top:24px;padding-top:20px;border-top:1px solid rgba(26,26,24,.08)}
+.spiralChapterNavBtn{padding:12px 16px;border:1px solid rgba(0,96,57,.28);border-radius:14px;background:transparent;color:#006039;font:inherit;font-size:14px;font-weight:700;cursor:pointer}
+.spiralChapterNavBtn:hover:not(:disabled){background:rgba(0,96,57,.07)}
+.spiralChapterNavBtn:focus-visible,.spiralChapterComplete:focus-visible{outline:3px solid rgba(0,96,57,.22);outline-offset:2px}
+.spiralChapterNavBtn:disabled{opacity:.35;cursor:not-allowed}
+.spiralChapterComplete{min-width:0}
 @media(max-width:640px){.spiralLayerHeader{padding:14px 14px}.spiralLayerWhy{display:none}.spiralLayerBody{padding:0 12px 16px}.spiralCard{padding:12px 12px}.spiralChapter{padding:16px 14px 60px}}
+@media(max-width:560px){.spiralChapterNav{grid-template-columns:1fr}.spiralChapterComplete{grid-row:1}.spiralChapterNavBtn{width:100%}}
 
 /* Dark mode safety — journey */
 .spiralLibrary,.spiralChapter{color:#1A1A18}
