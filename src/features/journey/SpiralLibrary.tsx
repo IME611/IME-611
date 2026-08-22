@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLearningProgress } from './model/useLearningProgress';
 import { journeyPath } from './model/journey-stage';
 import type { LearningStage } from '../../core/learning-path/learning-path.types';
 
 type Chapter = { number: number; title: string; subtitle: string; sourceFile: string; paragraphs: string[]; paragraphCount?: number; characterCount?: number };
-type Props = { chapters: Chapter[]; query: string; setQuery: (v: string) => void; corpusReady: boolean; paragraphs: number; characters: number };
+type Props = { chapters: Chapter[]; query: string; setQuery: (v: string) => void; corpusReady: boolean; paragraphs: number; characters: number; initialChapter?: number | null; onInitialChapterOpened?: () => void };
 
 const LAYERS = [
   { id: 'A', label: 'שכבה ראשונה — הכלי הפיזי',    color: '#006039', accent: '#006039', nums: [1,2,3],       why: 'לפני שנשאל "מי אני" — נראה ממה אנחנו בנויים. הגוף הוא נקודת המוצא.' },
@@ -48,11 +48,15 @@ function ChapterCard({ chapter, layer, unlocked, completed, onClick }: {
 }
 
 /* ── Chapter View ── */
-function ChapterView({ chapter, layer, onBack, onComplete, isOwner }: {
+function ChapterView({ chapter, layer, onBack, onComplete, onPrevious, onNext, canGoPrevious, canGoNext, isOwner }: {
   chapter: Chapter;
   layer: typeof LAYERS[number];
   onBack: () => void;
   onComplete: (reflection: string) => void;
+  onPrevious?: () => void;
+  onNext?: () => void;
+  canGoPrevious: boolean;
+  canGoNext: boolean;
   isOwner: boolean;
 }) {
   const [reflection, setReflection] = useState('');
@@ -118,14 +122,6 @@ function ChapterView({ chapter, layer, onBack, onComplete, isOwner }: {
           placeholder="מה נגע בך? מה תרצה לזכור?"
           rows={4}
         />
-        <button
-          className="spiralComplete"
-          style={{ background: canComplete ? "#006039" : "rgba(26,26,24,.20)", color: canComplete ? "#fff" : "rgba(26,26,24,.40)", opacity: 1 }}
-          onClick={() => onComplete(reflection)}
-          disabled={!canComplete}
-        >
-          סיימתי פרק זה — המשך ←
-        </button>
       </div>
 
       <div className="crystalSaveCard">
@@ -163,12 +159,26 @@ function ChapterView({ chapter, layer, onBack, onComplete, isOwner }: {
           ◆ שמור קריסטל
         </button>
       </div>
+
+      <nav className="spiralChapterNav" aria-label="ניווט בין פרקים">
+        <button className="spiralChapterNavBtn" type="button" onClick={onPrevious} disabled={!canGoPrevious}>→ הפרק הקודם</button>
+        <button
+          className="spiralComplete spiralChapterComplete"
+          type="button"
+          style={{ background: canComplete ? "#006039" : "rgba(26,26,24,.20)", color: canComplete ? "#fff" : "rgba(26,26,24,.40)", opacity: 1 }}
+          onClick={() => onComplete(reflection)}
+          disabled={!canComplete}
+        >
+          סיימתי — המשך
+        </button>
+        <button className="spiralChapterNavBtn" type="button" onClick={onNext} disabled={!canGoNext}>הפרק הבא ←</button>
+      </nav>
     </div>
   );
 }
 
 /* ── Main ── */
-export default function SpiralLibrary({ chapters, query, setQuery }: Props) {
+export default function SpiralLibrary({ chapters, query, setQuery, initialChapter, onInitialChapterOpened }: Props) {
   const learning = useLearningProgress(journeyPath);
   const [activeNum, setActiveNum]   = useState<number | null>(null);
   const [openLayer, setOpenLayer]   = useState<string>('A');
@@ -177,11 +187,24 @@ export default function SpiralLibrary({ chapters, query, setQuery }: Props) {
   const unlocked  = (num: number) => { const s = stageForNum(num); return isOwner || (s ? learning.isUnlocked(s) : false); };
   const completed = (num: number) => { const s = stageForNum(num); return s ? learning.state.completedStageIds.includes(s.id) : false; };
 
+  useEffect(() => {
+    if (!initialChapter) return;
+    setActiveNum(initialChapter);
+    onInitialChapterOpened?.();
+  }, [initialChapter]);
+
   const doneCount = chapters.filter(c => completed(c.number)).length;
   const pct       = Math.round((doneCount / 18) * 100);
 
   const chapter = activeNum ? chapters.find(c => c.number === activeNum) ?? null : null;
   const layer   = chapter   ? LAYERS.find(l => (l.nums as readonly number[]).includes(chapter.number)) ?? LAYERS[0] : LAYERS[0];
+  const previousChapter = chapter ? chapters.find(c => c.number === chapter.number - 1) ?? null : null;
+  const nextChapter = chapter ? chapters.find(c => c.number === chapter.number + 1) ?? null : null;
+  const openChapter = (chapterNumber: number) => {
+    if (!unlocked(chapterNumber)) return;
+    setActiveNum(chapterNumber);
+    scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const handleComplete = (reflection: string) => {
     if (!chapter) return;
@@ -206,6 +229,10 @@ export default function SpiralLibrary({ chapters, query, setQuery }: Props) {
         layer={layer}
         onBack={() => setActiveNum(null)}
         onComplete={handleComplete}
+        onPrevious={previousChapter ? () => openChapter(previousChapter.number) : undefined}
+        onNext={nextChapter ? () => openChapter(nextChapter.number) : undefined}
+        canGoPrevious={Boolean(previousChapter && unlocked(previousChapter.number))}
+        canGoNext={Boolean(nextChapter && unlocked(nextChapter.number))}
         isOwner={isOwner}
       />
     );
