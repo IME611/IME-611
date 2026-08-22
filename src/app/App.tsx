@@ -134,22 +134,44 @@ const AddSource=()=>{
 };
 
 const Settings=()=>{
- const[form,setForm]=React.useState({name:'',email:'',phone:''});
+ const[form,setForm]=React.useState({name:"",email:"",phone:""});
+ const[saved,setSaved]=React.useState(false);
  const[resetDone,setResetDone]=React.useState(false);
- React.useEffect(()=>{try{const s=JSON.parse(localStorage.getItem('eil-settings')||'{}');setForm(f=>({...f,...s}))}catch{};},[]);
- const save=()=>{localStorage.setItem('eil-settings',JSON.stringify(form));alert('נשמר ✓')};
- const reset=()=>{if(!window.confirm('האם אתה בטוח?'))return;resetJourneyProgress();setResetDone(true)};
- const field=(label:string,key:'name'|'email'|'phone',type='text')=><div className="settingField"><label className="settingLabel">{label}</label><input className="settingInput" type={type} value={form[key]} onChange={e=>setForm(f=>({...f,[key]:e.target.value}))}/></div>;
+ React.useEffect(()=>{
+ try{const s=JSON.parse(localStorage.getItem("eil-settings")||"{}");
+ setForm(f=>({...f,...s}));}catch{}
+ },[]);
+ const save=()=>{
+ localStorage.setItem("eil-settings",JSON.stringify(form));
+ setSaved(true);setTimeout(()=>setSaved(false),2000);
+ };
+ const reset=()=>{
+ if(!window.confirm("האם אתה בטוח? פעולה זו תמחק את כל ההתקדמות שלך."))return;
+ ["eil-crystals","eil-learnings","eil-progress"].forEach(k=>localStorage.removeItem(k));
+ setResetDone(true);setTimeout(()=>setResetDone(false),3000);
+ };
+ const field=(label:string,key:"name"|"email"|"phone",type="text")=>
+ <div className="settingField">
+ <label className="settingLabel">{label}</label>
+ <input className="settingInput" type={type} value={form[key]}
+ onChange={e=>setForm(f=>({...f,[key]:e.target.value}))}/>
+ </div>;
  return <div className="simplePage" dir="rtl">
-  <h2 className="simplePageTitle">⚙ הגדרות</h2>
-  <div className="settingForm">
-   {field('שם מלא','name')}
-   {field('אימייל','email','email')}
-   {field('טלפון','phone','tel')}
-   <button className="primaryBtn" onClick={save}>שמור הגדרות</button>
-   <button className="dangerBtn" type="button" onClick={reset}>אפס התקדמות</button>
-   {resetDone&&<p className="settingStatus" role="status">ההתקדמות אופסה.</p>}
-  </div>
+ <h2 className="simplePageTitle">⚙ הגדרות</h2>
+ <div className="settingForm">
+ {field("שם מלא","name")}
+ {field("אימייל","email","email")}
+ {field("טלפון","phone","tel")}
+ <button className="primaryBtn" onClick={save}>
+ {saved?"✓ נשמר!":"שמור הגדרות"}
+ </button>
+ <div className="settingDivider"/>
+ <h3 className="settingDangerTitle">אזור מסוכן</h3>
+ <button className="dangerBtn" onClick={reset}>
+ {resetDone?"✓ ההתקדמות אופסה":"🗑 אפס התקדמות"}
+ </button>
+ <p className="settingDangerNote">מוחק: קריסטלים, תובנות, התקדמות. לא ניתן לשחזר.</p>
+ </div>
  </div>;
 };
 
