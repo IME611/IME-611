@@ -18,7 +18,7 @@ import{LiquidGlassFilter}from'../design/primitives/LiquidGlassFilter';
 import{bindLiquidGlassPointerTracking}from'../design/glass/runtime';
 import{evolutionPages}from'./navigation';
 import type{Chapter}from'../core/types';
-import{readText,storageKeys,writeText}from'../core/storage';
+import{readText,resetJourneyProgress,storageKeys,writeText}from'../core/storage';
 
 const fallback:Chapter[]=embeddedChapters.map((chapter:any)=>({
  number:chapter.number,
@@ -39,6 +39,7 @@ export default function App(){
  const[online,setOnline]=useState(false);
  const[notice,setNotice]=useState('');
  const[crystalsOpen,setCrystalsOpen]=useState(false);
+ const[requestedChapter,setRequestedChapter]=useState<number|null>(null);
  const[sourceChapters,setSourceChapters]=useState<Chapter[]>([]);
  const[corpusStats,setCorpusStats]=useState({paragraphs:0,characters:0});
  const[corpusReady,setCorpusReady]=useState(false);
@@ -65,6 +66,7 @@ export default function App(){
  const current=pageByNavigationId(page);
  const isEvolution=evoPageIds.includes(page);
  const enterExperience=()=>{try{sessionStorage.setItem('eil-welcome-entered','1')}catch{}setEntered(true);nav('dashboard')};
+ const openChapterFromResearch=(chapterNumber:number)=>{setRequestedChapter(chapterNumber);nav('library')};
  const Header=({title,sub}:{title:string;sub?:string})=><div className="pageTitle"><div><span className="eyebrow">E.I.L</span><h1>{title}</h1>{sub&&<p>{sub}</p>}</div></div>;
  
  
@@ -133,8 +135,10 @@ const AddSource=()=>{
 
 const Settings=()=>{
  const[form,setForm]=React.useState({name:'',email:'',phone:''});
+ const[resetDone,setResetDone]=React.useState(false);
  React.useEffect(()=>{try{const s=JSON.parse(localStorage.getItem('eil-settings')||'{}');setForm(f=>({...f,...s}))}catch{};},[]);
  const save=()=>{localStorage.setItem('eil-settings',JSON.stringify(form));alert('נשמר ✓')};
+ const reset=()=>{if(!window.confirm('האם אתה בטוח?'))return;resetJourneyProgress();setResetDone(true)};
  const field=(label:string,key:'name'|'email'|'phone',type='text')=><div className="settingField"><label className="settingLabel">{label}</label><input className="settingInput" type={type} value={form[key]} onChange={e=>setForm(f=>({...f,[key]:e.target.value}))}/></div>;
  return <div className="simplePage" dir="rtl">
   <h2 className="simplePageTitle">⚙ הגדרות</h2>
@@ -143,15 +147,36 @@ const Settings=()=>{
    {field('אימייל','email','email')}
    {field('טלפון','phone','tel')}
    <button className="primaryBtn" onClick={save}>שמור הגדרות</button>
+   <button className="dangerBtn" type="button" onClick={reset}>אפס התקדמות</button>
+   {resetDone&&<p className="settingStatus" role="status">ההתקדמות אופסה.</p>}
   </div>
  </div>;
 };
 
-const Research=()=><div className="simplePage" dir="rtl">
- <h2 className="simplePageTitle">⌕ חקירה</h2>
- <p className="simplePageSub">חפש וקשר תוכן מתוך המקורות שלך</p>
- <div className="emptyState"><p>בפיתוח</p><span>בקרוב תוכל לחפש, לקשר ולשייך תוכן לפרקים</span></div>
-</div>;
+const Research=()=>{
+ const[researchQuery,setResearchQuery]=React.useState('');
+ const normalizedQuery=researchQuery.trim().toLowerCase();
+ const results=normalizedQuery.length>2
+  ?embeddedChapters.flatMap(ch=>ch.paragraphs
+   .filter(p=>p.toLowerCase().includes(normalizedQuery))
+   .slice(0,3)
+   .map(p=>({chapter:ch,text:p.replace(/^##[A-Z]+##\s*/,'')})))
+  :[];
+ return <div className="simplePage researchPage" dir="rtl">
+  <h2 className="simplePageTitle">⌕ חקירה</h2>
+  <p className="simplePageSub">חיפוש בתוך 18 פרקי המסע</p>
+  <label className="researchLabel" htmlFor="chapter-research">חיפוש בפרקים</label>
+  <input id="chapter-research" className="researchInput" type="search" value={researchQuery} onChange={e=>setResearchQuery(e.target.value)} placeholder="הקלד לפחות שלושה תווים..."/>
+  <div className="researchResults" aria-live="polite">
+   {normalizedQuery.length<=2&&<div className="emptyState"><p>הקלד לפחות שלושה תווים</p></div>}
+   {normalizedQuery.length>2&&results.length===0&&<div className="emptyState"><p>לא נמצאו תוצאות</p></div>}
+   {results.map((result,index)=><button className="researchResult" type="button" key={`${result.chapter.number}-${index}`} onClick={()=>openChapterFromResearch(result.chapter.number)}>
+    <strong>פרק {result.chapter.number}: {result.chapter.title}</strong>
+    <span>{result.text}</span>
+   </button>)}
+  </div>
+ </div>;
+};
 
 const Generic=()=><div className="simplePage" dir="rtl">
  <h2 className="simplePageTitle">{pageByNavigationId(page).label}</h2>
@@ -182,7 +207,7 @@ function useCrystals(){
    {page==='add-source'&&<AddSource/>}
    {page==='research'&&<Research/>}
    {page==='settings'&&<Settings/>}
-   {page==='library'&&<SpiralLibrary chapters={allChapters} query={q} setQuery={setQ} corpusReady={corpusReady} paragraphs={corpusStats.paragraphs} characters={corpusStats.characters}/>} 
+   {page==='library'&&<SpiralLibrary chapters={allChapters} query={q} setQuery={setQ} corpusReady={corpusReady} paragraphs={corpusStats.paragraphs} characters={corpusStats.characters} initialChapter={requestedChapter} onInitialChapterOpened={()=>setRequestedChapter(null)}/>}
    {page==='transformation'&&<TransformationWorkspace chapters={allChapters}/>} 
    {page==='media'&&<MediaWorkspace/>} 
    {isEvolution&&<EvolutionWorkspace page={page} onNav={nav}/>} 
