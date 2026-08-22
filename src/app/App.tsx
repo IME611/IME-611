@@ -154,27 +154,32 @@ const Settings=()=>{
 };
 
 const Research=()=>{
- const[researchQuery,setResearchQuery]=React.useState('');
- const normalizedQuery=researchQuery.trim().toLowerCase();
- const results=normalizedQuery.length>2
-  ?embeddedChapters.flatMap(ch=>ch.paragraphs
-   .filter(p=>p.toLowerCase().includes(normalizedQuery))
-   .slice(0,3)
-   .map(p=>({chapter:ch,text:p.replace(/^##[A-Z]+##\s*/,'')})))
-  :[];
- return <div className="simplePage researchPage" dir="rtl">
-  <h2 className="simplePageTitle">⌕ חקירה</h2>
-  <p className="simplePageSub">חיפוש בתוך 18 פרקי המסע</p>
-  <label className="researchLabel" htmlFor="chapter-research">חיפוש בפרקים</label>
-  <input id="chapter-research" className="researchInput" type="search" value={researchQuery} onChange={e=>setResearchQuery(e.target.value)} placeholder="הקלד לפחות שלושה תווים..."/>
-  <div className="researchResults" aria-live="polite">
-   {normalizedQuery.length<=2&&<div className="emptyState"><p>הקלד לפחות שלושה תווים</p></div>}
-   {normalizedQuery.length>2&&results.length===0&&<div className="emptyState"><p>לא נמצאו תוצאות</p></div>}
-   {results.map((result,index)=><button className="researchResult" type="button" key={`${result.chapter.number}-${index}`} onClick={()=>openChapterFromResearch(result.chapter.number)}>
-    <strong>פרק {result.chapter.number}: {result.chapter.title}</strong>
-    <span>{result.text}</span>
-   </button>)}
-  </div>
+ const[q,setQ]=React.useState("");
+ const needle=q.trim().toLowerCase();
+ const results=needle.length>2
+ ?embeddedChapters.flatMap(ch=>
+ ch.paragraphs
+ .filter(p=>!p.startsWith("##")&&p.toLowerCase().includes(needle))
+ .slice(0,3)
+ .map(p=>({ch,text:p})))
+ :[];
+ const highlight=(text:string)=>{
+ const idx=text.toLowerCase().indexOf(needle);
+ if(idx<0||!needle)return <span>{text}</span>;
+ return <span>{text.slice(0,idx)}<mark className="searchMark">{text.slice(idx,idx+needle.length)}</mark>{text.slice(idx+needle.length)}</span>;
+ };
+ return <div className="simplePage" dir="rtl">
+ <h2 className="simplePageTitle">⌕ חקירה</h2>
+ <input className="searchInput" value={q} onChange={e=>setQ(e.target.value)}
+ placeholder={`חפש בין ${embeddedChapters.reduce((a,c)=>a+c.paragraphCount,0)} הפסקאות...`}/>
+ {needle.length>2&&<p className="searchCount">{results.length>0?`נמצאו ${results.length} תוצאות`:`לא נמצאו תוצאות ל-"${q}" — נסה מילה אחרת`}</p>}
+ <div className="searchResults">
+ {results.map((r,i)=><button key={i} className="searchResult"
+ onClick={()=>nav("library")}>
+ <div className="searchResultChapter">פרק {r.ch.number} — {r.ch.title}</div>
+ <div className="searchResultText">{highlight(r.text)}</div>
+ </button>)}
+ </div>
  </div>;
 };
 
