@@ -14,6 +14,11 @@ export function writeText(key:string,value:string){try{localStorage.setItem(key,
 export function readJson<T>(key:string,fallback:T):T{try{const raw=localStorage.getItem(key);return raw?JSON.parse(raw) as T:fallback}catch{return fallback}}
 export function writeJson(key:string,value:unknown){try{localStorage.setItem(key,JSON.stringify(value))}catch{}}
 export function removeStored(key:string){try{localStorage.removeItem(key)}catch{}}
+export function resetJourneyProgress(){
+  removeStored('eil-crystals');
+  removeStored('eil-learnings');
+  removeStored('eil-progress');
+}
 
 export const journeyStorage={
   mode:()=>readText(storageKeys.accessMode,'owner'),
