@@ -46,12 +46,17 @@ function JourneyCards({onGoToJourney}:{onGoToJourney?:()=>void}){
       </div>
       <div className="dashOverviewLayers">
         {SPIRAL_OVERVIEW.map(l=>{
-          const layerDone=journeyPath.stages.filter(s=>{
-            const n=s.order;
-            const inLayer=l.layer==='א'?n<=3:l.layer==='ב'?n<=6:l.layer==='ג'?n<=9:l.layer==='ד'?n<=13:true;
-            return inLayer&&state.completedStageIds.includes(s.id);
-          }).length;
-          const layerTotal=l.layer==='א'?3:l.layer==='ב'?3:l.layer==='ג'?3:l.layer==='ד'?4:5;
+          const layerNums=
+            l.layer==='א'?[1,2,3]:
+            l.layer==='ב'?[4,5,6]:
+            l.layer==='ג'?[7,8,9]:
+            l.layer==='ד'?[10,11,12,13]:
+            [14,15,16,17,18];
+          const layerTotal=layerNums.length;
+          const layerDone=journeyPath.stages.filter(s=>
+            layerNums.includes(s.order)&&
+            state.completedStageIds.includes(s.id)
+          ).length;
           const layerPct=Math.round((layerDone/layerTotal)*100);
           return(
             <div key={l.layer} className="dashLayer" onClick={onGoToJourney} style={{'--lc':l.color} as React.CSSProperties}>
