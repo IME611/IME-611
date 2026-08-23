@@ -2,7 +2,7 @@ import React from'react';
 import{useLearningProgress}from'../journey/model/useLearningProgress';
 import{journeyPath}from'../journey/model/journey-stage';
 
-type Props={onOpenJourney:()=>void};
+type Props={onOpenJourney:(chapterNumber?:number)=>void};
 type LayerOverview={layer:string;color:string;label:string;chapters:string;numbers:number[]};
 
 const SPIRAL_OVERVIEW:LayerOverview[]=[
@@ -14,7 +14,7 @@ const SPIRAL_OVERVIEW:LayerOverview[]=[
 ];
 
 export function KnowledgeDashboard({onOpenJourney}:Props){
- const{state}=useLearningProgress(journeyPath);
+ const{state,currentStage}=useLearningProgress(journeyPath);
  const done=state.completedStageIds.length,total=journeyPath.stages.length;
  const pct=Math.round((done/total)*100);
 
@@ -32,7 +32,7 @@ export function KnowledgeDashboard({onOpenJourney}:Props){
     {SPIRAL_OVERVIEW.map(layer=>{
      const layerDone=journeyPath.stages.filter(stage=>layer.numbers.includes(stage.order)&&state.completedStageIds.includes(stage.id)).length;
      const layerPct=Math.round((layerDone/layer.numbers.length)*100);
-     return <button key={layer.layer} type="button" className="dashLayer" onClick={onOpenJourney} aria-label={`פתח את ${layer.label}, ${layerPct}% הושלמו`} style={{'--lc':layer.color} as React.CSSProperties}>
+     return <button key={layer.layer} type="button" className="dashLayer" onClick={()=>onOpenJourney()} aria-label={`פתח את ${layer.label}, ${layerPct}% הושלמו`} style={{'--lc':layer.color} as React.CSSProperties}>
       <span className="dashLayerDot" style={{background:layer.color}} aria-hidden="true"/>
       <span className="dashLayerInfo"><span className="dashLayerName">{layer.label}</span><span className="dashLayerChapters">פרקים {layer.chapters}</span></span>
       <span className="dashLayerBar" aria-hidden="true"><span className="dashLayerFill" style={{width:`${layerPct}%`,background:layer.color}}/></span>
@@ -40,7 +40,7 @@ export function KnowledgeDashboard({onOpenJourney}:Props){
      </button>;
     })}
    </div>
-   <button className="dashStartBtn" type="button" onClick={onOpenJourney}>המשך במסע ←</button>
+   <button className="dashStartBtn" type="button" onClick={()=>onOpenJourney(currentStage?.order)}>{currentStage?`המשך לפרק ${currentStage.order} ←`:'המסע הושלם ✓'}</button>
   </section>
  </div>;
 }

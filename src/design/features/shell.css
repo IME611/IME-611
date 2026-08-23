@@ -29,11 +29,14 @@
 
 /* Sources list */
 .sourceList{display:flex;flex-direction:column;gap:6px}
-.sourceItem{display:flex;align-items:center;gap:14px;padding:12px 14px;background:rgba(255,255,255,.60);border:1px solid rgba(184,150,46,.16);border-radius:12px}
+.sourceItem{width:100%;display:flex;align-items:center;gap:14px;padding:12px 14px;background:rgba(255,255,255,.60);border:1px solid rgba(184,150,46,.16);border-radius:12px;color:#1A1A18;font:inherit;text-align:right;cursor:pointer;transition:background .15s,border-color .15s,transform .15s}
+.sourceItem:hover{background:rgba(255,255,255,.88);border-color:rgba(0,96,57,.28);transform:translateX(-2px)}
+.sourceItem:focus-visible{outline:3px solid rgba(0,96,57,.20);outline-offset:2px}
 .sourceNum{font-size:18px;font-weight:800;color:rgba(0,96,57,.60);font-variant-numeric:tabular-nums;min-width:28px}
 .sourceInfo{flex:1;min-width:0}
 .sourceName{font-size:14px;font-weight:600;color:#1A1A18}
 .sourceFile{font-size:11px;color:rgba(26,26,24,.40);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sourceOpen{flex:0 0 auto;font-size:12px;font-weight:700;color:#006039}
 
 /* Settings form */
 .settingForm{display:flex;flex-direction:column;gap:16px}

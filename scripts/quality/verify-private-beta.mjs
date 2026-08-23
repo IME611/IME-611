@@ -1,4 +1,5 @@
 import assert from'node:assert/strict';
+import crypto from'node:crypto';
 import fs from'node:fs';
 import path from'node:path';
 import{fileURLToPath}from'node:url';
@@ -29,11 +30,12 @@ async function expectUnauthorized(label,handler,req){
  assert.equal(res.payload?.code,'EDITOR_AUTH_REQUIRED',`${label} must use the shared creator gate`);
 }
 
-const[{default:importHandler},{default:knowledgeHandler},{default:insightsHandler},{default:reviewsHandler}]=await Promise.all([
+const[{default:importHandler},{default:knowledgeHandler},{default:insightsHandler},{default:reviewsHandler},{default:chaptersHandler}]=await Promise.all([
  import('../../api/import.js'),
  import('../../api/knowledge.js'),
  import('../../api/insights.js'),
  import('../../api/reviews.js'),
+ import('../../api/chapters.js'),
 ]);
 
 await expectUnauthorized('canonical import',importHandler,request('/api/import','POST',{text:'private beta fixture'}));
@@ -43,6 +45,22 @@ await expectUnauthorized('taxonomy database write',knowledgeHandler,request('/ap
 await expectUnauthorized('canonical core-loop write',insightsHandler,request('/api/insights?mode=core-loop','POST',{action:'create-insight'}));
 await expectUnauthorized('legacy review write',reviewsHandler,request('/api/reviews','POST',{}));
 
+const unicodeKey='מפתח בדיקה בטוח';
+process.env.EIL_EDITOR_KEY_HASH=crypto.createHash('sha256').update(unicodeKey).digest('hex');
+const encodedKey=Buffer.from(unicodeKey,'utf8').toString('base64url');
+const authorizedRequest=request('/api/import','POST',{mode:'verify-access'});
+authorizedRequest.headers['x-eil-editor-key-b64']=encodedKey;
+const authorizedResponse=response();
+await importHandler(authorizedRequest,authorizedResponse);
+assert.equal(authorizedResponse.statusCode,200,'Unicode creator keys must be transported safely');
+assert.equal(authorizedResponse.payload?.authorized,true,'creator key verification must not write a source');
+delete process.env.EIL_EDITOR_KEY_HASH;
+
+const chapterCollectionResponse=response();
+await chaptersHandler(request('/api/chapters'),chapterCollectionResponse);
+assert.equal(chapterCollectionResponse.statusCode,200,'chapter collection endpoint must not treat a missing number as chapter zero');
+assert.equal(chapterCollectionResponse.payload?.total,18,'chapter collection must return all 18 canonical chapters');
+
 const matchResponse=response();
 await insightsHandler(request('/api/insights?mode=match','POST',{text:'מוח'}),matchResponse);
 assert.equal(matchResponse.statusCode,200,'read-only match request should remain available');
@@ -51,6 +69,7 @@ assert.equal(matchResponse.payload?.ok,true,'read-only match request should retu
 const app=read('src/app/App.tsx');
 const dashboard=read('src/features/knowledge-dashboard/KnowledgeDashboard.tsx');
 const journey=read('src/features/journey/SpiralLibrary.tsx');
+const navigation=read('src/features/navigation/navigation.config.ts');
 const crystals=read('src/features/crystals/model/crystal.repository.ts');
 const assignments=read('src/features/research/model/assignment.repository.ts');
 const storage=read('src/core/storage.ts');
@@ -58,7 +77,10 @@ const storage=read('src/core/storage.ts');
 assert.match(app,/KnowledgeDashboard onOpenJourney=/,'the approved dashboard must be connected to the journey');
 assert.doesNotMatch(app,/ProductDashboard/,'the hidden dashboard must not be connected');
 assert.match(dashboard,/onOpenJourney/,'dashboard layers must open the journey');
-assert.match(app,/openChapterFromResearch\(r\.ch\.number\)/,'search results must open the matched chapter');
+assert.doesNotMatch(app,/globalSearch|research-search|searchResult/,'the guided journey must not expose free-text chapter search');
+assert.doesNotMatch(journey,/spiralSearchInput|filtered search/,'the journey must remain chapter-by-chapter without text filtering');
+assert.doesNotMatch(navigation,/id:'research'/,'research search must be removed from primary navigation');
+assert.match(app,/className="sourceItem" onClick=\{\(\)=>openJourney\(source\.number\)\}/,'every source card must open its full chapter');
 assert.doesNotMatch(journey,/localStorage\.getItem\(['"]eil-crystals['"]\)/,'journey must not use the legacy crystal store');
 assert.doesNotMatch(crystals,/\/api\/knowledge\?resource=crystals/,'private-beta crystals must remain local-only');
 assert.doesNotMatch(assignments,/method:['"]PUT['"]/,'private-beta taxonomy assignments must remain local-only');
@@ -75,6 +97,7 @@ class MemoryStorage{
 const memory=new MemoryStorage();
 globalThis.CustomEvent??=class CustomEvent{constructor(type){this.type=type}};
 globalThis.window={localStorage:memory,dispatchEvent(){return true}};
+globalThis.localStorage=memory;
 memory.setItem('eil-settings','preserve');
 memory.setItem('eil-research-assignments-v1','preserve');
 memory.setItem('eil-crystals-v1','[{"fragmentId":"old"}]');
@@ -86,6 +109,24 @@ assert.equal(resetPersonalProgress(),4,'reset should remove every seeded progres
 assert.equal(memory.getItem('eil-settings'),'preserve','reset must preserve profile settings');
 assert.equal(memory.getItem('eil-research-assignments-v1'),'preserve','reset must preserve research organization');
 
+const{createServer}=await import('vite');
+const moduleLoader=await createServer({root,server:{middlewareMode:true},appType:'custom',logLevel:'silent'});
+const[{lifeResearchV1},{emptyLearningProgress,completeLearningStage},{saveLearningProgress,loadLearningProgress}]=await Promise.all([
+ moduleLoader.ssrLoadModule('/src/data/learning-paths/life-research-v1.ts'),
+ moduleLoader.ssrLoadModule('/src/core/learning-path/learning-progress.ts'),
+ moduleLoader.ssrLoadModule('/src/core/learning-path/learning-progress.storage.ts'),
+]);
+let progress=emptyLearningProgress(lifeResearchV1);
+progress=completeLearningStage(progress,lifeResearchV1,lifeResearchV1.stages[0].id);
+progress=completeLearningStage(progress,lifeResearchV1,lifeResearchV1.stages[1].id);
+progress=completeLearningStage(progress,lifeResearchV1,lifeResearchV1.stages[0].id);
+assert.equal(progress.activeStageId,lifeResearchV1.stages[2].id,'re-reading chapter 1 must not send progress back to chapter 2');
+assert.throws(()=>completeLearningStage(progress,lifeResearchV1,lifeResearchV1.stages[3].id),/Locked learning stage/,'chapters must complete sequentially');
+saveLearningProgress(lifeResearchV1,progress);
+assert.equal(memory.getItem('eil-journey-progress'),'3','legacy progress must stay synchronized with canonical progress');
+assert.equal(loadLearningProgress(lifeResearchV1).activeStageId,lifeResearchV1.stages[2].id,'saved progress must resume at the first incomplete chapter');
+await moduleLoader.close();
+
 memory.setItem('eil-crystals',JSON.stringify([{text:'תובנה ישנה',topic:'פרק ישן',chapterNum:2,date:'2026-08-01T00:00:00.000Z'}]));
 const{crystalCollectionRepository}=await import('../../src/features/crystals/model/crystal.repository.ts');
 assert.equal(crystalCollectionRepository.load().length,1,'legacy crystal should migrate into the canonical local collection');
@@ -96,4 +137,4 @@ assert.equal(crystalCollectionRepository.load().length,2,'old and new crystals s
 assert.equal(crystalCollectionRepository.clear(),true,'crystal collection should clear locally');
 assert.equal(crystalCollectionRepository.load().length,0,'cleared collection should remain empty');
 
-console.log('Private beta verification passed: protected writes, single dashboard, chapter search, unified local crystals, and complete reset contracts.');
+console.log('Private beta verification passed: protected writes, Unicode creator access, sequential journey progress, openable sources, unified local crystals, and complete reset contracts.');

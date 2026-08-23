@@ -8,6 +8,8 @@ const sha256=value=>crypto.createHash('sha256').update(String(value||'')).digest
 function suppliedKey(req){
  const authorization=String(req.headers?.authorization||'');
  if(/^Bearer\s+/i.test(authorization))return authorization.replace(/^Bearer\s+/i,'').trim();
+ const encoded=String(req.headers?.['x-eil-editor-key-b64']||'').trim();
+ if(encoded){try{return Buffer.from(encoded,'base64url').toString('utf8').trim()}catch{return''}}
  return String(req.headers?.['x-eil-editor-key']||'').trim();
 }
 export function isEditorAuthorized(req){

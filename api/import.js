@@ -52,6 +52,7 @@ async function importHandler(req,res){
  if(req.method!=='POST')return res.status(405).json({ok:false,error:'method not allowed'});
  if(!requireEditor(req,res))return;
  const body=req.body||{};
+ if(body.mode==='verify-access')return res.status(200).json({ok:true,authorized:true});
  const fileName=safeText(body.fileName||body.sourceFilename||'document.txt',{max:500});
  const mimeType=safeText(body.mimeType||'text/plain',{max:200});
  const base64=String(body.fileBase64||'');

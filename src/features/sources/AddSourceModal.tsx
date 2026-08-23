@@ -14,9 +14,10 @@ export function AddSourceModal({open,onClose,onImported}:AddSourceModalProps){
  const[file,setFile]=useState<File|null>(null);
  const[busy,setBusy]=useState(false);
  const[error,setError]=useState('');
+ const[keyStatus,setKeyStatus]=useState<'idle'|'checking'|'valid'>('idle');
  const[editorKey,setEditorKey]=useState(readEditorKey);
  const[form,setForm]=useState<KnowledgeItem>({title:'',kind:'ידע',content:'',source:'',tags:[]});
- const reset=useCallback(()=>{setFile(null);setError('');setForm({title:'',kind:'ידע',content:'',source:'',tags:[]})},[]);
+ const reset=useCallback(()=>{setFile(null);setError('');setKeyStatus('idle');setForm({title:'',kind:'ידע',content:'',source:'',tags:[]})},[]);
  const close=useCallback(()=>{if(busy)return;reset();onClose()},[busy,onClose,reset]);
  const dialogRef=useDialogA11y(open,close);
  if(!open)return null;
@@ -49,6 +50,19 @@ export function AddSourceModal({open,onClose,onImported}:AddSourceModalProps){
   }catch(cause){const message=cause instanceof Error?cause.message:'שגיאה לא צפויה';setError(message);onImported(`ייבוא נכשל: ${message}`)}finally{setBusy(false)}
  };
 
+ const verifyKey=async()=>{
+  const key=editorKey.trim();
+  if(!key){setError('יש להזין מפתח יוצר כדי לבדוק אותו.');return}
+  setError('');setKeyStatus('checking');
+  try{
+   const response=await fetch('/api/import',{method:'POST',headers:{'Content-Type':'application/json',...editorHeaders(key)},body:JSON.stringify({mode:'verify-access'})});
+   const payload=await response.json().catch(()=>null);
+   if(response.status===401)throw new Error('מפתח היוצר אינו תקין.');
+   if(!response.ok||!payload?.authorized)throw new Error(payload?.error||'בדיקת המפתח נכשלה.');
+   rememberEditorKey(key);setKeyStatus('valid');
+  }catch(cause){setKeyStatus('idle');setError(cause instanceof Error?cause.message:'לא ניתן היה לבדוק את המפתח. נסה שוב.')}
+ };
+
  return <div className="overlay" onClick={close}>
   <div className="modal" role="dialog" aria-modal="true" aria-labelledby="add-source-title" aria-describedby={error?'add-source-error':undefined} tabIndex={-1} ref={dialogRef as React.Ref<HTMLDivElement>} onClick={event=>event.stopPropagation()}>
    <div className="modalHead"><div><span className="eyebrow">ADD TO YOUR KNOWLEDGE</span><h2 id="add-source-title">הוסף משהו שלמדת</h2></div><button type="button" className="close" aria-label="סגור חלון הוספת מקור" onClick={close}>×</button></div>
@@ -56,9 +70,10 @@ export function AddSourceModal({open,onClose,onImported}:AddSourceModalProps){
    <label>כותרת<input value={form.title} onChange={event=>setForm({...form,title:event.target.value})} placeholder="מה זה?"/></label>
    {!file&&<label>או הדבק טקסט מלא<textarea rows={9} value={form.content} onChange={event=>setForm({...form,content:event.target.value})} placeholder="הדבק כאן..."/></label>}
    <label>מקור / URL<input value={form.source} onChange={event=>setForm({...form,source:event.target.value})} placeholder="URL, מחבר או שם מקור"/></label>
-   <label>מפתח יוצר<input type="password" autoComplete="current-password" value={editorKey} onChange={event=>{setEditorKey(event.target.value);setError('')}} placeholder="נדרש כדי למנוע כתיבה ציבורית"/></label>
+   <label>מפתח יוצר<input type="password" autoComplete="current-password" value={editorKey} onChange={event=>{setEditorKey(event.target.value);setError('');setKeyStatus('idle')}} placeholder="נדרש כדי למנוע כתיבה ציבורית"/></label>
+   {keyStatus==='valid'&&<p className="formSuccess" role="status">✓ המפתח תקין. אפשר לשמור את המקור.</p>}
    {error&&<p id="add-source-error" className="formError" role="alert">{error}</p>}
-   <div className="actions"><button type="button" className="secondary" onClick={close}>ביטול</button><button type="button" className="primary" disabled={busy||(!file&&!String(form.content||'').trim())} onClick={submit}>{busy?'שומר ומחבר...':'שמור מקור'}</button></div>
+   <div className="actions"><button type="button" className="secondary" onClick={close}>ביטול</button><button type="button" className="secondary" disabled={busy||keyStatus==='checking'} onClick={verifyKey}>{keyStatus==='checking'?'בודק...':'בדיקת מפתח'}</button><button type="button" className="primary" disabled={busy||keyStatus==='checking'||(!file&&!String(form.content||'').trim())} onClick={submit}>{busy?'שומר ומחבר...':'שמור מקור'}</button></div>
   </div>
  </div>;
 }

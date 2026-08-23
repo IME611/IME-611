@@ -2,6 +2,7 @@
 @import './primitives/tokens.css';
 @import './foundations/eil-base.css';
 @import './features/shell.css';
+@import './features/sources.css';
 @import './features/navigation.css';
 @import './features/journey.css';
 @import './features/knowledge-dashboard.css';

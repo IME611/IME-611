@@ -5,7 +5,6 @@ import EvolutionWorkspace from'../features/evolution/EvolutionWorkspace';
 import TransformationWorkspace from'../features/transformation/TransformationWorkspace';
 import{KnowledgeDashboard}from'../features/knowledge-dashboard/KnowledgeDashboard';
 import{MediaWorkspace}from'../features/media/MediaWorkspace';
-import{ResearchWorkbench}from'../features/research/ResearchWorkbench';
 import{AddSourceModal}from'../features/sources/AddSourceModal';
 import{DesktopNavigation,MobileNavigation}from'../features/navigation/NavigationShell';
 import{useAppNavigation}from'../features/navigation/useAppNavigation';
@@ -20,20 +19,10 @@ import{evolutionPages}from'./navigation';
 import type{Chapter}from'../core/types';
 import{readText,resetPersonalProgress,storageKeys,writeText}from'../core/storage';
 
-const fallback:Chapter[]=embeddedChapters.map((chapter:any)=>({
- number:chapter.number,
- title:chapter.title,
- subtitle:chapter.subtitle,
- sourceFile:`פרק ${chapter.number}`,
- paragraphs:chapter.paragraphs||[],
- paragraphCount:(chapter.paragraphs||[]).length,
- characterCount:(chapter.paragraphs||[]).join('').length,
-}));
 const evoPageIds=evolutionPages as readonly string[];
 
 export default function App(){
  const{page,navigate:nav,back:goBack}=useAppNavigation();
- const[q,setQ]=useState('');
  const[collapsed,setCollapsed]=useState(()=>readText(storageKeys.railCollapsed)==='1');
  const[editor,setEditor]=useState(false);
  const[online,setOnline]=useState(false);
@@ -41,8 +30,6 @@ export default function App(){
  const[crystalsOpen,setCrystalsOpen]=useState(false);
  const[requestedChapter,setRequestedChapter]=useState<number|null>(null);
  const[sourceChapters,setSourceChapters]=useState<Chapter[]>([]);
- const[corpusStats,setCorpusStats]=useState({paragraphs:0,characters:0});
- const[corpusReady,setCorpusReady]=useState(false);
  const[entered,setEntered]=useState(()=>{try{return sessionStorage.getItem('eil-welcome-entered')==='1'}catch{return false}});
  const{records:crystals}=useCrystalCollection();
  const reviewMode=typeof window!=='undefined'&&new URLSearchParams(window.location.search).get('editor')==='review';
@@ -53,8 +40,6 @@ export default function App(){
   fetch('/api/chapters').then(response=>response.ok?response.json():Promise.reject()).then(data=>{
    if(data.total===18&&Array.isArray(data.chapters)){
     setSourceChapters(data.chapters);
-    setCorpusStats({paragraphs:data.paragraphs||0,characters:data.characters||0});
-    setCorpusReady(data.sourceMode==='lossless-docx-text');
    }
   }).catch(()=>{});
  },[reviewMode]);
@@ -63,11 +48,9 @@ export default function App(){
 
  const allChapters=sourceChapters.length===18?sourceChapters:embeddedChapters;
  const openNew=()=>setEditor(true);
- const current=pageByNavigationId(page);
  const isEvolution=evoPageIds.includes(page);
  const enterExperience=()=>{try{sessionStorage.setItem('eil-welcome-entered','1')}catch{}setEntered(true);nav('dashboard')};
- const openChapterFromResearch=(chapterNumber:number)=>{setRequestedChapter(chapterNumber);nav('library')};
- const Header=({title,sub}:{title:string;sub?:string})=><div className="pageTitle"><div><span className="eyebrow">E.I.L</span><h1>{title}</h1>{sub&&<p>{sub}</p>}</div></div>;
+ const openJourney=(chapterNumber?:number)=>{setRequestedChapter(chapterNumber??null);nav('library')};
  
  
 /* ===== PAGE COMPONENTS ===== */
@@ -94,33 +77,14 @@ const AddLearning=()=>{
 };
 
 const Sources=()=>{
- const srcs=[
-  {num:1,name:'פרק 1 — התבוננות',file:'מי_אני_פרק1_v6.docx'},
-  {num:2,name:'פרק 2 — הכלי החיצוני',file:'פרק2_הכלי_החיצוני.docx'},
-  {num:3,name:'פרק 3 — הפלא ההנדסי',file:'פרק3_הפלא_ההנדסי.docx'},
-  {num:4,name:'פרק 4 — מערכת ההפעלה',file:'פרק4_מערכת_ההפעלה.docx'},
-  {num:5,name:'פרק 5 — המוח המפורט',file:'פרק5_המוח_המפורט.docx'},
-  {num:6,name:'פרק 6 — גלי המוח',file:'פרק6_גלי_המוח.docx'},
-  {num:7,name:'פרק 7 — בלוטת האצטרובל',file:'פרק7_בלוטת_האצטרובל.docx'},
-  {num:8,name:'פרק 8 — תדרים ומוזיקה',file:'פרק8_תדרים_מוזיקה_וצליל.docx'},
-  {num:9,name:'פרק 9 — הגוף כתדר',file:'פרק9_הגוף_כתדר.docx'},
-  {num:10,name:'פרק 10 — נוירופלסטיות',file:'פרק10_נוירופלסטיות.docx'},
-  {num:11,name:'פרק 11 — זהויות ואמונות',file:'פרק11_זהויות_ואמונות.docx'},
-  {num:12,name:'פרק 12 — רגשות כמידע',file:'פרק12_רגשות_כמידע.docx'},
-  {num:13,name:'פרק 13 — יצירת מציאות',file:'פרק13_יצירת_מציאות.docx'},
-  {num:14,name:'פרק 14 — 12 חוקי היקום',file:'פרק14_12_חוקי_היקום.docx'},
-  {num:15,name:'פרק 15 — יעדים וחזון',file:'פרק15_יעדים_וחזון.docx'},
-  {num:16,name:'פרק 16 — סבל וקושי',file:'פרק16_סבל_קושי_ומשמעות.docx'},
-  {num:17,name:'פרק 17 — חיבור הכל',file:'פרק17_חיבור_הכל.docx'},
-  {num:18,name:'פרק 18 — מי אני? תשובה',file:'פרק18_מי_אני_תשובה.docx'},
- ];
  return <div className="simplePage" dir="rtl">
   <h2 className="simplePageTitle">↗ המקורות שלי</h2>
-  <p className="simplePageSub">18 המסמכים שהועלו לפלטפורמה</p>
-  <div className="sourceList">{srcs.map(s=><div key={s.num} className="sourceItem">
-   <span className="sourceNum">{String(s.num).padStart(2,'0')}</span>
-   <div className="sourceInfo"><div className="sourceName">{s.name}</div><div className="sourceFile">{s.file}</div></div>
-  </div>)}</div>
+  <p className="simplePageSub">{allChapters.length} המקורות המלאים שעליהם מבוסס מסע הלימוד</p>
+  <div className="sourceList">{allChapters.map(source=><button key={source.number} type="button" className="sourceItem" onClick={()=>openJourney(source.number)} aria-label={`פתח מקור: ${source.title}`}>
+   <span className="sourceNum">{String(source.number).padStart(2,'0')}</span>
+   <span className="sourceInfo"><span className="sourceName">{source.title}</span><span className="sourceFile">{source.sourceFile}</span></span>
+   <span className="sourceOpen" aria-hidden="true">פתח ←</span>
+  </button>)}</div>
  </div>;
 };
 
@@ -177,37 +141,6 @@ const Settings=()=>{
  </div>;
 };
 
-const Research=()=>{
- const[q,setQ]=React.useState("");
- const needle=q.trim().toLowerCase();
- const results=needle.length>2
- ?embeddedChapters.flatMap(ch=>
- ch.paragraphs
- .filter(p=>!p.startsWith("##")&&p.toLowerCase().includes(needle))
- .slice(0,3)
- .map(p=>({ch,text:p})))
- :[];
- const highlight=(text:string)=>{
- const idx=text.toLowerCase().indexOf(needle);
- if(idx<0||!needle)return <span>{text}</span>;
- return <span>{text.slice(0,idx)}<mark className="searchMark">{text.slice(idx,idx+needle.length)}</mark>{text.slice(idx+needle.length)}</span>;
- };
- return <div className="simplePage" dir="rtl">
- <h2 className="simplePageTitle">⌕ חקירה</h2>
- <label className="srOnly" htmlFor="research-search">חיפוש בתוכן הפרקים</label>
- <input id="research-search" className="searchInput" type="search" value={q} onChange={e=>setQ(e.target.value)}
- placeholder={`חפש בין ${embeddedChapters.reduce((a,c)=>a+c.paragraphCount,0)} הפסקאות...`}/>
- {needle.length>2&&<p className="searchCount" aria-live="polite">{results.length>0?`נמצאו ${results.length} תוצאות`:`לא נמצאו תוצאות ל-"${q}" — נסה מילה אחרת`}</p>}
- <div className="searchResults">
- {results.map((r,i)=><button key={`${r.ch.number}-${i}`} className="searchResult"
- onClick={()=>openChapterFromResearch(r.ch.number)}>
- <div className="searchResultChapter">פרק {r.ch.number} — {r.ch.title}</div>
- <div className="searchResultText">{highlight(r.text)}</div>
- </button>)}
- </div>
- </div>;
-};
-
 const Generic=()=><div className="simplePage" dir="rtl">
  <h2 className="simplePageTitle">{pageByNavigationId(page).label}</h2>
  <p className="muted">דף זה בפיתוח.</p>
@@ -220,23 +153,21 @@ const Generic=()=><div className="simplePage" dir="rtl">
   <DesktopNavigation page={page} onNavigate={nav} onAdd={openNew} collapsed={collapsed} onCollapsedChange={setCollapsed} online={online}/>
   <MobileNavigation page={page} onNavigate={nav} onAdd={openNew} online={online}/>
   <main>
-   {page!=='dashboard'&&<div className="topbar"><div className="globalSearch">⌕<input value={q} onChange={event=>setQ(event.target.value)} placeholder="חפש רעיון, מקור, קשר או תובנה..."/></div></div>}
    {page!=='dashboard'&&<div className="pageBack"><button onClick={goBack}>→ חזרה</button></div>}
    {notice&&<div className="notice" role="status"><span>{notice}</span><button type="button" aria-label="סגור הודעה" onClick={()=>setNotice('')}>×</button></div>}
    {page==='dashboard'&&(
-    <KnowledgeDashboard onOpenJourney={()=>nav('library')}/>
+    <KnowledgeDashboard onOpenJourney={openJourney}/>
    )}
    {page==='crystals'&&<Crystals/>}
    {page==='add-learning'&&<AddLearning/>}
    {page==='sources'&&<Sources/>}
    {page==='add-source'&&<AddSource/>}
-   {page==='research'&&<Research/>}
    {page==='settings'&&<Settings/>}
-   {page==='library'&&<SpiralLibrary chapters={allChapters} query={q} setQuery={setQ} corpusReady={corpusReady} paragraphs={corpusStats.paragraphs} characters={corpusStats.characters} initialChapter={requestedChapter} onInitialChapterOpened={()=>setRequestedChapter(null)}/>}
+   {page==='library'&&<SpiralLibrary chapters={allChapters} initialChapter={requestedChapter} onInitialChapterOpened={()=>setRequestedChapter(null)}/>}
    {page==='transformation'&&<TransformationWorkspace chapters={allChapters}/>} 
    {page==='media'&&<MediaWorkspace/>} 
    {isEvolution&&<EvolutionWorkspace page={page} onNav={nav}/>} 
-   {!['dashboard','library','sources','transformation','media','research','crystals','add-learning','add-source','settings',...evoPageIds].includes(page)&&<Generic/>}
+   {!['dashboard','library','sources','transformation','media','crystals','add-learning','add-source','settings',...evoPageIds].includes(page)&&<Generic/>}
    <AddSourceModal open={editor} onClose={()=>setEditor(false)} onImported={setNotice}/>
   </main>
   <button className="crystalLauncher" onClick={()=>setCrystalsOpen(true)} aria-label="פתח את אוסף הקריסטלים"><span>◆</span><b>הקריסטלים שלי</b><em>{crystals.length}</em></button>

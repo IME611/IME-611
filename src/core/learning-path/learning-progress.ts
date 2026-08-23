@@ -1,4 +1,4 @@
-import type { LearningPath, LearningStageId } from './learning-path.types';
+import { isStageUnlocked, type LearningPath, type LearningStageId } from './learning-path.types';
 
 export type StageReflection = {
   stageId: LearningStageId;
@@ -35,12 +35,15 @@ export function completeLearningStage(
 ): LearningProgressState {
   const stage = path.stages.find(item => item.id === stageId);
   if (!stage) throw new Error(`Unknown learning stage: ${stageId}`);
+  if (!state.completedStageIds.includes(stageId) && !isStageUnlocked(stage, state)) {
+    throw new Error(`Locked learning stage cannot be completed: ${stageId}`);
+  }
 
   const completed = state.completedStageIds.includes(stageId)
     ? state.completedStageIds
     : [...state.completedStageIds, stageId];
   const now = new Date().toISOString();
-  const next = path.stages.find(item => item.order === stage.order + 1);
+  const next = path.stages.find(item => !completed.includes(item.id));
 
   return {
     ...state,

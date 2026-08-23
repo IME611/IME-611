@@ -16,5 +16,9 @@ export function rememberEditorKey(value:string):void{
 
 export function editorHeaders(value=readEditorKey()):Record<string,string>{
   const key=value.trim();
-  return key?{'x-eil-editor-key':key}:{};
+  if(!key)return{};
+  const bytes=new TextEncoder().encode(key);
+  let binary='';
+  bytes.forEach(byte=>{binary+=String.fromCharCode(byte)});
+  return{'x-eil-editor-key-b64':btoa(binary).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')};
 }

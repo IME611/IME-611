@@ -1,0 +1,31 @@
+.overlay{position:fixed;inset:0;z-index:110;display:grid;place-items:center;padding:20px;background:rgba(41,37,31,.38);backdrop-filter:blur(8px)}
+.modal{width:min(650px,100%);max-height:calc(100dvh - 40px);overflow:auto;padding:28px;background:#fbfaf8;border:1px solid rgba(184,150,46,.24);border-radius:24px;box-shadow:0 30px 100px rgba(44,39,31,.24);color:#1a1a18;direction:rtl}
+.modalHead{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:20px}
+.modalHead h2{margin:0;font-size:22px;color:#1a1a18}
+.close{width:44px;height:44px;flex:0 0 44px;display:grid;place-items:center;border:0;border-radius:50%;background:rgba(26,26,24,.06);color:rgba(26,26,24,.58);font-size:25px;cursor:pointer}
+.dropZone{position:relative;min-height:104px;display:grid!important;place-items:center;align-content:center;gap:5px;padding:18px;border:1.5px dashed rgba(0,96,57,.34)!important;border-radius:16px;background:rgba(0,96,57,.05);color:#006039!important;text-align:center;font-size:15px!important;font-weight:700;overflow:hidden;cursor:pointer}
+.dropZone input[type="file"]{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer}
+.dropZone span{font-size:12px;font-weight:400;color:rgba(26,26,24,.52)}
+.modal label{display:block;margin:14px 0;color:rgba(26,26,24,.68);font-size:13px;font-weight:600}
+.modal input,.modal textarea{display:block;width:100%;margin-top:7px;padding:12px;background:#fff;border:1px solid rgba(184,150,46,.24);border-radius:12px;color:#1a1a18;direction:rtl;resize:vertical}
+.modal textarea{min-height:150px;line-height:1.6}
+.modal input:focus,.modal textarea:focus{border-color:#006039;box-shadow:0 0 0 3px rgba(0,96,57,.09)}
+.actions{display:flex;gap:9px;margin-top:20px}
+.actions button{min-height:44px;flex:1}
+.actions .secondary{border:1px solid rgba(0,96,57,.24);border-radius:12px;background:rgba(255,255,255,.72);color:#006039;font-weight:700;cursor:pointer}
+.actions button:disabled{opacity:.45;cursor:not-allowed}
+.formError,.formSuccess{margin:10px 0 0;font-size:13px;line-height:1.55;text-align:right}
+.formError{color:#922b21}
+.formSuccess{color:#006039;font-weight:700}
+@media(max-width:640px){
+ .overlay{align-items:end;padding:0}
+ .modal{width:100%;max-height:100dvh;padding:18px 16px max(18px,env(safe-area-inset-bottom));border-radius:24px 24px 0 0}
+ .modalHead{position:sticky;top:-18px;z-index:2;margin:-18px -16px 14px;padding:18px 16px 12px;background:rgba(251,250,248,.96);backdrop-filter:blur(14px);border-bottom:1px solid rgba(184,150,46,.14)}
+ .modalHead .eyebrow{font-size:9px}
+ .modalHead h2{font-size:21px}
+ .dropZone{min-height:86px;padding:14px}
+ .modal label{margin:12px 0}
+ .modal textarea{min-height:130px;max-height:30dvh}
+ .actions{position:sticky;bottom:calc(0px - max(18px,env(safe-area-inset-bottom)));display:grid;grid-template-columns:1fr 1fr;margin:18px -16px calc(0px - max(18px,env(safe-area-inset-bottom)));padding:12px 16px max(14px,env(safe-area-inset-bottom));background:rgba(251,250,248,.97);border-top:1px solid rgba(184,150,46,.14);backdrop-filter:blur(14px)}
+ .actions .primary{grid-column:1/-1;grid-row:1}
+}
