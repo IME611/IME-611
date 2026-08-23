@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useLearningProgress } from './model/useLearningProgress';
 import { journeyPath } from './model/journey-stage';
 import type { LearningStage } from '../../core/learning-path/learning-path.types';
+import { journeyStorage } from '../../core/storage';
 import { useCrystalCollection } from '../crystals/model/useCrystalCollection';
 
 type Chapter = { number: number; title: string; subtitle: string; sourceFile: string; paragraphs: string[]; paragraphCount?: number; characterCount?: number };
@@ -18,6 +19,9 @@ const LAYERS = [
 function clean(t: string) { return t.replace(/^פרק\s*\d+[:：]?\s*/, ''); }
 function stageForNum(num: number): LearningStage | undefined {
   return journeyPath.stages.find(s => s.order === num);
+}
+function isOwnerMode(): boolean {
+  return journeyStorage.mode() === 'owner';
 }
 /* ── Card ── */
 function ChapterCard({ chapter, layer, unlocked, completed, onClick }: {
@@ -45,27 +49,29 @@ function ChapterCard({ chapter, layer, unlocked, completed, onClick }: {
 }
 
 /* ── Chapter View ── */
-function ChapterView({ chapter, layer, onBack, onComplete, onPrevious, canGoPrevious, canCompleteJourney, isFinal }: {
+function ChapterView({ chapter, layer, onBack, onComplete, onPrevious, onNext, canGoPrevious, canGoNext, isOwner }: {
   chapter: Chapter;
   layer: typeof LAYERS[number];
   onBack: () => void;
   onComplete: (reflection: string) => void;
   onPrevious?: () => void;
+  onNext?: () => void;
   canGoPrevious: boolean;
-  canCompleteJourney: boolean;
-  isFinal: boolean;
+  canGoNext: boolean;
+  isOwner: boolean;
 }) {
   const [reflection, setReflection] = useState('');
   const [crystalText, setCrystalText] = useState('');
   const [crystalStatus, setCrystalStatus] = useState<'idle'|'saved'|'error'>('idle');
   const { save: saveCrystal } = useCrystalCollection();
   const stage = stageForNum(chapter.number);
+  const canComplete = isOwner || reflection.trim().length >= 20;
 
   return (
     <div className="spiralChapter" dir="rtl">
       <div className="spiralChapterTop">
         <button className="spiralBack" onClick={onBack}>← חזרה למסע</button>
-        <span className="spiralChapterPos" style={{ color: layer.accent }}>פרק {chapter.number} מתוך 18</span>
+        <span className="spiralChapterPos" style={{ color: layer.accent }}>{layer.label}</span>
       </div>
 
       <header className="spiralChapterHeader" style={{ borderColor: layer.color }}>
@@ -166,14 +172,14 @@ function ChapterView({ chapter, layer, onBack, onComplete, onPrevious, canGoPrev
         <button
           className="spiralComplete spiralChapterComplete"
           type="button"
-          style={{ background: canCompleteJourney ? "#006039" : "rgba(26,26,24,.20)", color: canCompleteJourney ? "#fff" : "rgba(26,26,24,.55)", opacity: 1 }}
+          style={{ background: canComplete ? "#006039" : "rgba(26,26,24,.20)", color: canComplete ? "#fff" : "rgba(26,26,24,.40)", opacity: 1 }}
           onClick={() => onComplete(reflection)}
-          disabled={!canCompleteJourney}
+          disabled={!canComplete}
         >
-          {canCompleteJourney?(isFinal?'סיימתי את המסע':'סיימתי — לפרק הבא'):"הפרק עדיין נעול במסע"}
+          סיימתי — המשך
         </button>
+        <button className="spiralChapterNavBtn" type="button" onClick={onNext} disabled={!canGoNext}>הפרק הבא ←</button>
       </nav>
-      {!canCompleteJourney&&<p className="spiralLockedNote" role="status">אפשר לקרוא את המקור ולשמור ממנו קריסטל. כדי להתקדם במסע, יש להשלים תחילה את הפרק הקודם.</p>}
     </div>
   );
 }
@@ -183,8 +189,9 @@ export default function SpiralLibrary({ chapters, initialChapter, onInitialChapt
   const learning = useLearningProgress(journeyPath);
   const [activeNum, setActiveNum]   = useState<number | null>(null);
   const [openLayer, setOpenLayer]   = useState<string>('A');
+  const isOwner = isOwnerMode();
 
-  const unlocked  = (num: number) => { const s = stageForNum(num); return s ? learning.isUnlocked(s) : false; };
+  const unlocked  = (_num: number) => true;
   const completed = (num: number) => { const s = stageForNum(num); return s ? learning.state.completedStageIds.includes(s.id) : false; };
 
   useEffect(() => {
@@ -199,8 +206,8 @@ export default function SpiralLibrary({ chapters, initialChapter, onInitialChapt
   const chapter = activeNum ? chapters.find(c => c.number === activeNum) ?? null : null;
   const layer   = chapter   ? LAYERS.find(l => (l.nums as readonly number[]).includes(chapter.number)) ?? LAYERS[0] : LAYERS[0];
   const previousChapter = chapter ? chapters.find(c => c.number === chapter.number - 1) ?? null : null;
+  const nextChapter = chapter ? chapters.find(c => c.number === chapter.number + 1) ?? null : null;
   const openChapter = (chapterNumber: number) => {
-    if (!unlocked(chapterNumber)) return;
     setActiveNum(chapterNumber);
     scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -208,16 +215,13 @@ export default function SpiralLibrary({ chapters, initialChapter, onInitialChapt
   const handleComplete = (reflection: string) => {
     if (!chapter) return;
     const s = stageForNum(chapter.number);
-    if (!s || (!learning.isUnlocked(s) && !completed(chapter.number))) return;
-    learning.complete(s.id, reflection);
-    const completedAfter=new Set([...learning.state.completedStageIds,s.id]);
-    const next=journeyPath.stages.find(stage=>!completedAfter.has(stage.id));
-    setActiveNum(next?.order??null);
+    if (s) learning.complete(s.id, reflection);
+    const next = chapter.number + 1;
+    if (next <= 18) { setActiveNum(next); } else { setActiveNum(null); }
     scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   if (chapter) {
-    const stage=stageForNum(chapter.number);
     return (
       <ChapterView
         chapter={chapter}
@@ -225,9 +229,10 @@ export default function SpiralLibrary({ chapters, initialChapter, onInitialChapt
         onBack={() => setActiveNum(null)}
         onComplete={handleComplete}
         onPrevious={previousChapter ? () => openChapter(previousChapter.number) : undefined}
-        canGoPrevious={Boolean(previousChapter && unlocked(previousChapter.number))}
-        canCompleteJourney={Boolean(stage&&(learning.isUnlocked(stage)||completed(chapter.number)))}
-        isFinal={chapter.number===18}
+        onNext={nextChapter ? () => openChapter(nextChapter.number) : undefined}
+        canGoPrevious={Boolean(previousChapter)}
+        canGoNext={Boolean(nextChapter)}
+        isOwner={isOwner}
       />
     );
   }
@@ -244,7 +249,6 @@ export default function SpiralLibrary({ chapters, initialChapter, onInitialChapt
           </div>
           <span className="spiralProgressText">{doneCount} / 18 פרקים הושלמו</span>
         </div>
-        {learning.currentStage&&<button className="spiralContinue" type="button" onClick={()=>openChapter(learning.currentStage?.order??1)}>המשך לפרק {learning.currentStage.order} — {clean(learning.currentStage.title)} ←</button>}
       </div>
 
       <div className="spiralLayers">

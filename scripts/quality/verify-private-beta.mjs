@@ -77,8 +77,12 @@ const storage=read('src/core/storage.ts');
 assert.match(app,/KnowledgeDashboard onOpenJourney=/,'the approved dashboard must be connected to the journey');
 assert.doesNotMatch(app,/ProductDashboard/,'the hidden dashboard must not be connected');
 assert.match(dashboard,/onOpenJourney/,'dashboard layers must open the journey');
+assert.doesNotMatch(dashboard,/dashStartBtn|המשך לפרק/,'dashboard must not steer the reader to a numbered next chapter');
 assert.doesNotMatch(app,/globalSearch|research-search|searchResult/,'the guided journey must not expose free-text chapter search');
 assert.doesNotMatch(journey,/spiralSearchInput|filtered search/,'the journey must remain chapter-by-chapter without text filtering');
+assert.doesNotMatch(journey,/spiralContinue|המשך לפרק/,'journey index must expose clickable topics instead of a numbered continue CTA');
+assert.match(journey,/const unlocked\s*=\s*\(_num: number\) => true/,'all chapter topics must remain open and clickable');
+assert.match(app,/const journeyChapters=embeddedChapters/,'the reader must preserve the curated marker-based Claude chapter edition');
 assert.doesNotMatch(navigation,/id:'research'/,'research search must be removed from primary navigation');
 assert.match(app,/className="sourceItem" onClick=\{\(\)=>openJourney\(source\.number\)\}/,'every source card must open its full chapter');
 assert.doesNotMatch(journey,/localStorage\.getItem\(['"]eil-crystals['"]\)/,'journey must not use the legacy crystal store');
@@ -121,7 +125,9 @@ progress=completeLearningStage(progress,lifeResearchV1,lifeResearchV1.stages[0].
 progress=completeLearningStage(progress,lifeResearchV1,lifeResearchV1.stages[1].id);
 progress=completeLearningStage(progress,lifeResearchV1,lifeResearchV1.stages[0].id);
 assert.equal(progress.activeStageId,lifeResearchV1.stages[2].id,'re-reading chapter 1 must not send progress back to chapter 2');
-assert.throws(()=>completeLearningStage(progress,lifeResearchV1,lifeResearchV1.stages[3].id),/Locked learning stage/,'chapters must complete sequentially');
+progress=completeLearningStage(progress,lifeResearchV1,lifeResearchV1.stages[3].id);
+assert.ok(progress.completedStageIds.includes(lifeResearchV1.stages[3].id),'an opened topic must be completable without a sequential lock');
+assert.equal(progress.activeStageId,lifeResearchV1.stages[2].id,'open-topic completion must still resume at the first incomplete chapter');
 saveLearningProgress(lifeResearchV1,progress);
 assert.equal(memory.getItem('eil-journey-progress'),'3','legacy progress must stay synchronized with canonical progress');
 assert.equal(loadLearningProgress(lifeResearchV1).activeStageId,lifeResearchV1.stages[2].id,'saved progress must resume at the first incomplete chapter');
@@ -137,4 +143,4 @@ assert.equal(crystalCollectionRepository.load().length,2,'old and new crystals s
 assert.equal(crystalCollectionRepository.clear(),true,'crystal collection should clear locally');
 assert.equal(crystalCollectionRepository.load().length,0,'cleared collection should remain empty');
 
-console.log('Private beta verification passed: protected writes, Unicode creator access, sequential journey progress, openable sources, unified local crystals, and complete reset contracts.');
+console.log('Private beta verification passed: protected writes, Unicode creator access, open topic navigation, curated chapter rendering, openable sources, unified local crystals, and complete reset contracts.');

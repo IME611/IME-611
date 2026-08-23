@@ -46,7 +46,11 @@ export default function App(){
  useEffect(()=>{if(!reviewMode)writeText(storageKeys.railCollapsed,collapsed?'1':'0')},[collapsed,reviewMode]);
  useEffect(()=>{if(reviewMode)return;return bindLiquidGlassPointerTracking()},[reviewMode]);
 
- const allChapters=sourceChapters.length===18?sourceChapters:embeddedChapters;
+ // Keep the curated, marker-based Claude edition as the reader source. The API
+ // collection is used only for the source catalogue so a successful API fetch
+ // can never replace the designed chapter experience with raw DOCX paragraphs.
+ const journeyChapters=embeddedChapters;
+ const sourceCatalogue=sourceChapters.length===18?sourceChapters:embeddedChapters;
  const openNew=()=>setEditor(true);
  const isEvolution=evoPageIds.includes(page);
  const enterExperience=()=>{try{sessionStorage.setItem('eil-welcome-entered','1')}catch{}setEntered(true);nav('dashboard')};
@@ -79,8 +83,8 @@ const AddLearning=()=>{
 const Sources=()=>{
  return <div className="simplePage" dir="rtl">
   <h2 className="simplePageTitle">↗ המקורות שלי</h2>
-  <p className="simplePageSub">{allChapters.length} המקורות המלאים שעליהם מבוסס מסע הלימוד</p>
-  <div className="sourceList">{allChapters.map(source=><button key={source.number} type="button" className="sourceItem" onClick={()=>openJourney(source.number)} aria-label={`פתח מקור: ${source.title}`}>
+  <p className="simplePageSub">{sourceCatalogue.length} המקורות המלאים שעליהם מבוסס מסע הלימוד</p>
+  <div className="sourceList">{sourceCatalogue.map(source=><button key={source.number} type="button" className="sourceItem" onClick={()=>openJourney(source.number)} aria-label={`פתח מקור: ${source.title}`}>
    <span className="sourceNum">{String(source.number).padStart(2,'0')}</span>
    <span className="sourceInfo"><span className="sourceName">{source.title}</span><span className="sourceFile">{source.sourceFile}</span></span>
    <span className="sourceOpen" aria-hidden="true">פתח ←</span>
@@ -156,15 +160,15 @@ const Generic=()=><div className="simplePage" dir="rtl">
    {page!=='dashboard'&&<div className="pageBack"><button onClick={goBack}>→ חזרה</button></div>}
    {notice&&<div className="notice" role="status"><span>{notice}</span><button type="button" aria-label="סגור הודעה" onClick={()=>setNotice('')}>×</button></div>}
    {page==='dashboard'&&(
-    <KnowledgeDashboard onOpenJourney={openJourney}/>
+    <KnowledgeDashboard onOpenJourney={()=>openJourney()}/>
    )}
    {page==='crystals'&&<Crystals/>}
    {page==='add-learning'&&<AddLearning/>}
    {page==='sources'&&<Sources/>}
    {page==='add-source'&&<AddSource/>}
    {page==='settings'&&<Settings/>}
-   {page==='library'&&<SpiralLibrary chapters={allChapters} initialChapter={requestedChapter} onInitialChapterOpened={()=>setRequestedChapter(null)}/>}
-   {page==='transformation'&&<TransformationWorkspace chapters={allChapters}/>} 
+   {page==='library'&&<SpiralLibrary chapters={journeyChapters} initialChapter={requestedChapter} onInitialChapterOpened={()=>setRequestedChapter(null)}/>}
+   {page==='transformation'&&<TransformationWorkspace chapters={journeyChapters}/>}
    {page==='media'&&<MediaWorkspace/>} 
    {isEvolution&&<EvolutionWorkspace page={page} onNav={nav}/>} 
    {!['dashboard','library','sources','transformation','media','crystals','add-learning','add-source','settings',...evoPageIds].includes(page)&&<Generic/>}

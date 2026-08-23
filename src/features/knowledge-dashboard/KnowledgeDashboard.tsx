@@ -2,7 +2,7 @@ import React from'react';
 import{useLearningProgress}from'../journey/model/useLearningProgress';
 import{journeyPath}from'../journey/model/journey-stage';
 
-type Props={onOpenJourney:(chapterNumber?:number)=>void};
+type Props={onOpenJourney:()=>void};
 type LayerOverview={layer:string;color:string;label:string;chapters:string;numbers:number[]};
 
 const SPIRAL_OVERVIEW:LayerOverview[]=[
@@ -14,7 +14,7 @@ const SPIRAL_OVERVIEW:LayerOverview[]=[
 ];
 
 export function KnowledgeDashboard({onOpenJourney}:Props){
- const{state,currentStage}=useLearningProgress(journeyPath);
+ const{state}=useLearningProgress(journeyPath);
  const done=state.completedStageIds.length,total=journeyPath.stages.length;
  const pct=Math.round((done/total)*100);
 
@@ -40,7 +40,6 @@ export function KnowledgeDashboard({onOpenJourney}:Props){
      </button>;
     })}
    </div>
-   <button className="dashStartBtn" type="button" onClick={()=>onOpenJourney(currentStage?.order)}>{currentStage?`המשך לפרק ${currentStage.order} ←`:'המסע הושלם ✓'}</button>
   </section>
  </div>;
 }
