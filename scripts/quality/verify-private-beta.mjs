@@ -82,6 +82,8 @@ assert.doesNotMatch(app,/globalSearch|research-search|searchResult/,'the guided 
 assert.doesNotMatch(journey,/spiralSearchInput|filtered search/,'the journey must remain chapter-by-chapter without text filtering');
 assert.doesNotMatch(journey,/spiralContinue|המשך לפרק/,'journey index must expose clickable topics instead of a numbered continue CTA');
 assert.match(journey,/const unlocked\s*=\s*\(_num: number\) => true/,'all chapter topics must remain open and clickable');
+assert.doesNotMatch(journey,/spiralReflect|onNext|canGoNext/,'chapter view must not duplicate reflection or next-navigation controls');
+assert.match(journey,/סיימתי — לפרק הבא/,'chapter completion and next navigation must share one clear action');
 assert.match(app,/const journeyChapters=embeddedChapters/,'the reader must preserve the curated marker-based Claude chapter edition');
 assert.doesNotMatch(navigation,/id:'research'/,'research search must be removed from primary navigation');
 assert.match(app,/className="sourceItem" onClick=\{\(\)=>openJourney\(source\.number\)\}/,'every source card must open its full chapter');

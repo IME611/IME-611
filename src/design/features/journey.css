@@ -71,15 +71,10 @@
 .spiralBullet{display:flex;gap:12px;margin-bottom:12px;align-items:flex-start}
 .spiralBullet span{font-size:18px;flex-shrink:0;line-height:1.8}
 .spiralBullet p{margin:0;font-size:16px;line-height:1.75;color:rgba(26,26,24,.80)}
-.spiralReflect{border-top:1px solid rgba(255,255,255,.1);padding-top:28px}
-.spiralReflectTitle{font-size:18px;font-weight:700;margin:0 0 8px}
-.spiralReflectHint{font-size:14px;color:rgba(var(--eil-text-rgb),.5);margin:0 0 14px}
-.spiralReflectInput{background:rgba(255,255,255,.70);color:#1A1A18;width:100%;padding:14px 16px;border-radius:14px;border:1px solid rgba(184,150,46,.20);background:rgba(255,255,255,.55);color:var(--eil-text);font:inherit;font-size:16px;line-height:1.7;resize:vertical;outline:none;box-sizing:border-box;margin-bottom:16px}
-.spiralReflectInput::placeholder{color:rgba(var(--eil-text-rgb),.3)}
 .spiralComplete{width:100%;padding:16px;border-radius:14px;border:none;color:#fff;font:inherit;font-size:17px;font-weight:700;cursor:pointer;transition:opacity .2s,transform .15s}
 .spiralComplete:hover:not(:disabled){transform:translateY(-2px)}
 .spiralComplete:disabled{cursor:not-allowed}
-.spiralChapterNav{display:grid;grid-template-columns:minmax(0,1fr) minmax(180px,1.25fr) minmax(0,1fr);align-items:center;gap:12px;margin-top:24px;padding-top:20px;border-top:1px solid rgba(26,26,24,.08)}
+.spiralChapterNav{display:grid;grid-template-columns:minmax(0,1fr) minmax(180px,1.25fr);align-items:center;gap:12px;margin-top:24px;padding-top:20px;border-top:1px solid rgba(26,26,24,.08)}
 .spiralChapterNavBtn{padding:12px 16px;border:1px solid rgba(0,96,57,.28);border-radius:14px;background:transparent;color:#006039;font:inherit;font-size:14px;font-weight:700;cursor:pointer}
 .spiralChapterNavBtn:hover:not(:disabled){background:rgba(0,96,57,.07)}
 .spiralChapterNavBtn:focus-visible,.spiralChapterComplete:focus-visible{outline:3px solid rgba(0,96,57,.22);outline-offset:2px}
@@ -93,8 +88,6 @@
 .spiralTitle{color:#1A1A18}
 .spiralChapterTitle{color:#1A1A18}
 .spiralContentH3{color:#1A1A18}
-.spiralReflectTitle{color:#1A1A18}
-.spiralReflectInput{background:rgba(255,255,255,.70);color:#1A1A18;color:var(--eil-text)}
 .spiralBack:hover{color:#1A1A18}
 .spiralCard{color:#1A1A18}
 
