@@ -67,7 +67,15 @@ async function handleConsole(req,res,db){
 }
 
 async function handler(req,res){
- try{const mode=param(req,'mode'),db=getDb();if(mode==='intake')return await handleIntake(req,res,db);if(mode==='intake-health')return await handleIntakeHealth(req,res,db);if(mode==='console')return await handleConsole(req,res,db);return await handleLegacyReviews(req,res,db)}catch(error){console.error(error);return sendError(res,error)}
+ try{
+  const mode=param(req,'mode');
+  if(!mode&&!requireEditor(req,res))return;
+  const db=getDb();
+  if(mode==='intake')return await handleIntake(req,res,db);
+  if(mode==='intake-health')return await handleIntakeHealth(req,res,db);
+  if(mode==='console')return await handleConsole(req,res,db);
+  return await handleLegacyReviews(req,res,db);
+ }catch(error){console.error(error);return sendError(res,error)}
 }
 
 export default withHardening(handler,{rateLimit:{limit:30,windowMs:60_000,keyPrefix:'reviews-intake'},maxBytes:12_000_000});

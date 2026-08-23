@@ -18,7 +18,7 @@ import{LiquidGlassFilter}from'../design/primitives/LiquidGlassFilter';
 import{bindLiquidGlassPointerTracking}from'../design/glass/runtime';
 import{evolutionPages}from'./navigation';
 import type{Chapter}from'../core/types';
-import{readText,resetJourneyProgress,storageKeys,writeText}from'../core/storage';
+import{readText,resetPersonalProgress,storageKeys,writeText}from'../core/storage';
 
 const fallback:Chapter[]=embeddedChapters.map((chapter:any)=>({
  number:chapter.number,
@@ -73,12 +73,11 @@ export default function App(){
 /* ===== PAGE COMPONENTS ===== */
 
 const Crystals=()=>{
- const saved=useCrystals();
  return <div className="simplePage" dir="rtl">
   <h2 className="simplePageTitle">◆ הקריסטלים שלי</h2>
   <p className="simplePageSub">תובנות ששמרת מתוך המסע</p>
-  {saved.length===0?<div className="emptyState"><p>עוד לא שמרת קריסטלים</p><span>כשתקרא פרק ותסמן תובנה — היא תופיע כאן</span></div>:
-  <div className="crystalList">{saved.map((c:any,i:number)=><div key={i} className="crystalItem"><div className="crystalItemTitle">{c.topic||c.title||'תובנה'}</div><p className="crystalItemText">{c.text||c.summary}</p><span className="crystalItemSource">{c.sourceLabel||''}</span></div>)}</div>}
+  {crystals.length===0?<div className="emptyState"><p>עוד לא שמרת קריסטלים</p><span>כשתקרא פרק ותסמן תובנה — היא תופיע כאן</span></div>:
+  <div className="crystalList">{crystals.map(c=><article key={c.fragmentId} className="crystalItem"><div className="crystalItemTitle">{c.topic||'תובנה'}</div><p className="crystalItemText">{c.text}</p><span className="crystalItemSource">{c.sourceLabel} · {c.provenanceLabel}</span></article>)}</div>}
  </div>;
 };
 
@@ -137,23 +136,24 @@ const Settings=()=>{
  const[form,setForm]=React.useState({name:"",email:"",phone:""});
  const[saved,setSaved]=React.useState(false);
  const[resetDone,setResetDone]=React.useState(false);
+ const[settingsError,setSettingsError]=React.useState('');
  React.useEffect(()=>{
  try{const s=JSON.parse(localStorage.getItem("eil-settings")||"{}");
  setForm(f=>({...f,...s}));}catch{}
  },[]);
  const save=()=>{
- localStorage.setItem("eil-settings",JSON.stringify(form));
- setSaved(true);setTimeout(()=>setSaved(false),2000);
+ try{localStorage.setItem("eil-settings",JSON.stringify(form));setSettingsError('');setSaved(true);setTimeout(()=>setSaved(false),2000)}
+ catch{setSaved(false);setSettingsError('לא ניתן היה לשמור את ההגדרות בדפדפן.')}
  };
  const reset=()=>{
  if(!window.confirm("האם אתה בטוח? פעולה זו תמחק את כל ההתקדמות שלך."))return;
- ["eil-crystals","eil-learnings","eil-progress"].forEach(k=>localStorage.removeItem(k));
- setResetDone(true);setTimeout(()=>setResetDone(false),3000);
+ resetPersonalProgress();
+ setResetDone(true);setTimeout(()=>window.location.reload(),900);
  };
  const field=(label:string,key:"name"|"email"|"phone",type="text")=>
  <div className="settingField">
- <label className="settingLabel">{label}</label>
- <input className="settingInput" type={type} value={form[key]}
+ <label className="settingLabel" htmlFor={`setting-${key}`}>{label}</label>
+ <input id={`setting-${key}`} className="settingInput" type={type} value={form[key]}
  onChange={e=>setForm(f=>({...f,[key]:e.target.value}))}/>
  </div>;
  return <div className="simplePage" dir="rtl">
@@ -165,11 +165,13 @@ const Settings=()=>{
  <button className="primaryBtn" onClick={save}>
  {saved?"✓ נשמר!":"שמור הגדרות"}
  </button>
+ {settingsError&&<p className="formError" role="alert">{settingsError}</p>}
  <div className="settingDivider"/>
  <h3 className="settingDangerTitle">אזור מסוכן</h3>
  <button className="dangerBtn" onClick={reset}>
  {resetDone?"✓ ההתקדמות אופסה":"🗑 אפס התקדמות"}
  </button>
+ {resetDone&&<p className="settingStatus" role="status">הנתונים המקומיים אופסו. האפליקציה נטענת מחדש…</p>}
  <p className="settingDangerNote">מוחק: קריסטלים, תובנות, התקדמות. לא ניתן לשחזר.</p>
  </div>
  </div>;
@@ -192,12 +194,13 @@ const Research=()=>{
  };
  return <div className="simplePage" dir="rtl">
  <h2 className="simplePageTitle">⌕ חקירה</h2>
- <input className="searchInput" value={q} onChange={e=>setQ(e.target.value)}
+ <label className="srOnly" htmlFor="research-search">חיפוש בתוכן הפרקים</label>
+ <input id="research-search" className="searchInput" type="search" value={q} onChange={e=>setQ(e.target.value)}
  placeholder={`חפש בין ${embeddedChapters.reduce((a,c)=>a+c.paragraphCount,0)} הפסקאות...`}/>
- {needle.length>2&&<p className="searchCount">{results.length>0?`נמצאו ${results.length} תוצאות`:`לא נמצאו תוצאות ל-"${q}" — נסה מילה אחרת`}</p>}
+ {needle.length>2&&<p className="searchCount" aria-live="polite">{results.length>0?`נמצאו ${results.length} תוצאות`:`לא נמצאו תוצאות ל-"${q}" — נסה מילה אחרת`}</p>}
  <div className="searchResults">
- {results.map((r,i)=><button key={i} className="searchResult"
- onClick={()=>nav("library")}>
+ {results.map((r,i)=><button key={`${r.ch.number}-${i}`} className="searchResult"
+ onClick={()=>openChapterFromResearch(r.ch.number)}>
  <div className="searchResultChapter">פרק {r.ch.number} — {r.ch.title}</div>
  <div className="searchResultText">{highlight(r.text)}</div>
  </button>)}
@@ -210,13 +213,6 @@ const Generic=()=><div className="simplePage" dir="rtl">
  <p className="muted">דף זה בפיתוח.</p>
 </div>;
 
-function useCrystals(){
- const[items,setItems]=React.useState<any[]>([]);
- React.useEffect(()=>{try{const s=JSON.parse(localStorage.getItem('eil-crystals')||'[]');setItems(s)}catch{};},[]);
- return items;
-}
-
-
  if(reviewMode)return <><LiquidGlassFilter/><ReviewConsole/></>;
  if(!entered)return <><LiquidGlassFilter/><WelcomeScreen onStart={enterExperience}/></>;
 
@@ -226,8 +222,10 @@ function useCrystals(){
   <main>
    {page!=='dashboard'&&<div className="topbar"><div className="globalSearch">⌕<input value={q} onChange={event=>setQ(event.target.value)} placeholder="חפש רעיון, מקור, קשר או תובנה..."/></div></div>}
    {page!=='dashboard'&&<div className="pageBack"><button onClick={goBack}>→ חזרה</button></div>}
-   {notice&&<div className="notice" onClick={()=>setNotice('')}>{notice}</div>}
-   {page==='dashboard'&&<KnowledgeDashboard query={q} onQueryChange={setQ} onAdd={openNew}/>} 
+   {notice&&<div className="notice" role="status"><span>{notice}</span><button type="button" aria-label="סגור הודעה" onClick={()=>setNotice('')}>×</button></div>}
+   {page==='dashboard'&&(
+    <KnowledgeDashboard onOpenJourney={()=>nav('library')}/>
+   )}
    {page==='crystals'&&<Crystals/>}
    {page==='add-learning'&&<AddLearning/>}
    {page==='sources'&&<Sources/>}
@@ -239,7 +237,7 @@ function useCrystals(){
    {page==='media'&&<MediaWorkspace/>} 
    {isEvolution&&<EvolutionWorkspace page={page} onNav={nav}/>} 
    {!['dashboard','library','sources','transformation','media','research','crystals','add-learning','add-source','settings',...evoPageIds].includes(page)&&<Generic/>}
-   <AddSourceModal open={editor} onClose={()=>setEditor(false)} onImported={message=>{setNotice(message);setOnline(!message.startsWith('ייבוא נכשל'))}}/>
+   <AddSourceModal open={editor} onClose={()=>setEditor(false)} onImported={setNotice}/>
   </main>
   <button className="crystalLauncher" onClick={()=>setCrystalsOpen(true)} aria-label="פתח את אוסף הקריסטלים"><span>◆</span><b>הקריסטלים שלי</b><em>{crystals.length}</em></button>
   <CrystalCollectionDrawer open={crystalsOpen} onClose={()=>setCrystalsOpen(false)}/>

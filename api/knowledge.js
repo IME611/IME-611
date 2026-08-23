@@ -3,11 +3,14 @@ import{buildCorpusInventory}from'../server/knowledge/application/corpus/corpus-i
 import{previewAtomicExtraction,previewCorpusExtraction}from'../server/knowledge/application/extraction/atomic-extraction-preview.service.js';
 import{matchAgainstCorpus,buildConceptRegistryPreview}from'../server/knowledge/application/matching/knowledge-overlap.service.js';
 import{withHardening,text,requestUrl}from'./_lib/hardening.js';
+import{requireEditor}from'./_lib/editor-auth.js';
 
 const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const param=(req,name)=>requestUrl(req).searchParams.get(name);
 const positiveId=value=>{if(value===null)return null;const id=Number(value);return Number.isInteger(id)&&id>0?id:NaN};
 const ownerId=req=>{const value=String(req.headers?.['x-eil-owner-id']||'').trim();return UUID.test(value)?value:null};
+const WRITE_RESOURCES=new Set(['items','inbox','crystals','taxonomy']);
+const isProtectedWrite=(resource,method)=>method!=='GET'&&WRITE_RESOURCES.has(resource);
 
 async function handleItems(req,res,db){
  const rawId=param(req,'id'),id=positiveId(rawId),hasId=Number.isInteger(id);
@@ -118,7 +121,9 @@ async function handleOverlapHealth(req,res,db){
 }
 
 async function knowledge(req,res){
- const db=getDb();const resource=param(req,'resource')||'sources';
+ const resource=param(req,'resource')||'sources';
+ if(isProtectedWrite(resource,req.method)&&!requireEditor(req,res))return;
+ const db=getDb();
  if(resource==='items')return handleItems(req,res,db);
  if(resource==='inbox')return handleInbox(req,res,db);
  if(resource==='sources'||resource==='documents')return handleSources(req,res,db);

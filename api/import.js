@@ -4,6 +4,7 @@ import{getDb}from'../server/shared/postgres.js';
 import{ingestCanonicalSource}from'../server/knowledge/application/ingestion/ingest-source.js';
 import{PostgresSourceIngestionRepository}from'../server/knowledge/infrastructure/postgres/source-ingestion.repository.js';
 import{withHardening,text as safeText}from'./_lib/hardening.js';
+import{requireEditor}from'./_lib/editor-auth.js';
 
 async function extract(fileName,mimeType,base64,suppliedText){
  if(String(suppliedText||'').trim())return String(suppliedText);
@@ -49,6 +50,7 @@ async function importSource(db,body,fileName,mimeType,base64,extractedText){
 
 async function importHandler(req,res){
  if(req.method!=='POST')return res.status(405).json({ok:false,error:'method not allowed'});
+ if(!requireEditor(req,res))return;
  const body=req.body||{};
  const fileName=safeText(body.fileName||body.sourceFilename||'document.txt',{max:500});
  const mimeType=safeText(body.mimeType||'text/plain',{max:200});

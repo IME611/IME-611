@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useLearningProgress } from './model/useLearningProgress';
 import { journeyPath } from './model/journey-stage';
 import type { LearningStage } from '../../core/learning-path/learning-path.types';
+import { journeyStorage } from '../../core/storage';
+import { useCrystalCollection } from '../crystals/model/useCrystalCollection';
 
 type Chapter = { number: number; title: string; subtitle: string; sourceFile: string; paragraphs: string[]; paragraphCount?: number; characterCount?: number };
 type Props = { chapters: Chapter[]; query: string; setQuery: (v: string) => void; corpusReady: boolean; paragraphs: number; characters: number; initialChapter?: number | null; onInitialChapterOpened?: () => void };
@@ -19,7 +21,7 @@ function stageForNum(num: number): LearningStage | undefined {
   return journeyPath.stages.find(s => s.order === num);
 }
 function isOwnerMode(): boolean {
-  try { return localStorage.getItem('eil-access-mode') === 'owner'; } catch { return true; }
+  return journeyStorage.mode() === 'owner';
 }
 
 /* ── Card ── */
@@ -61,7 +63,8 @@ function ChapterView({ chapter, layer, onBack, onComplete, onPrevious, onNext, c
 }) {
   const [reflection, setReflection] = useState('');
   const [crystalText, setCrystalText] = useState('');
-  const [crystalSaved, setCrystalSaved] = useState(false);
+  const [crystalStatus, setCrystalStatus] = useState<'idle'|'saved'|'error'>('idle');
+  const { save: saveCrystal } = useCrystalCollection();
   const stage = stageForNum(chapter.number);
   const canComplete = isOwner || reflection.trim().length >= 20;
 
@@ -137,28 +140,32 @@ function ChapterView({ chapter, layer, onBack, onComplete, onPrevious, onNext, c
         <textarea
           className="crystalSaveInput"
           value={crystalText}
-          onChange={e=>setCrystalText(e.target.value)}
-          placeholder={crystalSaved?"✓ נשמר בקריסטלים שלך!":"כתוב תובנה שתרצה לשמור מהפרק הזה..."}
+          onChange={e=>{setCrystalText(e.target.value);setCrystalStatus('idle')}}
+          placeholder={crystalStatus==='saved'?"✓ נשמר בקריסטלים שלך!":"כתוב תובנה שתרצה לשמור מהפרק הזה..."}
           rows={3}
         />
         <button className="crystalSaveBtn" disabled={!crystalText.trim()} onClick={() => {
-          if (!crystalText.trim()) return;
-          try {
-            const existing = JSON.parse(localStorage.getItem('eil-crystals') || '[]');
-            existing.unshift({
-              text: crystalText.trim(),
-              topic: chapter.title.replace(/^פרק\s*\d+[::]?\s*/u, ''),
-              chapterNum: chapter.number,
-              date: new Date().toISOString()
-            });
-            localStorage.setItem('eil-crystals', JSON.stringify(existing));
+          const text=crystalText.trim();
+          if (!text) return;
+          const saved=saveCrystal({
+            fragmentId:`personal-${chapter.number}-${Date.now()}-${Math.random().toString(36).slice(2,8)}`,
+            conceptId:`chapter-${chapter.number}`,
+            topic:clean(chapter.title),
+            subtopic:'תובנה אישית',
+            text,
+            sourceLabel:`פרק ${chapter.number} — ${clean(chapter.title)}`,
+            provenanceLabel:`נכתב לאחר קריאת פרק ${chapter.number}`,
+            savedAt:new Date().toISOString(),
+          });
+          if(saved){
             setCrystalText('');
-            setCrystalSaved(true);
-            setTimeout(() => setCrystalSaved(false), 3000);
-          } catch {}
+            setCrystalStatus('saved');
+            setTimeout(() => setCrystalStatus('idle'), 3000);
+          }else setCrystalStatus('error');
         }}>
-          {crystalSaved ? "✓ נשמר בקריסטלים!" : "◆ שמור קריסטל"}
+          {crystalStatus==='saved' ? "✓ נשמר בקריסטלים!" : "◆ שמור קריסטל"}
         </button>
+        {crystalStatus==='error'&&<p className="formError" role="alert">לא ניתן היה לשמור את הקריסטל בדפדפן. נסה שוב.</p>}
       </div>
 
       <nav className="spiralChapterNav" aria-label="ניווט בין פרקים">

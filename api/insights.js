@@ -7,11 +7,13 @@ import{PostgresCoreLoopRepository}from'../server/synthesis/infrastructure/postgr
 import{PostgresDashboardRepository}from'../server/synthesis/infrastructure/postgres/dashboard.repository.js';
 import{getInsightProvenanceTrace}from'../server/synthesis/infrastructure/postgres/provenance-trace.js';
 import{createInsightFromClaims,createExperiment,reflectOnExperiment}from'../server/synthesis/domain/core-loop/core-loop.service.js';
+import{requireEditor}from'./_lib/editor-auth.js';
 
 function evidence(c,topic){const q=n(topic);return(c?.paragraphs||[]).map((text,i)=>({paragraph:i+1,text})).filter(x=>n(x.text).includes(q)).slice(0,2)}
 const bad=(res,status,error)=>res.status(status).json({ok:false,error});
 
 async function handleCoreLoop(req,res,params){
+ if(req.method==='POST'&&!requireEditor(req,res))return;
  if(!process.env.DATABASE_URL)return bad(res,503,'Canonical database is not configured. Local drafts must remain HYPOTHESIS.');
  const db=getDb(),repository=new PostgresCoreLoopRepository(db,getInsightProvenanceTrace);
  const body=typeof req.body==='string'?JSON.parse(req.body||'{}'):(req.body||{}),action=body.action;
