@@ -13,3 +13,5 @@
 @import './features/errors.css';
 @import './responsive.css';
 @import './accessibility.css';
+
+.reviewConsole h1,.reviewConsole h2,.reviewConsole h3{color:#edf2f7}
