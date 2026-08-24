@@ -153,10 +153,16 @@ const learnerNavigationIds=[...learnerNavigation.primary,...learnerNavigation.gr
 assert.deepEqual(learnerNavigationIds,['dashboard','library','sources','settings'],'learner navigation must stay focused on the journey, full sources and settings');
 assert.equal(isOwnerOnlyNavigation('add-source'),true,'direct source-ingestion routes must be recognized as creator-only');
 assert.equal(isOwnerOnlyNavigation('add-learning'),true,'standalone learning capture must be recognized as creator-only');
-assert.equal(pilotCardChapters.length,6,'the card-format draft must cover the first six learning chapters');
-assert.equal(pilotCardChapters.flatMap(chapter=>chapter.cards).length,40,'the first six chapters must contain all 40 traceable cards');
+assert.equal(pilotCardChapters.length,9,'the card-format draft must cover the first nine learning chapters');
+assert.equal(pilotCardChapters.flatMap(chapter=>chapter.cards).length,60,'the first nine chapters must contain all 60 traceable cards');
 assert.equal(pilotCardChapters[3].sourceFile,'פרק5_המוח_המפורט.docx','learning chapter 4 must use the brain source before the operating-system metaphor');
 assert.equal(pilotCardChapters[4].sourceFile,'פרק4_מערכת_ההפעלה.docx','learning chapter 5 must use the operating-system source after the brain');
+assert.equal(pilotCardChapters[6].title,'אור, שינה ובלוטת האצטרובל','learning chapter 7 must begin from measurable circadian biology');
+assert.equal(pilotCardChapters[7].title,'צליל — מפיזיקה לחוויה','learning chapter 8 must move from physical sound to subjective experience');
+assert.equal(pilotCardChapters[8].title,'מפות אנרגטיות — מסורת, מטפורה ומדידה','learning chapter 9 must distinguish tradition, metaphor and measurement');
+assert.match(pilotCardChapters[6].cards.map(item=>item.text).join(' '),/לא הוכח שהאצטרובל האנושי/,'pineal DMT claims must not be promoted as established human biology');
+assert.match(pilotCardChapters[7].cards.map(item=>item.text).join(' '),/אינו לבדו הוכחה לריפוי/,'sound frequency must not be presented as a universal healing mechanism');
+assert.match(pilotCardChapters[8].cards.map(item=>item.text).join(' '),/אינה מסקנה רפואית מבוססת/,'spiritual maps must not be presented as medical anatomy');
 for(const chapter of pilotCardChapters){
  for(const card of chapter.cards){
   const words=card.text.trim().split(/\s+/u).filter(Boolean).length;
@@ -193,4 +199,4 @@ assert.equal(crystalCollectionRepository.load().length,2,'updating a crystal not
 assert.equal(crystalCollectionRepository.clear(),true,'crystal collection should clear locally');
 assert.equal(crystalCollectionRepository.load().length,0,'cleared collection should remain empty');
 
-console.log('Private beta verification passed: protected writes, open topic navigation, 40 traceable short cards across chapters 1–6, persistent card position, unified crystals with personal notes, canonical sources, and complete reset contracts.');
+console.log('Private beta verification passed: protected writes, open topic navigation, 60 traceable short cards across chapters 1–9, persistent card position, unified crystals with personal notes, canonical sources, and complete reset contracts.');
