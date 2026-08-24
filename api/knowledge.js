@@ -108,6 +108,7 @@ async function handleOverlapHealth(req,res,db){
  const fixtures=[
   {name:'known-exact',text:'מדיטציה',allowed:['EXISTS']},
   {name:'known-token',text:'נוירופלסטיות',allowed:['EXISTS','EXTENDS']},
+  {name:'known-concept-paraphrase',text:'המוח מסוגל לבנות קשרים עצביים חדשים גם בבגרות',allowed:['RELATED','EXISTS']},
   {name:'known-extension',text:'מדיטציה יכולה להשפיע על תשומת הלב ועל דפוסי תרגול יומיומיים',allowed:['EXTENDS','RELATED','UNCERTAIN']},
   {name:'novel-control',text:'פוטוסינתזה בצמחי מנגרוב באוקיינוס הארקטי',allowed:['NEW','UNCERTAIN']},
  ];
@@ -117,7 +118,7 @@ async function handleOverlapHealth(req,res,db){
   results.push({name:fixture.name,verdict:match.verdict,confidence:match.confidence,pass:fixture.allowed.includes(match.verdict),topScore:top?Number(top.score.toFixed(4)):null,topType:top?.type||null,topSourceFile:top?.sourceFile||null,indexed:match.indexed});
  }
  const pass=results.every(result=>result.pass);
- return res.status(pass?200:503).json({ok:pass,engine:'overlap-v0.1',semanticModel:false,results});
+ return res.status(pass?200:503).json({ok:pass,engine:'overlap-v0.2',semanticModel:false,conceptAwareMatching:true,results});
 }
 
 async function knowledge(req,res){

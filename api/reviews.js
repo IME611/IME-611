@@ -48,9 +48,9 @@ async function handleIntake(req,res,db){
 
 async function handleIntakeHealth(req,res,db){
  if(req.method!=='GET'){res.setHeader('Allow','GET');return res.status(405).json({ok:false,error:'method not allowed'})}
- const fixtures=[{name:'known-concept',text:'נוירופלסטיות',allowed:['EXISTS','EXTENDS']},{name:'novel-control',text:'פוטוסינתזה בצמחי מנגרוב באוקיינוס הארקטי',allowed:['NEW','UNCERTAIN']}],results=[];
+ const fixtures=[{name:'known-concept',text:'נוירופלסטיות',allowed:['EXISTS','EXTENDS']},{name:'known-concept-paraphrase',text:'המוח מסוגל לבנות קשרים עצביים חדשים גם בבגרות',allowed:['RELATED','EXISTS']},{name:'novel-control',text:'פוטוסינתזה בצמחי מנגרוב באוקיינוס הארקטי',allowed:['NEW','UNCERTAIN']}],results=[];
  for(const fixture of fixtures){const analysis=await analyzeIntake(db,{kind:'TOPIC',title:fixture.name,text:fixture.text,fileName:'health.txt',mimeType:'text/plain',sourceUrl:null,metadata:{verification:true}});results.push({name:fixture.name,verdict:analysis.verdict.verdict,confidence:analysis.verdict.confidence,pass:fixture.allowed.includes(analysis.verdict.verdict),closest:analysis.closestExistingKnowledge[0]||null,suggestedDrawer:analysis.placement.suggestedDrawer,decisionRequired:analysis.decision.required,canonicalWrites:analysis.policy.canonicalWrites})}
- const pass=results.every(item=>item.pass&&item.decisionRequired===true&&item.canonicalWrites===false);return res.status(pass?200:503).json({ok:pass,analysisVersion:'intake-v0.1',schemaReady:await intakeSchemaReady(db),semanticMatching:false,results});
+ const pass=results.every(item=>item.pass&&item.decisionRequired===true&&item.canonicalWrites===false);return res.status(pass?200:503).json({ok:pass,analysisVersion:'intake-v0.2',schemaReady:await intakeSchemaReady(db),semanticMatching:false,conceptAwareMatching:true,results});
 }
 
 async function handleConsole(req,res,db){
