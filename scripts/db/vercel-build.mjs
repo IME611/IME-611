@@ -1,29 +1,14 @@
-import { spawnSync } from 'node:child_process';
+import{spawnSync}from'node:child_process';
 
-function run(command, args) {
-  const result = spawnSync(command, args, { stdio: 'inherit', shell: process.platform === 'win32' });
-  if (result.status !== 0) process.exit(result.status ?? 1);
+function run(command,args){
+ const result=spawnSync(command,args,{stdio:'inherit',shell:process.platform==='win32'});
+ if(result.status!==0)process.exit(result.status??1);
 }
 
-if (process.env.VERCEL_ENV === 'production') {
-  console.log('Production build: ensuring migrations 001-010 before verification.');
-  run('node', ['scripts/db/ensure-production-migrations.mjs']);
-  console.log('Production build: verifying database foundation including extraction/relation/intake/review/publication layers.');
-  run('npm', ['run', 'db:health']);
-  console.log('Production build: exercising extraction candidate persistence with a transactional verification fixture.');
-  run('npm', ['run', 'db:verify-extraction']);
-  console.log('Production build: idempotently bootstrapping PENDING atomic extraction candidates.');
-  run('npm', ['run', 'knowledge:bootstrap-extraction']);
-  console.log('Production build: idempotently bootstrapping evidence-backed relation candidates.');
-  run('node', ['scripts/knowledge/bootstrap-relations.mjs']);
-  console.log('Production build: auditing relation endpoint suggestion quality without writes.');
-  run('node', ['scripts/knowledge/audit-relation-endpoint-suggestions.mjs']);
-  console.log('Production build: verifying intake CHANGE / REJECT / duplicate-safe APPROVE lifecycle.');
-  run('node', ['scripts/knowledge/verify-intake-db.mjs']);
-  console.log('Production build: enforcing corpus provenance, review, relation, intake, and flexible publication quality gates.');
-  run('node', ['scripts/knowledge/verify-quality-gates.mjs']);
-} else {
-  console.log(`Skipping database migrations and production DB quality verification for VERCEL_ENV=${process.env.VERCEL_ENV || 'local'}.`);
-}
+console.log(`Vercel build: running single-pass prebuild for VERCEL_ENV=${process.env.VERCEL_ENV||'local'}.`);
+run(process.execPath,['scripts/quality/run-prebuild.mjs']);
 
-run('npm', ['run', 'build']);
+console.log('Vercel build: compiling TypeScript directly.');
+run('npx',['--no-install','tsc','-b']);
+console.log('Vercel build: building Vite output directly.');
+run('npx',['--no-install','vite','build']);
