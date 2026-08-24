@@ -20,6 +20,8 @@
 .crystalItem{background:rgba(255,255,255,.65);border:1px solid rgba(184,150,46,.20);border-radius:16px;padding:16px;box-shadow:0 4px 12px rgba(26,20,8,.06)}
 .crystalItemTitle{font-size:12px;font-weight:700;color:rgba(184,150,46,.80);letter-spacing:.10em;text-transform:uppercase;margin-bottom:6px}
 .crystalItemText{font-size:14px;color:#1A1A18;line-height:1.65;margin:0 0 6px}
+.crystalItemNote{display:grid;gap:3px;margin:10px 0;padding:10px 12px;border:0;border-right:3px solid #B8962E;border-radius:9px;background:rgba(184,150,46,.08);font-size:12px;line-height:1.65;color:rgba(26,26,24,.72)}
+.crystalItemNote strong{font-size:10px;color:#8A6A1A}
 .crystalItemSource{font-size:11px;color:rgba(26,26,24,.40)}
 
 /* Learning input */

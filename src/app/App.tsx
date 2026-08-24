@@ -29,6 +29,7 @@ export default function App(){
  const[notice,setNotice]=useState('');
  const[crystalsOpen,setCrystalsOpen]=useState(false);
  const[requestedChapter,setRequestedChapter]=useState<number|null>(null);
+ const[requestedSourceNumber,setRequestedSourceNumber]=useState<number|null>(null);
  const[sourceChapters,setSourceChapters]=useState<Chapter[]>([]);
  const[entered,setEntered]=useState(()=>{try{return sessionStorage.getItem('eil-welcome-entered')==='1'}catch{return false}});
  const{records:crystals}=useCrystalCollection();
@@ -54,7 +55,8 @@ export default function App(){
  const openNew=()=>setEditor(true);
  const isEvolution=evoPageIds.includes(page);
  const enterExperience=()=>{try{sessionStorage.setItem('eil-welcome-entered','1')}catch{}setEntered(true);nav('dashboard')};
- const openJourney=(chapterNumber?:number)=>{setRequestedChapter(chapterNumber??null);nav('library')};
+ const openJourney=(chapterNumber?:number)=>{setRequestedSourceNumber(null);setRequestedChapter(chapterNumber??null);nav('library')};
+ const openSource=(sourceNumber:number)=>{setRequestedChapter(null);setRequestedSourceNumber(sourceNumber);nav('library')};
  
  
 /* ===== PAGE COMPONENTS ===== */
@@ -64,7 +66,7 @@ const Crystals=()=>{
   <h2 className="simplePageTitle">◆ הקריסטלים שלי</h2>
   <p className="simplePageSub">תובנות ששמרת מתוך המסע</p>
   {crystals.length===0?<div className="emptyState"><p>עוד לא שמרת קריסטלים</p><span>כשתקרא פרק ותסמן תובנה — היא תופיע כאן</span></div>:
-  <div className="crystalList">{crystals.map(c=><article key={c.fragmentId} className="crystalItem"><div className="crystalItemTitle">{c.topic||'תובנה'}</div><p className="crystalItemText">{c.text}</p><span className="crystalItemSource">{c.sourceLabel} · {c.provenanceLabel}</span></article>)}</div>}
+  <div className="crystalList">{crystals.map(c=><article key={c.fragmentId} className="crystalItem"><div className="crystalItemTitle">{c.topic||'תובנה'}</div><p className="crystalItemText">{c.text}</p>{c.personalNote&&<blockquote className="crystalItemNote"><strong>ההערה שלי</strong>{c.personalNote}</blockquote>}<span className="crystalItemSource">{c.sourceLabel} · {c.provenanceLabel}</span></article>)}</div>}
  </div>;
 };
 
@@ -84,7 +86,7 @@ const Sources=()=>{
  return <div className="simplePage" dir="rtl">
   <h2 className="simplePageTitle">↗ המקורות שלי</h2>
   <p className="simplePageSub">{sourceCatalogue.length} המקורות המלאים שעליהם מבוסס מסע הלימוד</p>
-  <div className="sourceList">{sourceCatalogue.map(source=><button key={source.number} type="button" className="sourceItem" onClick={()=>openJourney(source.number)} aria-label={`פתח מקור: ${source.title}`}>
+  <div className="sourceList">{sourceCatalogue.map(source=><button key={source.number} type="button" className="sourceItem" onClick={()=>openSource(source.number)} aria-label={`פתח מקור: ${source.title}`}>
    <span className="sourceNum">{String(source.number).padStart(2,'0')}</span>
    <span className="sourceInfo"><span className="sourceName">{source.title}</span><span className="sourceFile">{source.sourceFile}</span></span>
    <span className="sourceOpen" aria-hidden="true">פתח ←</span>
@@ -167,7 +169,14 @@ const Generic=()=><div className="simplePage" dir="rtl">
    {page==='sources'&&<Sources/>}
    {page==='add-source'&&<AddSource/>}
    {page==='settings'&&<Settings/>}
-   {page==='library'&&<SpiralLibrary chapters={journeyChapters} initialChapter={requestedChapter} onInitialChapterOpened={()=>setRequestedChapter(null)}/>}
+   {page==='library'&&<SpiralLibrary
+    chapters={journeyChapters}
+    initialChapter={requestedChapter}
+    initialSourceNumber={requestedSourceNumber}
+    onInitialChapterOpened={()=>setRequestedChapter(null)}
+    onInitialSourceOpened={()=>setRequestedSourceNumber(null)}
+    onSourceClosed={()=>nav('sources')}
+   />}
    {page==='transformation'&&<TransformationWorkspace chapters={journeyChapters}/>}
    {page==='media'&&<MediaWorkspace/>} 
    {isEvolution&&<EvolutionWorkspace page={page} onNav={nav}/>} 

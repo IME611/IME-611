@@ -539,6 +539,9 @@
   margin: 0;
 }
 .dashWelcomeText strong { color: #1A1A18; font-weight: 700 }
+.dashWelcomeText span { display: block }
+.dashWelcomeText span + span { margin-top: 11px }
 @media (max-width: 640px) {
-  .dashWelcomeText { line-height: 2; padding: 20px 18px }
+  .dashWelcomeText { line-height: 1.9; padding: 22px 18px }
+  .dashWelcomeText span + span { margin-top: 14px }
 }

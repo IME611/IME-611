@@ -7,6 +7,7 @@ export type CrystalRecord={
  sourceLabel:string;
  provenanceLabel:string;
  savedAt:string;
+ personalNote?:string;
 };
 
 const CACHE_KEY='eil-crystals-v1';
@@ -16,7 +17,7 @@ const EVENT='eil:crystals-changed';
 const isRecord=(value:unknown):value is CrystalRecord=>{
  if(!value||typeof value!=='object')return false;
  const record=value as Partial<CrystalRecord>;
- return typeof record.fragmentId==='string'&&typeof record.conceptId==='string'&&typeof record.topic==='string'&&typeof record.text==='string'&&typeof record.sourceLabel==='string'&&typeof record.provenanceLabel==='string'&&typeof record.savedAt==='string';
+ return typeof record.fragmentId==='string'&&typeof record.conceptId==='string'&&typeof record.topic==='string'&&typeof record.text==='string'&&typeof record.sourceLabel==='string'&&typeof record.provenanceLabel==='string'&&typeof record.savedAt==='string'&&(record.personalNote===undefined||typeof record.personalNote==='string');
 };
 
 function safeArray(value:string|null):unknown[]{
@@ -71,7 +72,7 @@ export const crystalCollectionRepository={
  save(record:CrystalRecord){
   const text=record.text.trim();
   if(!text)return false;
-  const current=readCache(),next={...record,text,savedAt:record.savedAt||new Date().toISOString()};
+  const current=readCache(),next={...record,text,personalNote:record.personalNote?.trim()||undefined,savedAt:record.savedAt||new Date().toISOString()};
   const index=current.findIndex(item=>item.fragmentId===record.fragmentId);
   if(index>=0)current[index]=next;else current.unshift(next);
   return writeCache(current);

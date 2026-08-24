@@ -6,8 +6,8 @@ const questions = [
   'מי אני, איפה אני ולמה אני כאן?',
   'באיזו סביבה פיזית ומערכתית הקיום שלי מתרחש?',
   'מה מלמדת המורכבות של הגוף והעולם על המערכת שאני חוקר?',
-  'אילו שכבות של מודעות ותהליכים פנימיים מפעילים אותי?',
   'איך המוח מתווך בין גוף, תפיסה, זיכרון והתנהגות?',
+  'איך קשב, אוטומציה וניסיון חוזר נעשים דפוס פעולה?',
   'כיצד מצבי מוח משתנים קשורים לחוויה ולתפקוד?',
   'מה ידוע, מה משוער ומה שנוי במחלוקת סביב האצטרובל וחוויות אנרגטיות?',
   'איך צליל ומוזיקה משפיעים על גוף, מוח וחוויה?',
@@ -25,12 +25,30 @@ const questions = [
 
 const conceptSets = [
   ['self','existence','observation'],['environment','systems','interdependence'],['complexity','body','emergence'],
-  ['consciousness','subconscious','attention'],['brain','perception','memory'],['brain-states','attention','sleep'],
+  ['brain','neuron','synapse'],['attention','automatic-processes','patterns'],['brain-states','attention','sleep'],
   ['pineal','circadian-rhythm','subjective-experience'],['sound','music','nervous-system'],['embodiment','subjective-experience','evidence'],
   ['neuroplasticity','learning','habit'],['identity','belief','prediction'],['emotion','signal','regulation'],
   ['observation','causality','hypothesis'],['principles','tradition','evidence'],['goals','vision','experiment'],
   ['suffering','meaning','resilience'],['integration','body','mind','meaning'],['self-model','synthesis','uncertainty'],
 ];
+
+const proposedStageTitles=[
+  'התבוננות — שאלת המסע',
+  'הסביבה — המערכת שמחוץ לנו',
+  'הגוף כמערכת מורכבת',
+  'המוח — מבנה, תקשורת ובקרה',
+  'מערכת ההפעלה — מודע, אוטומטי ודפוסים',
+  'מצבי מוח — קשב, שינה ולמידה',
+] as const;
+
+const proposedStageSourceFiles=[
+  'מי_אני_פרק1_v6.docx',
+  'פרק2_הכלי_החיצוני.docx',
+  'פרק3_הפלא_ההנדסי.docx',
+  'פרק5_המוח_המפורט.docx',
+  'פרק4_מערכת_ההפעלה.docx',
+  'פרק6_גלי_המוח.docx',
+] as const;
 
 const path: LearningPath = {
   id: 'life-research',
@@ -41,10 +59,10 @@ const path: LearningPath = {
   stages: chapters.map((chapter, index) => ({
     id: `life-research-v1-stage-${String(index + 1).padStart(2,'0')}`,
     order: index + 1,
-    title: chapter.title,
+    title: proposedStageTitles[index]??chapter.title,
     subtitle: chapter.subtitle,
     guidingQuestion: questions[index],
-    sourceRefs: [chapter.sourceFile],
+    sourceRefs: [proposedStageSourceFiles[index]??chapter.sourceFile],
     requiredConceptRefs: index === 0 ? [] : conceptSets[Math.max(0,index - 1)].slice(0,2),
     introducedConceptRefs: conceptSets[index],
     objectives: [{

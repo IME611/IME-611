@@ -7,7 +7,7 @@ type LayerOverview={layer:string;color:string;label:string;chapters:string;numbe
 
 const SPIRAL_OVERVIEW:LayerOverview[]=[
  {layer:'א',color:'#1E3A5F',label:'הכלי הפיזי',chapters:'1–3',numbers:[1,2,3]},
- {layer:'ב',color:'#4A235A',label:'מערכת ההפעלה',chapters:'4–6',numbers:[4,5,6]},
+ {layer:'ב',color:'#4A235A',label:'המוח והדפוסים',chapters:'4–6',numbers:[4,5,6]},
  {layer:'ג',color:'#7D6608',label:'האנרגיה והתדר',chapters:'7–9',numbers:[7,8,9]},
  {layer:'ד',color:'#922B21',label:'כלי השינוי',chapters:'10–13',numbers:[10,11,12,13]},
  {layer:'ה',color:'#1A5276',label:'המשמעות',chapters:'14–18',numbers:[14,15,16,17,18]},
@@ -20,7 +20,7 @@ export function KnowledgeDashboard({onOpenJourney}:Props){
 
  return <div className="knowledgeDashboard" dir="rtl">
   <section className="dashOverview" aria-labelledby="journey-progress-title">
-   <div className="dashWelcome"><p className="dashWelcomeText">ברוך הבא ל-<strong>E.I.L</strong> — פלטפורמה שתוביל אותך למסע של מודעות כלפי עצמך וכלפי הסביבה, ותיתן לך כלים כדי להפוך לאדם שאתה רוצה להיות. מאחל לך שתהנה, תחכים ותהפוך לקריסטל הכי טוב שאתה יכול.</p></div>
+   <div className="dashWelcome"><p className="dashWelcomeText"><span>ברוך הבא ל-<strong>E.I.L</strong> — פלטפורמה שתוביל אותך למסע של מודעות כלפי עצמך וכלפי הסביבה.</span><span>בדרך תקבל כלים שיעזרו לך להפוך לאדם שאתה רוצה להיות.</span><span>מאחל לך שתהנה, תחכים ותהפוך לקריסטל הכי טוב שאתה יכול.</span></p></div>
    <div className="dashOverviewHeader">
     <h1 id="journey-progress-title" className="dashOverviewTitle">ההתקדמות שלי במסע</h1>
     <div className="dashOverviewMeta">{done}/{total} פרקים · {pct}%</div>
