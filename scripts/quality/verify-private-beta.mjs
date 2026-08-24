@@ -103,6 +103,7 @@ assert.match(navigation,/id:'add-source'.*ownerOnly:true/,'source ingestion must
 assert.doesNotMatch(navigation,/id:'crystals'/,'the navigation must not duplicate the persistent crystal launcher');
 assert.match(navigationShell,/navigationForMode\(owner\)/,'desktop and mobile navigation must filter items through the same access policy');
 assert.match(app,/activePage=owner\|\|!isOwnerOnlyNavigation\(page\)\?page:'dashboard'/,'learner routes must fail closed when an owner-only hash is requested');
+assert.match(app,/replaceNav\('dashboard'\)/,'a blocked creator hash must be replaced with the learner dashboard URL');
 assert.match(app,/className="sourceItem" onClick=\{\(\)=>openSource\(source\.number\)\}/,'source cards must open canonical documents independently of the learning sequence');
 assert.match(journey,/chapters\.find\(item=>item\.sourceFile===pilotCardChapter\.sourceFile\)/,'reordered learning chapters must resolve their own canonical source by file');
 assert.match(embeddedChapter2,/title:"הכלי החיצוני"/,'chapter 2 must open the external-environment source');

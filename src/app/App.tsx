@@ -22,7 +22,7 @@ import{journeyStorage,readText,resetPersonalProgress,storageKeys,writeText}from'
 const evoPageIds=evolutionPages as readonly string[];
 
 export default function App(){
- const{page,navigate:nav,back:goBack}=useAppNavigation();
+ const{page,navigate:nav,replace:replaceNav,back:goBack}=useAppNavigation();
  const owner=journeyStorage.mode()==='owner';
  const activePage=owner||!isOwnerOnlyNavigation(page)?page:'dashboard';
  const[collapsed,setCollapsed]=useState(()=>readText(storageKeys.railCollapsed)==='1');
@@ -48,6 +48,7 @@ export default function App(){
  },[reviewMode]);
  useEffect(()=>{if(!reviewMode)writeText(storageKeys.railCollapsed,collapsed?'1':'0')},[collapsed,reviewMode]);
  useEffect(()=>{if(reviewMode)return;return bindLiquidGlassPointerTracking()},[reviewMode]);
+ useEffect(()=>{if(!owner&&isOwnerOnlyNavigation(page))replaceNav('dashboard')},[owner,page,replaceNav]);
 
  // Keep the curated, marker-based Claude edition as the reader source. The API
  // collection is used only for the source catalogue so a successful API fetch
