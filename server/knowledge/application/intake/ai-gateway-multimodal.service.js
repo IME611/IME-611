@@ -1,25 +1,31 @@
+import{getVercelOidcToken}from'@vercel/oidc';
+
 const GATEWAY_BASE='https://ai-gateway.vercel.sh/v1';
 const DEFAULT_VISION_MODEL='anthropic/claude-opus-5';
 const DEFAULT_FALLBACK_MODEL='google/gemini-3.6-flash';
 const MAX_IMAGE_BYTES=8_000_000;
 const ALLOWED_MIME=new Set(['image/png','image/jpeg','image/webp','image/gif']);
 
-const token=()=>process.env.AI_GATEWAY_API_KEY||process.env.VERCEL_OIDC_TOKEN||'';
+const staticToken=()=>process.env.AI_GATEWAY_API_KEY||process.env.VERCEL_OIDC_TOKEN||'';
+const hasPotentialAuth=()=>Boolean(staticToken()||process.env.VERCEL);
+async function token(){const direct=staticToken();if(direct)return direct;if(!process.env.VERCEL)return'';try{return await getVercelOidcToken()||''}catch{return''}}
 const compact=value=>String(value||'').replace(/\s+/gu,' ').trim();
 
 export function multimodalCapability(){
+ const available=hasPotentialAuth();
  return{
-  available:Boolean(token()),
-  provider:Boolean(token())?'vercel-ai-gateway':'none',
-  model:Boolean(token())?(process.env.EIL_VISION_MODEL||DEFAULT_VISION_MODEL):null,
-  fallbackModel:Boolean(token())?(process.env.EIL_VISION_FALLBACK_MODEL||DEFAULT_FALLBACK_MODEL):null,
+  available,
+  provider:available?'vercel-ai-gateway':'none',
+  model:available?(process.env.EIL_VISION_MODEL||DEFAULT_VISION_MODEL):null,
+  fallbackModel:available?(process.env.EIL_VISION_FALLBACK_MODEL||DEFAULT_FALLBACK_MODEL):null,
+  authMode:staticToken()?'static-token':process.env.VERCEL?'vercel-oidc-context':'none',
   authority:'SOURCE_DESCRIPTION_DRAFT_ONLY',
   fallback:'creator-supplied-description',
  };
 }
 
 export async function describeImageForKnowledgeIntake({bytes,mimeType,fileName=''}){
- const auth=token();
+ const auth=await token();
  if(!auth)throw Object.assign(new Error('native image understanding is unavailable; supply a description or enable Vercel AI Gateway'),{code:'IMAGE_AI_UNAVAILABLE',status:503});
  if(!Buffer.isBuffer(bytes)||!bytes.length)throw Object.assign(new Error('image bytes are required'),{code:'IMAGE_BYTES_REQUIRED',status:400});
  if(bytes.length>MAX_IMAGE_BYTES)throw Object.assign(new Error(`native image analysis supports images up to ${MAX_IMAGE_BYTES} bytes`),{code:'IMAGE_AI_TOO_LARGE',status:413});

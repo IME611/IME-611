@@ -1,10 +1,18 @@
+import{getVercelOidcToken}from'@vercel/oidc';
+
 const GATEWAY_BASE='https://ai-gateway.vercel.sh/v1';
 const DEFAULT_MODEL='openai/text-embedding-3-small';
 const MAX_RECORDS=320;
 const MAX_TEXT_CHARS=1400;
 
 const compact=value=>String(value||'').replace(/\s+/gu,' ').trim();
-const authToken=()=>process.env.AI_GATEWAY_API_KEY||process.env.VERCEL_OIDC_TOKEN||'';
+const staticToken=()=>process.env.AI_GATEWAY_API_KEY||process.env.VERCEL_OIDC_TOKEN||'';
+const hasPotentialAuth=()=>Boolean(staticToken()||process.env.VERCEL);
+async function authToken(){
+ const direct=staticToken();if(direct)return direct;
+ if(!process.env.VERCEL)return'';
+ try{return await getVercelOidcToken()||''}catch{return''}
+}
 
 export class SemanticMatcherUnavailableError extends Error {
   constructor(message='Semantic matcher is not configured'){
@@ -33,7 +41,7 @@ function cleanRecords(records=[]){
 }
 
 async function gatewayEmbeddings(model,values){
-  const token=authToken();
+  const token=await authToken();
   if(!token)throw new SemanticMatcherUnavailableError('AI Gateway authentication is unavailable');
   const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),12_000);
   try{
@@ -53,12 +61,8 @@ async function gatewayEmbeddings(model,values){
   }finally{clearTimeout(timer)}
 }
 
-/**
- * Provider-neutral semantic ranking. It can improve review suggestions but never
- * mutates canonical concepts, candidates, relations, taxonomy, or review state.
- */
 export class SemanticMatcher {
-  get available(){return Boolean(authToken())}
+  get available(){return hasPotentialAuth()}
   get provider(){return this.available?'vercel-ai-gateway':'none'}
   get model(){return this.available?(process.env.EIL_SEMANTIC_EMBEDDING_MODEL||DEFAULT_MODEL):null}
 
@@ -82,6 +86,7 @@ export function semanticCapability(){
     available:semanticMatcher.available,
     provider:semanticMatcher.provider,
     model:semanticMatcher.model,
+    authMode:staticToken()?'static-token':process.env.VERCEL?'vercel-oidc-context':'none',
     requiredFor:['semantic-near-duplicate','synonym-resolution','paraphrase-equivalence'],
     authority:'REVIEW_SUGGESTION_ONLY',
     fallback:'deterministic-concept-aware',

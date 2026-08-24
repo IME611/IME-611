@@ -28,6 +28,7 @@
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",
+    "@vercel/oidc": "latest",
     "vite": "latest",
     "typescript": "latest",
     "react": "latest",
