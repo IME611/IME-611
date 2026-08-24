@@ -73,6 +73,7 @@ const cardReader=read('src/features/journey/LearningCardReader.tsx');
 const cardScript=read('src/features/journey/data/pilot-card-script.ts');
 const crystalComposer=read('src/features/crystals/CrystalCardComposer.tsx');
 const navigation=read('src/features/navigation/navigation.config.ts');
+const navigationShell=read('src/features/navigation/NavigationShell.tsx');
 const crystals=read('src/features/crystals/model/crystal.repository.ts');
 const assignments=read('src/features/research/model/assignment.repository.ts');
 const storage=read('src/core/storage.ts');
@@ -96,6 +97,12 @@ assert.match(crystalComposer,/הערה אישית/,'a saved card must support on
 assert.match(cardScript,/S01-U01/,'pilot cards must retain source-unit traceability');
 assert.match(app,/const journeyChapters=embeddedChapters/,'the reader must preserve the curated marker-based Claude chapter edition');
 assert.doesNotMatch(navigation,/id:'research'/,'research search must be removed from primary navigation');
+assert.match(storage,/readText\(storageKeys\.accessMode,'learner'\)/,'a fresh browser must enter the learner journey, not creator mode');
+assert.match(navigation,/id:'add-learning'.*ownerOnly:true/,'standalone learning capture must stay in creator mode because learner notes belong to crystals');
+assert.match(navigation,/id:'add-source'.*ownerOnly:true/,'source ingestion must stay in creator mode');
+assert.doesNotMatch(navigation,/id:'crystals'/,'the navigation must not duplicate the persistent crystal launcher');
+assert.match(navigationShell,/navigationForMode\(owner\)/,'desktop and mobile navigation must filter items through the same access policy');
+assert.match(app,/activePage=owner\|\|!isOwnerOnlyNavigation\(page\)\?page:'dashboard'/,'learner routes must fail closed when an owner-only hash is requested');
 assert.match(app,/className="sourceItem" onClick=\{\(\)=>openSource\(source\.number\)\}/,'source cards must open canonical documents independently of the learning sequence');
 assert.match(journey,/chapters\.find\(item=>item\.sourceFile===pilotCardChapter\.sourceFile\)/,'reordered learning chapters must resolve their own canonical source by file');
 assert.match(embeddedChapter2,/title:"הכלי החיצוני"/,'chapter 2 must open the external-environment source');
@@ -132,13 +139,19 @@ assert.equal(memory.getItem('eil-research-assignments-v1'),'preserve','reset mus
 
 const{createServer}=await import('vite');
 const moduleLoader=await createServer({root,server:{middlewareMode:true},appType:'custom',logLevel:'silent'});
-const[{lifeResearchV1},{emptyLearningProgress,completeLearningStage},{saveLearningProgress,loadLearningProgress},{pilotCardChapters},{cardProgressRepository}]=await Promise.all([
+const[{lifeResearchV1},{emptyLearningProgress,completeLearningStage},{saveLearningProgress,loadLearningProgress},{pilotCardChapters},{cardProgressRepository},{navigationForMode,isOwnerOnlyNavigation}]=await Promise.all([
  moduleLoader.ssrLoadModule('/src/data/learning-paths/life-research-v1.ts'),
  moduleLoader.ssrLoadModule('/src/core/learning-path/learning-progress.ts'),
  moduleLoader.ssrLoadModule('/src/core/learning-path/learning-progress.storage.ts'),
  moduleLoader.ssrLoadModule('/src/features/journey/data/pilot-card-script.ts'),
  moduleLoader.ssrLoadModule('/src/features/journey/model/card-progress.repository.ts'),
+ moduleLoader.ssrLoadModule('/src/features/navigation/navigation.config.ts'),
 ]);
+const learnerNavigation=navigationForMode(false);
+const learnerNavigationIds=[...learnerNavigation.primary,...learnerNavigation.groups.flatMap(group=>group.items)].map(item=>item.id);
+assert.deepEqual(learnerNavigationIds,['dashboard','library','sources','settings'],'learner navigation must stay focused on the journey, full sources and settings');
+assert.equal(isOwnerOnlyNavigation('add-source'),true,'direct source-ingestion routes must be recognized as creator-only');
+assert.equal(isOwnerOnlyNavigation('add-learning'),true,'standalone learning capture must be recognized as creator-only');
 assert.equal(pilotCardChapters.length,6,'the card-format draft must cover the first six learning chapters');
 assert.equal(pilotCardChapters.flatMap(chapter=>chapter.cards).length,40,'the first six chapters must contain all 40 traceable cards');
 assert.equal(pilotCardChapters[3].sourceFile,'פרק5_המוח_המפורט.docx','learning chapter 4 must use the brain source before the operating-system metaphor');

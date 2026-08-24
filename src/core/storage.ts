@@ -42,7 +42,7 @@ export function resetPersonalProgress():number{
 }
 
 export const journeyStorage={
-  mode:()=>readText(storageKeys.accessMode,'owner'),
+  mode:(): 'learner'|'owner'=>readText(storageKeys.accessMode,'learner')==='owner'?'owner':'learner',
   progress:()=>Number(readText(storageKeys.journeyProgress,'1')),
   setProgress:(value:number)=>writeText(storageKeys.journeyProgress,String(value)),
   reflectionKey:(chapter:number)=>`eil-chapter-reflection-${chapter}`,

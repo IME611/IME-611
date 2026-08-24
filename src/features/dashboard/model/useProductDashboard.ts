@@ -12,7 +12,7 @@ export function useProductDashboard(){
  const[state,setState]=useState<DashboardLoadState>({status:'loading'});
  const progress=useMemo(()=>localLearningProgressRepository.load(lifeResearchV1),[]);
  const drafts=useMemo(()=>localTransformationDraftRepository.load(),[]);
- const owner=useMemo(()=>{try{return localStorage.getItem('eil-access-mode')!=='learner'}catch{return true}},[]);
+ const owner=useMemo(()=>{try{return localStorage.getItem('eil-access-mode')==='owner'}catch{return false}},[]);
  useEffect(()=>{
   const controller=new AbortController();
   fetch('/api/insights?mode=dashboard',{signal:controller.signal})

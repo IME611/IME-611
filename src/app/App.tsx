@@ -8,7 +8,7 @@ import{MediaWorkspace}from'../features/media/MediaWorkspace';
 import{AddSourceModal}from'../features/sources/AddSourceModal';
 import{DesktopNavigation,MobileNavigation}from'../features/navigation/NavigationShell';
 import{useAppNavigation}from'../features/navigation/useAppNavigation';
-import{pageByNavigationId}from'../features/navigation/navigation.config';
+import{isOwnerOnlyNavigation,pageByNavigationId}from'../features/navigation/navigation.config';
 import{CrystalCollectionDrawer}from'../features/crystals/CrystalCollectionDrawer';
 import{useCrystalCollection}from'../features/crystals/model/useCrystalCollection';
 import{WelcomeScreen}from'../features/welcome/WelcomeScreen';
@@ -17,12 +17,14 @@ import{LiquidGlassFilter}from'../design/primitives/LiquidGlassFilter';
 import{bindLiquidGlassPointerTracking}from'../design/glass/runtime';
 import{evolutionPages}from'./navigation';
 import type{Chapter}from'../core/types';
-import{readText,resetPersonalProgress,storageKeys,writeText}from'../core/storage';
+import{journeyStorage,readText,resetPersonalProgress,storageKeys,writeText}from'../core/storage';
 
 const evoPageIds=evolutionPages as readonly string[];
 
 export default function App(){
  const{page,navigate:nav,back:goBack}=useAppNavigation();
+ const owner=journeyStorage.mode()==='owner';
+ const activePage=owner||!isOwnerOnlyNavigation(page)?page:'dashboard';
  const[collapsed,setCollapsed]=useState(()=>readText(storageKeys.railCollapsed)==='1');
  const[editor,setEditor]=useState(false);
  const[online,setOnline]=useState(false);
@@ -52,8 +54,8 @@ export default function App(){
  // can never replace the designed chapter experience with raw DOCX paragraphs.
  const journeyChapters=embeddedChapters;
  const sourceCatalogue=sourceChapters.length===18?sourceChapters:embeddedChapters;
- const openNew=()=>setEditor(true);
- const isEvolution=evoPageIds.includes(page);
+ const openNew=()=>{if(!owner){setNotice('העלאת מקור זמינה במצב יוצר בלבד.');return}setEditor(true)};
+ const isEvolution=evoPageIds.includes(activePage);
  const enterExperience=()=>{try{sessionStorage.setItem('eil-welcome-entered','1')}catch{}setEntered(true);nav('dashboard')};
  const openJourney=(chapterNumber?:number)=>{setRequestedSourceNumber(null);setRequestedChapter(chapterNumber??null);nav('library')};
  const openSource=(sourceNumber:number)=>{setRequestedChapter(null);setRequestedSourceNumber(sourceNumber);nav('library')};
@@ -148,7 +150,7 @@ const Settings=()=>{
 };
 
 const Generic=()=><div className="simplePage" dir="rtl">
- <h2 className="simplePageTitle">{pageByNavigationId(page).label}</h2>
+ <h2 className="simplePageTitle">{pageByNavigationId(activePage).label}</h2>
  <p className="muted">דף זה בפיתוח.</p>
 </div>;
 
@@ -156,20 +158,20 @@ const Generic=()=><div className="simplePage" dir="rtl">
  if(!entered)return <><LiquidGlassFilter/><WelcomeScreen onStart={enterExperience}/></>;
 
  return <><LiquidGlassFilter/><div className="app">
-  <DesktopNavigation page={page} onNavigate={nav} onAdd={openNew} collapsed={collapsed} onCollapsedChange={setCollapsed} online={online}/>
-  <MobileNavigation page={page} onNavigate={nav} onAdd={openNew} online={online}/>
+  <DesktopNavigation page={activePage} onNavigate={nav} onAdd={openNew} collapsed={collapsed} onCollapsedChange={setCollapsed} online={online}/>
+  <MobileNavigation page={activePage} onNavigate={nav} onAdd={openNew} online={online}/>
   <main>
-   {page!=='dashboard'&&<div className="pageBack"><button onClick={goBack}>→ חזרה</button></div>}
+   {activePage!=='dashboard'&&<div className="pageBack"><button onClick={goBack}>→ חזרה</button></div>}
    {notice&&<div className="notice" role="status"><span>{notice}</span><button type="button" aria-label="סגור הודעה" onClick={()=>setNotice('')}>×</button></div>}
-   {page==='dashboard'&&(
+   {activePage==='dashboard'&&(
     <KnowledgeDashboard onOpenJourney={()=>openJourney()}/>
    )}
-   {page==='crystals'&&<Crystals/>}
-   {page==='add-learning'&&<AddLearning/>}
-   {page==='sources'&&<Sources/>}
-   {page==='add-source'&&<AddSource/>}
-   {page==='settings'&&<Settings/>}
-   {page==='library'&&<SpiralLibrary
+   {activePage==='crystals'&&<Crystals/>}
+   {activePage==='add-learning'&&<AddLearning/>}
+   {activePage==='sources'&&<Sources/>}
+   {activePage==='add-source'&&<AddSource/>}
+   {activePage==='settings'&&<Settings/>}
+   {activePage==='library'&&<SpiralLibrary
     chapters={journeyChapters}
     initialChapter={requestedChapter}
     initialSourceNumber={requestedSourceNumber}
@@ -177,11 +179,11 @@ const Generic=()=><div className="simplePage" dir="rtl">
     onInitialSourceOpened={()=>setRequestedSourceNumber(null)}
     onSourceClosed={()=>nav('sources')}
    />}
-   {page==='transformation'&&<TransformationWorkspace chapters={journeyChapters}/>}
-   {page==='media'&&<MediaWorkspace/>} 
-   {isEvolution&&<EvolutionWorkspace page={page} onNav={nav}/>} 
-   {!['dashboard','library','sources','transformation','media','crystals','add-learning','add-source','settings',...evoPageIds].includes(page)&&<Generic/>}
-   <AddSourceModal open={editor} onClose={()=>setEditor(false)} onImported={setNotice}/>
+   {activePage==='transformation'&&<TransformationWorkspace chapters={journeyChapters}/>}
+   {activePage==='media'&&<MediaWorkspace/>}
+   {isEvolution&&<EvolutionWorkspace page={activePage} onNav={nav}/>}
+   {!['dashboard','library','sources','transformation','media','crystals','add-learning','add-source','settings',...evoPageIds].includes(activePage)&&<Generic/>}
+   <AddSourceModal open={owner&&editor} onClose={()=>setEditor(false)} onImported={setNotice}/>
   </main>
   <button className="crystalLauncher" onClick={()=>setCrystalsOpen(true)} aria-label="פתח את אוסף הקריסטלים"><span>◆</span><b>הקריסטלים שלי</b><em>{crystals.length}</em></button>
   <CrystalCollectionDrawer open={crystalsOpen} onClose={()=>setCrystalsOpen(false)}/>
