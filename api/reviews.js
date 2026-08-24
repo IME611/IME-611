@@ -83,7 +83,7 @@ async function handlePublicationPlacement(req,res,db){
 
 async function handleBackendHealth(req,res,db){
  if(req.method!=='GET'){res.setHeader('Allow','GET');return res.status(405).json({ok:false,error:'method not allowed'})}
- const result=await backendCompletionHealth(db,{probeSemantic:param(req,'probeSemantic')==='1'});return res.status(result.ok?200:503).json(result);
+ const result=await backendCompletionHealth(db,{probeSemantic:param(req,'probeSemantic')==='1',probeVision:param(req,'probeVision')==='1'});return res.status(result.ok?200:503).json(result);
 }
 
 async function handleConsole(req,res,db){
