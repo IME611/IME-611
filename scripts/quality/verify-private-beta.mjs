@@ -44,6 +44,7 @@ await expectUnauthorized('crystal database write',knowledgeHandler,request('/api
 await expectUnauthorized('taxonomy database write',knowledgeHandler,request('/api/knowledge?resource=taxonomy','PUT',{fragmentId:'fixture'}));
 await expectUnauthorized('canonical core-loop write',insightsHandler,request('/api/insights?mode=core-loop','POST',{action:'create-insight'}));
 await expectUnauthorized('legacy review write',reviewsHandler,request('/api/reviews','POST',{}));
+await expectUnauthorized('intake analysis',reviewsHandler,request('/api/intake','POST',{text:'private beta intake fixture'}));
 
 const unicodeKey='מפתח בדיקה בטוח';
 process.env.EIL_EDITOR_KEY_HASH=crypto.createHash('sha256').update(unicodeKey).digest('hex');
@@ -77,6 +78,8 @@ const navigationShell=read('src/features/navigation/NavigationShell.tsx');
 const crystals=read('src/features/crystals/model/crystal.repository.ts');
 const assignments=read('src/features/research/model/assignment.repository.ts');
 const storage=read('src/core/storage.ts');
+const sourceIntakeModal=read('src/features/sources/AddSourceModal.tsx');
+const sourceIntakeApi=read('src/features/sources/source-intake.api.ts');
 const embeddedChapter2=read('src/data/chapters-embedded.ts').split('\n').find(line=>line.startsWith('{id:"2"'))??'';
 
 assert.match(app,/KnowledgeDashboard onOpenJourney=/,'the approved dashboard must be connected to the journey');
@@ -100,6 +103,10 @@ assert.doesNotMatch(navigation,/id:'research'/,'research search must be removed 
 assert.match(storage,/readText\(storageKeys\.accessMode,'learner'\)/,'a fresh browser must enter the learner journey, not creator mode');
 assert.match(navigation,/id:'add-learning'.*ownerOnly:true/,'standalone learning capture must stay in creator mode because learner notes belong to crystals');
 assert.match(navigation,/id:'add-source'.*ownerOnly:true/,'source ingestion must stay in creator mode');
+assert.match(sourceIntakeApi,/\/api\/intake/,'new sources must pass through intake analysis before canonical ingestion');
+assert.match(sourceIntakeModal,/sourceIntakeApi\.analyze/,'the creator upload flow must compare a source with the corpus');
+assert.match(sourceIntakeModal,/sourceIntakeApi\.decide/,'the creator upload flow must require an explicit intake decision');
+assert.doesNotMatch(sourceIntakeModal,/fetch\(['"]\/api\/import/,'the source modal must not bypass intake analysis with direct canonical import');
 assert.doesNotMatch(navigation,/id:'crystals'/,'the navigation must not duplicate the persistent crystal launcher');
 assert.match(navigationShell,/navigationForMode\(owner\)/,'desktop and mobile navigation must filter items through the same access policy');
 assert.match(app,/activePage=owner\|\|!isOwnerOnlyNavigation\(page\)\?page:'dashboard'/,'learner routes must fail closed when an owner-only hash is requested');
