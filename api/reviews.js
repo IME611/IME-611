@@ -1,8 +1,13 @@
 import{getDb}from'../server/shared/postgres.js';
-import{resolveIntakeInput}from'../server/knowledge/application/intake/intake-input.service.js';
-import{analyzeIntake}from'../server/knowledge/application/intake/intake-analysis.service.js';
+import{resolveIntakeInput}from'../server/knowledge/application/intake/intake-input-v2.service.js';
+import{analyzeIntake}from'../server/knowledge/application/intake/intake-analysis-v2.service.js';
 import{stageIntakeSubmission,getIntakeSubmission,listIntakeSubmissions,changeIntakeSubmission,rejectIntakeSubmission,approveIntakeSubmission,intakeSchemaReady}from'../server/knowledge/application/intake/intake-review.service.js';
 import{reviewOverview,listReviewQueue,applyReviewDecision}from'../server/knowledge/application/review/review-console.service.js';
+import{getRelationResolutionSuggestions}from'../server/knowledge/application/relations/relation-resolution-v2.service.js';
+import{getPublicationPlacementCatalog,previewFlexiblePublication,saveFlexiblePublicationDraft,publishFlexiblePublication,getPublishedCardsForLearningUnit}from'../server/knowledge/application/publication/flexible-publication.service.js';
+import{backendCompletionHealth}from'../server/knowledge/application/quality/backend-completion.service.js';
+import{semanticCapability}from'../server/knowledge/application/matching/semantic-matcher.js';
+import{multimodalCapability}from'../server/knowledge/application/intake/ai-gateway-multimodal.service.js';
 import{withHardening,requestUrl}from'./_lib/hardening.js';
 import{requireEditor}from'./_lib/editor-auth.js';
 
@@ -48,9 +53,37 @@ async function handleIntake(req,res,db){
 
 async function handleIntakeHealth(req,res,db){
  if(req.method!=='GET'){res.setHeader('Allow','GET');return res.status(405).json({ok:false,error:'method not allowed'})}
- const fixtures=[{name:'known-concept',text:'נוירופלסטיות',allowed:['EXISTS','EXTENDS']},{name:'known-concept-paraphrase',text:'המוח מסוגל לבנות קשרים עצביים חדשים גם בבגרות',allowed:['RELATED','EXISTS']},{name:'novel-control',text:'פוטוסינתזה בצמחי מנגרוב באוקיינוס הארקטי',allowed:['NEW','UNCERTAIN']}],results=[];
- for(const fixture of fixtures){const analysis=await analyzeIntake(db,{kind:'TOPIC',title:fixture.name,text:fixture.text,fileName:'health.txt',mimeType:'text/plain',sourceUrl:null,metadata:{verification:true}});results.push({name:fixture.name,verdict:analysis.verdict.verdict,confidence:analysis.verdict.confidence,pass:fixture.allowed.includes(analysis.verdict.verdict),closest:analysis.closestExistingKnowledge[0]||null,suggestedDrawer:analysis.placement.suggestedDrawer,decisionRequired:analysis.decision.required,canonicalWrites:analysis.policy.canonicalWrites})}
- const pass=results.every(item=>item.pass&&item.decisionRequired===true&&item.canonicalWrites===false);return res.status(pass?200:503).json({ok:pass,analysisVersion:'intake-v0.2',schemaReady:await intakeSchemaReady(db),semanticMatching:false,conceptAwareMatching:true,results});
+ const fixtures=[{name:'known-concept',text:'נוירופלסטיות',allowed:['EXISTS','EXTENDS']},{name:'known-concept-paraphrase',text:'המוח מסוגל לבנות קשרים עצביים חדשים גם בבגרות',allowed:['RELATED','EXISTS','UNCERTAIN']},{name:'novel-control',text:'פוטוסינתזה בצמחי מנגרוב באוקיינוס הארקטי',allowed:['NEW','UNCERTAIN']}],results=[];
+ for(const fixture of fixtures){const analysis=await analyzeIntake(db,{kind:'TOPIC',title:fixture.name,text:fixture.text,fileName:'health.txt',mimeType:'text/plain',sourceUrl:null,metadata:{verification:true}});results.push({name:fixture.name,verdict:analysis.verdict.verdict,confidence:analysis.verdict.confidence,pass:fixture.allowed.includes(analysis.verdict.verdict),semanticStatus:analysis.semantic?.status||'UNAVAILABLE',semanticTop:analysis.semantic?.matches?.[0]||null,closest:analysis.closestExistingKnowledge[0]||null,suggestedDrawer:analysis.placement.suggestedDrawer,decisionRequired:analysis.decision.required,canonicalWrites:analysis.policy.canonicalWrites})}
+ const pass=results.every(item=>item.pass&&item.decisionRequired===true&&item.canonicalWrites===false);return res.status(pass?200:503).json({ok:pass,analysisVersion:'intake-v0.3',schemaReady:await intakeSchemaReady(db),semanticMatching:semanticCapability(),multimodal:multimodalCapability(),conceptAwareMatching:true,results});
+}
+
+async function handleRelationResolution(req,res,db){
+ if(!requireEditor(req,res))return;
+ if(req.method!=='GET'){res.setHeader('Allow','GET');return res.status(405).json({ok:false,error:'method not allowed'})}
+ return res.status(200).json(await getRelationResolutionSuggestions(db,param(req,'id')));
+}
+
+async function handlePublicationPlacement(req,res,db){
+ if(!requireEditor(req,res))return;
+ if(req.method==='GET'){
+  const unitKey=param(req,'learningUnitKey');
+  if(unitKey)return res.status(200).json(await getPublishedCardsForLearningUnit(db,unitKey));
+  return res.status(200).json(await getPublicationPlacementCatalog(db));
+ }
+ if(req.method==='PATCH'||req.method==='POST'){
+  const body=req.body||{},action=String(body.action||'PREVIEW').toUpperCase(),payload={publicationId:String(body.publicationId||''),learningUnitKey:body.learningUnitKey,candidateIds:body.candidateIds,cards:body.cards||[],note:body.note||'',reviewer:reviewer(req)};
+  if(action==='PREVIEW')return res.status(200).json(await previewFlexiblePublication(db,payload));
+  if(action==='SAVE_DRAFT')return res.status(200).json(await saveFlexiblePublicationDraft(db,payload));
+  if(action==='PUBLISH')return res.status(200).json(await publishFlexiblePublication(db,payload));
+  return res.status(400).json({ok:false,error:'action must be PREVIEW, SAVE_DRAFT, or PUBLISH'});
+ }
+ res.setHeader('Allow','GET,POST,PATCH');return res.status(405).json({ok:false,error:'method not allowed'});
+}
+
+async function handleBackendHealth(req,res,db){
+ if(req.method!=='GET'){res.setHeader('Allow','GET');return res.status(405).json({ok:false,error:'method not allowed'})}
+ const result=await backendCompletionHealth(db,{probeSemantic:param(req,'probeSemantic')==='1'});return res.status(result.ok?200:503).json(result);
 }
 
 async function handleConsole(req,res,db){
@@ -73,6 +106,9 @@ async function handler(req,res){
   const db=getDb();
   if(mode==='intake')return await handleIntake(req,res,db);
   if(mode==='intake-health')return await handleIntakeHealth(req,res,db);
+  if(mode==='relation-resolution')return await handleRelationResolution(req,res,db);
+  if(mode==='publication-placement')return await handlePublicationPlacement(req,res,db);
+  if(mode==='backend-health')return await handleBackendHealth(req,res,db);
   if(mode==='console')return await handleConsole(req,res,db);
   return await handleLegacyReviews(req,res,db);
  }catch(error){console.error(error);return sendError(res,error)}
