@@ -2,7 +2,7 @@ import React,{useCallback,useMemo,useState}from'react';
 import{readEditorKey,rememberEditorKey}from'../../core/editorAccess';
 import{fileToBase64}from'../../lib/files';
 import{useDialogA11y}from'../accessibility/useDialogA11y';
-import{sourceIntakeApi,type IntakeAnalysis,type IntakeVerdict}from'./source-intake.api';
+import{sourceIntakeApi,type IntakeAnalysis,type IntakeMatch,type IntakeVerdict}from'./source-intake.api';
 
 interface AddSourceModalProps{
  open:boolean;
@@ -20,6 +20,8 @@ const verdictCopy:Record<IntakeVerdict,{label:string;summary:string;recommendati
 };
 
 const confidence=(value:unknown)=>Number.isFinite(Number(value))?`${Math.round(Number(value)*100)}%`:'—';
+const basisCopy:Record<NonNullable<IntakeMatch['basis']>,string>={EXACT_TEXT:'טקסט זהה',PHRASE:'ניסוח מוכל',CONCEPT_EQUIVALENCE:'מונח מקביל',CONCEPT_CONTEXT:'התאמה מושגית',LEXICAL_OVERLAP:'חפיפת ניסוח'};
+const matchEvidence=(match:IntakeMatch)=>{const basis=basisCopy[match.basis||'LEXICAL_OVERLAP'],concepts=match.matchedConcepts?.map(item=>item.label).filter(Boolean)||[];return concepts.length?`${basis}: ${concepts.join(', ')}`:basis};
 const isImageFile=(file:File|null)=>Boolean(file&&(file.type.startsWith('image/')||/\.(png|jpe?g|webp|gif)$/i.test(file.name)));
 
 export function AddSourceModal({open,onClose,onImported}:AddSourceModalProps){
@@ -94,7 +96,7 @@ export function AddSourceModal({open,onClose,onImported}:AddSourceModalProps){
     <section className={`intakeVerdict intakeVerdict--${verdict.toLowerCase()}`} aria-live="polite"><div><span>{copy.label}</span><strong>{confidence(analysis.verdict.confidence)}</strong></div><h3>{copy.summary}</h3><p>{copy.recommendation}</p>{analysis.exactSourceMatch&&<p className="intakeExact">✓ נמצא עותק זהה: {analysis.exactSourceMatch.title}</p>}</section>
     <div className="intakeFacts"><div><small>יחידות שנבדקו</small><strong>{analysis.atomic?.analyzed??0}</strong></div><div><small>רעיונות חדשים</small><strong>{analysis.newMaterial?.count??0}</strong></div><div><small>סתירות</small><strong>{analysis.conflicts?.count??0}</strong></div></div>
     <section className="intakePlacement"><small>מיקום מוצע בתוכנית</small><strong>{analysis.placement?.suggestedDrawer?.label||'עדיין לא הוכרע'}</strong><span>{analysis.placement?.suggestedDrawer?`רמת התאמה ${confidence(analysis.placement.suggestedDrawer.confidence)}`:'יישאר לבדיקה ידנית'}</span></section>
-    {Boolean(analysis.closestExistingKnowledge?.length)&&<section className="intakeMatches"><h3>החומר הקרוב ביותר שכבר קיים</h3>{analysis.closestExistingKnowledge?.slice(0,3).map((match,index)=><article key={`${match.authority||'match'}-${match.id||index}`}><p>{match.text||'התאמה ללא טקסט'}</p><span>{match.sourceFile||match.sourceTitle||'המאגר הקיים'} · {confidence(match.score)}</span></article>)}</section>}
+    {Boolean(analysis.closestExistingKnowledge?.length)&&<section className="intakeMatches"><h3>החומר הקרוב ביותר שכבר קיים</h3>{analysis.closestExistingKnowledge?.slice(0,3).map((match,index)=><article key={`${match.authority||'match'}-${match.id||index}`}><p>{match.text||'התאמה ללא טקסט'}</p><span>{match.sourceFile||match.sourceTitle||'המאגר הקיים'} · {matchEvidence(match)} · {confidence(match.score)}</span></article>)}</section>}
     {!analysis.staging?.persisted&&<p className="formError" role="alert">הניתוח זמין לצפייה, אך תור האישור עדיין אינו מחובר. המקור לא נוסף.</p>}
     {error&&<p id="add-source-error" className="formError" role="alert">{error}</p>}
     <div className="intakeDecisionNote">המקור ייכנס למאגר רק בלחיצה על “אשר והוסף”. המיקום וכרטיסיות הלמידה ימשיכו לדרוש אישור נפרד.</div>

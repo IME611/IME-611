@@ -1,4 +1,5 @@
 import crypto from 'node:crypto';
+import{extractConceptSignals}from'./concept-signals.js';
 
 const sha256=value=>crypto.createHash('sha256').update(String(value)).digest('hex');
 const HEBREW_DIACRITICS=/[\u0591-\u05C7]/g;
@@ -37,6 +38,27 @@ function polarity(value){
 }
 function withoutNegations(value){return setOf(contentTokens(value).filter(token=>!NEGATIONS.has(token)))}
 
+function conceptMetrics(query,candidate,queryTokenCount,candidateTokenCount){
+ const querySignals=extractConceptSignals(query),candidateSignals=extractConceptSignals(candidate),queryIds=setOf(querySignals.map(item=>item.id)),candidateIds=setOf(candidateSignals.map(item=>item.id)),sharedIds=[...queryIds].filter(id=>candidateIds.has(id));
+ const matchedConcepts=sharedIds.map(id=>{
+  const querySignal=querySignals.find(item=>item.id===id),candidateSignal=candidateSignals.find(item=>item.id===id);
+  return{id,label:querySignal?.label||candidateSignal?.label||id,strength:Math.min(querySignal?.strength||0,candidateSignal?.strength||0),queryEvidence:querySignal?.evidence||[],candidateEvidence:candidateSignal?.evidence||[],queryKind:querySignal?.kind||null,candidateKind:candidateSignal?.kind||null};
+ });
+ const conceptJaccard=jaccard(queryIds,candidateIds),conceptContainment=containment(queryIds,candidateIds),conceptCoverage=queryCoverage(queryIds,candidateIds),candidateConceptCoverage=queryCoverage(candidateIds,queryIds),averageCoverage=(conceptCoverage+candidateConceptCoverage)/2;
+ const sharedStrength=matchedConcepts.length?matchedConcepts.reduce((sum,item)=>sum+item.strength,0)/matchedConcepts.length:0;
+ const normalizedQuery=normalizeKnowledgeText(query),normalizedCandidate=normalizeKnowledgeText(candidate),queryIsDirectLabel=matchedConcepts.some(item=>item.queryEvidence.includes(normalizedQuery)),candidateIsDirectLabel=matchedConcepts.some(item=>item.candidateEvidence.includes(normalizedCandidate));
+ const directEquivalent=matchedConcepts.length===1&&queryIds.size===1&&candidateIds.size===1&&queryTokenCount<=5&&candidateTokenCount<=5&&matchedConcepts[0].queryKind==='DIRECT_ALIAS'&&matchedConcepts[0].candidateKind==='DIRECT_ALIAS'&&queryIsDirectLabel&&candidateIsDirectLabel;
+ let conceptScore=0;
+ if(directEquivalent)conceptScore=.965;
+ else if(matchedConcepts.length){
+  conceptScore=.28+.32*Math.min(conceptCoverage,candidateConceptCoverage)+.18*averageCoverage+.16*sharedStrength;
+  if(matchedConcepts.length>=2)conceptScore+=.04;
+  if(Math.min(queryTokenCount,candidateTokenCount)<=5&&Math.max(queryTokenCount,candidateTokenCount)>5)conceptScore=Math.min(conceptScore,.72);
+  if(Math.max(queryIds.size,candidateIds.size)>=3&&matchedConcepts.length===1)conceptScore=Math.min(conceptScore,.54);
+ }
+ return{querySignals,candidateSignals,matchedConcepts,conceptJaccard,conceptContainment,conceptCoverage,candidateConceptCoverage,sharedConceptStrength:sharedStrength,directConceptEquivalent:directEquivalent,conceptScore:Math.min(1,conceptScore)};
+}
+
 function similarityMetrics(query,candidate){
  const normalizedQuery=normalizeKnowledgeText(query),normalizedCandidate=normalizeKnowledgeText(candidate);
  const queryTokens=setOf(contentTokens(query)),candidateTokens=setOf(contentTokens(candidate));
@@ -47,7 +69,8 @@ function similarityMetrics(query,candidate){
  const candidateInsideQuery=Boolean(normalizedQuery&&normalizedCandidate&&normalizedQuery.includes(normalizedCandidate));
  const phrase=queryInsideCandidate||candidateInsideQuery;
  const singleToken=queryTokens.size===1&&candidateTokens.has([...queryTokens][0]);
- let score=.44*tokenJaccard+.22*tokenContainment+.34*trigramJaccard;
+ const concepts=conceptMetrics(query,candidate,queryTokens.size,candidateTokens.size);
+ let score=Math.max(.44*tokenJaccard+.22*tokenContainment+.34*trigramJaccard,concepts.conceptScore);
  if(queryInsideCandidate&&normalizedQuery.length>=5){
   score=Math.max(score,.88+.08*Math.min(1,normalizedQuery.length/Math.max(normalizedQuery.length,normalizedCandidate.length)));
  }
@@ -61,7 +84,8 @@ function similarityMetrics(query,candidate){
  if(exact)score=1;
  const coreA=withoutNegations(query),coreB=withoutNegations(candidate),coreSimilarity=jaccard(coreA,coreB);
  const conflictSignal=coreA.size>=2&&coreB.size>=2&&coreSimilarity>=.82&&polarity(query)!==polarity(candidate);
- return{score:Math.min(1,score),exact,phrase,queryInsideCandidate,candidateInsideQuery,tokenJaccard,tokenContainment,queryCoverage:coverage,trigramJaccard,conflictSignal,coreSimilarity};
+ const basis=exact?'EXACT_TEXT':phrase?'PHRASE':concepts.directConceptEquivalent?'CONCEPT_EQUIVALENCE':concepts.matchedConcepts.length?'CONCEPT_CONTEXT':'LEXICAL_OVERLAP';
+ return{score:Math.min(1,score),exact,phrase,queryInsideCandidate,candidateInsideQuery,tokenJaccard,tokenContainment,queryCoverage:coverage,trigramJaccard,conflictSignal,coreSimilarity,basis,...concepts};
 }
 
 function compareLength(query,candidate){
@@ -79,14 +103,14 @@ export function rankKnowledgeOverlap(query,records,{topK=8}={}){
  let verdict='NEW',confidence=top?Math.max(.5,1-top.score):.98,reason='No meaningful lexical overlap was found in the current corpus index.';
  const conflict=ranked.find(match=>match.metrics.conflictSignal&&match.score>=.7);
  if(conflict){verdict='CONFLICTS';confidence=Math.min(.9,.58+conflict.score*.35);reason='A highly similar statement with opposite explicit negation was found; human review is still required.'}
- else if(top?.metrics.exact||top?.score>=.95){verdict='EXISTS';confidence=Math.max(.9,top.score);reason='The same or nearly identical normalized idea is already represented.'}
+ else if(top?.metrics.exact||top?.score>=.95){verdict='EXISTS';confidence=Math.max(.9,top.score);reason=top.metrics.basis==='CONCEPT_EQUIVALENCE'?'An approved equivalent term for the same short concept label is already represented.':'The same or nearly identical normalized idea is already represented.'}
  else if(top?.score>=.82){
   if(top.length.ratio>=1.35&&top.metrics.queryCoverage>=.5&&top.metrics.tokenContainment>=.7){verdict='EXTENDS';confidence=Math.min(.94,.68+top.score*.25);reason='The input substantially contains an existing idea and adds additional material.'}
   else if(top.metrics.queryInsideCandidate||top.metrics.queryCoverage>=.8){verdict='EXISTS';confidence=Math.min(.93,.7+top.score*.24);reason='A very strong lexical/phrase match is already represented.'}
-  else{verdict='RELATED';confidence=Math.min(.9,.55+top.score*.35);reason='A contained term is present, but it does not cover enough of the input to claim duplication or extension.'}
+  else{verdict='RELATED';confidence=Math.min(.9,.55+top.score*.35);reason=top.metrics.basis==='CONCEPT_CONTEXT'?'Equivalent terminology or a shared concept was found, but the full statements still require human comparison.':'A contained term is present, but it does not cover enough of the input to claim duplication or extension.'}
  }
- else if(top?.score>=.56){verdict='RELATED';confidence=Math.min(.9,.55+top.score*.35);reason='The input overlaps materially with existing knowledge but is not a duplicate.'}
- else if(top?.score>=.32){verdict='UNCERTAIN';confidence=.5+top.score*.2;reason='Some overlap exists, but deterministic matching is not strong enough to classify safely.'}
+ else if(top?.score>=.56){verdict='RELATED';confidence=Math.min(.9,.55+top.score*.35);reason=top.metrics.basis==='CONCEPT_CONTEXT'?'Equivalent terminology or a shared concept was found, but the full statements still require human comparison.':'The input overlaps materially with existing knowledge but is not a duplicate.'}
+ else if(top?.score>=.32){verdict='UNCERTAIN';confidence=.5+top.score*.2;reason=top.metrics.basis==='CONCEPT_CONTEXT'?'A shared concept was found, but there is not enough evidence to classify the complete idea safely.':'Some overlap exists, but deterministic matching is not strong enough to classify safely.'}
  return{verdict,confidence:Number(confidence.toFixed(4)),reason,matches:ranked};
 }
 
@@ -104,7 +128,7 @@ export async function matchAgainstCorpus(db,text,{topK=8}={}){
  const canonicalRows=(await db.query(`SELECT id,canonical_name,description FROM concepts`)).rows;
  const records=[...canonicalRows.map(row=>({id:row.id,authority:'CANONICAL',type:'CONCEPT',text:row.canonical_name,description:row.description||''})),...candidateRows.map(dbRecordFromCandidate)];
  const result=rankKnowledgeOverlap(text,records,{topK});
- return{ok:true,engine:{method:'deterministic-lexical',version:'overlap-v0.1',semanticModel:false},input:{text:String(text).trim(),normalized:normalizeKnowledgeText(text)},indexed:{canonicalConcepts:canonicalRows.length,reviewCandidates:candidateRows.length,total:records.length},...result,policy:{provisional:true,note:'Verdicts use deterministic lexical evidence only. RELATED/UNCERTAIN and all conflict signals require later semantic or human review before canonical merge.'}};
+ return{ok:true,engine:{method:'deterministic-concept-aware',version:'overlap-v0.2',semanticModel:false},input:{text:String(text).trim(),normalized:normalizeKnowledgeText(text)},indexed:{canonicalConcepts:canonicalRows.length,reviewCandidates:candidateRows.length,total:records.length},...result,policy:{provisional:true,conceptAwareMatching:true,note:'Verdicts combine lexical evidence with a curated equivalence registry. RELATED/UNCERTAIN and all conflict signals require human review before canonical merge.'}};
 }
 
 export async function buildConceptRegistryPreview(db,{duplicatesOnly=false,limit=100}={}){

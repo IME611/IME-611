@@ -9,6 +9,8 @@ export type IntakeMatch={
  sourceFile?:string;
  sourceTitle?:string;
  score?:number;
+ basis?:'EXACT_TEXT'|'PHRASE'|'CONCEPT_EQUIVALENCE'|'CONCEPT_CONTEXT'|'LEXICAL_OVERLAP';
+ matchedConcepts?:Array<{id:string;label:string;strength:number}>;
 };
 
 export type IntakeAnalysis={
@@ -21,7 +23,7 @@ export type IntakeAnalysis={
  conflicts?:{count:number;sample?:Array<{text:string}>};
  placement?:{suggestedDrawer?:{label:string;confidence:number}|null};
  staging?:{persisted:boolean;id:string|null;status?:string};
- policy?:{canonicalWrites:boolean;autoMerge:boolean};
+ policy?:{canonicalWrites:boolean;autoMerge:boolean;conceptAwareMatching?:boolean};
 };
 
 export type IntakeInput={
