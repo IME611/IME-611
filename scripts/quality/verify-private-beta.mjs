@@ -73,6 +73,7 @@ const navigation=read('src/features/navigation/navigation.config.ts');
 const crystals=read('src/features/crystals/model/crystal.repository.ts');
 const assignments=read('src/features/research/model/assignment.repository.ts');
 const storage=read('src/core/storage.ts');
+const embeddedChapter2=read('src/data/chapters-embedded.ts').split('\n').find(line=>line.startsWith('{id:"2"'))??'';
 
 assert.match(app,/KnowledgeDashboard onOpenJourney=/,'the approved dashboard must be connected to the journey');
 assert.doesNotMatch(app,/ProductDashboard/,'the hidden dashboard must not be connected');
@@ -87,6 +88,9 @@ assert.match(journey,/סיימתי — לפרק הבא/,'chapter completion and 
 assert.match(app,/const journeyChapters=embeddedChapters/,'the reader must preserve the curated marker-based Claude chapter edition');
 assert.doesNotMatch(navigation,/id:'research'/,'research search must be removed from primary navigation');
 assert.match(app,/className="sourceItem" onClick=\{\(\)=>openJourney\(source\.number\)\}/,'every source card must open its full chapter');
+assert.match(embeddedChapter2,/title:"הכלי החיצוני"/,'chapter 2 must open the external-environment source');
+assert.match(embeddedChapter2,/sourceFile:"פרק2_הכלי_החיצוני\.docx"/,'chapter 2 must preserve its canonical source mapping');
+assert.doesNotMatch(embeddedChapter2,/title:"מערכת ההפעלה"/,'chapter 2 must not duplicate chapter 4');
 assert.doesNotMatch(journey,/localStorage\.getItem\(['"]eil-crystals['"]\)/,'journey must not use the legacy crystal store');
 assert.doesNotMatch(crystals,/\/api\/knowledge\?resource=crystals/,'private-beta crystals must remain local-only');
 assert.doesNotMatch(assignments,/method:['"]PUT['"]/,'private-beta taxonomy assignments must remain local-only');
