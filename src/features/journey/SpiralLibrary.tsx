@@ -3,13 +3,15 @@ import { useLearningProgress } from './model/useLearningProgress';
 import { journeyPath } from './model/journey-stage';
 import type { LearningStage } from '../../core/learning-path/learning-path.types';
 import { useCrystalCollection } from '../crystals/model/useCrystalCollection';
+import { getPilotCardChapter } from './data/pilot-card-script';
+import { LearningCardReader } from './LearningCardReader';
 
 type Chapter = { number: number; title: string; subtitle: string; sourceFile: string; paragraphs: string[]; paragraphCount?: number; characterCount?: number };
 type Props = { chapters: Chapter[]; initialChapter?: number | null; onInitialChapterOpened?: () => void };
 
 const LAYERS = [
-  { id: 'A', label: 'שכבה ראשונה — הכלי הפיזי',    color: '#006039', accent: '#006039', nums: [1,2,3],       why: 'לפני שנשאל "מי אני" — נראה ממה אנחנו בנויים. הגוף הוא נקודת המוצא.' },
-  { id: 'B', label: 'שכבה שנייה — מערכת ההפעלה',  color: '#006039', accent: '#006039', nums: [4,5,6],       why: 'הגוף הוא החומרה. עכשיו נבין מי מריץ את התוכנה — מודע, תת-מודע, על-מודע.' },
+  { id: 'A', label: 'שכבה ראשונה — אני והמערכת',   color: '#006039', accent: '#006039', nums: [1,2,3],       why: 'מתחילים בשאלת הזהות, מרחיבים את המבט אל הסביבה, ורק אז חוזרים אל מורכבות הגוף.' },
+  { id: 'B', label: 'שכבה שנייה — המוח והדפוסים', color: '#006039', accent: '#006039', nums: [4,5,6],       why: 'אחרי הגוף עוברים אל מנגנוני המוח, אל הדפוסים האוטומטיים ואל מצבי הפעילות שמשפיעים על למידה.' },
   { id: 'C', label: 'שכבה שלישית — האנרגיה והתדר', color: '#006039', accent: '#006039', nums: [7,8,9],       why: 'המוח פועל בגלים. הגוף כולו רוטט בתדרים. הצליל בונה צורה פיזית.' },
   { id: 'D', label: 'שכבה רביעית — כלי השינוי',    color: '#006039', accent: '#006039', nums: [10,11,12,13], why: 'הבנתי מה אני. האם אני יכול לשנות? כן — כך עושים את זה.' },
   { id: 'E', label: 'שכבה חמישית — המשמעות',       color: '#006039', accent: '#006039', nums: [14,15,16,17,18], why: 'חוקי המשחק, כיוון, קושי — וחזרה לשאלה הראשונה עם תשובה אמיתית.' },
@@ -183,6 +185,7 @@ export default function SpiralLibrary({ chapters, initialChapter, onInitialChapt
 
   const chapter = activeNum ? chapters.find(c => c.number === activeNum) ?? null : null;
   const layer   = chapter   ? LAYERS.find(l => (l.nums as readonly number[]).includes(chapter.number)) ?? LAYERS[0] : LAYERS[0];
+  const pilotCardChapter=chapter?getPilotCardChapter(chapter.number):null;
   const previousChapter = chapter ? chapters.find(c => c.number === chapter.number - 1) ?? null : null;
   const openChapter = (chapterNumber: number) => {
     setActiveNum(chapterNumber);
@@ -199,6 +202,17 @@ export default function SpiralLibrary({ chapters, initialChapter, onInitialChapt
   };
 
   if (chapter) {
+    if(pilotCardChapter){
+      return <LearningCardReader key={pilotCardChapter.chapterNumber}
+        chapter={pilotCardChapter}
+        sourceChapter={chapter}
+        layerLabel={layer.label}
+        color={layer.color}
+        onBack={()=>setActiveNum(null)}
+        onComplete={handleComplete}
+        onPreviousChapter={previousChapter?()=>openChapter(previousChapter.number):undefined}
+      />;
+    }
     return (
       <ChapterView
         chapter={chapter}

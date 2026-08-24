@@ -20,7 +20,7 @@ export function KnowledgeDashboard({onOpenJourney}:Props){
 
  return <div className="knowledgeDashboard" dir="rtl">
   <section className="dashOverview" aria-labelledby="journey-progress-title">
-   <div className="dashWelcome"><p className="dashWelcomeText">ברוך הבא ל-<strong>E.I.L</strong> — פלטפורמה שתוביל אותך למסע של מודעות כלפי עצמך וכלפי הסביבה, ותיתן לך כלים כדי להפוך לאדם שאתה רוצה להיות. מאחל לך שתהנה, תחכים ותהפוך לקריסטל הכי טוב שאתה יכול.</p></div>
+   <div className="dashWelcome"><p className="dashWelcomeText"><span>ברוך הבא ל-<strong>E.I.L</strong> — פלטפורמה שתוביל אותך למסע של מודעות כלפי עצמך וכלפי הסביבה.</span><span>בדרך תקבל כלים שיעזרו לך להפוך לאדם שאתה רוצה להיות.</span><span>מאחל לך שתהנה, תחכים ותהפוך לקריסטל הכי טוב שאתה יכול.</span></p></div>
    <div className="dashOverviewHeader">
     <h1 id="journey-progress-title" className="dashOverviewTitle">ההתקדמות שלי במסע</h1>
     <div className="dashOverviewMeta">{done}/{total} פרקים · {pct}%</div>

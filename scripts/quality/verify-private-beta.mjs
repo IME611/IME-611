@@ -69,6 +69,9 @@ assert.equal(matchResponse.payload?.ok,true,'read-only match request should retu
 const app=read('src/app/App.tsx');
 const dashboard=read('src/features/knowledge-dashboard/KnowledgeDashboard.tsx');
 const journey=read('src/features/journey/SpiralLibrary.tsx');
+const cardReader=read('src/features/journey/LearningCardReader.tsx');
+const cardScript=read('src/features/journey/data/pilot-card-script.ts');
+const crystalComposer=read('src/features/crystals/CrystalCardComposer.tsx');
 const navigation=read('src/features/navigation/navigation.config.ts');
 const crystals=read('src/features/crystals/model/crystal.repository.ts');
 const assignments=read('src/features/research/model/assignment.repository.ts');
@@ -85,6 +88,12 @@ assert.doesNotMatch(journey,/spiralContinue|המשך לפרק/,'journey index mu
 assert.match(journey,/const unlocked\s*=\s*\(_num: number\) => true/,'all chapter topics must remain open and clickable');
 assert.doesNotMatch(journey,/spiralReflect|onNext|canGoNext/,'chapter view must not duplicate reflection or next-navigation controls');
 assert.match(journey,/סיימתי — לפרק הבא/,'chapter completion and next navigation must share one clear action');
+assert.match(journey,/getPilotCardChapter/,'the guided journey must connect the reviewed short-card pilot');
+assert.match(cardReader,/כרטיס \{position\+1\} מתוך/,'card reader must communicate short in-chapter progress');
+assert.match(cardReader,/isLast\?'סיימתי — לפרק הבא/,'the last card must own the only completion and next-chapter action');
+assert.doesNotMatch(cardReader,/crystalSaveCard|שמור כקריסטל/,'card chapters must not duplicate the crystal composer');
+assert.match(crystalComposer,/הערה אישית/,'a saved card must support one optional personal note in the same flow');
+assert.match(cardScript,/S01-U01/,'pilot cards must retain source-unit traceability');
 assert.match(app,/const journeyChapters=embeddedChapters/,'the reader must preserve the curated marker-based Claude chapter edition');
 assert.doesNotMatch(navigation,/id:'research'/,'research search must be removed from primary navigation');
 assert.match(app,/className="sourceItem" onClick=\{\(\)=>openJourney\(source\.number\)\}/,'every source card must open its full chapter');
@@ -114,18 +123,33 @@ memory.setItem('eil-crystals-v1','[{"fragmentId":"old"}]');
 memory.setItem('eil-learning-progress:life-research:v1','progress');
 memory.setItem('eil-chapter-reflection-1','reflection');
 memory.setItem('eil-transformation-drafts:v1','draft');
+memory.setItem('eil-card-progress-v1','{"schemaVersion":1,"positions":{"1":3}}');
 const{resetPersonalProgress}=await import('../../src/core/storage.ts');
-assert.equal(resetPersonalProgress(),4,'reset should remove every seeded progress record');
+assert.equal(resetPersonalProgress(),5,'reset should remove every seeded progress record, including in-chapter card position');
 assert.equal(memory.getItem('eil-settings'),'preserve','reset must preserve profile settings');
 assert.equal(memory.getItem('eil-research-assignments-v1'),'preserve','reset must preserve research organization');
 
 const{createServer}=await import('vite');
 const moduleLoader=await createServer({root,server:{middlewareMode:true},appType:'custom',logLevel:'silent'});
-const[{lifeResearchV1},{emptyLearningProgress,completeLearningStage},{saveLearningProgress,loadLearningProgress}]=await Promise.all([
+const[{lifeResearchV1},{emptyLearningProgress,completeLearningStage},{saveLearningProgress,loadLearningProgress},{pilotCardChapters},{cardProgressRepository}]=await Promise.all([
  moduleLoader.ssrLoadModule('/src/data/learning-paths/life-research-v1.ts'),
  moduleLoader.ssrLoadModule('/src/core/learning-path/learning-progress.ts'),
  moduleLoader.ssrLoadModule('/src/core/learning-path/learning-progress.storage.ts'),
+ moduleLoader.ssrLoadModule('/src/features/journey/data/pilot-card-script.ts'),
+ moduleLoader.ssrLoadModule('/src/features/journey/model/card-progress.repository.ts'),
 ]);
+assert.equal(pilotCardChapters.length,2,'the first card-format pilot must cover chapters 1 and 2');
+assert.equal(pilotCardChapters.flatMap(chapter=>chapter.cards).length,13,'the reviewed pilot must contain all 13 cards');
+for(const chapter of pilotCardChapters){
+ for(const card of chapter.cards){
+  const words=card.text.trim().split(/\s+/u).filter(Boolean).length;
+  assert.ok(words>=40&&words<=90,`${card.id} must contain 40–90 words`);
+  assert.ok(card.sourceUnitIds.length>0,`${card.id} must point back to at least one source unit`);
+ }
+}
+cardProgressRepository.save(1,4);
+assert.equal(cardProgressRepository.load(1,6),4,'card position must persist across a reload');
+assert.equal(cardProgressRepository.load(1,3),2,'stored card position must be clamped when a reviewed script becomes shorter');
 let progress=emptyLearningProgress(lifeResearchV1);
 progress=completeLearningStage(progress,lifeResearchV1,lifeResearchV1.stages[0].id);
 progress=completeLearningStage(progress,lifeResearchV1,lifeResearchV1.stages[1].id);
@@ -146,7 +170,10 @@ assert.equal(memory.getItem('eil-crystals'),null,'legacy crystal key should be r
 assert.ok(memory.getItem('eil-crystals-v1'),'canonical crystal cache should be written after migration');
 assert.equal(crystalCollectionRepository.save({fragmentId:'personal-test',conceptId:'chapter-1',topic:'בדיקה',text:'תובנה חדשה',sourceLabel:'פרק 1',provenanceLabel:'נכתב בבדיקה',savedAt:'2026-08-23T00:00:00.000Z'}),true,'new crystal should save locally');
 assert.equal(crystalCollectionRepository.load().length,2,'old and new crystals should share one collection');
+assert.equal(crystalCollectionRepository.save({fragmentId:'personal-test',conceptId:'chapter-1',topic:'בדיקה',text:'תובנה חדשה',sourceLabel:'פרק 1',provenanceLabel:'נכתב בבדיקה',personalNote:'הערה אישית',savedAt:'2026-08-23T00:00:00.000Z'}),true,'a personal note must update the same crystal instead of creating a duplicate');
+assert.equal(crystalCollectionRepository.load().find(item=>item.fragmentId==='personal-test')?.personalNote,'הערה אישית','a crystal personal note must survive repository normalization');
+assert.equal(crystalCollectionRepository.load().length,2,'updating a crystal note must not increase the collection count');
 assert.equal(crystalCollectionRepository.clear(),true,'crystal collection should clear locally');
 assert.equal(crystalCollectionRepository.load().length,0,'cleared collection should remain empty');
 
-console.log('Private beta verification passed: protected writes, Unicode creator access, open topic navigation, curated chapter rendering, openable sources, unified local crystals, and complete reset contracts.');
+console.log('Private beta verification passed: protected writes, open topic navigation, 13 traceable short cards, persistent card position, unified crystals with personal notes, canonical sources, and complete reset contracts.');

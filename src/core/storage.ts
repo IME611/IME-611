@@ -16,6 +16,7 @@ export function writeJson(key:string,value:unknown){try{localStorage.setItem(key
 export function removeStored(key:string){try{localStorage.removeItem(key)}catch{}}
 const PERSONAL_PROGRESS_KEYS=new Set([
   'eil-actions',
+  'eil-card-progress-v1',
   'eil-crystals',
   'eil-crystals-v1',
   'eil-focus',

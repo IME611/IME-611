@@ -196,3 +196,55 @@
 }
 .chSystemDot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px}
 .chWink{font-size:clamp(16px,2.5vw,19px);font-weight:700;color:rgba(184,150,46,.85);text-align:center;margin:32px 0 8px;font-style:italic}
+
+/* ===== SHORT LEARNING CARD READER ===== */
+.learningCardReader{--card-accent:#006039;max-width:700px;margin:0 auto;padding:24px 20px 80px;color:#1A1A18;direction:rtl}
+.learningCardChapterHead{display:flex;align-items:center;gap:15px;margin-bottom:18px}
+.learningCardChapterNumber{width:48px;height:48px;display:grid;place-items:center;flex:0 0 48px;border-radius:15px;background:var(--card-accent);color:#fff;font-size:20px;font-weight:800}
+.learningCardChapterHead h1{margin:0 0 4px;font-size:clamp(22px,4vw,30px);line-height:1.25}
+.learningCardChapterHead p{margin:0;color:rgba(26,26,24,.55);font-size:14px}
+.learningCardContext{display:grid;gap:10px;margin-bottom:20px}
+.learningCardContext>div,.learningCardContext>p{margin:0;padding:13px 15px;border-radius:13px;background:rgba(255,255,255,.52);border:1px solid rgba(0,96,57,.12)}
+.learningCardContext>div{display:grid;gap:5px}
+.learningCardContext span{font-size:10px;font-weight:750;letter-spacing:.08em;color:rgba(26,26,24,.48)}
+.learningCardContext strong{font-size:15px;line-height:1.55;color:#1A1A18}
+.learningCardContext>p{font-size:13px;line-height:1.7;color:rgba(26,26,24,.66)}
+.learningCardContext b{color:#006039}
+.learningCardProgress{display:flex;align-items:center;justify-content:space-between;gap:18px;margin:0 2px 12px;color:rgba(26,26,24,.5);font-size:12px}
+.learningCardProgress>div{display:flex;flex:1;gap:5px;max-width:280px;direction:rtl}
+.learningCardProgress i{height:4px;flex:1;border-radius:99px;background:rgba(26,26,24,.1)}
+.learningCardProgress i.isReached{background:var(--card-accent)}
+.learningCard{position:relative;min-height:270px;padding:24px 26px 22px;border-radius:24px;background:linear-gradient(145deg,rgba(255,255,255,.86),rgba(249,246,239,.74));border:1px solid rgba(184,150,46,.24);box-shadow:0 18px 50px rgba(36,30,20,.10);overflow:hidden}
+.learningCard:before{content:'';position:absolute;left:-75px;top:-80px;width:190px;height:190px;border-radius:50%;background:radial-gradient(circle,rgba(0,96,57,.12),transparent 68%);pointer-events:none}
+.learningCard>header,.learningCard>footer,.learningCard h2,.learningCard>p{position:relative}
+.learningCard>header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:30px}
+.learningCard>header span{padding:5px 9px;border-radius:999px;background:rgba(0,96,57,.08);color:#006039;font-size:10px;font-weight:800;letter-spacing:.05em}
+.learningCard>header small{font-size:10px;color:rgba(26,26,24,.4)}
+.learningCard h2{font-size:clamp(23px,4.5vw,31px);line-height:1.3;margin:0 0 18px;color:#1A1A18}
+.learningCard>p{font-size:clamp(17px,2.8vw,19px);line-height:1.95;margin:0;color:rgba(26,26,24,.8)}
+.learningCard>footer{display:flex;justify-content:space-between;gap:14px;margin-top:30px;padding-top:13px;border-top:1px solid rgba(26,26,24,.08);font-size:9px;color:rgba(26,26,24,.42)}
+.learningCard--reflection{border-color:rgba(184,150,46,.38);background:linear-gradient(145deg,rgba(255,253,246,.94),rgba(247,241,222,.75))}
+.learningCardNavigation{display:grid;grid-template-columns:minmax(0,.8fr) minmax(180px,1.2fr);gap:12px;margin-top:18px}
+.learningCardNavigation button{min-height:50px;padding:12px 16px;border-radius:14px;font:inherit;font-size:14px;font-weight:750;cursor:pointer;transition:transform .15s}
+.learningCardPrevious{border:1px solid rgba(0,96,57,.25);background:rgba(255,255,255,.45);color:#006039}
+.learningCardNext{border:0;background:#006039;color:#fff;box-shadow:0 9px 24px rgba(0,96,57,.18)}
+.learningCardNavigation button:hover:not(:disabled){transform:translateY(-1px)}
+.learningCardNavigation button:focus-visible,.canonicalSourceDetails summary:focus-visible{outline:3px solid rgba(0,96,57,.22);outline-offset:2px}
+.learningCardNavigation button:disabled{opacity:.32;cursor:not-allowed}
+.canonicalSourceDetails{margin-top:26px;border:1px solid rgba(26,26,24,.09);border-radius:16px;background:rgba(255,255,255,.38);overflow:hidden}
+.canonicalSourceDetails summary{padding:15px 17px;color:rgba(26,26,24,.62);font-size:13px;font-weight:700;cursor:pointer}
+.canonicalSourceNotice{display:grid;gap:3px;margin:0 16px 18px;padding:12px 14px;border-radius:12px;background:rgba(184,150,46,.09);font-size:12px;color:rgba(26,26,24,.62)}
+.canonicalSourceDetails .spiralContent{padding:0 18px 20px;margin-bottom:0}
+.canonicalSourceDetails .spiralPara{font-size:16px;line-height:1.8}
+
+@media(max-width:640px){
+  .learningCardReader{padding:16px 10px 64px}
+  .learningCardChapterHead{padding:0 4px}
+  .learningCardContext{padding:0 2px}
+  .learningCard{min-height:0;padding:21px 18px 19px;border-radius:20px}
+  .learningCard>header{margin-bottom:24px}
+  .learningCard>p{line-height:1.85}
+  .learningCard>footer{flex-direction:column;gap:4px}
+  .learningCardNavigation{grid-template-columns:1fr}
+  .learningCardNext{grid-row:1}
+}

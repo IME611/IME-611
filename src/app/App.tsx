@@ -64,7 +64,7 @@ const Crystals=()=>{
   <h2 className="simplePageTitle">◆ הקריסטלים שלי</h2>
   <p className="simplePageSub">תובנות ששמרת מתוך המסע</p>
   {crystals.length===0?<div className="emptyState"><p>עוד לא שמרת קריסטלים</p><span>כשתקרא פרק ותסמן תובנה — היא תופיע כאן</span></div>:
-  <div className="crystalList">{crystals.map(c=><article key={c.fragmentId} className="crystalItem"><div className="crystalItemTitle">{c.topic||'תובנה'}</div><p className="crystalItemText">{c.text}</p><span className="crystalItemSource">{c.sourceLabel} · {c.provenanceLabel}</span></article>)}</div>}
+  <div className="crystalList">{crystals.map(c=><article key={c.fragmentId} className="crystalItem"><div className="crystalItemTitle">{c.topic||'תובנה'}</div><p className="crystalItemText">{c.text}</p>{c.personalNote&&<blockquote className="crystalItemNote"><strong>ההערה שלי</strong>{c.personalNote}</blockquote>}<span className="crystalItemSource">{c.sourceLabel} · {c.provenanceLabel}</span></article>)}</div>}
  </div>;
 };
 
