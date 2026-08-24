@@ -6,7 +6,7 @@ function run(command,args){
 }
 
 if(process.env.VERCEL_ENV==='production'){
- console.log('Production prebuild: ensuring canonical migrations 001-009.');
+ console.log('Production prebuild: ensuring canonical migrations 001-010.');
  run('npm',['run','db:migrate']);
 }else{
  console.log(`Skipping production migrations for VERCEL_ENV=${process.env.VERCEL_ENV||'local'}.`);
