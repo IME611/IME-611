@@ -1,3 +1,4 @@
+import{useEffect,useState}from'react';
 import type{Chapter}from'../../core/types';
 import{CrystalCardComposer}from'../crystals/CrystalCardComposer';
 import type{LearningCardChapter,LearningCardType}from'./model/learning-card.types';
@@ -38,6 +39,13 @@ export function LearningCardReader({chapter,sourceChapter,layerLabel,color,onBac
   const{position,setPosition}=useCardProgress(chapter.chapterNumber,chapter.cards.length);
   const current=chapter.cards[position];
   const isLast=position===chapter.cards.length-1;
+  const[uploadedSource,setUploadedSource]=useState<any>(null);const[sourceLoading,setSourceLoading]=useState(false);const[sourceError,setSourceError]=useState('');
+  useEffect(()=>{setUploadedSource(null);setSourceError('');setSourceLoading(false)},[current.sourceId]);
+  const loadUploadedSource=async(event:React.SyntheticEvent<HTMLDetailsElement>)=>{
+    if(!event.currentTarget.open||!current.sourceId||uploadedSource||sourceLoading)return;
+    setSourceLoading(true);setSourceError('');
+    try{const response=await fetch(`/api/sources?id=${encodeURIComponent(current.sourceId)}`,{headers:{Accept:'application/json'}}),payload=await response.json().catch(()=>({}));if(!response.ok)throw new Error(payload.error||`HTTP ${response.status}`);setUploadedSource(payload)}catch(error:any){setSourceError(String(error?.message||'לא ניתן לטעון את המקור'))}finally{setSourceLoading(false)}
+  };
   const previous=()=>{
     if(position>0)setPosition(position-1);
     else onPreviousChapter?.();
@@ -77,8 +85,9 @@ export function LearningCardReader({chapter,sourceChapter,layerLabel,color,onBac
       <h2 id={`learning-card-${current.id}`}>{current.title}</h2>
       <p>{current.text}</p>
       <footer>
-        <span>עיבוד פדגוגי מקושר למקור</span>
-        <span>{current.sourceUnitIds.join(' · ')}</span>
+        <span>{current.editorialStatus==='CREATOR_PUBLISHED'?'כרטיס שאושר ופורסם מתוך מקור חדש':'עיבוד פדגוגי מקושר למקור'}</span>
+        <span>{current.sourceLabel||chapter.sourceFile}</span>
+        <span>{current.provenanceLabel||current.sourceUnitIds.join(' · ')}</span>
         {current.evidenceRefs?.length?<span>בדיקת ראיות: {current.evidenceRefs.join(' · ')}</span>:null}
       </footer>
     </article>
@@ -89,8 +98,8 @@ export function LearningCardReader({chapter,sourceChapter,layerLabel,color,onBac
       topic:chapter.title,
       subtopic:current.title,
       text:current.text,
-      sourceLabel:chapter.sourceFile,
-      provenanceLabel:current.sourceUnitIds.join(' · '),
+      sourceLabel:current.sourceLabel||chapter.sourceFile,
+      provenanceLabel:current.provenanceLabel||current.sourceUnitIds.join(' · '),
       savedAt:'',
     }}/>
 
@@ -99,10 +108,10 @@ export function LearningCardReader({chapter,sourceChapter,layerLabel,color,onBac
       <button type="button" className="learningCardNext" onClick={next}>{isLast?'סיימתי — לפרק הבא ←':'הכרטיס הבא ←'}</button>
     </nav>
 
-    <details className="canonicalSourceDetails">
-      <summary>לקריאת חומר המקור המלא</summary>
+    <details className="canonicalSourceDetails" onToggle={loadUploadedSource}>
+      <summary>{current.sourceId?'לקריאת המקור שהועלה':'לקריאת חומר המקור המלא'}</summary>
       <div className="canonicalSourceNotice"><b>המקור נשמר בשלמותו</b><span>הכרטיסיות הן עיבוד קצר; כאן אפשר לבדוק את הניסוח וההקשר המקוריים.</span></div>
-      <article className="spiralContent">{sourceChapter.paragraphs.map(sourceParagraph)}</article>
+      {current.sourceId?<>{sourceLoading&&<p>טוען את המקור…</p>}{sourceError&&<p className="formError" role="alert">{sourceError}</p>}{uploadedSource&&<article className="spiralContent">{(uploadedSource.fragments||[]).flatMap((fragment:any)=>String(fragment.raw_text||'').split(/\n{2,}/u)).map(sourceParagraph)}</article>}</>:<article className="spiralContent">{sourceChapter.paragraphs.map(sourceParagraph)}</article>}
     </details>
   </div>;
 }

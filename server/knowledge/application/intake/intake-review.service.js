@@ -2,6 +2,7 @@ import crypto from'node:crypto';
 import{ingestCanonicalSource}from'../ingestion/ingest-source.js';
 import{extractAtomicCandidates}from'../extraction/atomic-extraction-preview.service.js';
 import{PostgresSourceIngestionRepository}from'../../infrastructure/postgres/source-ingestion.repository.js';
+import{ensureSourcePublicationDraft}from'../publication/source-publication.service.js';
 
 const METHOD='deterministic-rules';
 const VERSION='atomic-he-v0.2';
@@ -69,7 +70,12 @@ export async function approveIntakeSubmission(db,id,{reviewedBy,note=''}){
   const overrides=row.decision_overrides||{},bytes=Buffer.isBuffer(row.original_bytes)&&row.original_bytes.length?row.original_bytes:Buffer.from(row.extracted_text,'utf8'),repository=new PostgresSourceIngestionRepository(client);
   const ingestion=await ingestCanonicalSource({db:client,repository,manageTransaction:false,input:{originalBytes:bytes,extractedText:row.extracted_text,fileName:row.file_name||`${row.input_kind.toLowerCase()}.txt`,mimeType:row.mime_type||'text/plain',title:String(overrides.title||row.title||'Intake source').slice(0,500),author:String(overrides.author||''),originalUri:row.source_url||null}}),extraction=await persistSourceExtraction(client,ingestion.source.id);
   const updated=(await client.query(`UPDATE intake_submissions SET review_status='APPROVED',reviewed_at=NOW(),reviewed_by=$2,review_note=$3,approved_source_id=$4,updated_at=NOW() WHERE id=$1 RETURNING *`,[id,reviewedBy,String(note||'').slice(0,10_000),ingestion.source.id])).rows[0];
+  const publication=ingestion.deduplicated?{schemaReady:await publicationSchemaReadySafe(client),created:false,publication:null,reason:'DUPLICATE_SOURCE'}:await ensureSourcePublicationDraft(client,{sourceId:ingestion.source.id,intakeSubmissionId:id});
   await client.query('COMMIT');
-  return{submission:submissionView(updated),ingestion:{deduplicated:ingestion.deduplicated,source:ingestion.source,fragmentCount:ingestion.fragments.length},extraction,mapEffect:{eligibleImmediately:true,note:'Approved source extraction candidates enter the reviewable Corpus Map layer; no canonical Concept or semantic relation is auto-approved.'}};
+  return{submission:submissionView(updated),ingestion:{deduplicated:ingestion.deduplicated,source:ingestion.source,fragmentCount:ingestion.fragments.length},extraction,publication,mapEffect:{repositoryEligibleImmediately:true,learnerVisible:false,note:'The approved source is preserved in the repository and its extracted units enter review. Learner cards require a separate creator-approved publication.'}};
  }catch(error){try{await client.query('ROLLBACK')}catch{};throw error}finally{client.release()}
+}
+
+async function publicationSchemaReadySafe(db){
+ try{return Boolean((await db.query(`SELECT to_regclass('public.source_publications') AS table_name`)).rows[0]?.table_name)}catch{return false}
 }

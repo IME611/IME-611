@@ -40,7 +40,7 @@ async function handleIntake(req,res,db){
   const action=String(req.body?.action||'').trim().toUpperCase(),reviewedBy=reviewer(req),note=String(req.body?.note||'').slice(0,10_000);
   if(action==='CHANGE'){const item=await changeIntakeSubmission(db,id,{reviewedBy,overrides:req.body?.overrides||{},note});return res.status(200).json({ok:true,action,item,canonicalWrites:false})}
   if(action==='REJECT'){const item=await rejectIntakeSubmission(db,id,{reviewedBy,note});return res.status(200).json({ok:true,action,item,canonicalWrites:false})}
-  if(action==='APPROVE'){const result=await approveIntakeSubmission(db,id,{reviewedBy,note});return res.status(200).json({ok:true,action,...result,canonicalWrites:{source:true,extractionCandidates:'PENDING_ONLY',concepts:false,relations:false}})}
+  if(action==='APPROVE'){const result=await approveIntakeSubmission(db,id,{reviewedBy,note});return res.status(200).json({ok:true,action,...result,canonicalWrites:{source:true,extractionCandidates:'PENDING_ONLY',concepts:false,relations:false,learnerCards:false},nextStep:result.publication?.publication?'REVIEW_SOURCE_PUBLICATION':'NO_NEW_PUBLICATION_FOR_DUPLICATE_SOURCE'})}
   return res.status(400).json({ok:false,error:'action must be APPROVE, CHANGE, or REJECT'});
  }
  res.setHeader('Allow','GET,POST,PATCH');return res.status(405).json({ok:false,error:'method not allowed'});
@@ -58,7 +58,7 @@ async function handleConsole(req,res,db){
  const queue=String(param(req,'queue')||'overview').toLowerCase();
  if(req.method==='GET'){
   if(queue==='overview')return res.status(200).json(await reviewOverview(db));
-  const result=await listReviewQueue(db,{queue,limit:Number(param(req,'limit')||50)});return res.status(200).json({ok:true,...result});
+  const result=await listReviewQueue(db,{queue,limit:Number(param(req,'limit')||50),id:param(req,'id')});return res.status(200).json({ok:true,...result});
  }
  if(req.method==='PATCH'){
   const result=await applyReviewDecision(db,{queue,id:String(req.body?.id||param(req,'id')||''),subjectKey:String(req.body?.subjectKey||''),action:String(req.body?.action||''),payload:req.body?.payload||{},reviewer:reviewer(req)});return res.status(200).json({ok:true,queue,action:String(req.body?.action||'').toUpperCase(),result});

@@ -2,6 +2,7 @@ import{getDb}from'../server/shared/postgres.js';
 import{buildCorpusInventory}from'../server/knowledge/application/corpus/corpus-inventory.service.js';
 import{previewAtomicExtraction,previewCorpusExtraction}from'../server/knowledge/application/extraction/atomic-extraction-preview.service.js';
 import{matchAgainstCorpus,buildConceptRegistryPreview}from'../server/knowledge/application/matching/knowledge-overlap.service.js';
+import{getPublishedLearningCards,getSourcePublicationHealth,publicationSchemaReady}from'../server/knowledge/application/publication/source-publication.service.js';
 import{withHardening,text,requestUrl}from'./_lib/hardening.js';
 import{requireEditor}from'./_lib/editor-auth.js';
 
@@ -45,8 +46,10 @@ async function handleInbox(req,res,db){
 async function handleSources(req,res,db){
  const id=param(req,'id');
  if(req.method!=='GET'){res.setHeader('Allow','GET');return res.status(405).json({ok:false,error:'source writes must use /api/import'})}
- if(id){if(!UUID.test(id))return res.status(400).json({ok:false,error:'source id must be a UUID'});const source=await db.query('SELECT id,type,title,author,original_uri,mime_type,content_hash,metadata,created_at FROM sources WHERE id=$1',[id]);if(!source.rows[0])return res.status(404).json({ok:false,error:'source not found'});const fragments=await db.query('SELECT id,ordinal,raw_text,start_offset,end_offset,page,section,metadata FROM source_fragments WHERE source_id=$1 ORDER BY ordinal',[id]);return res.status(200).json({ok:true,source:source.rows[0],fragments:fragments.rows})}
- const{rows}=await db.query(`SELECT s.id,s.type,s.title,s.author,s.original_uri,s.mime_type,s.content_hash,s.metadata,s.created_at,COUNT(f.id)::int AS fragment_count FROM sources s LEFT JOIN source_fragments f ON f.source_id=s.id GROUP BY s.id ORDER BY s.created_at DESC`);
+ const hasPublicationGate=await publicationSchemaReady(db);
+ const learnerVisibility=hasPublicationGate?`AND (NOT EXISTS(SELECT 1 FROM source_publications p WHERE p.source_id=s.id) OR EXISTS(SELECT 1 FROM source_publications p WHERE p.source_id=s.id AND p.status='PUBLISHED'))`:'';
+ if(id){if(!UUID.test(id))return res.status(400).json({ok:false,error:'source id must be a UUID'});const source=await db.query(`SELECT s.id,s.type,s.title,s.author,s.original_uri,s.mime_type,s.content_hash,s.metadata,s.created_at FROM sources s WHERE s.id=$1 ${learnerVisibility}`,[id]);if(!source.rows[0])return res.status(404).json({ok:false,error:'source not found'});const fragments=await db.query('SELECT id,ordinal,raw_text,start_offset,end_offset,page,section,metadata FROM source_fragments WHERE source_id=$1 ORDER BY ordinal',[id]);return res.status(200).json({ok:true,source:source.rows[0],fragments:fragments.rows})}
+ const{rows}=await db.query(`SELECT s.id,s.type,s.title,s.author,s.original_uri,s.mime_type,s.content_hash,s.metadata,s.created_at,COUNT(f.id)::int AS fragment_count FROM sources s LEFT JOIN source_fragments f ON f.source_id=s.id WHERE TRUE ${learnerVisibility} GROUP BY s.id ORDER BY s.created_at DESC`);
  return res.status(200).json({ok:true,sources:rows,documents:rows});
 }
 
@@ -121,6 +124,17 @@ async function handleOverlapHealth(req,res,db){
  return res.status(pass?200:503).json({ok:pass,engine:'overlap-v0.2',semanticModel:false,conceptAwareMatching:true,results});
 }
 
+async function handlePublishedLearningCards(req,res,db){
+ if(req.method!=='GET'){res.setHeader('Allow','GET');return res.status(405).json({ok:false,error:'method not allowed'})}
+ const chapter=Number(param(req,'chapter'));if(!Number.isInteger(chapter)||chapter<1||chapter>18)return res.status(400).json({ok:false,error:'chapter must be an integer from 1 to 18'});
+ return res.status(200).json(await getPublishedLearningCards(db,{chapterNumber:chapter}));
+}
+
+async function handlePublicationHealth(req,res,db){
+ if(req.method!=='GET'){res.setHeader('Allow','GET');return res.status(405).json({ok:false,error:'method not allowed'})}
+ const result=await getSourcePublicationHealth(db);return res.status(result.ok?200:503).json(result);
+}
+
 async function knowledge(req,res){
  const resource=param(req,'resource')||'sources';
  if(isProtectedWrite(resource,req.method)&&!requireEditor(req,res))return;
@@ -136,6 +150,8 @@ async function knowledge(req,res){
  if(resource==='overlap-preview')return handleOverlapPreview(req,res,db);
  if(resource==='concept-registry-preview')return handleConceptRegistryPreview(req,res,db);
  if(resource==='overlap-health')return handleOverlapHealth(req,res,db);
+ if(resource==='published-learning-cards')return handlePublishedLearningCards(req,res,db);
+ if(resource==='publication-health')return handlePublicationHealth(req,res,db);
  return res.status(404).json({ok:false,error:'unknown knowledge resource'});
 }
 

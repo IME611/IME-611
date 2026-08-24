@@ -10,7 +10,8 @@ const requiredTables = [
   'insights','experiments','reflections','provenance_edges',
   'legacy_source_mappings','legacy_fragment_mappings','schema_migrations',
   'extraction_runs','extraction_candidates','extraction_candidate_evidence',
-  'relation_extraction_runs','relation_candidates','intake_submissions','review_decisions'
+  'relation_extraction_runs','relation_candidates','intake_submissions','review_decisions',
+  'source_publications','published_learning_cards'
 ];
 const requiredEnums = [
   'source_type','claim_type','claim_status','evidence_relation','insight_status','experiment_status',
@@ -40,6 +41,8 @@ async function main(){
       (SELECT COUNT(*)::int FROM relation_candidates) relation_candidates,
       (SELECT COUNT(*)::int FROM intake_submissions) intake_submissions,
       (SELECT COUNT(*)::int FROM review_decisions) review_decisions,
+      (SELECT COUNT(*)::int FROM source_publications) source_publications,
+      (SELECT COUNT(*)::int FROM published_learning_cards WHERE status='PUBLISHED') published_learning_cards,
       (SELECT COUNT(*)::int FROM schema_migrations) migrations_applied`);
     console.log(JSON.stringify({ok:true,...counts.rows[0]},null,2));
   } finally { await client.end(); }

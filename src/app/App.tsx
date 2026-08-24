@@ -171,6 +171,7 @@ const Generic=()=><div className="simplePage" dir="rtl">
    {activePage==='add-learning'&&<AddLearning/>}
    {activePage==='sources'&&<Sources/>}
    {activePage==='add-source'&&<AddSource/>}
+   {activePage==='review'&&<ReviewConsole/>}
    {activePage==='settings'&&<Settings/>}
    {activePage==='library'&&<SpiralLibrary
     chapters={journeyChapters}
@@ -183,7 +184,7 @@ const Generic=()=><div className="simplePage" dir="rtl">
    {activePage==='transformation'&&<TransformationWorkspace chapters={journeyChapters}/>}
    {activePage==='media'&&<MediaWorkspace/>}
    {isEvolution&&<EvolutionWorkspace page={activePage} onNav={nav}/>}
-   {!['dashboard','library','sources','transformation','media','crystals','add-learning','add-source','settings',...evoPageIds].includes(activePage)&&<Generic/>}
+   {!['dashboard','library','sources','transformation','media','crystals','add-learning','add-source','review','settings',...evoPageIds].includes(activePage)&&<Generic/>}
    <AddSourceModal open={owner&&editor} onClose={()=>setEditor(false)} onImported={setNotice}/>
   </main>
   <button className="crystalLauncher" onClick={()=>setCrystalsOpen(true)} aria-label="פתח את אוסף הקריסטלים"><span>◆</span><b>הקריסטלים שלי</b><em>{crystals.length}</em></button>

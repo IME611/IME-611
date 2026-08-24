@@ -8,6 +8,7 @@ const checks=[
  'scripts/knowledge/verify-relation-extractor.mjs',
  'scripts/knowledge/verify-relation-endpoint-suggestions.mjs',
  'scripts/knowledge/verify-intake-workflow.mjs',
+ 'scripts/knowledge/verify-source-publication.mjs',
  'scripts/knowledge/verify-content-library.mjs',
 ];
 

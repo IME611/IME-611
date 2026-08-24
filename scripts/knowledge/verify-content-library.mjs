@@ -120,4 +120,4 @@ assert(environment?.subtopics.some(item=>item.nodeIds.includes(environmentFromOp
 const card=buildExtractiveCard('DMT',[{text:'יחידת ידע ראשונה המבוססת על המקור ונשמרת ללא המצאת טענה חדשה.'},{text:'יחידת ידע שנייה ממשיכה את הסיכום מתוך החומר הקיים.'}], [{title:'פרק7_בלוטת_האצטרובל.docx'}],'subtopic:pineal-gland:dmt');
 assert.equal(card.id,'knowledge-card:subtopic:pineal-gland:dmt:v2');
 assert(card.summary.includes('יחידת ידע ראשונה'),'knowledge card must be built from supplied source-backed points');
-console.log('PASS content library v3.6 (explicit flow; parent-topic summaries respect epistemic frames; topic scope coherent; card matches unit)');
+console.log('PASS content library v3.7 (explicit flow; intake publication gate; parent-topic summaries respect epistemic frames; topic scope coherent)');

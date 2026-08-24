@@ -35,3 +35,4 @@
  .actions .primary{grid-column:1/-1;grid-row:1}
  .intakeFacts>div{padding:10px 8px}.intakeFacts small{font-size:10px}.intakeFacts strong{font-size:18px}
 }
+.intakeApproved{text-align:center;padding:18px 4px 2px}.intakeApproved>span{display:grid;place-items:center;width:58px;height:58px;margin:0 auto 14px;border-radius:50%;background:rgba(0,96,57,.1);color:#006039;font-size:28px;font-weight:900}.intakeApproved h3{margin:0 0 8px;font-size:21px}.intakeApproved p{max-width:520px;margin:0 auto;color:rgba(26,26,24,.64);line-height:1.7}.intakeApproved .actions{margin-top:22px}

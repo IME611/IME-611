@@ -34,9 +34,10 @@ export function AddSourceModal({open,onClose,onImported}:AddSourceModalProps){
  const[text,setText]=useState('');
  const[sourceUrl,setSourceUrl]=useState('');
  const[analysis,setAnalysis]=useState<IntakeAnalysis|null>(null);
+ const[approvedResult,setApprovedResult]=useState<{message:string;publicationReady:boolean}|null>(null);
  const imageFile=useMemo(()=>isImageFile(file),[file]);
  const hasInput=Boolean(file||text.trim()||sourceUrl.trim());
- const reset=useCallback(()=>{setFile(null);setBusy('idle');setError('');setKeyStatus('idle');setTitle('');setText('');setSourceUrl('');setAnalysis(null)},[]);
+ const reset=useCallback(()=>{setFile(null);setBusy('idle');setError('');setKeyStatus('idle');setTitle('');setText('');setSourceUrl('');setAnalysis(null);setApprovedResult(null)},[]);
  const close=useCallback(()=>{if(busy!=='idle')return;reset();onClose()},[busy,onClose,reset]);
  const dialogRef=useDialogA11y(open,close);
  if(!open)return null;
@@ -69,9 +70,11 @@ export function AddSourceModal({open,onClose,onImported}:AddSourceModalProps){
   if(!id){setError('הניתוח הושלם, אך לא נשמר תור בדיקה. נסה שוב בעוד רגע.');return}
   setError('');setBusy('deciding');
   try{
-   const result=await sourceIntakeApi.decide(id,action,key)as{ingestion?:{deduplicated?:boolean;fragmentCount?:number}};
+   const result=await sourceIntakeApi.decide(id,action,key)as{ingestion?:{deduplicated?:boolean;fragmentCount?:number};publication?:{publication?:{id?:string}|null};nextStep?:string};
    const message=action==='REJECT'?'המקור סומן כלא להוספה.':result.ingestion?.deduplicated?'המקור כבר היה במאגר; לא נוצר עותק נוסף.':`המקור אושר ונשמר בשלמותו${Number.isFinite(result.ingestion?.fragmentCount)?` · ${result.ingestion?.fragmentCount} מקטעי מקור`:''}.`;
-   onImported(message);reset();onClose();
+   onImported(message);
+   if(action==='APPROVE'){setAnalysis(null);setApprovedResult({message,publicationReady:Boolean(result.publication?.publication||result.nextStep==='REVIEW_SOURCE_PUBLICATION')})}
+   else{reset();onClose()}
   }catch(cause){setError(cause instanceof Error?cause.message:'לא ניתן היה לשמור את ההחלטה.')}
   finally{setBusy('idle')}
  };
@@ -81,8 +84,8 @@ export function AddSourceModal({open,onClose,onImported}:AddSourceModalProps){
 
  return <div className="overlay" onClick={close}>
   <div className="modal sourceIntakeModal" role="dialog" aria-modal="true" aria-labelledby="add-source-title" aria-describedby={error?'add-source-error':undefined} tabIndex={-1} ref={dialogRef as React.Ref<HTMLDivElement>} onClick={event=>event.stopPropagation()}>
-   <div className="modalHead"><div><span className="eyebrow">KNOWLEDGE INTAKE</span><h2 id="add-source-title">{analysis?'האם זה כבר כתוב?':'בדיקת מקור חדש'}</h2></div><button type="button" className="close" aria-label="סגור חלון בדיקת מקור" onClick={close}>×</button></div>
-   {!analysis?<>
+   <div className="modalHead"><div><span className="eyebrow">KNOWLEDGE INTAKE</span><h2 id="add-source-title">{approvedResult?'המקור נשמר':analysis?'האם זה כבר כתוב?':'בדיקת מקור חדש'}</h2></div><button type="button" className="close" aria-label="סגור חלון בדיקת מקור" onClick={close}>×</button></div>
+   {approvedResult?<section className="intakeApproved"><span aria-hidden="true">✓</span><h3>{approvedResult.message}</h3><p>{approvedResult.publicationReady?'המקור עדיין אינו מוצג ללומדים. בשלב הבא בוחרים אילו יחידות יהפכו לכרטיסיות ובאיזה פרק הן יופיעו.':'לא נדרש מסלול פרסום חדש עבור עותק זהה שכבר קיים.'}</p><div className="actions"> <button type="button" className="secondary" onClick={close}>סגור</button>{approvedResult.publicationReady&&<button type="button" className="primary" onClick={()=>window.location.assign('/#/review')}>המשך להכנת כרטיסיות</button>}</div></section>:!analysis?<>
     <p className="intakeIntro">המערכת תשווה את החומר למאגר, תזהה מה כבר קיים, מה חדש והיכן הוא עשוי להשתלב. שום דבר לא יתווסף בלי אישור שלך.</p>
     <label className="dropZone">{file?file.name:'בחר קובץ'}<input type="file" accept=".pdf,.docx,.txt,.md,.csv,.json,.html,.xml,image/*" onChange={event=>{const selected=event.target.files?.[0]||null;setError('');setFile(selected);if(selected)setTitle(current=>current||selected.name.replace(/\.[^.]+$/,''))}}/><span>{file?`${Math.ceil(file.size/1024)} KB · ייבדק מול המאגר`:'PDF, DOCX, טקסט או תמונה'}</span></label>
     <label>כותרת<input value={title} onChange={event=>setTitle(event.target.value)} placeholder="מהו החומר?"/></label>

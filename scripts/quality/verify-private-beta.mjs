@@ -80,6 +80,7 @@ const assignments=read('src/features/research/model/assignment.repository.ts');
 const storage=read('src/core/storage.ts');
 const sourceIntakeModal=read('src/features/sources/AddSourceModal.tsx');
 const sourceIntakeApi=read('src/features/sources/source-intake.api.ts');
+const knowledgeApi=read('api/knowledge.js');
 const embeddedChapter2=read('src/data/chapters-embedded.ts').split('\n').find(line=>line.startsWith('{id:"2"'))??'';
 
 assert.match(app,/KnowledgeDashboard onOpenJourney=/,'the approved dashboard must be connected to the journey');
@@ -103,16 +104,21 @@ assert.doesNotMatch(navigation,/id:'research'/,'research search must be removed 
 assert.match(storage,/readText\(storageKeys\.accessMode,'learner'\)/,'a fresh browser must enter the learner journey, not creator mode');
 assert.match(navigation,/id:'add-learning'.*ownerOnly:true/,'standalone learning capture must stay in creator mode because learner notes belong to crystals');
 assert.match(navigation,/id:'add-source'.*ownerOnly:true/,'source ingestion must stay in creator mode');
+assert.match(navigation,/id:'review'.*ownerOnly:true/,'source-card publication must stay in creator mode');
 assert.match(sourceIntakeApi,/\/api\/intake/,'new sources must pass through intake analysis before canonical ingestion');
 assert.match(sourceIntakeModal,/sourceIntakeApi\.analyze/,'the creator upload flow must compare a source with the corpus');
 assert.match(sourceIntakeModal,/sourceIntakeApi\.decide/,'the creator upload flow must require an explicit intake decision');
+assert.match(sourceIntakeModal,/window\.location\.assign\('\/#\/review'\)/,'an approved new source must offer a direct creator-only path to card preparation');
+assert.match(sourceIntakeModal,/המקור עדיין אינו מוצג ללומדים/,'source approval must clearly remain separate from learner publication');
 assert.doesNotMatch(sourceIntakeModal,/fetch\(['"]\/api\/import/,'the source modal must not bypass intake analysis with direct canonical import');
+assert.match(knowledgeApi,/source_publications p WHERE p\.source_id=s\.id AND p\.status='PUBLISHED'/,'repository-only intake sources must stay hidden from the public source API');
 assert.doesNotMatch(navigation,/id:'crystals'/,'the navigation must not duplicate the persistent crystal launcher');
 assert.match(navigationShell,/navigationForMode\(owner\)/,'desktop and mobile navigation must filter items through the same access policy');
 assert.match(app,/activePage=owner\|\|!isOwnerOnlyNavigation\(page\)\?page:'dashboard'/,'learner routes must fail closed when an owner-only hash is requested');
 assert.match(app,/replaceNav\('dashboard'\)/,'a blocked creator hash must be replaced with the learner dashboard URL');
 assert.match(app,/className="sourceItem" onClick=\{\(\)=>openSource\(source\.number\)\}/,'source cards must open canonical documents independently of the learning sequence');
-assert.match(journey,/chapters\.find\(item=>item\.sourceFile===pilotCardChapter\.sourceFile\)/,'reordered learning chapters must resolve their own canonical source by file');
+assert.match(journey,/chapters\.find\(item=>item\.sourceFile===pilot\.sourceFile\)/,'reordered learning chapters must resolve their own canonical source by file');
+assert.match(journey,/usePublishedLearningCards\(chapter\.number\)/,'each live journey chapter must be able to receive explicitly published source cards');
 assert.match(embeddedChapter2,/title:"הכלי החיצוני"/,'chapter 2 must open the external-environment source');
 assert.match(embeddedChapter2,/sourceFile:"פרק2_הכלי_החיצוני\.docx"/,'chapter 2 must preserve its canonical source mapping');
 assert.doesNotMatch(embeddedChapter2,/title:"מערכת ההפעלה"/,'chapter 2 must not duplicate chapter 4');
@@ -160,6 +166,7 @@ const learnerNavigationIds=[...learnerNavigation.primary,...learnerNavigation.gr
 assert.deepEqual(learnerNavigationIds,['dashboard','library','sources','settings'],'learner navigation must stay focused on the journey, full sources and settings');
 assert.equal(isOwnerOnlyNavigation('add-source'),true,'direct source-ingestion routes must be recognized as creator-only');
 assert.equal(isOwnerOnlyNavigation('add-learning'),true,'standalone learning capture must be recognized as creator-only');
+assert.equal(isOwnerOnlyNavigation('review'),true,'direct publication-review routes must be recognized as creator-only');
 assert.equal(pilotCardChapters.length,9,'the card-format draft must cover the first nine learning chapters');
 assert.equal(pilotCardChapters.flatMap(chapter=>chapter.cards).length,60,'the first nine chapters must contain all 60 traceable cards');
 assert.equal(pilotCardChapters[3].sourceFile,'פרק5_המוח_המפורט.docx','learning chapter 4 must use the brain source before the operating-system metaphor');

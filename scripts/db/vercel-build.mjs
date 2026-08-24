@@ -6,7 +6,7 @@ function run(command, args) {
 }
 
 if (process.env.VERCEL_ENV === 'production') {
-  console.log('Production build: ensuring migrations 001-008 before verification.');
+  console.log('Production build: ensuring migrations 001-009 before verification.');
   run('node', ['scripts/db/ensure-production-migrations.mjs']);
   console.log('Production build: verifying database foundation including extraction/relation/intake/review layers.');
   run('npm', ['run', 'db:health']);

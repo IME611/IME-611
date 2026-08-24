@@ -8,7 +8,12 @@ export type LearningCard={
   text:string;
   sourceUnitIds:string[];
   evidenceRefs?:string[];
-  editorialStatus:'SOURCE_DERIVED_DRAFT';
+  sourceId?:string;
+  sourceLabel?:string;
+  provenanceLabel?:string;
+  publicationId?:string;
+  publicationVersion?:number;
+  editorialStatus:'SOURCE_DERIVED_DRAFT'|'CREATOR_PUBLISHED';
 };
 
 export type LearningCardChapter={

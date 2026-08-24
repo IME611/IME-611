@@ -5,6 +5,8 @@ import type { LearningStage } from '../../core/learning-path/learning-path.types
 import { useCrystalCollection } from '../crystals/model/useCrystalCollection';
 import { getPilotCardChapter } from './data/pilot-card-script';
 import { LearningCardReader } from './LearningCardReader';
+import { usePublishedLearningCards } from './model/usePublishedLearningCards';
+import type { LearningCardChapter } from './model/learning-card.types';
 
 type Chapter = { number: number; title: string; subtitle: string; sourceFile: string; paragraphs: string[]; paragraphCount?: number; characterCount?: number };
 type Props = {
@@ -175,6 +177,24 @@ function ChapterView({ chapter, layer, onBack, onComplete, onPrevious, canGoPrev
   );
 }
 
+function ChapterExperience({chapter,chapters,layer,onBack,onComplete,onPrevious}:{chapter:Chapter;chapters:Chapter[];layer:typeof LAYERS[number];onBack:()=>void;onComplete:()=>void;onPrevious?:()=>void}){
+  const published=usePublishedLearningCards(chapter.number),pilot=getPilotCardChapter(chapter.number),stage=stageForNum(chapter.number);
+  const sourceChapter=pilot?chapters.find(item=>item.sourceFile===pilot.sourceFile)??chapter:chapter;
+  if(published.loading&&!pilot)return <div className="spiralChapter journeyCardsLoading" dir="rtl"><div className="spiralChapterTop"><button className="spiralBack" type="button" onClick={onBack}>← חזרה לנושאים</button><span className="spiralChapterPos">{layer.label}</span></div><p>טוען את הכרטיסיות של הפרק…</p></div>;
+  const combinedCards=[...(pilot?.cards||[]),...published.cards].map((card,index)=>({...card,order:index+1}));
+  const cardChapter:LearningCardChapter|null=combinedCards.length?{
+    chapterNumber:chapter.number,
+    title:pilot?.title??clean(chapter.title),
+    subtitle:pilot?.subtitle??chapter.subtitle,
+    guidingQuestion:pilot?.guidingQuestion??stage?.guidingQuestion??'מה אפשר להבין מן המקור הזה?',
+    whyHere:pilot?.whyHere??layer.why,
+    sourceFile:pilot?.sourceFile??chapter.sourceFile,
+    cards:combinedCards,
+  }:null;
+  if(cardChapter)return <LearningCardReader chapter={cardChapter} sourceChapter={sourceChapter} layerLabel={layer.label} color={layer.color} onBack={onBack} onComplete={onComplete} onPreviousChapter={onPrevious}/>;
+  return <ChapterView chapter={chapter} layer={layer} onBack={onBack} onComplete={onComplete} onPrevious={onPrevious} canGoPrevious={Boolean(onPrevious)} isFinal={chapter.number===18}/>;
+}
+
 /* ── Main ── */
 export default function SpiralLibrary({ chapters, initialChapter, initialSourceNumber, onInitialChapterOpened, onInitialSourceOpened, onSourceClosed }: Props) {
   const learning = useLearningProgress(journeyPath);
@@ -203,8 +223,6 @@ export default function SpiralLibrary({ chapters, initialChapter, initialSourceN
 
   const chapter = activeNum ? chapters.find(c => c.number === activeNum) ?? null : null;
   const layer   = chapter   ? LAYERS.find(l => (l.nums as readonly number[]).includes(chapter.number)) ?? LAYERS[0] : LAYERS[0];
-  const pilotCardChapter=chapter?getPilotCardChapter(chapter.number):null;
-  const pilotSourceChapter=pilotCardChapter?chapters.find(item=>item.sourceFile===pilotCardChapter.sourceFile)??chapter:null;
   const previousChapter = chapter ? chapters.find(c => c.number === chapter.number - 1) ?? null : null;
   const openChapter = (chapterNumber: number) => {
     setActiveSourceNum(null);
@@ -238,28 +256,7 @@ export default function SpiralLibrary({ chapters, initialChapter, initialSourceN
   };
 
   if (chapter) {
-    if(pilotCardChapter){
-      return <LearningCardReader key={pilotCardChapter.chapterNumber}
-        chapter={pilotCardChapter}
-        sourceChapter={pilotSourceChapter??chapter}
-        layerLabel={layer.label}
-        color={layer.color}
-        onBack={()=>setActiveNum(null)}
-        onComplete={handleComplete}
-        onPreviousChapter={previousChapter?()=>openChapter(previousChapter.number):undefined}
-      />;
-    }
-    return (
-      <ChapterView
-        chapter={chapter}
-        layer={layer}
-        onBack={() => setActiveNum(null)}
-        onComplete={handleComplete}
-        onPrevious={previousChapter ? () => openChapter(previousChapter.number) : undefined}
-        canGoPrevious={Boolean(previousChapter)}
-        isFinal={chapter.number===18}
-      />
-    );
+    return <ChapterExperience key={chapter.number} chapter={chapter} chapters={chapters} layer={layer} onBack={()=>setActiveNum(null)} onComplete={handleComplete} onPrevious={previousChapter?()=>openChapter(previousChapter.number):undefined}/>;
   }
 
   return (
