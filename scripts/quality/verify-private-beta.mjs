@@ -103,7 +103,7 @@ assert.match(cardScript,/S01-U01/,'pilot cards must retain source-unit traceabil
 assert.match(app,/const journeyChapters=embeddedChapters/,'the reader must preserve the curated marker-based Claude chapter edition');
 assert.doesNotMatch(navigation,/id:'research'/,'research search must be removed from primary navigation');
 assert.match(storage,/readText\(storageKeys\.accessMode,'learner'\)/,'a fresh browser must enter the learner journey, not creator mode');
-assert.match(navigation,/id:'add-learning'.*ownerOnly:true/,'standalone learning capture must stay in creator mode because learner notes belong to crystals');
+assert.doesNotMatch(navigation,/id:'add-learning'/,'standalone local-only learning capture must not remain a production route; creator content enters through source intake');
 assert.match(navigation,/id:'add-source'.*ownerOnly:true/,'source ingestion must stay in creator mode');
 assert.match(navigation,/id:'review'.*ownerOnly:true/,'source-card publication must stay in creator mode');
 assert.match(sourceIntakeApi,/\/api\/intake/,'new sources must pass through intake analysis before canonical ingestion');
@@ -166,7 +166,7 @@ const learnerNavigation=navigationForMode(false);
 const learnerNavigationIds=[...learnerNavigation.primary,...learnerNavigation.groups.flatMap(group=>group.items)].map(item=>item.id);
 assert.deepEqual(learnerNavigationIds,['dashboard','library','sources','settings'],'learner navigation must stay focused on the journey, full sources and settings');
 assert.equal(isOwnerOnlyNavigation('add-source'),true,'direct source-ingestion routes must be recognized as creator-only');
-assert.equal(isOwnerOnlyNavigation('add-learning'),true,'standalone learning capture must be recognized as creator-only');
+assert.equal(isOwnerOnlyNavigation('add-learning'),false,'removed local-only learning capture must not remain a recognized production route');
 assert.equal(isOwnerOnlyNavigation('review'),true,'direct publication-review routes must be recognized as creator-only');
 assert.equal(pilotCardChapters.length,9,'the card-format draft must cover the first nine learning chapters');
 assert.equal(pilotCardChapters.flatMap(chapter=>chapter.cards).length,60,'the first nine chapters must contain all 60 traceable cards');
