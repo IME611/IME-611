@@ -16,11 +16,15 @@ assert.equal(multimodal.fallback,'creator-supplied-description');
 
 const root=new URL('../../',import.meta.url);
 const api=fs.readFileSync(new URL('api/reviews.js',root),'utf8');
+const learnerApi=fs.readFileSync(new URL('api/learning-publications.js',root),'utf8');
 const migration=fs.readFileSync(new URL('database/migrations/010_backend_completion.sql',root),'utf8');
 const flexible=fs.readFileSync(new URL('server/knowledge/application/publication/flexible-publication.service.js',root),'utf8');
+const learnerPublication=fs.readFileSync(new URL('server/knowledge/application/publication/learner-publication.service.js',root),'utf8');
 const semanticService=fs.readFileSync(new URL('server/knowledge/application/matching/semantic-matcher.js',root),'utf8');
 const imageService=fs.readFileSync(new URL('server/knowledge/application/intake/ai-gateway-multimodal.service.js',root),'utf8');
 const relationService=fs.readFileSync(new URL('server/knowledge/application/relations/relation-resolution-v2.service.js',root),'utf8');
+const journey=fs.readFileSync(new URL('src/features/journey/SpiralLibrary.tsx',root),'utf8');
+const publishedUnitsHook=fs.readFileSync(new URL('src/features/journey/model/usePublishedLearningUnits.ts',root),'utf8');
 
 assert.match(api,/intake-input-v2\.service\.js/,'intake API must route through native-image capable resolver');
 assert.match(api,/intake-analysis-v2\.service\.js/,'intake API must route through semantic-enhanced analysis');
@@ -36,5 +40,13 @@ assert.match(semanticService,/REVIEW_SUGGESTION_ONLY/,'semantic matcher must rem
 assert.match(imageService,/SOURCE_DESCRIPTION_DRAFT_ONLY/,'native vision output must remain a source-description draft');
 assert.match(relationService,/autoResolve:false/,'semantic relation suggestions must never auto-resolve endpoints');
 assert.match(relationService,/semanticSuggestionIsNotEvidence:true/,'semantic endpoint similarity must not become relation evidence');
+assert.match(learnerApi,/getLearnerPublishedCardsForLearningUnit/,'learner API must expose cards by stable learning-unit key');
+assert.match(learnerApi,/listPublishedLearningUnits/,'learner API must expose published dynamic units');
+assert.doesNotMatch(learnerApi,/chapter\s*[<>]=?\s*18|from 1 to 18/,'dynamic learner API must not restore the fixed chapter ceiling');
+assert.match(learnerPublication,/p\.status='PUBLISHED'/,'learner publication list must expose only creator-published material');
+assert.match(learnerPublication,/p\.publication_version=c\.publication_version/,'learner publication list must use the current publication version');
+assert.match(journey,/usePublishedLearningUnits/,'learner journey must load dynamic published units');
+assert.match(journey,/activeDynamicUnitKey/,'learner journey must be able to open a dynamic unit');
+assert.match(publishedUnitsHook,/\/api\/learning-publications/,'dynamic learner units must load from the learner-safe API');
 
-console.log(JSON.stringify({ok:true,version:'backend-completion-regression-v1',semanticConfigured:semantic.available,multimodalConfigured:multimodal.available,policy:{fixedChapterCount:false,aiNeverWritesCanonicalTruth:true,creatorReviewRequired:true,nativeImageFallbackSafe:true}},null,2));
+console.log(JSON.stringify({ok:true,version:'backend-completion-regression-v1.1',semanticConfigured:semantic.available,multimodalConfigured:multimodal.available,policy:{fixedChapterCount:false,dynamicLearnerDelivery:true,aiNeverWritesCanonicalTruth:true,creatorReviewRequired:true,nativeImageFallbackSafe:true}},null,2));
