@@ -26,6 +26,7 @@ const learnerPublication=fs.readFileSync(new URL('server/knowledge/application/p
 const semanticService=fs.readFileSync(new URL('server/knowledge/application/matching/semantic-matcher.js',root),'utf8');
 const imageService=fs.readFileSync(new URL('server/knowledge/application/intake/ai-gateway-multimodal.service.js',root),'utf8');
 const relationService=fs.readFileSync(new URL('server/knowledge/application/relations/relation-resolution-v2.service.js',root),'utf8');
+const backendHealth=fs.readFileSync(new URL('server/knowledge/application/quality/backend-completion.service.js',root),'utf8');
 const journey=fs.readFileSync(new URL('src/features/journey/SpiralLibrary.tsx',root),'utf8');
 const publishedUnitsHook=fs.readFileSync(new URL('src/features/journey/model/usePublishedLearningUnits.ts',root),'utf8');
 
@@ -47,6 +48,13 @@ assert.match(semanticService,/REVIEW_SUGGESTION_ONLY/,'semantic matcher must rem
 assert.match(imageService,/SOURCE_DESCRIPTION_DRAFT_ONLY/,'native vision output must remain a source-description draft');
 assert.match(relationService,/autoResolve:false/,'semantic relation suggestions must never auto-resolve endpoints');
 assert.match(relationService,/semanticSuggestionIsNotEvidence:true/,'semantic endpoint similarity must not become relation evidence');
+assert.match(backendHealth,/semanticProbe:probeSemantic\?semanticProbe\.ok===true:null/,'unrequested semantic probes must be null, never reported as passed');
+assert.match(backendHealth,/visionProbe:probeVision\?visionProbe\.ok===true:null/,'unrequested vision probes must be null, never reported as passed');
+assert.match(backendHealth,/notRequestedValue:null/,'health response must document null for unrequested probes');
+assert.match(backendHealth,/configuredDoesNotImplyProbePassed:true/,'health policy must distinguish configured capability from live probe success');
+assert.match(backendHealth,/backendReadyBeforeVisualRedesign:coreReady/,'core backend readiness must not be rewritten by an optional paid probe');
+assert.doesNotMatch(backendHealth,/semanticProbe:semanticProbe\.attempted\?semanticProbe\.ok:true/,'health must not turn an unrequested semantic probe into true');
+assert.doesNotMatch(backendHealth,/visionProbe:visionProbe\.attempted\?visionProbe\.ok:true/,'health must not turn an unrequested vision probe into true');
 assert.match(learnerApi,/resource==='published-units'/,'existing learner API function must expose dynamic published units');
 assert.match(learnerApi,/getLearnerPublishedCardsForLearningUnit/,'learner API must expose cards by stable learning-unit key');
 assert.match(learnerApi,/listPublishedLearningUnits/,'learner API must expose published dynamic units');
@@ -59,4 +67,4 @@ assert.match(journey,/activeDynamicUnitKey/,'learner journey must be able to ope
 assert.match(publishedUnitsHook,/\/api\/learning-graph\?resource=published-units/,'dynamic learner units must reuse the learner-safe learning API function');
 assert.equal(fs.existsSync(new URL('api/learning-publications.js',root)),false,'dynamic learner delivery must not add a thirteenth Vercel Function on the Hobby plan');
 
-console.log(JSON.stringify({ok:true,version:'backend-completion-regression-v1.3',semanticConfigured:semantic.available,multimodalConfigured:multimodal.available,policy:{fixedChapterCount:false,dynamicLearnerDelivery:true,dynamicLearningUnitTitles:true,functionBudgetPreserved:true,aiNeverWritesCanonicalTruth:true,creatorReviewRequired:true,nativeImageFallbackSafe:true}},null,2));
+console.log(JSON.stringify({ok:true,version:'backend-completion-regression-v1.4',semanticConfigured:semantic.available,multimodalConfigured:multimodal.available,policy:{fixedChapterCount:false,dynamicLearnerDelivery:true,dynamicLearningUnitTitles:true,functionBudgetPreserved:true,aiNeverWritesCanonicalTruth:true,creatorReviewRequired:true,nativeImageFallbackSafe:true,configuredDoesNotImplyProbePassed:true}},null,2));
