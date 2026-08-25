@@ -18,7 +18,7 @@ export function usePublishedLearningCards(target:number|string){
  const[state,setState]=useState<State>({loading:true,cards:[],error:null,schemaReady:false});
  useEffect(()=>{
   const controller=new AbortController();setState(current=>({...current,loading:true,error:null}));
-  const url=typeof target==='number'?`/api/knowledge?resource=published-learning-cards&chapter=${target}`:`/api/learning-publications?learningUnitKey=${encodeURIComponent(target)}`;
+  const url=typeof target==='number'?`/api/knowledge?resource=published-learning-cards&chapter=${target}`:`/api/learning-graph?resource=published-units&learningUnitKey=${encodeURIComponent(target)}`;
   fetch(url,{signal:controller.signal,headers:{Accept:'application/json'}})
    .then(async response=>{const payload=await response.json().catch(()=>({}));if(!response.ok)throw new Error(payload.error||`HTTP ${response.status}`);return payload})
    .then(payload=>setState({loading:false,cards:normalizeCards(payload.cards),error:null,schemaReady:payload.schemaReady!==false}))
