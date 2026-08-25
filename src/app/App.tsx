@@ -5,6 +5,7 @@ import{DesktopNavigation,MobileNavigation}from'../features/navigation/Navigation
 import{useAppNavigation}from'../features/navigation/useAppNavigation';
 import{isOwnerOnlyNavigation,pageByNavigationId}from'../features/navigation/navigation.config';
 import{useCrystalCollection}from'../features/crystals/model/useCrystalCollection';
+import type{JourneyLayerId}from'../features/journey/model/journey-layers';
 import{WelcomeScreen}from'../features/welcome/WelcomeScreen';
 import{LiquidGlassFilter}from'../design/primitives/LiquidGlassFilter';
 import{bindLiquidGlassPointerTracking}from'../design/glass/runtime';
@@ -36,6 +37,7 @@ export default function App(){
  const[crystalsOpen,setCrystalsOpen]=useState(false);
  const[requestedChapter,setRequestedChapter]=useState<number|null>(null);
  const[requestedSourceNumber,setRequestedSourceNumber]=useState<number|null>(null);
+ const[requestedLayer,setRequestedLayer]=useState<JourneyLayerId|null>(null);
  const[sourceChapters,setSourceChapters]=useState<Chapter[]>([]);
  const[publicSources,setPublicSources]=useState<PublicSourceSummary[]>([]);
  const[selectedPublicSourceId,setSelectedPublicSourceId]=useState<string|null>(null);
@@ -73,8 +75,8 @@ export default function App(){
  const openNew=()=>{if(!owner){setNotice('העלאת מקור זמינה במצב יוצר בלבד.');return}setEditor(true)};
  const isEvolution=evoPageIds.includes(activePage);
  const enterExperience=()=>{try{sessionStorage.setItem('eil-welcome-entered','1')}catch{}setEntered(true);nav('dashboard')};
- const openJourney=(chapterNumber?:number)=>{setSelectedPublicSourceId(null);setRequestedSourceNumber(null);setRequestedChapter(chapterNumber??null);nav('library')};
- const openSource=(sourceNumber:number)=>{setSelectedPublicSourceId(null);setRequestedChapter(null);setRequestedSourceNumber(sourceNumber);nav('library')};
+ const openJourney=(layerId?:JourneyLayerId)=>{setSelectedPublicSourceId(null);setRequestedSourceNumber(null);setRequestedChapter(null);setRequestedLayer(layerId??null);nav('library')};
+ const openSource=(sourceNumber:number)=>{setSelectedPublicSourceId(null);setRequestedChapter(null);setRequestedLayer(null);setRequestedSourceNumber(sourceNumber);nav('library')};
 
 /* ===== PAGE COMPONENTS ===== */
 
@@ -195,7 +197,7 @@ const Generic=()=><div className="simplePage" dir="rtl">
   <main>
    {activePage!=='dashboard'&&<div className="pageBack"><button onClick={goBack}>→ חזרה</button></div>}
    {notice&&<div className="notice" role="status"><span>{notice}</span><button type="button" aria-label="סגור הודעה" onClick={()=>setNotice('')}>×</button></div>}
-   {activePage==='dashboard'&&<KnowledgeDashboard onOpenJourney={()=>openJourney()}/>}
+   {activePage==='dashboard'&&<KnowledgeDashboard onOpenJourney={openJourney}/>}
    {activePage==='crystals'&&<Crystals/>}
    {activePage==='add-learning'&&<AddLearning/>}
    {activePage==='sources'&&<Sources/>}
@@ -207,8 +209,10 @@ const Generic=()=><div className="simplePage" dir="rtl">
      chapters={journeyChapters}
      initialChapter={requestedChapter}
      initialSourceNumber={requestedSourceNumber}
+     initialLayer={requestedLayer}
      onInitialChapterOpened={()=>setRequestedChapter(null)}
      onInitialSourceOpened={()=>setRequestedSourceNumber(null)}
+     onInitialLayerOpened={()=>setRequestedLayer(null)}
      onSourceClosed={()=>nav('sources')}
     />}
     {activePage==='transformation'&&<TransformationWorkspace chapters={journeyChapters}/>}
