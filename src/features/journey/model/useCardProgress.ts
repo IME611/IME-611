@@ -1,10 +1,10 @@
 import{useEffect,useState}from'react';
 import{cardProgressRepository}from'./card-progress.repository';
 
-export function useCardProgress(chapterNumber:number,cardCount:number){
-  const[position,setPositionState]=useState(()=>cardProgressRepository.load(chapterNumber,cardCount));
+export function useCardProgress(unitKey:string|number,cardCount:number){
+  const[position,setPositionState]=useState(()=>cardProgressRepository.load(unitKey,cardCount));
   useEffect(()=>{
-    const sync=()=>setPositionState(cardProgressRepository.load(chapterNumber,cardCount));
+    const sync=()=>setPositionState(cardProgressRepository.load(unitKey,cardCount));
     sync();
     window.addEventListener(cardProgressRepository.eventName,sync);
     window.addEventListener('storage',sync);
@@ -14,11 +14,11 @@ export function useCardProgress(chapterNumber:number,cardCount:number){
       window.removeEventListener('storage',sync);
       window.removeEventListener('eil:progress-reset',sync);
     };
-  },[chapterNumber,cardCount]);
+  },[unitKey,cardCount]);
   const setPosition=(next:number)=>{
     const normalized=Math.min(Math.max(0,next),Math.max(0,cardCount-1));
     setPositionState(normalized);
-    cardProgressRepository.save(chapterNumber,normalized);
+    cardProgressRepository.save(unitKey,normalized);
   };
   return{position,setPosition};
 }
