@@ -29,6 +29,7 @@ const migrations = [
   'database/migrations/009_source_publications.sql',
   'database/migrations/010_backend_completion.sql',
   'database/migrations/011_learning_unit_titles.sql',
+  'database/migrations/012_legacy_review_boundary.sql',
 ];
 
 const sha256 = value => crypto.createHash('sha256').update(value).digest('hex');

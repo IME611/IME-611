@@ -20,6 +20,7 @@ const expectedMigrations=[
  'database/migrations/009_source_publications.sql',
  'database/migrations/010_backend_completion.sql',
  'database/migrations/011_learning_unit_titles.sql',
+ 'database/migrations/012_legacy_review_boundary.sql',
 ];
 
 await client.connect();
@@ -54,14 +55,15 @@ try{
  checks.publishedCandidateVisibilityFailures=await scalar(`SELECT COUNT(*) FROM source_publications p JOIN extraction_candidates c ON c.id=ANY(p.selected_candidate_ids) WHERE p.status='PUBLISHED' AND COALESCE((c.metadata->>'learnerPublished')::boolean,FALSE)=FALSE`);
  checks.repositoryCandidateVisibilityLeaks=await scalar(`SELECT COUNT(*) FROM source_publications p JOIN extraction_candidates c ON c.source_id=p.source_id WHERE p.status<>'PUBLISHED' AND COALESCE((c.metadata->>'learnerPublished')::boolean,FALSE)=TRUE`);
  checks.chapterRangeConstraintsRemaining=await scalar(`SELECT COUNT(*) FROM pg_constraint WHERE contype='c' AND conrelid IN('source_publications'::regclass,'published_learning_cards'::regclass) AND pg_get_constraintdef(oid) ~* '(target_chapter|chapter_number).*18'`);
+ checks.legacyReviewTableMissing=await scalar(`SELECT CASE WHEN to_regclass('public.knowledge_reviews') IS NULL THEN 1 ELSE 0 END AS count`);
  checks.migrationsApplied=await scalar(`SELECT COUNT(*) FROM schema_migrations WHERE name=ANY($1::text[])`,[expectedMigrations]);
  checks.migrationChecksumShapeFailures=await scalar(`SELECT COUNT(*) FROM schema_migrations WHERE name=ANY($1::text[]) AND checksum !~ '^[0-9a-f]{64}$'`,[expectedMigrations]);
 
  assert.ok(checks.sources>=18,'canonical source corpus unexpectedly shrank below seed baseline');
  assert.ok(checks.fragments>=18,'canonical fragment corpus unexpectedly shrank below seed baseline');
  assert.ok(checks.candidates>0,'knowledge candidate layer must be non-empty');
- assert.equal(checks.migrationsApplied,expectedMigrations.length,'all canonical migrations 001-011 must be recorded');
- for(const name of ['candidatesWithoutEvidence','unverifiedCandidateEvidence','candidateSourceQuoteMismatch','evidenceFragmentQuoteMismatch','evidenceSourceMismatch','claimsWithoutEvidence','approvedRelationsWithUnresolvedEndpoints','nonExplicitRelationEvidence','relationSourceAtomMismatch','reviewDecisionsMissingReviewer','orphanExtractionReviewDecisions','orphanRelationReviewDecisions','pendingIntakeWithCanonicalSource','rejectedIntakeWithCanonicalSource','approvedIntakeWithoutCanonicalSource','publishedSourceWithoutCards','publishedSourceWithoutLearningUnit','publishedSourceWithoutLearningUnitTitle','publishedCardWithoutLearningUnit','publishedCardWithoutLearningUnitTitle','publishedCardOutsideSelectedCandidates','publishedCardSourceMismatch','publishedCardWordCountFailures','publishedCandidateVisibilityFailures','repositoryCandidateVisibilityLeaks','chapterRangeConstraintsRemaining','migrationChecksumShapeFailures'])assert.equal(checks[name],0,`${name} must be zero`);
+ assert.equal(checks.migrationsApplied,expectedMigrations.length,'all canonical migrations 001-012 must be recorded');
+ for(const name of ['candidatesWithoutEvidence','unverifiedCandidateEvidence','candidateSourceQuoteMismatch','evidenceFragmentQuoteMismatch','evidenceSourceMismatch','claimsWithoutEvidence','approvedRelationsWithUnresolvedEndpoints','nonExplicitRelationEvidence','relationSourceAtomMismatch','reviewDecisionsMissingReviewer','orphanExtractionReviewDecisions','orphanRelationReviewDecisions','pendingIntakeWithCanonicalSource','rejectedIntakeWithCanonicalSource','approvedIntakeWithoutCanonicalSource','publishedSourceWithoutCards','publishedSourceWithoutLearningUnit','publishedSourceWithoutLearningUnitTitle','publishedCardWithoutLearningUnit','publishedCardWithoutLearningUnitTitle','publishedCardOutsideSelectedCandidates','publishedCardSourceMismatch','publishedCardWordCountFailures','publishedCandidateVisibilityFailures','repositoryCandidateVisibilityLeaks','chapterRangeConstraintsRemaining','legacyReviewTableMissing','migrationChecksumShapeFailures'])assert.equal(checks[name],0,`${name} must be zero`);
 
- console.log(JSON.stringify({ok:true,phase:'CORPUS_QUALITY_GATES_V0_4',checks,policy:{everyCandidateTraceable:true,exactQuotesVerified:true,canonicalClaimsEvidenceBacked:true,unresolvedRelationsCannotBeApproved:true,reviewDecisionsAttributedAndReferential:true,intakeReviewGatePreserved:true,sourcePublicationSeparate:true,publishedCardsTraceable:true,dynamicLearningUnitPublication:true,dynamicLearningUnitTitles:true,fixedChapterCount:false,aiCannotBypassReview:true,migrationLedgerVerified:true}},null,2));
+ console.log(JSON.stringify({ok:true,phase:'CORPUS_QUALITY_GATES_V0_5',checks,policy:{everyCandidateTraceable:true,exactQuotesVerified:true,canonicalClaimsEvidenceBacked:true,unresolvedRelationsCannotBeApproved:true,reviewDecisionsAttributedAndReferential:true,intakeReviewGatePreserved:true,sourcePublicationSeparate:true,publishedCardsTraceable:true,dynamicLearningUnitPublication:true,dynamicLearningUnitTitles:true,fixedChapterCount:false,aiCannotBypassReview:true,legacyReviewSchemaMigrationOwned:true,migrationLedgerVerified:true}},null,2));
 }finally{await client.end()}

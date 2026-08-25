@@ -21,6 +21,7 @@ const api=fs.readFileSync(new URL('api/reviews.js',root),'utf8');
 const learnerApi=fs.readFileSync(new URL('api/learning-graph.js',root),'utf8');
 const migration010=fs.readFileSync(new URL('database/migrations/010_backend_completion.sql',root),'utf8');
 const migration011=fs.readFileSync(new URL('database/migrations/011_learning_unit_titles.sql',root),'utf8');
+const migration012=fs.readFileSync(new URL('database/migrations/012_legacy_review_boundary.sql',root),'utf8');
 const flexible=fs.readFileSync(new URL('server/knowledge/application/publication/flexible-publication.service.js',root),'utf8');
 const learnerPublication=fs.readFileSync(new URL('server/knowledge/application/publication/learner-publication.service.js',root),'utf8');
 const semanticService=fs.readFileSync(new URL('server/knowledge/application/matching/semantic-matcher.js',root),'utf8');
@@ -36,11 +37,15 @@ assert.match(api,/mode==='relation-resolution'/,'creator relation-resolution end
 assert.match(api,/mode==='publication-placement'/,'dynamic publication placement endpoint must be connected');
 assert.match(api,/learningUnitTitle:body\.learningUnitTitle/,'dynamic publication endpoint must carry the learner-facing title');
 assert.match(api,/mode==='backend-health'/,'backend completion health endpoint must be connected');
+assert.match(api,/PROTECTED_MODES/,'review API must define explicit protected modes');
+assert.match(api,/KNOWN_MODES/,'review API must reject unknown modes instead of falling through');
+assert.doesNotMatch(api,/CREATE TABLE IF NOT EXISTS knowledge_reviews/i,'review API must not own schema creation');
 assert.match(migration010,/target_learning_unit_key/,'source publications must have dynamic learning-unit placement');
 assert.match(migration010,/learning_unit_key/,'published cards must have dynamic learning-unit placement');
 assert.match(migration010,/ALTER COLUMN chapter_number DROP NOT NULL/,'legacy numeric chapter placement must be optional');
 assert.match(migration011,/target_learning_unit_title/,'source publications must persist learner-facing unit titles');
 assert.match(migration011,/learning_unit_title/,'published cards must persist learner-facing unit titles');
+assert.match(migration012,/CREATE TABLE IF NOT EXISTS knowledge_reviews/i,'legacy review schema must be migration-owned');
 assert.doesNotMatch(flexible,/chapter<1\|\|chapter>18|BETWEEN 1 AND 18|from 1 to 18/,'dynamic publication service must not impose a fixed 18-unit ceiling');
 assert.match(flexible,/fixedChapterCount:false/,'dynamic publication policy must explicitly reject a fixed chapter count');
 assert.match(flexible,/normalizeLearningUnitTitle/,'dynamic publication must validate a learner-facing title');
@@ -48,6 +53,9 @@ assert.match(semanticService,/REVIEW_SUGGESTION_ONLY/,'semantic matcher must rem
 assert.match(imageService,/SOURCE_DESCRIPTION_DRAFT_ONLY/,'native vision output must remain a source-description draft');
 assert.match(relationService,/autoResolve:false/,'semantic relation suggestions must never auto-resolve endpoints');
 assert.match(relationService,/semanticSuggestionIsNotEvidence:true/,'semantic endpoint similarity must not become relation evidence');
+assert.match(backendHealth,/migration012:migration012===1/,'backend health must require review-boundary migration 012');
+assert.match(backendHealth,/reviewRoutesFailClosed:true/,'backend health policy must declare fail-closed review routing');
+assert.match(backendHealth,/legacyReviewSchemaMigrationOwned:true/,'backend health policy must declare migration-owned legacy review schema');
 assert.match(backendHealth,/semanticProbe:probeSemantic\?semanticProbe\.ok===true:null/,'unrequested semantic probes must be null, never reported as passed');
 assert.match(backendHealth,/visionProbe:probeVision\?visionProbe\.ok===true:null/,'unrequested vision probes must be null, never reported as passed');
 assert.match(backendHealth,/notRequestedValue:null/,'health response must document null for unrequested probes');
@@ -67,4 +75,4 @@ assert.match(journey,/activeDynamicUnitKey/,'learner journey must be able to ope
 assert.match(publishedUnitsHook,/\/api\/learning-graph\?resource=published-units/,'dynamic learner units must reuse the learner-safe learning API function');
 assert.equal(fs.existsSync(new URL('api/learning-publications.js',root)),false,'dynamic learner delivery must not add a thirteenth Vercel Function on the Hobby plan');
 
-console.log(JSON.stringify({ok:true,version:'backend-completion-regression-v1.4',semanticConfigured:semantic.available,multimodalConfigured:multimodal.available,policy:{fixedChapterCount:false,dynamicLearnerDelivery:true,dynamicLearningUnitTitles:true,functionBudgetPreserved:true,aiNeverWritesCanonicalTruth:true,creatorReviewRequired:true,nativeImageFallbackSafe:true,configuredDoesNotImplyProbePassed:true}},null,2));
+console.log(JSON.stringify({ok:true,version:'backend-completion-regression-v1.5',semanticConfigured:semantic.available,multimodalConfigured:multimodal.available,policy:{fixedChapterCount:false,dynamicLearnerDelivery:true,dynamicLearningUnitTitles:true,functionBudgetPreserved:true,aiNeverWritesCanonicalTruth:true,creatorReviewRequired:true,nativeImageFallbackSafe:true,configuredDoesNotImplyProbePassed:true,reviewRoutesFailClosed:true,legacyReviewSchemaMigrationOwned:true}},null,2));
