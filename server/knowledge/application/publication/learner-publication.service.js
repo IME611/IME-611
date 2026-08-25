@@ -12,6 +12,7 @@ export async function listPublishedLearningUnits(db){
   SELECT c.learning_unit_key AS key,
          COUNT(*)::int AS card_count,
          COUNT(DISTINCT c.source_id)::int AS source_count,
+         MAX(NULLIF(trim(c.learning_unit_title),'')) AS creator_title,
          MIN(c.title) AS fallback_title,
          MAX(c.published_at) AS published_at
   FROM published_learning_cards c
@@ -33,13 +34,13 @@ export async function listPublishedLearningUnits(db){
   ok:true,
   units:rows.map(row=>({
    key:row.key,
-   title:titles.get(row.key)||row.fallback_title||row.key,
+   title:row.creator_title||titles.get(row.key)||row.fallback_title||row.key,
    cardCount:Number(row.card_count||0),
    sourceCount:Number(row.source_count||0),
    publishedAt:row.published_at,
    legacyChapterNumber:legacyChapterNumber(row.key),
   })),
-  policy:{learnerSafe:true,fixedChapterCount:false,legacyUnitsRemainAvailable:true,creatorPublishedOnly:true},
+  policy:{learnerSafe:true,creatorPublishedOnly:true,fixedChapterCount:false,legacyUnitsRemainAvailable:true,creatorTitlePreferred:true},
  };
 }
 
