@@ -27,16 +27,20 @@ function sourceParagraph(text:string,index:number){
 
 type Props={
   chapter:LearningCardChapter;
-  sourceChapter:Chapter;
+  sourceChapter?:Chapter;
   layerLabel:string;
   color:string;
   onBack:()=>void;
   onComplete:()=>void;
   onPreviousChapter?:()=>void;
+  backLabel?:string;
+  completionLabel?:string;
 };
 
-export function LearningCardReader({chapter,sourceChapter,layerLabel,color,onBack,onComplete,onPreviousChapter}:Props){
-  const{position,setPosition}=useCardProgress(chapter.chapterNumber,chapter.cards.length);
+export function LearningCardReader({chapter,sourceChapter,layerLabel,color,onBack,onComplete,onPreviousChapter,backLabel='← חזרה לנושאים',completionLabel}:Props){
+  const progressKey=chapter.unitKey??chapter.chapterNumber??chapter.title;
+  const chapterIdentity=chapter.unitKey??(chapter.chapterNumber?`legacy-chapter:${chapter.chapterNumber}`:chapter.title);
+  const{position,setPosition}=useCardProgress(progressKey,chapter.cards.length);
   const current=chapter.cards[position];
   const isLast=position===chapter.cards.length-1;
   const[uploadedSource,setUploadedSource]=useState<any>(null);const[sourceLoading,setSourceLoading]=useState(false);const[sourceError,setSourceError]=useState('');
@@ -58,21 +62,23 @@ export function LearningCardReader({chapter,sourceChapter,layerLabel,color,onBac
       window.scrollTo({top:0,behavior:'smooth'});
     }
   };
+  const displayNumber=chapter.displayNumber??(chapter.chapterNumber?String(chapter.chapterNumber).padStart(2,'0'):'חדש');
+  const canShowSource=Boolean(current.sourceId||sourceChapter);
 
   return <div className="learningCardReader" dir="rtl" style={{'--card-accent':color} as React.CSSProperties}>
     <div className="spiralChapterTop">
-      <button className="spiralBack" type="button" onClick={onBack}>← חזרה לנושאים</button>
+      <button className="spiralBack" type="button" onClick={onBack}>{backLabel}</button>
       <span className="spiralChapterPos">{layerLabel}</span>
     </div>
 
     <header className="learningCardChapterHead">
-      <span className="learningCardChapterNumber">{String(chapter.chapterNumber).padStart(2,'0')}</span>
+      <span className="learningCardChapterNumber">{displayNumber}</span>
       <div><h1>{chapter.title}</h1><p>{chapter.subtitle}</p></div>
     </header>
 
     <div className="learningCardContext">
-      <div><span>השאלה שמובילה את הפרק</span><strong>{chapter.guidingQuestion}</strong></div>
-      <p><b>למה הוא כאן?</b> {chapter.whyHere}</p>
+      <div><span>השאלה שמובילה את היחידה</span><strong>{chapter.guidingQuestion}</strong></div>
+      <p><b>למה היא כאן?</b> {chapter.whyHere}</p>
     </div>
 
     <div className="learningCardProgress" aria-label={`כרטיס ${position+1} מתוך ${chapter.cards.length}`}>
@@ -94,7 +100,7 @@ export function LearningCardReader({chapter,sourceChapter,layerLabel,color,onBac
 
     <CrystalCardComposer record={{
       fragmentId:`learning-card-${current.id}`,
-      conceptId:`chapter-${chapter.chapterNumber}`,
+      conceptId:`learning-unit:${chapterIdentity}`,
       topic:chapter.title,
       subtopic:current.title,
       text:current.text,
@@ -104,14 +110,14 @@ export function LearningCardReader({chapter,sourceChapter,layerLabel,color,onBac
     }}/>
 
     <nav className="learningCardNavigation" aria-label="ניווט בין כרטיסיות">
-      <button type="button" className="learningCardPrevious" onClick={previous} disabled={position===0&&!onPreviousChapter}>{position>0?'→ הכרטיס הקודם':'→ הפרק הקודם'}</button>
-      <button type="button" className="learningCardNext" onClick={next}>{isLast?'סיימתי — לפרק הבא ←':'הכרטיס הבא ←'}</button>
+      {(position>0||chapter.chapterNumber!==undefined||onPreviousChapter)?<button type="button" className="learningCardPrevious" onClick={previous} disabled={position===0&&!onPreviousChapter}>{position>0?'→ הכרטיס הקודם':'→ הפרק הקודם'}</button>:null}
+      <button type="button" className="learningCardNext" onClick={next}>{isLast?(completionLabel??'סיימתי — לפרק הבא ←'):'הכרטיס הבא ←'}</button>
     </nav>
 
-    <details className="canonicalSourceDetails" onToggle={loadUploadedSource}>
+    {canShowSource?<details className="canonicalSourceDetails" onToggle={loadUploadedSource}>
       <summary>{current.sourceId?'לקריאת המקור שהועלה':'לקריאת חומר המקור המלא'}</summary>
       <div className="canonicalSourceNotice"><b>המקור נשמר בשלמותו</b><span>הכרטיסיות הן עיבוד קצר; כאן אפשר לבדוק את הניסוח וההקשר המקוריים.</span></div>
-      {current.sourceId?<>{sourceLoading&&<p>טוען את המקור…</p>}{sourceError&&<p className="formError" role="alert">{sourceError}</p>}{uploadedSource&&<article className="spiralContent">{(uploadedSource.fragments||[]).flatMap((fragment:any)=>String(fragment.raw_text||'').split(/\n{2,}/u)).map(sourceParagraph)}</article>}</>:<article className="spiralContent">{sourceChapter.paragraphs.map(sourceParagraph)}</article>}
-    </details>
+      {current.sourceId?<>{sourceLoading&&<p>טוען את המקור…</p>}{sourceError&&<p className="formError" role="alert">{sourceError}</p>}{uploadedSource&&<article className="spiralContent">{(uploadedSource.fragments||[]).flatMap((fragment:any)=>String(fragment.raw_text||'').split(/\n{2,}/u)).map(sourceParagraph)}</article>}</>:sourceChapter?<article className="spiralContent">{sourceChapter.paragraphs.map(sourceParagraph)}</article>:null}
+    </details>:null}
   </div>;
 }

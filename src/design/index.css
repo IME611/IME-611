@@ -7,6 +7,7 @@
 @import './features/source-publication.css';
 @import './features/navigation.css';
 @import './features/journey.css';
+@import './features/dynamic-publications.css';
 @import './features/knowledge-dashboard.css';
 @import './features/welcome.css';
 @import './features/cards.css';

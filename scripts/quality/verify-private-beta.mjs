@@ -95,7 +95,8 @@ assert.doesNotMatch(journey,/spiralReflect|onNext|canGoNext/,'chapter view must 
 assert.match(journey,/סיימתי — לפרק הבא/,'chapter completion and next navigation must share one clear action');
 assert.match(journey,/getPilotCardChapter/,'the guided journey must connect the reviewed short-card pilot');
 assert.match(cardReader,/כרטיס \{position\+1\} מתוך/,'card reader must communicate short in-chapter progress');
-assert.match(cardReader,/isLast\?'סיימתי — לפרק הבא/,'the last card must own the only completion and next-chapter action');
+assert.match(cardReader,/if\(isLast\)onComplete\(\)/,'the last card must own the only completion action');
+assert.match(cardReader,/isLast\?\(completionLabel\?\?'סיימתי — לפרק הבא/,'the final action may use a unit-specific label without adding another completion control');
 assert.doesNotMatch(cardReader,/crystalSaveCard|שמור כקריסטל/,'card chapters must not duplicate the crystal composer');
 assert.match(crystalComposer,/הערה אישית/,'a saved card must support one optional personal note in the same flow');
 assert.match(cardScript,/S01-U01/,'pilot cards must retain source-unit traceability');
