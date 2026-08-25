@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useLearningProgress } from './model/useLearningProgress';
 import { journeyPath } from './model/journey-stage';
+import { JOURNEY_LAYERS, isJourneyLayerId, journeyLayerForChapter } from './model/journey-layers';
+import type { JourneyLayerId } from './model/journey-layers';
 import type { LearningStage } from '../../core/learning-path/learning-path.types';
 import { useCrystalCollection } from '../crystals/model/useCrystalCollection';
 import { getPilotCardChapter } from './data/pilot-card-script';
@@ -15,18 +17,14 @@ type Props = {
   chapters: Chapter[];
   initialChapter?: number | null;
   initialSourceNumber?: number | null;
+  initialLayer?: JourneyLayerId | null;
   onInitialChapterOpened?: () => void;
   onInitialSourceOpened?: () => void;
+  onInitialLayerOpened?: () => void;
   onSourceClosed?: () => void;
 };
 
-const LAYERS = [
-  { id: 'A', label: 'שכבה ראשונה — אני והמערכת',   color: '#006039', accent: '#006039', nums: [1,2,3],       why: 'מתחילים בשאלת הזהות, מרחיבים את המבט אל הסביבה, ורק אז חוזרים אל מורכבות הגוף.' },
-  { id: 'B', label: 'שכבה שנייה — המוח והדפוסים', color: '#006039', accent: '#006039', nums: [4,5,6],       why: 'אחרי הגוף עוברים אל מנגנוני המוח, אל הדפוסים האוטומטיים ואל מצבי הפעילות שמשפיעים על למידה.' },
-  { id: 'C', label: 'שכבה שלישית — תדר, חוויה ומשמעות', color: '#006039', accent: '#006039', nums: [7,8,9],       why: 'מתחילים במנגנון ביולוגי שניתן למדוד, עוברים לפיזיקה ולחוויה של צליל, ורק אז בוחנים מפות רוחניות תוך הבחנה בין מסורת, מטפורה וראיה.' },
-  { id: 'D', label: 'שכבה רביעית — כלי השינוי',    color: '#006039', accent: '#006039', nums: [10,11,12,13], why: 'הבנתי מה אני. האם אני יכול לשנות? כן — כך עושים את זה.' },
-  { id: 'E', label: 'שכבה חמישית — המשמעות',       color: '#006039', accent: '#006039', nums: [14,15,16,17,18], why: 'חוקי המשחק, כיוון, קושי — וחזרה לשאלה הראשונה עם תשובה אמיתית.' },
-] as const;
+type JourneyLayer=typeof JOURNEY_LAYERS[number];
 
 function clean(t: string) { return t.replace(/^פרק\s*\d+[:：]?\s*/, ''); }
 function stageForNum(num: number): LearningStage | undefined {
@@ -36,7 +34,7 @@ function stageForNum(num: number): LearningStage | undefined {
 function ChapterCard({ chapter, displayTitle, layer, unlocked, completed, onClick }: {
   chapter: Chapter;
   displayTitle?: string;
-  layer: typeof LAYERS[number];
+  layer: JourneyLayer;
   unlocked: boolean;
   completed: boolean;
   onClick: () => void;
@@ -45,7 +43,7 @@ function ChapterCard({ chapter, displayTitle, layer, unlocked, completed, onClic
     <button
       type="button"
       className={`spiralCard${completed ? ' spiralCard--done' : ''}${!unlocked ? ' spiralCard--locked' : ''}`}
-      style={{ '--lc': layer.color, '--la': layer.accent } as React.CSSProperties}
+      style={{ '--lc': layer.color, '--lt': layer.textColor } as React.CSSProperties}
       onClick={onClick}
       disabled={!unlocked}
     >
@@ -53,25 +51,25 @@ function ChapterCard({ chapter, displayTitle, layer, unlocked, completed, onClic
       <span className="spiralCardBody">
         <span className="spiralCardTitle">{displayTitle??clean(chapter.title)}</span>
       </span>
-      <span className="spiralCardIcon">{completed ? '✓' : unlocked ? '←' : '🔒'}</span>
+      <span className="spiralCardIcon" aria-hidden="true">{completed ? '✓' : unlocked ? '←' : '🔒'}</span>
     </button>
   );
 }
 
 function PublishedUnitCard({unit,onClick}:{unit:PublishedLearningUnit;onClick:()=>void}){
-  return <button type="button" className="spiralCard publishedUnitCard" onClick={onClick}>
+  return <button type="button" className="spiralCard publishedUnitCard" onClick={onClick} style={{'--lc':'#006039','--lt':'#006039'} as React.CSSProperties}>
     <span className="spiralCardNum publishedUnitBadge">חדש</span>
     <span className="spiralCardBody">
       <span className="spiralCardTitle">{unit.title}</span>
       <span className="publishedUnitMeta">{unit.cardCount} כרטיסים · {unit.sourceCount} {unit.sourceCount===1?'מקור':'מקורות'}</span>
     </span>
-    <span className="spiralCardIcon">←</span>
+    <span className="spiralCardIcon" aria-hidden="true">←</span>
   </button>;
 }
 
 function ChapterView({ chapter, layer, onBack, onComplete, onPrevious, canGoPrevious, isFinal, sourceOnly=false }: {
   chapter: Chapter;
-  layer: typeof LAYERS[number];
+  layer: JourneyLayer;
   onBack: () => void;
   onComplete: () => void;
   onPrevious?: () => void;
@@ -88,11 +86,11 @@ function ChapterView({ chapter, layer, onBack, onComplete, onPrevious, canGoPrev
     <div className="spiralChapter" dir="rtl">
       <div className="spiralChapterTop">
         <button className="spiralBack" type="button" onClick={onBack}>{sourceOnly?'→ חזרה למקורות':'← חזרה למסע'}</button>
-        <span className="spiralChapterPos" style={{ color: layer.accent }}>{sourceOnly?'מסמך מקור מלא':layer.label}</span>
+        <span className="spiralChapterPos" style={{ color: layer.textColor }}>{sourceOnly?'מסמך מקור מלא':layer.label}</span>
       </div>
 
       <header className="spiralChapterHeader" style={{ borderColor: layer.color }}>
-        <div className="spiralChapterNum" style={{ background: layer.color }}>
+        <div className="spiralChapterNum" style={{ background: layer.textColor }}>
           {String(chapter.number).padStart(2, '0')}
         </div>
         <div>
@@ -102,7 +100,7 @@ function ChapterView({ chapter, layer, onBack, onComplete, onPrevious, canGoPrev
       </header>
 
       {!sourceOnly&&stage?.guidingQuestion && (
-        <div className="spiralQuestion" style={{ borderColor: layer.accent }}>
+        <div className="spiralQuestion" style={{ borderColor: layer.color }}>
           <span className="spiralQuestionLabel">השאלה שהפרק עונה עליה</span>
           <p>{stage.guidingQuestion}</p>
         </div>
@@ -124,19 +122,19 @@ function ChapterView({ chapter, layer, onBack, onComplete, onPrevious, canGoPrev
           if (t.startsWith('##HIGHLIGHT##')) return <div key={i} className="chHighlight">{t.replace('##HIGHLIGHT##','').trim()}</div>;
           if (t.startsWith('##BIG##')) return <div key={i} className="chBig">{t.replace('##BIG##','').trim()}</div>;
           if (t.startsWith('##GROUP##')) return <div key={i} className="chGroup">{t.replace('##GROUP##','').trim()}</div>;
-          if (t.startsWith('##SYSTEM##')) return <div key={i} className="chSystem"><span className="chSystemDot" style={{background:layer.color}}/>  <span>{t.replace('##SYSTEM##','').trim()}</span></div>;
+          if (t.startsWith('##SYSTEM##')) return <div key={i} className="chSystem"><span className="chSystemDot" style={{background:layer.color}} aria-hidden="true"/>  <span>{t.replace('##SYSTEM##','').trim()}</span></div>;
           if (t.startsWith('##WINK##')) return <div key={i} className="chWink">{t.replace('##WINK##','').trim()}</div>;
           if ((/^פרק\s*\d+/u.test(t) || /^\d+\.\s+/u.test(t)) && t.length < 120)
             return <h3 key={i} className="spiralContentH3">{t}</h3>;
           if (/^[-•✓→]/u.test(t))
-            return <div className="spiralBullet" key={i}><span style={{color:layer.accent}}>•</span><p>{t.replace(/^[-•✓→]\s*/u,'')}</p></div>;
+            return <div className="spiralBullet" key={i}><span style={{color:layer.color}} aria-hidden="true">•</span><p>{t.replace(/^[-•✓→]\s*/u,'')}</p></div>;
           return <p key={i} className="spiralPara">{t}</p>;
         })}
       </article>
 
       {!sourceOnly&&<div className="crystalSaveCard">
         <div className="crystalSaveHeader">
-          <span className="crystalSaveIcon">◆</span>
+          <span className="crystalSaveIcon" aria-hidden="true">◆</span>
           <div>
             <div className="crystalSaveTitle">שמור כקריסטל</div>
             <div className="crystalSaveSub">תובנה שתישמר ב"המרחב האישי" שלך</div>
@@ -188,10 +186,10 @@ function ChapterView({ chapter, layer, onBack, onComplete, onPrevious, canGoPrev
   );
 }
 
-function ChapterExperience({chapter,chapters,layer,onBack,onComplete,onPrevious}:{chapter:Chapter;chapters:Chapter[];layer:typeof LAYERS[number];onBack:()=>void;onComplete:()=>void;onPrevious?:()=>void}){
+function ChapterExperience({chapter,chapters,layer,onBack,onComplete,onPrevious}:{chapter:Chapter;chapters:Chapter[];layer:JourneyLayer;onBack:()=>void;onComplete:()=>void;onPrevious?:()=>void}){
   const published=usePublishedLearningCards(chapter.number),pilot=getPilotCardChapter(chapter.number),stage=stageForNum(chapter.number);
   const sourceChapter=pilot?chapters.find(item=>item.sourceFile===pilot.sourceFile)??chapter:chapter;
-  if(published.loading&&!pilot)return <div className="spiralChapter journeyCardsLoading" dir="rtl"><div className="spiralChapterTop"><button className="spiralBack" type="button" onClick={onBack}>← חזרה לנושאים</button><span className="spiralChapterPos">{layer.label}</span></div><p>טוען את הכרטיסיות של הפרק…</p></div>;
+  if(published.loading&&!pilot)return <div className="spiralChapter journeyCardsLoading" dir="rtl"><div className="spiralChapterTop"><button className="spiralBack" type="button" onClick={onBack}>← חזרה לנושאים</button><span className="spiralChapterPos" style={{color:layer.textColor}}>{layer.label}</span></div><p>טוען את הכרטיסיות של הפרק…</p></div>;
   const combinedCards=[...(pilot?.cards||[]),...published.cards].map((card,index)=>({...card,order:index+1}));
   const cardChapter:LearningCardChapter|null=combinedCards.length?{
     chapterNumber:chapter.number,
@@ -202,7 +200,7 @@ function ChapterExperience({chapter,chapters,layer,onBack,onComplete,onPrevious}
     sourceFile:pilot?.sourceFile??chapter.sourceFile,
     cards:combinedCards,
   }:null;
-  if(cardChapter)return <LearningCardReader chapter={cardChapter} sourceChapter={sourceChapter} layerLabel={layer.label} color={layer.color} onBack={onBack} onComplete={onComplete} onPreviousChapter={onPrevious}/>;
+  if(cardChapter)return <LearningCardReader chapter={cardChapter} sourceChapter={sourceChapter} layerLabel={layer.label} color={layer.textColor} onBack={onBack} onComplete={onComplete} onPreviousChapter={onPrevious}/>;
   return <ChapterView chapter={chapter} layer={layer} onBack={onBack} onComplete={onComplete} onPrevious={onPrevious} canGoPrevious={Boolean(onPrevious)} isFinal={chapter.number===18}/>;
 }
 
@@ -224,13 +222,13 @@ function DynamicUnitExperience({unit,onBack}:{unit:PublishedLearningUnit;onBack:
   return <LearningCardReader chapter={chapter} layerLabel="חדש במאגר" color="#006039" onBack={onBack} onComplete={onBack} backLabel="← חזרה למסע" completionLabel="סיימתי — חזרה למסע ←"/>;
 }
 
-export default function SpiralLibrary({ chapters, initialChapter, initialSourceNumber, onInitialChapterOpened, onInitialSourceOpened, onSourceClosed }: Props) {
+export default function SpiralLibrary({ chapters, initialChapter, initialSourceNumber, initialLayer, onInitialChapterOpened, onInitialSourceOpened, onInitialLayerOpened, onSourceClosed }: Props) {
   const learning = useLearningProgress(journeyPath);
   const publishedUnits=usePublishedLearningUnits();
   const [activeNum, setActiveNum]   = useState<number | null>(null);
   const [activeSourceNum, setActiveSourceNum] = useState<number | null>(null);
   const [activeDynamicUnitKey,setActiveDynamicUnitKey]=useState<string|null>(null);
-  const [openLayer, setOpenLayer]   = useState<string>('A');
+  const [openLayer, setOpenLayer]   = useState<JourneyLayerId|''>('A');
 
   const unlocked  = (_num: number) => true;
   const completed = (num: number) => { const s = stageForNum(num); return s ? learning.state.completedStageIds.includes(s.id) : false; };
@@ -238,7 +236,10 @@ export default function SpiralLibrary({ chapters, initialChapter, initialSourceN
 
   useEffect(() => {
     if (!initialChapter) return;
+    const targetLayer=journeyLayerForChapter(initialChapter);
     setActiveDynamicUnitKey(null);
+    setActiveSourceNum(null);
+    if(targetLayer)setOpenLayer(targetLayer.id);
     setActiveNum(initialChapter);
     onInitialChapterOpened?.();
   }, [initialChapter]);
@@ -251,16 +252,28 @@ export default function SpiralLibrary({ chapters, initialChapter, initialSourceN
     onInitialSourceOpened?.();
   }, [initialSourceNumber]);
 
-  const doneCount = chapters.filter(c => completed(c.number)).length;
-  const pct       = Math.round((doneCount / 18) * 100);
+  useEffect(() => {
+    if (!initialLayer||!isJourneyLayerId(initialLayer)) return;
+    setActiveDynamicUnitKey(null);
+    setActiveSourceNum(null);
+    setActiveNum(null);
+    setOpenLayer(initialLayer);
+    onInitialLayerOpened?.();
+  }, [initialLayer]);
+
+  const foundationTotal=journeyPath.stages.length;
+  const doneCount = journeyPath.stages.filter(stage=>learning.state.completedStageIds.includes(stage.id)).length;
+  const pct       = Math.round((doneCount / foundationTotal) * 100);
 
   const chapter = activeNum ? chapters.find(c => c.number === activeNum) ?? null : null;
-  const layer   = chapter   ? LAYERS.find(l => (l.nums as readonly number[]).includes(chapter.number)) ?? LAYERS[0] : LAYERS[0];
+  const layer   = chapter ? journeyLayerForChapter(chapter.number) ?? JOURNEY_LAYERS[0] : JOURNEY_LAYERS[0];
   const previousChapter = chapter ? chapters.find(c => c.number === chapter.number - 1) ?? null : null;
   const activeDynamicUnit=activeDynamicUnitKey?dynamicUnits.find(unit=>unit.key===activeDynamicUnitKey)??null:null;
   const openChapter = (chapterNumber: number) => {
+    const targetLayer=journeyLayerForChapter(chapterNumber);
     setActiveDynamicUnitKey(null);
     setActiveSourceNum(null);
+    if(targetLayer)setOpenLayer(targetLayer.id);
     setActiveNum(chapterNumber);
     scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -268,7 +281,7 @@ export default function SpiralLibrary({ chapters, initialChapter, initialSourceN
   if(activeSourceNum){
     const sourceChapter=chapters.find(item=>item.number===activeSourceNum)??null;
     if(sourceChapter){
-      const sourceLayer=LAYERS.find(item=>(item.nums as readonly number[]).includes(sourceChapter.number))??LAYERS[0];
+      const sourceLayer=journeyLayerForChapter(sourceChapter.number)??JOURNEY_LAYERS[0];
       return <ChapterView
         chapter={sourceChapter}
         layer={sourceLayer}
@@ -288,7 +301,11 @@ export default function SpiralLibrary({ chapters, initialChapter, initialSourceN
     const s = stageForNum(chapter.number);
     if (s) learning.complete(s.id, '');
     const next = chapter.number + 1;
-    if (next <= 18) { setActiveNum(next); } else { setActiveNum(null); }
+    if (next <= foundationTotal) {
+      const nextLayer=journeyLayerForChapter(next);
+      if(nextLayer)setOpenLayer(nextLayer.id);
+      setActiveNum(next);
+    } else { setActiveNum(null); }
     scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -303,57 +320,58 @@ export default function SpiralLibrary({ chapters, initialChapter, initialSourceN
         <p className="spiralSubtitle">5 שכבות במסלול היסוד · ידע חדש יכול להצטרף מהמאגר</p>
 
         <div className="spiralProgress">
-          <div className="spiralProgressBar">
+          <div className="spiralProgressBar" role="progressbar" aria-label="התקדמות במסלול היסוד" aria-valuemin={0} aria-valuemax={100} aria-valuenow={pct}>
             <div className="spiralProgressFill" style={{ width: `${pct}%` }} />
           </div>
-          <span className="spiralProgressText">{doneCount} / 18 פרקי יסוד הושלמו</span>
+          <span className="spiralProgressText">{doneCount} / {foundationTotal} פרקי יסוד הושלמו</span>
         </div>
       </div>
 
       <div className="spiralLayers">
-        {LAYERS.map(l => {
+        {JOURNEY_LAYERS.map(l => {
           const layerNums = l.nums as readonly number[]; const layerChaps = chapters.filter(c => layerNums.includes(c.number));
           const layerDone  = layerChaps.filter(c => completed(c.number)).length;
           const isOpen     = openLayer === l.id;
+          const bodyId=`journey-layer-${l.id}`;
 
           return (
-            <div key={l.id} className={`spiralLayer${isOpen ? ' spiralLayer--open' : ''}`}>
+            <div key={l.id} className={`spiralLayer${isOpen ? ' spiralLayer--open' : ''}`} style={{'--lc':l.color,'--lt':l.textColor} as React.CSSProperties}>
               <button
                 type="button"
                 className="spiralLayerHeader"
                 style={{ borderColor: l.color, background: isOpen ? `${l.color}12` : 'transparent' }}
                 onClick={() => setOpenLayer(isOpen ? '' : l.id)}
+                aria-expanded={isOpen}
+                aria-controls={bodyId}
               >
                 <div className="spiralLayerLeft">
-                  <div className="spiralLayerDot" style={{ background: l.color }} />
+                  <div className="spiralLayerDot" style={{ background: l.color }} aria-hidden="true" />
                   <div>
-                    <div className="spiralLayerLabel" style={{ color: l.color }}>{l.label}</div>
+                    <div className="spiralLayerLabel" style={{ color: l.textColor }}>{l.label}</div>
                   </div>
                 </div>
                 <div className="spiralLayerRight">
-                  <span className="spiralLayerCount" style={{ color: l.accent }}>{layerDone}/{l.nums.length}</span>
-                  <span className="spiralLayerChevron" style={{ display:'inline-block', transform: isOpen ? 'rotate(180deg)' : 'none', transition:'transform .25s' }}>▾</span>
+                  <span className="spiralLayerCount" style={{ color: l.textColor }}>{layerDone}/{l.nums.length}</span>
+                  <span className="spiralLayerChevron" style={{ display:'inline-block', transform: isOpen ? 'rotate(180deg)' : 'none', transition:'transform .25s' }} aria-hidden="true">▾</span>
                 </div>
               </button>
 
-              {isOpen && (
-                <div className="spiralLayerBody">
-                  <p className="spiralLayerFullWhy">{l.why}</p>
-                  <div className="spiralCards">
-                    {layerChaps.map(ch => (
-                      <ChapterCard
-                        key={ch.number}
-                        chapter={ch}
-                        displayTitle={getPilotCardChapter(ch.number)?.title}
-                        layer={l}
-                        unlocked={unlocked(ch.number)}
-                        completed={completed(ch.number)}
-                        onClick={() => { setActiveNum(ch.number); scrollTo({ top: 0, behavior: 'smooth' }); }}
-                      />
-                    ))}
-                  </div>
+              <div id={bodyId} className="spiralLayerBody" hidden={!isOpen}>
+                <p className="spiralLayerFullWhy">{l.why}</p>
+                <div className="spiralCards">
+                  {layerChaps.map(ch => (
+                    <ChapterCard
+                      key={ch.number}
+                      chapter={ch}
+                      displayTitle={getPilotCardChapter(ch.number)?.title}
+                      layer={l}
+                      unlocked={unlocked(ch.number)}
+                      completed={completed(ch.number)}
+                      onClick={() => openChapter(ch.number)}
+                    />
+                  ))}
                 </div>
-              )}
+              </div>
             </div>
           );
         })}
