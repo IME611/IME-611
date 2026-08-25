@@ -1,1 +1,0 @@
-MVP: React + TypeScript + Vite dashboard foundation.
