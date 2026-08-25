@@ -1,25 +1,27 @@
 import React,{useEffect,useState}from'react';
 import{chapters as embeddedChapters}from'../data/chapters-embedded';
-import SpiralLibrary from'../features/journey/SpiralLibrary';
-import EvolutionWorkspace from'../features/evolution/EvolutionWorkspace';
-import TransformationWorkspace from'../features/transformation/TransformationWorkspace';
 import{KnowledgeDashboard}from'../features/knowledge-dashboard/KnowledgeDashboard';
-import{MediaWorkspace}from'../features/media/MediaWorkspace';
-import{AddSourceModal}from'../features/sources/AddSourceModal';
 import{DesktopNavigation,MobileNavigation}from'../features/navigation/NavigationShell';
 import{useAppNavigation}from'../features/navigation/useAppNavigation';
 import{isOwnerOnlyNavigation,pageByNavigationId}from'../features/navigation/navigation.config';
-import{CrystalCollectionDrawer}from'../features/crystals/CrystalCollectionDrawer';
 import{useCrystalCollection}from'../features/crystals/model/useCrystalCollection';
 import{WelcomeScreen}from'../features/welcome/WelcomeScreen';
-import{ReviewConsole}from'../features/editor/ReviewConsole';
 import{LiquidGlassFilter}from'../design/primitives/LiquidGlassFilter';
 import{bindLiquidGlassPointerTracking}from'../design/glass/runtime';
 import{evolutionPages}from'./navigation';
 import type{Chapter}from'../core/types';
 import{journeyStorage,readText,resetPersonalProgress,storageKeys,writeText}from'../core/storage';
 
+const SpiralLibrary=React.lazy(()=>import('../features/journey/SpiralLibrary'));
+const EvolutionWorkspace=React.lazy(()=>import('../features/evolution/EvolutionWorkspace'));
+const TransformationWorkspace=React.lazy(()=>import('../features/transformation/TransformationWorkspace'));
+const MediaWorkspace=React.lazy(()=>import('../features/media/MediaWorkspace').then(module=>({default:module.MediaWorkspace})));
+const AddSourceModal=React.lazy(()=>import('../features/sources/AddSourceModal').then(module=>({default:module.AddSourceModal})));
+const CrystalCollectionDrawer=React.lazy(()=>import('../features/crystals/CrystalCollectionDrawer').then(module=>({default:module.CrystalCollectionDrawer})));
+const ReviewConsole=React.lazy(()=>import('../features/editor/ReviewConsole').then(module=>({default:module.ReviewConsole})));
+
 const evoPageIds=evolutionPages as readonly string[];
+const RouteLoading=()=> <div className="routeLoading" role="status" aria-live="polite"><span>טוען את המרחב…</span></div>;
 
 export default function App(){
  const{page,navigate:nav,replace:replaceNav,back:goBack}=useAppNavigation();
@@ -60,8 +62,7 @@ export default function App(){
  const enterExperience=()=>{try{sessionStorage.setItem('eil-welcome-entered','1')}catch{}setEntered(true);nav('dashboard')};
  const openJourney=(chapterNumber?:number)=>{setRequestedSourceNumber(null);setRequestedChapter(chapterNumber??null);nav('library')};
  const openSource=(sourceNumber:number)=>{setRequestedChapter(null);setRequestedSourceNumber(sourceNumber);nav('library')};
- 
- 
+
 /* ===== PAGE COMPONENTS ===== */
 
 const Crystals=()=>{
@@ -155,7 +156,7 @@ const Generic=()=><div className="simplePage" dir="rtl">
  <p className="muted">דף זה בפיתוח.</p>
 </div>;
 
- if(reviewMode)return <><LiquidGlassFilter/><ReviewConsole/></>;
+ if(reviewMode)return <><LiquidGlassFilter/><React.Suspense fallback={<RouteLoading/>}><ReviewConsole/></React.Suspense></>;
  if(!entered)return <><LiquidGlassFilter/><WelcomeScreen onStart={enterExperience}/></>;
 
  return <><LiquidGlassFilter/><div className="app">
@@ -164,30 +165,30 @@ const Generic=()=><div className="simplePage" dir="rtl">
   <main>
    {activePage!=='dashboard'&&<div className="pageBack"><button onClick={goBack}>→ חזרה</button></div>}
    {notice&&<div className="notice" role="status"><span>{notice}</span><button type="button" aria-label="סגור הודעה" onClick={()=>setNotice('')}>×</button></div>}
-   {activePage==='dashboard'&&(
-    <KnowledgeDashboard onOpenJourney={()=>openJourney()}/>
-   )}
+   {activePage==='dashboard'&&<KnowledgeDashboard onOpenJourney={()=>openJourney()}/>}
    {activePage==='crystals'&&<Crystals/>}
    {activePage==='add-learning'&&<AddLearning/>}
    {activePage==='sources'&&<Sources/>}
    {activePage==='add-source'&&<AddSource/>}
-   {activePage==='review'&&<ReviewConsole/>}
    {activePage==='settings'&&<Settings/>}
-   {activePage==='library'&&<SpiralLibrary
-    chapters={journeyChapters}
-    initialChapter={requestedChapter}
-    initialSourceNumber={requestedSourceNumber}
-    onInitialChapterOpened={()=>setRequestedChapter(null)}
-    onInitialSourceOpened={()=>setRequestedSourceNumber(null)}
-    onSourceClosed={()=>nav('sources')}
-   />}
-   {activePage==='transformation'&&<TransformationWorkspace chapters={journeyChapters}/>}
-   {activePage==='media'&&<MediaWorkspace/>}
-   {isEvolution&&<EvolutionWorkspace page={activePage} onNav={nav}/>}
+   <React.Suspense fallback={<RouteLoading/>}>
+    {activePage==='review'&&<ReviewConsole/>}
+    {activePage==='library'&&<SpiralLibrary
+     chapters={journeyChapters}
+     initialChapter={requestedChapter}
+     initialSourceNumber={requestedSourceNumber}
+     onInitialChapterOpened={()=>setRequestedChapter(null)}
+     onInitialSourceOpened={()=>setRequestedSourceNumber(null)}
+     onSourceClosed={()=>nav('sources')}
+    />}
+    {activePage==='transformation'&&<TransformationWorkspace chapters={journeyChapters}/>}
+    {activePage==='media'&&<MediaWorkspace/>}
+    {isEvolution&&<EvolutionWorkspace page={activePage} onNav={nav}/>}
+   </React.Suspense>
    {!['dashboard','library','sources','transformation','media','crystals','add-learning','add-source','review','settings',...evoPageIds].includes(activePage)&&<Generic/>}
-   <AddSourceModal open={owner&&editor} onClose={()=>setEditor(false)} onImported={setNotice}/>
+   {owner&&editor&&<React.Suspense fallback={null}><AddSourceModal open onClose={()=>setEditor(false)} onImported={setNotice}/></React.Suspense>}
   </main>
   <button className="crystalLauncher" onClick={()=>setCrystalsOpen(true)} aria-label="פתח את אוסף הקריסטלים"><span>◆</span><b>הקריסטלים שלי</b><em>{crystals.length}</em></button>
-  <CrystalCollectionDrawer open={crystalsOpen} onClose={()=>setCrystalsOpen(false)}/>
+  {crystalsOpen&&<React.Suspense fallback={null}><CrystalCollectionDrawer open onClose={()=>setCrystalsOpen(false)}/></React.Suspense>}
  </div></>;
 }
