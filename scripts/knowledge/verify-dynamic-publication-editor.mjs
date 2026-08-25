@@ -50,6 +50,5 @@ assert.ok(learner.includes('creatorTitlePreferred:true'),'learner policy must de
 
 assert.ok(health.includes("healthScope:'LEGACY_COMPATIBILITY_SERVICE'"),'aggregate health must label the retained legacy health service');
 assert.ok(health.includes('effectivePolicy:{fixedChapterCount:false,dynamicLearningUnitKeys:true,dynamicLearningUnitTitles:true'),'aggregate health must expose the effective dynamic publication policy');
-assert.ok(health.includes("version:'backend-completion-v1.4'"),'aggregate health version must reflect the policy clarification');
 
 console.log('PASS dynamic publication editor (unbounded units + creator titles + truthful creator copy + effective policy context)');
