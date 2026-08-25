@@ -18,6 +18,7 @@ const expectedMigrations=[
  'database/migrations/008_review_decisions.sql',
  'database/migrations/009_source_publications.sql',
  'database/migrations/010_backend_completion.sql',
+ 'database/migrations/011_learning_unit_titles.sql',
 ];
 
 await client.connect();
@@ -43,7 +44,9 @@ try{
  checks.approvedIntakeWithoutCanonicalSource=await scalar(`SELECT COUNT(*) FROM intake_submissions WHERE review_status='APPROVED' AND approved_source_id IS NULL`);
  checks.publishedSourceWithoutCards=await scalar(`SELECT COUNT(*) FROM source_publications p WHERE p.status='PUBLISHED' AND NOT EXISTS(SELECT 1 FROM published_learning_cards c WHERE c.publication_id=p.id AND c.publication_version=p.publication_version AND c.status='PUBLISHED')`);
  checks.publishedSourceWithoutLearningUnit=await scalar(`SELECT COUNT(*) FROM source_publications WHERE status='PUBLISHED' AND length(trim(COALESCE(target_learning_unit_key,'')))<2`);
+ checks.publishedSourceWithoutLearningUnitTitle=await scalar(`SELECT COUNT(*) FROM source_publications WHERE status='PUBLISHED' AND length(trim(COALESCE(target_learning_unit_title,'')))<2`);
  checks.publishedCardWithoutLearningUnit=await scalar(`SELECT COUNT(*) FROM published_learning_cards WHERE status='PUBLISHED' AND length(trim(COALESCE(learning_unit_key,'')))<2`);
+ checks.publishedCardWithoutLearningUnitTitle=await scalar(`SELECT COUNT(*) FROM published_learning_cards WHERE status='PUBLISHED' AND length(trim(COALESCE(learning_unit_title,'')))<2`);
  checks.publishedCardOutsideSelectedCandidates=await scalar(`SELECT COUNT(*) FROM published_learning_cards c JOIN source_publications p ON p.id=c.publication_id WHERE c.status='PUBLISHED' AND NOT c.source_candidate_ids <@ p.selected_candidate_ids`);
  checks.publishedCardSourceMismatch=await scalar(`SELECT COUNT(*) FROM published_learning_cards c JOIN extraction_candidates x ON x.id=ANY(c.source_candidate_ids) WHERE c.status='PUBLISHED' AND x.source_id<>c.source_id`);
  checks.publishedCardWordCountFailures=await scalar(`SELECT COUNT(*) FROM published_learning_cards c WHERE c.status='PUBLISHED' AND cardinality(regexp_split_to_array(trim(c.card_text),'\\s+')) NOT BETWEEN 40 AND 90`);
@@ -56,8 +59,8 @@ try{
  assert.ok(checks.sources>=18,'canonical source corpus unexpectedly shrank below seed baseline');
  assert.ok(checks.fragments>=18,'canonical fragment corpus unexpectedly shrank below seed baseline');
  assert.ok(checks.candidates>0,'knowledge candidate layer must be non-empty');
- assert.equal(checks.migrationsApplied,expectedMigrations.length,'all canonical migrations 001-010 must be recorded');
- for(const name of ['candidatesWithoutEvidence','unverifiedCandidateEvidence','candidateSourceQuoteMismatch','evidenceFragmentQuoteMismatch','evidenceSourceMismatch','claimsWithoutEvidence','approvedRelationsWithUnresolvedEndpoints','nonExplicitRelationEvidence','relationSourceAtomMismatch','reviewDecisionsMissingReviewer','orphanExtractionReviewDecisions','orphanRelationReviewDecisions','pendingIntakeWithCanonicalSource','rejectedIntakeWithCanonicalSource','approvedIntakeWithoutCanonicalSource','publishedSourceWithoutCards','publishedSourceWithoutLearningUnit','publishedCardWithoutLearningUnit','publishedCardOutsideSelectedCandidates','publishedCardSourceMismatch','publishedCardWordCountFailures','publishedCandidateVisibilityFailures','repositoryCandidateVisibilityLeaks','chapterRangeConstraintsRemaining','migrationChecksumShapeFailures'])assert.equal(checks[name],0,`${name} must be zero`);
+ assert.equal(checks.migrationsApplied,expectedMigrations.length,'all canonical migrations 001-011 must be recorded');
+ for(const name of ['candidatesWithoutEvidence','unverifiedCandidateEvidence','candidateSourceQuoteMismatch','evidenceFragmentQuoteMismatch','evidenceSourceMismatch','claimsWithoutEvidence','approvedRelationsWithUnresolvedEndpoints','nonExplicitRelationEvidence','relationSourceAtomMismatch','reviewDecisionsMissingReviewer','orphanExtractionReviewDecisions','orphanRelationReviewDecisions','pendingIntakeWithCanonicalSource','rejectedIntakeWithCanonicalSource','approvedIntakeWithoutCanonicalSource','publishedSourceWithoutCards','publishedSourceWithoutLearningUnit','publishedSourceWithoutLearningUnitTitle','publishedCardWithoutLearningUnit','publishedCardWithoutLearningUnitTitle','publishedCardOutsideSelectedCandidates','publishedCardSourceMismatch','publishedCardWordCountFailures','publishedCandidateVisibilityFailures','repositoryCandidateVisibilityLeaks','chapterRangeConstraintsRemaining','migrationChecksumShapeFailures'])assert.equal(checks[name],0,`${name} must be zero`);
 
- console.log(JSON.stringify({ok:true,phase:'CORPUS_QUALITY_GATES_V0_3',checks,policy:{everyCandidateTraceable:true,exactQuotesVerified:true,canonicalClaimsEvidenceBacked:true,unresolvedRelationsCannotBeApproved:true,reviewDecisionsAttributedAndReferential:true,intakeReviewGatePreserved:true,sourcePublicationSeparate:true,publishedCardsTraceable:true,dynamicLearningUnitPublication:true,fixedChapterCount:false,aiCannotBypassReview:true,migrationLedgerVerified:true}},null,2));
+ console.log(JSON.stringify({ok:true,phase:'CORPUS_QUALITY_GATES_V0_4',checks,policy:{everyCandidateTraceable:true,exactQuotesVerified:true,canonicalClaimsEvidenceBacked:true,unresolvedRelationsCannotBeApproved:true,reviewDecisionsAttributedAndReferential:true,intakeReviewGatePreserved:true,sourcePublicationSeparate:true,publishedCardsTraceable:true,dynamicLearningUnitPublication:true,dynamicLearningUnitTitles:true,fixedChapterCount:false,aiCannotBypassReview:true,migrationLedgerVerified:true}},null,2));
 }finally{await client.end()}
