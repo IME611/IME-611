@@ -1,0 +1,32 @@
+name: generate-package-lock
+
+on:
+  push:
+    branches: [chore/final-audit-cleanup-v1]
+
+permissions:
+  contents: write
+
+jobs:
+  lock:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: chore/final-audit-cleanup-v1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Generate lock once
+        shell: bash
+        run: |
+          if [ -f package-lock.json ]; then
+            echo "package-lock.json already exists; nothing to do."
+            exit 0
+          fi
+          npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package-lock.json
+          git commit -m "build: generate package lock"
+          git push origin HEAD:chore/final-audit-cleanup-v1
