@@ -31,6 +31,7 @@ const checks=[
  'scripts/quality/verify-db-url-normalization.mjs',
  'scripts/quality/verify-learner-journey-coherence.mjs',
  'scripts/quality/verify-review-auth-boundary.mjs',
+ 'scripts/quality/verify-production-surface.mjs',
  'scripts/knowledge/verify-dynamic-publication-editor.mjs',
  'scripts/knowledge/verify-atomic-extractor.mjs',
  'scripts/knowledge/verify-overlap-engine.mjs',
