@@ -32,6 +32,7 @@ assert.ok(editor.includes('מסלול יסוד (תאימות לפרקים)'),'le
 assert.ok(!editor.includes("onError('בחר פרק יעד לפני יצירת הכרטיסיות.')"),'creator editor must not require a fixed chapter');
 
 assert.ok(learner.includes('learning_unit_title'),'learner publication listing must read persisted unit titles');
-assert.ok(learner.includes('row.unit_title'),'learner unit title must prefer persisted creator title');
+assert.ok(learner.includes('row.creator_title'),'learner unit title must prefer persisted creator title');
+assert.ok(learner.includes('creatorTitlePreferred:true'),'learner policy must declare creator title precedence');
 
 console.log('PASS dynamic publication editor (unbounded unit keys + creator titles + flexible placement UI + migration 011)');
