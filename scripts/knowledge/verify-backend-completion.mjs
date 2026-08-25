@@ -16,7 +16,7 @@ assert.equal(multimodal.fallback,'creator-supplied-description');
 
 const root=new URL('../../',import.meta.url);
 const api=fs.readFileSync(new URL('api/reviews.js',root),'utf8');
-const learnerApi=fs.readFileSync(new URL('api/learning-publications.js',root),'utf8');
+const learnerApi=fs.readFileSync(new URL('api/learning-graph.js',root),'utf8');
 const migration=fs.readFileSync(new URL('database/migrations/010_backend_completion.sql',root),'utf8');
 const flexible=fs.readFileSync(new URL('server/knowledge/application/publication/flexible-publication.service.js',root),'utf8');
 const learnerPublication=fs.readFileSync(new URL('server/knowledge/application/publication/learner-publication.service.js',root),'utf8');
@@ -40,6 +40,7 @@ assert.match(semanticService,/REVIEW_SUGGESTION_ONLY/,'semantic matcher must rem
 assert.match(imageService,/SOURCE_DESCRIPTION_DRAFT_ONLY/,'native vision output must remain a source-description draft');
 assert.match(relationService,/autoResolve:false/,'semantic relation suggestions must never auto-resolve endpoints');
 assert.match(relationService,/semanticSuggestionIsNotEvidence:true/,'semantic endpoint similarity must not become relation evidence');
+assert.match(learnerApi,/resource==='published-units'/,'existing learner API function must expose dynamic published units');
 assert.match(learnerApi,/getLearnerPublishedCardsForLearningUnit/,'learner API must expose cards by stable learning-unit key');
 assert.match(learnerApi,/listPublishedLearningUnits/,'learner API must expose published dynamic units');
 assert.doesNotMatch(learnerApi,/chapter\s*[<>]=?\s*18|from 1 to 18/,'dynamic learner API must not restore the fixed chapter ceiling');
@@ -47,6 +48,7 @@ assert.match(learnerPublication,/p\.status='PUBLISHED'/,'learner publication lis
 assert.match(learnerPublication,/p\.publication_version=c\.publication_version/,'learner publication list must use the current publication version');
 assert.match(journey,/usePublishedLearningUnits/,'learner journey must load dynamic published units');
 assert.match(journey,/activeDynamicUnitKey/,'learner journey must be able to open a dynamic unit');
-assert.match(publishedUnitsHook,/\/api\/learning-publications/,'dynamic learner units must load from the learner-safe API');
+assert.match(publishedUnitsHook,/\/api\/learning-graph\?resource=published-units/,'dynamic learner units must reuse the learner-safe learning API function');
+assert.equal(fs.existsSync(new URL('api/learning-publications.js',root)),false,'dynamic learner delivery must not add a thirteenth Vercel Function on the Hobby plan');
 
-console.log(JSON.stringify({ok:true,version:'backend-completion-regression-v1.1',semanticConfigured:semantic.available,multimodalConfigured:multimodal.available,policy:{fixedChapterCount:false,dynamicLearnerDelivery:true,aiNeverWritesCanonicalTruth:true,creatorReviewRequired:true,nativeImageFallbackSafe:true}},null,2));
+console.log(JSON.stringify({ok:true,version:'backend-completion-regression-v1.2',semanticConfigured:semantic.available,multimodalConfigured:multimodal.available,policy:{fixedChapterCount:false,dynamicLearnerDelivery:true,functionBudgetPreserved:true,aiNeverWritesCanonicalTruth:true,creatorReviewRequired:true,nativeImageFallbackSafe:true}},null,2));
