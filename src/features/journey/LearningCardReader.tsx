@@ -1,6 +1,7 @@
 import{useEffect,useState}from'react';
 import type{Chapter}from'../../core/types';
 import{CrystalCardComposer}from'../crystals/CrystalCardComposer';
+import{CardSourceExhibit}from'./CardSourceExhibit';
 import type{LearningCardChapter,LearningCardType}from'./model/learning-card.types';
 import{useCardProgress}from'./model/useCardProgress';
 
@@ -90,6 +91,7 @@ export function LearningCardReader({chapter,sourceChapter,layerLabel,color,onBac
       <header><span>{TYPE_LABELS[current.type]}</span><small>רעיון אחד · קריאה קצרה</small></header>
       <h2 id={`learning-card-${current.id}`}>{current.title}</h2>
       <p>{current.text}</p>
+      <CardSourceExhibit cardId={current.id}/>
       <footer>
         <span>{current.editorialStatus==='CREATOR_PUBLISHED'?'כרטיס שאושר ופורסם מתוך מקור חדש':'עיבוד פדגוגי מקושר למקור'}</span>
         <span>{current.sourceLabel||chapter.sourceFile}</span>
