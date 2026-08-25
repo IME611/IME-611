@@ -1,14 +1,19 @@
 import{spawnSync}from'node:child_process';
+import{claimProductionPreflight}from'./production-preflight-lock.mjs';
 
 function run(command,args){
  const result=spawnSync(command,args,{stdio:'inherit',shell:process.platform==='win32'});
  if(result.status!==0)process.exit(result.status??1);
 }
 
-run(process.execPath,['scripts/db/ensure-production-migrations.mjs']);
+const production=process.env.VERCEL_ENV==='production';
+const preflight=claimProductionPreflight();
 
-if(process.env.VERCEL_ENV==='production'){
- console.log('Production prebuild: running DB health and mutation-safe quality verification once.');
+if(!production){
+ run(process.execPath,['scripts/db/ensure-production-migrations.mjs']);
+}else if(preflight.run){
+ console.log(`Production prebuild: remote preflight claimed (${preflight.reason}); running migrations + DB quality once for this deployment.`);
+ run(process.execPath,['scripts/db/ensure-production-migrations.mjs']);
  run('npm',['run','db:health']);
  run('npm',['run','db:verify-extraction']);
  run('npm',['run','knowledge:bootstrap-extraction']);
@@ -16,9 +21,12 @@ if(process.env.VERCEL_ENV==='production'){
  run(process.execPath,['scripts/knowledge/audit-relation-endpoint-suggestions.mjs']);
  run(process.execPath,['scripts/knowledge/verify-intake-db.mjs']);
  run(process.execPath,['scripts/knowledge/verify-quality-gates.mjs']);
+}else{
+ console.log('Production prebuild: remote preflight already claimed by another build unit; skipping duplicate migrations/DB checks.');
 }
 
 const checks=[
+ 'scripts/quality/verify-production-preflight-lock.mjs',
  'scripts/knowledge/verify-atomic-extractor.mjs',
  'scripts/knowledge/verify-overlap-engine.mjs',
  'scripts/knowledge/verify-corpus-map.mjs',
