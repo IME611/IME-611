@@ -12,12 +12,14 @@ import{withHardening,requestUrl}from'./_lib/hardening.js';
 import{requireEditor}from'./_lib/editor-auth.js';
 
 const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const PROTECTED_MODES=new Set(['intake','relation-resolution','publication-placement','console']);
+const PUBLIC_MODES=new Set(['intake-health','backend-health']);
+const KNOWN_MODES=new Set([...PROTECTED_MODES,...PUBLIC_MODES]);
 const param=(req,name)=>requestUrl(req).searchParams.get(name);
 const reviewer=req=>String(req.body?.reviewedBy||req.headers?.['x-eil-reviewer']||'creator').trim().slice(0,300)||'creator';
 function sendError(res,error){const status=Number(error?.status)||500,code=String(error?.code||'REVIEW_FAILED');return res.status(status).json({ok:false,error:String(error?.message||'review request failed').slice(0,500),code})}
 
 async function handleLegacyReviews(req,res,db){
- await db.query(`CREATE TABLE IF NOT EXISTS knowledge_reviews(id BIGSERIAL PRIMARY KEY,knowledge_item_id BIGINT REFERENCES knowledge_items(id) ON DELETE CASCADE,relation_type TEXT NOT NULL,chapter_id INTEGER,category_id TEXT,score NUMERIC(8,3) NOT NULL DEFAULT 0,status TEXT NOT NULL DEFAULT 'pending',note TEXT NOT NULL DEFAULT '',created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),reviewed_at TIMESTAMPTZ)`);
  if(req.method==='GET'){
   const itemId=Number(param(req,'itemId')),hasItem=Number.isInteger(itemId);const query=hasItem?'SELECT * FROM knowledge_reviews WHERE knowledge_item_id=$1 ORDER BY created_at DESC':'SELECT * FROM knowledge_reviews ORDER BY created_at DESC';const{rows}=hasItem?await db.query(query,[itemId]):await db.query(query);return res.status(200).json({ok:true,reviews:rows});
  }
@@ -102,15 +104,17 @@ async function handleConsole(req,res,db){
 async function handler(req,res){
  try{
   const mode=param(req,'mode');
-  if(!mode&&!requireEditor(req,res))return;
+  if(mode&&!KNOWN_MODES.has(mode))return res.status(404).json({ok:false,error:'unknown review mode',code:'REVIEW_MODE_NOT_FOUND'});
+  if((!mode||PROTECTED_MODES.has(mode))&&!requireEditor(req,res))return;
   const db=getDb();
+  if(!mode)return await handleLegacyReviews(req,res,db);
   if(mode==='intake')return await handleIntake(req,res,db);
   if(mode==='intake-health')return await handleIntakeHealth(req,res,db);
   if(mode==='relation-resolution')return await handleRelationResolution(req,res,db);
   if(mode==='publication-placement')return await handlePublicationPlacement(req,res,db);
   if(mode==='backend-health')return await handleBackendHealth(req,res,db);
   if(mode==='console')return await handleConsole(req,res,db);
-  return await handleLegacyReviews(req,res,db);
+  return res.status(404).json({ok:false,error:'unknown review mode',code:'REVIEW_MODE_NOT_FOUND'});
  }catch(error){console.error(error);return sendError(res,error)}
 }
 
