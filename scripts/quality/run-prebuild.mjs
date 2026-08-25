@@ -29,6 +29,7 @@ const checks=[
  'scripts/quality/verify-production-preflight-lock.mjs',
  'scripts/quality/verify-learner-source-library.mjs',
  'scripts/quality/verify-db-url-normalization.mjs',
+ 'scripts/quality/verify-learner-journey-coherence.mjs',
  'scripts/knowledge/verify-dynamic-publication-editor.mjs',
  'scripts/knowledge/verify-atomic-extractor.mjs',
  'scripts/knowledge/verify-overlap-engine.mjs',
