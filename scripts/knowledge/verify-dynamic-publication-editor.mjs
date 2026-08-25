@@ -26,7 +26,8 @@ assert.ok(migration.includes('published_learning_cards_legacy_unit_compat'),'leg
 assert.ok(migration.includes("NEW.target_learning_unit_key := 'legacy-chapter:'"),'legacy source placement must receive a stable unit key');
 assert.ok(migration.includes("NEW.learning_unit_key := 'legacy-chapter:'"),'legacy cards must receive a stable unit key');
 assert.ok(migrations.includes("'database/migrations/011_learning_unit_titles.sql'"),'migration runner must include 011');
-assert.ok(ensure.includes('001-011'),'production migration gate must advertise 001-011');
+assert.ok(migrations.includes("'database/migrations/012_legacy_review_boundary.sql'"),'migration runner must include latest canonical migration');
+assert.ok(ensure.includes('001-012'),'production migration gate must advertise 001-012');
 
 assert.ok(api.includes('learningUnitTitle:body.learningUnitTitle'),'publication API must forward the learner-facing unit title');
 assert.ok(editor.includes("'/api/reviews?mode=publication-placement'"),'creator editor must use flexible publication endpoint');
