@@ -6,6 +6,8 @@ import { useCrystalCollection } from '../crystals/model/useCrystalCollection';
 import { getPilotCardChapter } from './data/pilot-card-script';
 import { LearningCardReader } from './LearningCardReader';
 import { usePublishedLearningCards } from './model/usePublishedLearningCards';
+import { usePublishedLearningUnits } from './model/usePublishedLearningUnits';
+import type { PublishedLearningUnit } from './model/usePublishedLearningUnits';
 import type { LearningCardChapter } from './model/learning-card.types';
 
 type Chapter = { number: number; title: string; subtitle: string; sourceFile: string; paragraphs: string[]; paragraphCount?: number; characterCount?: number };
@@ -30,7 +32,7 @@ function clean(t: string) { return t.replace(/^פרק\s*\d+[:：]?\s*/, ''); }
 function stageForNum(num: number): LearningStage | undefined {
   return journeyPath.stages.find(s => s.order === num);
 }
-/* ── Card ── */
+
 function ChapterCard({ chapter, displayTitle, layer, unlocked, completed, onClick }: {
   chapter: Chapter;
   displayTitle?: string;
@@ -50,14 +52,23 @@ function ChapterCard({ chapter, displayTitle, layer, unlocked, completed, onClic
       <span className="spiralCardNum">{String(chapter.number).padStart(2, '0')}</span>
       <span className="spiralCardBody">
         <span className="spiralCardTitle">{displayTitle??clean(chapter.title)}</span>
-        
       </span>
       <span className="spiralCardIcon">{completed ? '✓' : unlocked ? '←' : '🔒'}</span>
     </button>
   );
 }
 
-/* ── Chapter View ── */
+function PublishedUnitCard({unit,onClick}:{unit:PublishedLearningUnit;onClick:()=>void}){
+  return <button type="button" className="spiralCard publishedUnitCard" onClick={onClick}>
+    <span className="spiralCardNum publishedUnitBadge">חדש</span>
+    <span className="spiralCardBody">
+      <span className="spiralCardTitle">{unit.title}</span>
+      <span className="publishedUnitMeta">{unit.cardCount} כרטיסים · {unit.sourceCount} {unit.sourceCount===1?'מקור':'מקורות'}</span>
+    </span>
+    <span className="spiralCardIcon">←</span>
+  </button>;
+}
+
 function ChapterView({ chapter, layer, onBack, onComplete, onPrevious, canGoPrevious, isFinal, sourceOnly=false }: {
   chapter: Chapter;
   layer: typeof LAYERS[number];
@@ -195,24 +206,46 @@ function ChapterExperience({chapter,chapters,layer,onBack,onComplete,onPrevious}
   return <ChapterView chapter={chapter} layer={layer} onBack={onBack} onComplete={onComplete} onPrevious={onPrevious} canGoPrevious={Boolean(onPrevious)} isFinal={chapter.number===18}/>;
 }
 
-/* ── Main ── */
+function DynamicUnitExperience({unit,onBack}:{unit:PublishedLearningUnit;onBack:()=>void}){
+  const published=usePublishedLearningCards(unit.key);
+  if(published.loading)return <div className="spiralChapter journeyCardsLoading" dir="rtl"><div className="spiralChapterTop"><button className="spiralBack" type="button" onClick={onBack}>← חזרה למסע</button><span className="spiralChapterPos">יחידה שפורסמה מהמאגר</span></div><p>טוען את הכרטיסיות…</p></div>;
+  if(published.error)return <div className="spiralChapter journeyCardsLoading" dir="rtl"><div className="spiralChapterTop"><button className="spiralBack" type="button" onClick={onBack}>← חזרה למסע</button><span className="spiralChapterPos">יחידה שפורסמה מהמאגר</span></div><p className="formError" role="alert">{published.error}</p></div>;
+  if(!published.cards.length)return <div className="spiralChapter journeyCardsLoading" dir="rtl"><div className="spiralChapterTop"><button className="spiralBack" type="button" onClick={onBack}>← חזרה למסע</button><span className="spiralChapterPos">יחידה שפורסמה מהמאגר</span></div><p>לא נמצאו כרטיסים שפורסמו ביחידה הזו.</p></div>;
+  const chapter:LearningCardChapter={
+    unitKey:unit.key,
+    displayNumber:'חדש',
+    title:unit.title,
+    subtitle:`${unit.cardCount} כרטיסים מתוך ${unit.sourceCount} ${unit.sourceCount===1?'מקור מאושר':'מקורות מאושרים'}`,
+    guidingQuestion:'מה אפשר ללמוד מהחומר שאושר ופורסם ליחידה הזו?',
+    whyHere:'היחידה נוספה מתוך חומר חדש שעבר קליטה, בדיקת חפיפה ואישור לפרסום. היא מוצגת לצד מסלול היסוד בלי לשנות אוטומטית את סדר הלמידה.',
+    sourceFile:'מקור מאושר',
+    cards:published.cards,
+  };
+  return <LearningCardReader chapter={chapter} layerLabel="חדש במאגר" color="#006039" onBack={onBack} onComplete={onBack} backLabel="← חזרה למסע" completionLabel="סיימתי — חזרה למסע ←"/>;
+}
+
 export default function SpiralLibrary({ chapters, initialChapter, initialSourceNumber, onInitialChapterOpened, onInitialSourceOpened, onSourceClosed }: Props) {
   const learning = useLearningProgress(journeyPath);
+  const publishedUnits=usePublishedLearningUnits();
   const [activeNum, setActiveNum]   = useState<number | null>(null);
   const [activeSourceNum, setActiveSourceNum] = useState<number | null>(null);
+  const [activeDynamicUnitKey,setActiveDynamicUnitKey]=useState<string|null>(null);
   const [openLayer, setOpenLayer]   = useState<string>('A');
 
   const unlocked  = (_num: number) => true;
   const completed = (num: number) => { const s = stageForNum(num); return s ? learning.state.completedStageIds.includes(s.id) : false; };
+  const dynamicUnits=publishedUnits.units.filter(unit=>unit.legacyChapterNumber===null);
 
   useEffect(() => {
     if (!initialChapter) return;
+    setActiveDynamicUnitKey(null);
     setActiveNum(initialChapter);
     onInitialChapterOpened?.();
   }, [initialChapter]);
 
   useEffect(() => {
     if (!initialSourceNumber) return;
+    setActiveDynamicUnitKey(null);
     setActiveNum(null);
     setActiveSourceNum(initialSourceNumber);
     onInitialSourceOpened?.();
@@ -224,7 +257,9 @@ export default function SpiralLibrary({ chapters, initialChapter, initialSourceN
   const chapter = activeNum ? chapters.find(c => c.number === activeNum) ?? null : null;
   const layer   = chapter   ? LAYERS.find(l => (l.nums as readonly number[]).includes(chapter.number)) ?? LAYERS[0] : LAYERS[0];
   const previousChapter = chapter ? chapters.find(c => c.number === chapter.number - 1) ?? null : null;
+  const activeDynamicUnit=activeDynamicUnitKey?dynamicUnits.find(unit=>unit.key===activeDynamicUnitKey)??null:null;
   const openChapter = (chapterNumber: number) => {
+    setActiveDynamicUnitKey(null);
     setActiveSourceNum(null);
     setActiveNum(chapterNumber);
     scrollTo({ top: 0, behavior: 'smooth' });
@@ -246,6 +281,8 @@ export default function SpiralLibrary({ chapters, initialChapter, initialSourceN
     }
   }
 
+  if(activeDynamicUnit)return <DynamicUnitExperience unit={activeDynamicUnit} onBack={()=>setActiveDynamicUnitKey(null)}/>;
+
   const handleComplete = () => {
     if (!chapter) return;
     const s = stageForNum(chapter.number);
@@ -263,13 +300,13 @@ export default function SpiralLibrary({ chapters, initialChapter, initialSourceN
     <div className="spiralLibrary" dir="rtl">
       <div className="spiralHeader">
         <h1 className="spiralTitle">ההתקדמות שלי במסע</h1>
-        <p className="spiralSubtitle">18 פרקים · 5 שכבות · מבפנים החוצה</p>
+        <p className="spiralSubtitle">5 שכבות במסלול היסוד · ידע חדש יכול להצטרף מהמאגר</p>
 
         <div className="spiralProgress">
           <div className="spiralProgressBar">
             <div className="spiralProgressFill" style={{ width: `${pct}%` }} />
           </div>
-          <span className="spiralProgressText">{doneCount} / 18 פרקים הושלמו</span>
+          <span className="spiralProgressText">{doneCount} / 18 פרקי יסוד הושלמו</span>
         </div>
       </div>
 
@@ -291,7 +328,6 @@ export default function SpiralLibrary({ chapters, initialChapter, initialSourceN
                   <div className="spiralLayerDot" style={{ background: l.color }} />
                   <div>
                     <div className="spiralLayerLabel" style={{ color: l.color }}>{l.label}</div>
-                    
                   </div>
                 </div>
                 <div className="spiralLayerRight">
@@ -322,6 +358,18 @@ export default function SpiralLibrary({ chapters, initialChapter, initialSourceN
           );
         })}
       </div>
+
+      {dynamicUnits.length>0?<section className="publishedUnitsSection" aria-labelledby="published-units-title">
+        <div className="publishedUnitsHead">
+          <span className="publishedUnitsKicker">חדש במאגר</span>
+          <h2 id="published-units-title">יחידות שנוספו מחומרים שאושרו</h2>
+          <p>היחידות האלו פורסמו מתוך מקורות חדשים. הן זמינות ללמידה ולבדיקת המקור, אך אינן משנות אוטומטית את סדר מסלול היסוד.</p>
+        </div>
+        <div className="spiralCards">
+          {dynamicUnits.map(unit=><PublishedUnitCard key={unit.key} unit={unit} onClick={()=>{setActiveDynamicUnitKey(unit.key);scrollTo({top:0,behavior:'smooth'})}}/>)}
+        </div>
+      </section>:null}
+      {publishedUnits.error?<p className="publishedUnitsError" role="status">היחידות החדשות לא נטענו כרגע. מסלול היסוד ממשיך לפעול כרגיל.</p>:null}
     </div>
   );
 }
