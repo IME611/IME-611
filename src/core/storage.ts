@@ -7,7 +7,6 @@ export const storageKeys={
   originAnswer:'eil-origin-answer',
   railCollapsed:'eil-rail',
   localItems:'eil-items',
-  learnings:'eil-learnings',
   settings:'eil-settings',
 } as const;
 
@@ -23,7 +22,7 @@ const PERSONAL_PROGRESS_KEYS=new Set([
   'eil-crystals-v1',
   'eil-focus',
   'eil-journey-progress',
-  storageKeys.learnings,
+  'eil-learnings',
   'eil-origin-answer',
   'eil-progress',
   'eil-reflections',
