@@ -17,11 +17,13 @@ const EvolutionWorkspace=React.lazy(()=>import('../features/evolution/EvolutionW
 const TransformationWorkspace=React.lazy(()=>import('../features/transformation/TransformationWorkspace'));
 const MediaWorkspace=React.lazy(()=>import('../features/media/MediaWorkspace').then(module=>({default:module.MediaWorkspace})));
 const AddSourceModal=React.lazy(()=>import('../features/sources/AddSourceModal').then(module=>({default:module.AddSourceModal})));
+const PublicSourceDocument=React.lazy(()=>import('../features/sources/PublicSourceDocument').then(module=>({default:module.PublicSourceDocument})));
 const CrystalCollectionDrawer=React.lazy(()=>import('../features/crystals/CrystalCollectionDrawer').then(module=>({default:module.CrystalCollectionDrawer})));
 const ReviewConsole=React.lazy(()=>import('../features/editor/ReviewConsole').then(module=>({default:module.ReviewConsole})));
 
 const evoPageIds=evolutionPages as readonly string[];
 const RouteLoading=()=> <div className="routeLoading" role="status" aria-live="polite"><span>טוען את המרחב…</span></div>;
+type PublicSourceSummary={id:string;type:string;title:string;author?:string|null;original_uri?:string|null;mime_type?:string|null;metadata?:Record<string,unknown>|null;created_at?:string|null;fragment_count?:number};
 
 export default function App(){
  const{page,navigate:nav,replace:replaceNav,back:goBack}=useAppNavigation();
@@ -35,33 +37,44 @@ export default function App(){
  const[requestedChapter,setRequestedChapter]=useState<number|null>(null);
  const[requestedSourceNumber,setRequestedSourceNumber]=useState<number|null>(null);
  const[sourceChapters,setSourceChapters]=useState<Chapter[]>([]);
+ const[publicSources,setPublicSources]=useState<PublicSourceSummary[]>([]);
+ const[selectedPublicSourceId,setSelectedPublicSourceId]=useState<string|null>(null);
  const[entered,setEntered]=useState(()=>{try{return sessionStorage.getItem('eil-welcome-entered')==='1'}catch{return false}});
  const{records:crystals}=useCrystalCollection();
  const reviewMode=typeof window!=='undefined'&&new URLSearchParams(window.location.search).get('editor')==='review';
 
  useEffect(()=>{
   if(reviewMode)return;
-  fetch('/api/knowledge?resource=items').then(response=>{setOnline(response.ok)}).catch(()=>setOnline(false));
+  fetch('/api/sources',{headers:{Accept:'application/json'}}).then(async response=>{
+   setOnline(response.ok);
+   if(!response.ok)throw new Error(`HTTP ${response.status}`);
+   const data=await response.json();
+   if(Array.isArray(data.sources))setPublicSources(data.sources.filter((source:any)=>source?.id&&source?.title));
+  }).catch(()=>setOnline(false));
   fetch('/api/chapters').then(response=>response.ok?response.json():Promise.reject()).then(data=>{
-   if(data.total===18&&Array.isArray(data.chapters)){
-    setSourceChapters(data.chapters);
-   }
+   if(data.total===18&&Array.isArray(data.chapters))setSourceChapters(data.chapters);
   }).catch(()=>{});
  },[reviewMode]);
  useEffect(()=>{if(!reviewMode)writeText(storageKeys.railCollapsed,collapsed?'1':'0')},[collapsed,reviewMode]);
  useEffect(()=>{if(reviewMode)return;return bindLiquidGlassPointerTracking()},[reviewMode]);
  useEffect(()=>{if(!owner&&isOwnerOnlyNavigation(page))replaceNav('dashboard')},[owner,page,replaceNav]);
+ useEffect(()=>{if(activePage!=='sources'&&selectedPublicSourceId)setSelectedPublicSourceId(null)},[activePage,selectedPublicSourceId]);
 
  // Keep the curated, marker-based Claude edition as the reader source. The API
  // collection is used only for the source catalogue so a successful API fetch
  // can never replace the designed chapter experience with raw DOCX paragraphs.
  const journeyChapters=embeddedChapters;
  const sourceCatalogue=sourceChapters.length===18?sourceChapters:embeddedChapters;
+ const seedSourceFiles=new Set(sourceCatalogue.map(source=>source.sourceFile));
+ const publishedExtraSources=publicSources.filter(source=>{
+  const metadata=source.metadata||{},sourceFile=typeof metadata.sourceFile==='string'?metadata.sourceFile:'';
+  return metadata.ingestion!=='repository-corpus-bootstrap-v1'&&!seedSourceFiles.has(sourceFile);
+ });
  const openNew=()=>{if(!owner){setNotice('העלאת מקור זמינה במצב יוצר בלבד.');return}setEditor(true)};
  const isEvolution=evoPageIds.includes(activePage);
  const enterExperience=()=>{try{sessionStorage.setItem('eil-welcome-entered','1')}catch{}setEntered(true);nav('dashboard')};
- const openJourney=(chapterNumber?:number)=>{setRequestedSourceNumber(null);setRequestedChapter(chapterNumber??null);nav('library')};
- const openSource=(sourceNumber:number)=>{setRequestedChapter(null);setRequestedSourceNumber(sourceNumber);nav('library')};
+ const openJourney=(chapterNumber?:number)=>{setSelectedPublicSourceId(null);setRequestedSourceNumber(null);setRequestedChapter(chapterNumber??null);nav('library')};
+ const openSource=(sourceNumber:number)=>{setSelectedPublicSourceId(null);setRequestedChapter(null);setRequestedSourceNumber(sourceNumber);nav('library')};
 
 /* ===== PAGE COMPONENTS ===== */
 
@@ -87,14 +100,31 @@ const AddLearning=()=>{
 };
 
 const Sources=()=>{
- return <div className="simplePage" dir="rtl">
+ if(selectedPublicSourceId)return <React.Suspense fallback={<RouteLoading/>}><PublicSourceDocument sourceId={selectedPublicSourceId} onBack={()=>setSelectedPublicSourceId(null)}/></React.Suspense>;
+ const totalSources=sourceCatalogue.length+publishedExtraSources.length;
+ return <div className="simplePage sourceLibraryPage" dir="rtl">
   <h2 className="simplePageTitle">↗ המקורות שלי</h2>
-  <p className="simplePageSub">{sourceCatalogue.length} המקורות המלאים שעליהם מבוסס מסע הלימוד</p>
-  <div className="sourceList">{sourceCatalogue.map(source=><button key={source.number} type="button" className="sourceItem" onClick={()=>openSource(source.number)} aria-label={`פתח מקור: ${source.title}`}>
-   <span className="sourceNum">{String(source.number).padStart(2,'0')}</span>
-   <span className="sourceInfo"><span className="sourceName">{source.title}</span><span className="sourceFile">{source.sourceFile}</span></span>
-   <span className="sourceOpen" aria-hidden="true">פתח ←</span>
-  </button>)}</div>
+  <p className="simplePageSub">{totalSources} מקורות מלאים שפורסמו ללומדים ושעליהם מבוסס הידע באתר</p>
+  <section className="sourceLibrarySection" aria-labelledby="foundation-sources-title">
+   <div className="sourceLibrarySectionHead"><div><span>FOUNDATION SOURCES</span><h3 id="foundation-sources-title">מקורות היסוד</h3></div><b>{sourceCatalogue.length}</b></div>
+   <div className="sourceList">{sourceCatalogue.map(source=><button key={source.number} type="button" className="sourceItem" onClick={()=>openSource(source.number)} aria-label={`פתח מקור: ${source.title}`}>
+    <span className="sourceNum">{String(source.number).padStart(2,'0')}</span>
+    <span className="sourceInfo"><span className="sourceName">{source.title}</span><span className="sourceFile">{source.sourceFile}</span></span>
+    <span className="sourceOpen" aria-hidden="true">פתח ←</span>
+   </button>)}</div>
+  </section>
+  {publishedExtraSources.length>0&&<section className="sourceLibrarySection sourceLibrarySection--published" aria-labelledby="published-sources-title">
+   <div className="sourceLibrarySectionHead"><div><span>NEW PUBLISHED SOURCES</span><h3 id="published-sources-title">מקורות חדשים שפורסמו</h3></div><b>{publishedExtraSources.length}</b></div>
+   <p className="sourceLibraryHint">מקורות שעברו קליטה, בדיקה ופרסום מפורש. לחיצה פותחת את חומר המקור הקנוני המלא.</p>
+   <div className="sourceList">{publishedExtraSources.map(source=>{
+    const metadata=source.metadata||{},sourceFile=typeof metadata.sourceFile==='string'?metadata.sourceFile:source.original_uri||source.mime_type||source.type;
+    return <button key={source.id} type="button" className="sourceItem sourceItem--published" onClick={()=>setSelectedPublicSourceId(source.id)} aria-label={`פתח מקור שפורסם: ${source.title}`}>
+     <span className="sourceNum sourceNum--published">חדש</span>
+     <span className="sourceInfo"><span className="sourceName">{source.title}</span><span className="sourceFile">{sourceFile}{source.fragment_count?` · ${source.fragment_count} קטעים`:''}</span></span>
+     <span className="sourceOpen" aria-hidden="true">מקור ←</span>
+    </button>;
+   })}</div>
+  </section>}
  </div>;
 };
 
