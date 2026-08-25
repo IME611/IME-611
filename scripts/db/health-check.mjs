@@ -1,9 +1,10 @@
 import pg from 'pg';
+import { normalizeDatabaseUrl } from '../../server/shared/postgres.js';
 const { Client } = pg;
 const DATABASE_URL = process.env.DATABASE_URL;
 if (!DATABASE_URL) throw new Error('DATABASE_URL is required');
 const ssl = process.env.DATABASE_SSL === 'false' ? false : { rejectUnauthorized: false };
-const client = new Client({ connectionString: DATABASE_URL, ssl });
+const client = new Client({ connectionString: normalizeDatabaseUrl(DATABASE_URL), ssl });
 
 const requiredTables = [
   'sources','source_fragments','claims','concepts','evidence','connections',

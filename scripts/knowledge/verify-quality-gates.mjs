@@ -1,11 +1,12 @@
 import assert from'node:assert/strict';
 import pg from'pg';
+import{normalizeDatabaseUrl}from'../../server/shared/postgres.js';
 
 const{Client}=pg;
 const DATABASE_URL=process.env.DATABASE_URL;
 if(!DATABASE_URL)throw new Error('DATABASE_URL is required for corpus quality gates');
 const ssl=process.env.DATABASE_SSL==='false'?false:{rejectUnauthorized:false};
-const client=new Client({connectionString:DATABASE_URL,ssl});
+const client=new Client({connectionString:normalizeDatabaseUrl(DATABASE_URL),ssl});
 const scalar=async(sql,params=[])=>Number((await client.query(sql,params)).rows[0]?.count||0);
 const expectedMigrations=[
  'database/migrations/001_knowledge_foundation.sql',
