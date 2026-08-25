@@ -1,97 +1,149 @@
-# E.I.L Live DB Migration & Golden Thread Runbook
+# E.I.L Live DB Migration & Production Verification Runbook
 
 ## Preconditions
+
 - Run only against the intended PostgreSQL database.
 - `DATABASE_URL` must point to that database.
 - Set `DATABASE_SSL=false` only when the target explicitly does not require TLS.
-- Take a provider snapshot/backup before the first live migration.
+- Production schema changes are forward-only. Never edit an already-applied migration.
+- Take a provider backup/snapshot before a risky provider-level change; normal E.I.L migrations are additive/compatibility-preserving unless a new migration explicitly documents otherwise.
 
-## 1. Dry safety checks
+## Reproducible local checks
+
+CI uses Node 24 and the committed lockfile.
+
 ```bash
-npm install
+npm ci
+npm run verify:private-beta
 npm run build
 ```
 
-Confirm the target database manually before mutation:
+For live DB commands, confirm the target manually before mutation:
+
 ```bash
 node -e "const u=new URL(process.env.DATABASE_URL); console.log({host:u.hostname,database:u.pathname.slice(1),user:u.username})"
 ```
 
-## 2. Apply migrations 001 + 002
+## Apply canonical migrations
+
 ```bash
 DATABASE_URL='postgresql://...' npm run db:migrate
 ```
 
-The runner:
-- acquires an advisory migration lock;
-- creates `schema_migrations`;
+The runner currently contains canonical migrations **001–012** and:
+
+- acquires a PostgreSQL advisory migration lock;
+- creates/uses `schema_migrations`;
 - stores a SHA-256 checksum per migration;
 - skips already-applied migrations;
-- aborts if an applied migration file later changes.
+- aborts if an applied migration file changes;
+- strips conflicting URL SSL mode query parameters before applying the explicit TLS policy.
 
-Migration 001 creates the canonical Knowledge Domain. Migration 002 is additive and preserves all legacy rows while creating explicit legacy-id -> canonical-UUID mappings.
+Do not manually mark migrations as applied. Do not edit migration checksums.
 
-## 3. Immediate health check
+## Immediate health
+
 ```bash
 DATABASE_URL='postgresql://...' npm run db:health
 ```
 
-Expected JSON:
-```json
-{
-  "ok": true,
-  "canonical_sources": 1,
-  "canonical_fragments": 1,
-  "mapped_sources": 1,
-  "mapped_fragments": 1,
-  "migrations_applied": 2
-}
-```
-Counts will be larger on the real database. The critical condition is `ok: true` and `migrations_applied >= 2`.
+On the current seed database the important conditions are:
 
-Optional provider SQL console checks:
+- `ok: true`
+- `canonical_sources >= 18`
+- `canonical_fragments >= 18`
+- `extraction_candidates > 0`
+- `migrations_applied >= 12`
+
+Counts may grow as creator-approved sources are added.
+
+Useful ledger check:
+
 ```sql
-SELECT name, checksum, applied_at FROM schema_migrations ORDER BY applied_at;
-SELECT COUNT(*) FROM sources;
-SELECT COUNT(*) FROM source_fragments;
-SELECT COUNT(*) FROM legacy_source_mappings;
-SELECT COUNT(*) FROM legacy_fragment_mappings;
+SELECT name, checksum, applied_at
+FROM schema_migrations
+ORDER BY applied_at, name;
 ```
 
-## 4. Backfill integrity verification
-Run the read-only file in the provider SQL console:
+## Canonical corpus quality gates
 
-`database/verification/002_verify_legacy_backfill.sql`
+Production preflight runs the live DB checks automatically. To run the main read-only corpus integrity gate directly:
 
-The first four result sets must return zero rows. The summary counts should show all legacy source/chunk rows mapped.
+```bash
+DATABASE_URL='postgresql://...' node scripts/knowledge/verify-quality-gates.mjs
+```
 
-## 5. Golden Thread verification
-This uses one real canonical fragment already present after backfill. It creates one evidence-backed Claim, one SUPPORTED Insight, one Experiment and one Reflection, then traces the Insight all the way back to the exact canonical fragment text.
+Current gate family: `CORPUS_QUALITY_GATES_V0_5`.
+
+Zero-failure invariants include:
+
+- every active extraction candidate has evidence;
+- exact candidate/evidence quotes match source text;
+- claims are evidence-backed;
+- approved relations cannot have unresolved endpoints;
+- review decisions remain attributable/referential;
+- intake review status and canonical source links remain consistent;
+- published sources/cards have stable learning-unit keys and titles;
+- published cards stay inside creator-selected candidates and 40–90 words;
+- learner visibility does not leak unpublished repository candidates;
+- no fixed `1..18` chapter constraint remains on canonical publication;
+- legacy review compatibility schema exists and is migration-owned;
+- migrations 001–012 are ledgered with valid checksums.
+
+## Atomic extraction schema verification
+
+```bash
+DATABASE_URL='postgresql://...' npm run db:verify-extraction
+```
+
+This executes the read-only verification SQL under `database/verification/`.
+
+## Golden thread
+
+The historical Golden Thread verifies Claim → Evidence → SourceFragment → Source plus experiment/reflection traceability against a real canonical fragment:
 
 ```bash
 DATABASE_URL='postgresql://...' npm run db:golden
 ```
 
-Pass criteria:
-- `ok: true`
-- `insightStatus: "SUPPORTED"`
-- non-empty `claimId`, `insightId`, `experimentId`, `reflectionId`
-- `traceRows >= 1`
-- the returned `fragmentPreview` belongs to the selected real source
-- the exact evidence quote is present in the traced fragment
+Use it when modifying the foundational canonical claim/evidence model. It is not a substitute for the newer corpus/intake/publication quality gates.
 
-Combined command:
+## Production deployment behavior
+
+Vercel Production runs:
+
 ```bash
-DATABASE_URL='postgresql://...' npm run db:verify
+npm run vercel-build
 ```
 
-## 6. Definition of Done
-Foundation Live DB is complete only when:
-1. migrations 001 and 002 are recorded in `schema_migrations`;
-2. backfill verification returns no mismatches or missing mappings;
-3. Golden Thread returns a SUPPORTED Insight;
-4. the Insight trace resolves to Claim -> Evidence -> SourceFragment -> Source;
-5. the traced fragment contains the evidence quote used to construct the Claim.
+The first Function build unit that claims the deployment lock runs remote migrations and live DB quality checks. Other build units skip the duplicate remote work but still run deterministic regressions, TypeScript and Vite. This avoids running migrations/DB audits 12 times per deployment.
+
+Expected Production log pattern:
+
+```text
+Production prebuild: remote preflight claimed (...)
+Production prebuild: ensuring canonical migrations 001-012.
+...
+CORPUS_QUALITY_GATES_V0_5
+PASS ...
+```
+
+Subsequent build units should say the remote preflight was already claimed.
+
+## Post-deploy verification
+
+After the exact merged deployment is `READY`:
+
+1. confirm `https://ime-611.vercel.app/` returns 200;
+2. call `/api/reviews?mode=backend-health` without paid probes and require `ok:true`;
+3. require health checks for migrations 010/011/012 and `reviewBoundarySchema` to be true;
+4. confirm `semanticProbe` and `visionProbe` are `null` when not requested;
+5. confirm an unknown review mode returns 404 and the legacy no-mode review route returns 401 without creator credentials;
+6. check Vercel runtime errors;
+7. verify the deployment still reports 12 Node.js Functions.
+
+Do not run paid semantic/vision probes merely to make a deployment look green.
 
 ## Rollback policy
-The migrations are additive. Do not delete legacy tables during this stage. If a live verification fails after migration, keep the new canonical tables isolated, disable canonical ingestion (`EIL_CANONICAL_INGESTION` unset/false), inspect the failure, and correct via a new forward migration. Do not edit an already-applied migration because the migration runner will detect checksum drift.
+
+Prefer forward fixes. If a deployment is bad but the migration succeeded safely, revert/roll back application code and add a new forward migration if schema correction is required. Never rewrite an applied migration to simulate rollback; checksum verification will reject drift.
