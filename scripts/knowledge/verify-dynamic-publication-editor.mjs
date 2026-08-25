@@ -19,6 +19,10 @@ assert.throws(()=>normalizeLearningUnitKey('learning unit 19'),/without spaces/)
 
 assert.ok(migration.includes('target_learning_unit_title TEXT'),'migration 011 must add source publication unit title');
 assert.ok(migration.includes('learning_unit_title TEXT'),'migration 011 must add learner card unit title');
+assert.ok(migration.includes('source_publications_legacy_unit_compat'),'legacy source-publication writes must be upgraded before constraints');
+assert.ok(migration.includes('published_learning_cards_legacy_unit_compat'),'legacy card writes must be upgraded before constraints');
+assert.ok(migration.includes("NEW.target_learning_unit_key := 'legacy-chapter:'"),'legacy source placement must receive a stable unit key');
+assert.ok(migration.includes("NEW.learning_unit_key := 'legacy-chapter:'"),'legacy cards must receive a stable unit key');
 assert.ok(migrations.includes("'database/migrations/011_learning_unit_titles.sql'"),'migration runner must include 011');
 assert.ok(ensure.includes('001-011'),'production migration gate must advertise 001-011');
 
@@ -35,4 +39,4 @@ assert.ok(learner.includes('learning_unit_title'),'learner publication listing m
 assert.ok(learner.includes('row.creator_title'),'learner unit title must prefer persisted creator title');
 assert.ok(learner.includes('creatorTitlePreferred:true'),'learner policy must declare creator title precedence');
 
-console.log('PASS dynamic publication editor (unbounded unit keys + creator titles + flexible placement UI + migration 011)');
+console.log('PASS dynamic publication editor (unbounded unit keys + creator titles + flexible placement UI + legacy-safe migration 011)');
