@@ -72,7 +72,7 @@ async function handlePublicationPlacement(req,res,db){
   return res.status(200).json(await getPublicationPlacementCatalog(db));
  }
  if(req.method==='PATCH'||req.method==='POST'){
-  const body=req.body||{},action=String(body.action||'PREVIEW').toUpperCase(),payload={publicationId:String(body.publicationId||''),learningUnitKey:body.learningUnitKey,candidateIds:body.candidateIds,cards:body.cards||[],note:body.note||'',reviewer:reviewer(req)};
+  const body=req.body||{},action=String(body.action||'PREVIEW').toUpperCase(),payload={publicationId:String(body.publicationId||''),learningUnitKey:body.learningUnitKey,learningUnitTitle:body.learningUnitTitle,candidateIds:body.candidateIds,cards:body.cards||[],note:body.note||'',reviewer:reviewer(req)};
   if(action==='PREVIEW')return res.status(200).json(await previewFlexiblePublication(db,payload));
   if(action==='SAVE_DRAFT')return res.status(200).json(await saveFlexiblePublicationDraft(db,payload));
   if(action==='PUBLISH')return res.status(200).json(await publishFlexiblePublication(db,payload));
