@@ -3,39 +3,34 @@ import{chapters as embeddedChapters}from'../data/chapters-embedded';
 import{KnowledgeDashboard}from'../features/knowledge-dashboard/KnowledgeDashboard';
 import{DesktopNavigation,MobileNavigation}from'../features/navigation/NavigationShell';
 import{useAppNavigation}from'../features/navigation/useAppNavigation';
-import{isOwnerOnlyNavigation,pageByNavigationId}from'../features/navigation/navigation.config';
+import{isKnownNavigation,isOwnerOnlyNavigation}from'../features/navigation/navigation.config';
 import{useCrystalCollection}from'../features/crystals/model/useCrystalCollection';
 import type{JourneyLayerId}from'../features/journey/model/journey-layers';
 import{WelcomeScreen}from'../features/welcome/WelcomeScreen';
 import{LiquidGlassFilter}from'../design/primitives/LiquidGlassFilter';
 import{bindLiquidGlassPointerTracking}from'../design/glass/runtime';
-import{evolutionPages}from'./navigation';
 import type{Chapter}from'../core/types';
-import{journeyStorage,readText,resetPersonalProgress,storageKeys,writeText}from'../core/storage';
+import{journeyStorage,readJson,readText,resetPersonalProgress,storageKeys,writeJson,writeText}from'../core/storage';
 
 const SpiralLibrary=React.lazy(()=>import('../features/journey/SpiralLibrary'));
-const EvolutionWorkspace=React.lazy(()=>import('../features/evolution/EvolutionWorkspace'));
-const TransformationWorkspace=React.lazy(()=>import('../features/transformation/TransformationWorkspace'));
-const MediaWorkspace=React.lazy(()=>import('../features/media/MediaWorkspace').then(module=>({default:module.MediaWorkspace})));
 const AddSourceModal=React.lazy(()=>import('../features/sources/AddSourceModal').then(module=>({default:module.AddSourceModal})));
 const PublicSourceDocument=React.lazy(()=>import('../features/sources/PublicSourceDocument').then(module=>({default:module.PublicSourceDocument})));
 const CrystalCollectionDrawer=React.lazy(()=>import('../features/crystals/CrystalCollectionDrawer').then(module=>({default:module.CrystalCollectionDrawer})));
 const ReviewConsole=React.lazy(()=>import('../features/editor/ReviewConsole').then(module=>({default:module.ReviewConsole})));
 
-const evoPageIds=evolutionPages as readonly string[];
 const RouteLoading=()=> <div className="routeLoading" role="status" aria-live="polite"><span>טוען את המרחב…</span></div>;
 type PublicSourceSummary={id:string;type:string;title:string;author?:string|null;original_uri?:string|null;mime_type?:string|null;metadata?:Record<string,unknown>|null;created_at?:string|null;fragment_count?:number};
+type SettingsForm={name:string;email:string;phone:string};
 
 export default function App(){
  const{page,navigate:nav,replace:replaceNav,back:goBack}=useAppNavigation();
  const owner=journeyStorage.mode()==='owner';
- const activePage=owner||!isOwnerOnlyNavigation(page)?page:'dashboard';
+ const activePage=isKnownNavigation(page)&&(owner||!isOwnerOnlyNavigation(page))?page:'dashboard';
  const[collapsed,setCollapsed]=useState(()=>readText(storageKeys.railCollapsed)==='1');
  const[editor,setEditor]=useState(false);
  const[online,setOnline]=useState(false);
  const[notice,setNotice]=useState('');
  const[crystalsOpen,setCrystalsOpen]=useState(false);
- const[requestedChapter,setRequestedChapter]=useState<number|null>(null);
  const[requestedSourceNumber,setRequestedSourceNumber]=useState<number|null>(null);
  const[requestedLayer,setRequestedLayer]=useState<JourneyLayerId|null>(null);
  const[sourceChapters,setSourceChapters]=useState<Chapter[]>([]);
@@ -59,12 +54,12 @@ export default function App(){
  },[reviewMode]);
  useEffect(()=>{if(!reviewMode)writeText(storageKeys.railCollapsed,collapsed?'1':'0')},[collapsed,reviewMode]);
  useEffect(()=>{if(reviewMode)return;return bindLiquidGlassPointerTracking()},[reviewMode]);
- useEffect(()=>{if(!owner&&isOwnerOnlyNavigation(page))replaceNav('dashboard')},[owner,page,replaceNav]);
+ useEffect(()=>{if(!reviewMode&&page!==activePage)replaceNav(activePage)},[activePage,page,replaceNav,reviewMode]);
  useEffect(()=>{if(activePage!=='sources'&&selectedPublicSourceId)setSelectedPublicSourceId(null)},[activePage,selectedPublicSourceId]);
 
- // Keep the curated, marker-based Claude edition as the reader source. The API
- // collection is used only for the source catalogue so a successful API fetch
- // can never replace the designed chapter experience with raw DOCX paragraphs.
+ // The curated 18-item foundation remains a learner presentation layer. Canonical
+ // source truth and newly published material come from the API and are never
+ // replaced or mutated by this frontend representation.
  const journeyChapters=embeddedChapters;
  const sourceCatalogue=sourceChapters.length===18?sourceChapters:embeddedChapters;
  const seedSourceFiles=new Set(sourceCatalogue.map(source=>source.sourceFile));
@@ -73,120 +68,78 @@ export default function App(){
   return metadata.ingestion!=='repository-corpus-bootstrap-v1'&&!seedSourceFiles.has(sourceFile);
  });
  const openNew=()=>{if(!owner){setNotice('העלאת מקור זמינה במצב יוצר בלבד.');return}setEditor(true)};
- const isEvolution=evoPageIds.includes(activePage);
  const enterExperience=()=>{try{sessionStorage.setItem('eil-welcome-entered','1')}catch{}setEntered(true);nav('dashboard')};
- const openJourney=(layerId?:JourneyLayerId)=>{setSelectedPublicSourceId(null);setRequestedSourceNumber(null);setRequestedChapter(null);setRequestedLayer(layerId??null);nav('library')};
- const openSource=(sourceNumber:number)=>{setSelectedPublicSourceId(null);setRequestedChapter(null);setRequestedLayer(null);setRequestedSourceNumber(sourceNumber);nav('library')};
+ const openJourney=(layerId?:JourneyLayerId)=>{setSelectedPublicSourceId(null);setRequestedSourceNumber(null);setRequestedLayer(layerId??null);nav('library')};
+ const openSource=(sourceNumber:number)=>{setSelectedPublicSourceId(null);setRequestedLayer(null);setRequestedSourceNumber(sourceNumber);nav('library')};
 
-/* ===== PAGE COMPONENTS ===== */
+ const Sources=()=>{
+  if(selectedPublicSourceId)return <React.Suspense fallback={<RouteLoading/>}><PublicSourceDocument sourceId={selectedPublicSourceId} onBack={()=>setSelectedPublicSourceId(null)}/></React.Suspense>;
+  const totalSources=sourceCatalogue.length+publishedExtraSources.length;
+  return <div className="simplePage sourceLibraryPage" dir="rtl">
+   <h2 className="simplePageTitle">↗ המקורות שלי</h2>
+   <p className="simplePageSub">{totalSources} מקורות מלאים שפורסמו ללומדים ושעליהם מבוסס הידע באתר</p>
+   <section className="sourceLibrarySection" aria-labelledby="foundation-sources-title">
+    <div className="sourceLibrarySectionHead"><div><span>FOUNDATION SOURCES</span><h3 id="foundation-sources-title">מקורות היסוד</h3></div><b>{sourceCatalogue.length}</b></div>
+    <div className="sourceList">{sourceCatalogue.map(source=><button key={source.number} type="button" className="sourceItem" onClick={()=>openSource(source.number)} aria-label={`פתח מקור: ${source.title}`}>
+     <span className="sourceNum">{String(source.number).padStart(2,'0')}</span>
+     <span className="sourceInfo"><span className="sourceName">{source.title}</span><span className="sourceFile">{source.sourceFile}</span></span>
+     <span className="sourceOpen" aria-hidden="true">פתח ←</span>
+    </button>)}</div>
+   </section>
+   {publishedExtraSources.length>0&&<section className="sourceLibrarySection sourceLibrarySection--published" aria-labelledby="published-sources-title">
+    <div className="sourceLibrarySectionHead"><div><span>NEW PUBLISHED SOURCES</span><h3 id="published-sources-title">מקורות חדשים שפורסמו</h3></div><b>{publishedExtraSources.length}</b></div>
+    <p className="sourceLibraryHint">מקורות שעברו קליטה, בדיקה ופרסום מפורש. לחיצה פותחת את חומר המקור הקנוני המלא.</p>
+    <div className="sourceList">{publishedExtraSources.map(source=>{
+     const metadata=source.metadata||{},sourceFile=typeof metadata.sourceFile==='string'?metadata.sourceFile:source.original_uri||source.mime_type||source.type;
+     return <button key={source.id} type="button" className="sourceItem sourceItem--published" onClick={()=>setSelectedPublicSourceId(source.id)} aria-label={`פתח מקור שפורסם: ${source.title}`}>
+      <span className="sourceNum sourceNum--published">חדש</span>
+      <span className="sourceInfo"><span className="sourceName">{source.title}</span><span className="sourceFile">{sourceFile}{source.fragment_count?` · ${source.fragment_count} קטעים`:''}</span></span>
+      <span className="sourceOpen" aria-hidden="true">מקור ←</span>
+     </button>;
+    })}</div>
+   </section>}
+  </div>;
+ };
 
-const Crystals=()=>{
- return <div className="simplePage" dir="rtl">
-  <h2 className="simplePageTitle">◆ הקריסטלים שלי</h2>
-  <p className="simplePageSub">תובנות ששמרת מתוך המסע</p>
-  {crystals.length===0?<div className="emptyState"><p>עוד לא שמרת קריסטלים</p><span>כשתקרא פרק ותסמן תובנה — היא תופיע כאן</span></div>:
-  <div className="crystalList">{crystals.map(c=><article key={c.fragmentId} className="crystalItem"><div className="crystalItemTitle">{c.topic||'תובנה'}</div><p className="crystalItemText">{c.text}</p>{c.personalNote&&<blockquote className="crystalItemNote"><strong>ההערה שלי</strong>{c.personalNote}</blockquote>}<span className="crystalItemSource">{c.sourceLabel} · {c.provenanceLabel}</span></article>)}</div>}
- </div>;
-};
-
-const AddLearning=()=>{
- const[text,setText]=React.useState('');
- const[saved,setSaved]=React.useState(false);
- const save=()=>{if(!text.trim())return;const items=JSON.parse(localStorage.getItem('eil-learnings')||'[]');items.unshift({text:text.trim(),date:new Date().toISOString()});localStorage.setItem('eil-learnings',JSON.stringify(items));setSaved(true);setTimeout(()=>{setText('');setSaved(false)},2000)};
- return <div className="simplePage" dir="rtl">
-  <h2 className="simplePageTitle">✎ הוסף משהו שלמדת</h2>
-  <p className="simplePageSub">כתוב תובנה, מחשבה, או קשר שגילית</p>
-  <textarea className="learningInput" value={text} onChange={e=>setText(e.target.value)} placeholder="מה למדת היום?" rows={5}/>
-  <button className="primaryBtn" onClick={save} disabled={!text.trim()}>{saved?'✓ נשמר!':'שמור'}</button>
- </div>;
-};
-
-const Sources=()=>{
- if(selectedPublicSourceId)return <React.Suspense fallback={<RouteLoading/>}><PublicSourceDocument sourceId={selectedPublicSourceId} onBack={()=>setSelectedPublicSourceId(null)}/></React.Suspense>;
- const totalSources=sourceCatalogue.length+publishedExtraSources.length;
- return <div className="simplePage sourceLibraryPage" dir="rtl">
-  <h2 className="simplePageTitle">↗ המקורות שלי</h2>
-  <p className="simplePageSub">{totalSources} מקורות מלאים שפורסמו ללומדים ושעליהם מבוסס הידע באתר</p>
-  <section className="sourceLibrarySection" aria-labelledby="foundation-sources-title">
-   <div className="sourceLibrarySectionHead"><div><span>FOUNDATION SOURCES</span><h3 id="foundation-sources-title">מקורות היסוד</h3></div><b>{sourceCatalogue.length}</b></div>
-   <div className="sourceList">{sourceCatalogue.map(source=><button key={source.number} type="button" className="sourceItem" onClick={()=>openSource(source.number)} aria-label={`פתח מקור: ${source.title}`}>
-    <span className="sourceNum">{String(source.number).padStart(2,'0')}</span>
-    <span className="sourceInfo"><span className="sourceName">{source.title}</span><span className="sourceFile">{source.sourceFile}</span></span>
-    <span className="sourceOpen" aria-hidden="true">פתח ←</span>
-   </button>)}</div>
-  </section>
-  {publishedExtraSources.length>0&&<section className="sourceLibrarySection sourceLibrarySection--published" aria-labelledby="published-sources-title">
-   <div className="sourceLibrarySectionHead"><div><span>NEW PUBLISHED SOURCES</span><h3 id="published-sources-title">מקורות חדשים שפורסמו</h3></div><b>{publishedExtraSources.length}</b></div>
-   <p className="sourceLibraryHint">מקורות שעברו קליטה, בדיקה ופרסום מפורש. לחיצה פותחת את חומר המקור הקנוני המלא.</p>
-   <div className="sourceList">{publishedExtraSources.map(source=>{
-    const metadata=source.metadata||{},sourceFile=typeof metadata.sourceFile==='string'?metadata.sourceFile:source.original_uri||source.mime_type||source.type;
-    return <button key={source.id} type="button" className="sourceItem sourceItem--published" onClick={()=>setSelectedPublicSourceId(source.id)} aria-label={`פתח מקור שפורסם: ${source.title}`}>
-     <span className="sourceNum sourceNum--published">חדש</span>
-     <span className="sourceInfo"><span className="sourceName">{source.title}</span><span className="sourceFile">{sourceFile}{source.fragment_count?` · ${source.fragment_count} קטעים`:''}</span></span>
-     <span className="sourceOpen" aria-hidden="true">מקור ←</span>
-    </button>;
-   })}</div>
-  </section>}
- </div>;
-};
-
-const AddSource=()=>{
- return <div className="simplePage" dir="rtl">
+ const AddSource=()=> <div className="simplePage" dir="rtl">
   <h2 className="simplePageTitle">＋ הוסף מקור</h2>
-  <p className="simplePageSub">העלה מסמך, מאמר, סרטון או כל חומר גלם</p>
-  <button className="primaryBtn" onClick={openNew}>+ העלה מקור / PDF</button>
+  <p className="simplePageSub">העלה מסמך, מאמר, תמונה, קישור או חומר גלם אחר למסלול הקליטה והבדיקה.</p>
+  <button className="primaryBtn" onClick={openNew}>+ העלה מקור</button>
  </div>;
-};
 
-const Settings=()=>{
- const[form,setForm]=React.useState({name:"",email:"",phone:""});
- const[saved,setSaved]=React.useState(false);
- const[resetDone,setResetDone]=React.useState(false);
- const[settingsError,setSettingsError]=React.useState('');
- React.useEffect(()=>{
- try{const s=JSON.parse(localStorage.getItem("eil-settings")||"{}");
- setForm(f=>({...f,...s}));}catch{}
- },[]);
- const save=()=>{
- try{localStorage.setItem("eil-settings",JSON.stringify(form));setSettingsError('');setSaved(true);setTimeout(()=>setSaved(false),2000)}
- catch{setSaved(false);setSettingsError('לא ניתן היה לשמור את ההגדרות בדפדפן.')}
+ const Settings=()=>{
+  const[form,setForm]=React.useState<SettingsForm>({name:'',email:'',phone:''});
+  const[saved,setSaved]=React.useState(false);
+  const[resetDone,setResetDone]=React.useState(false);
+  const[settingsError,setSettingsError]=React.useState('');
+  React.useEffect(()=>{setForm(current=>({...current,...readJson<Partial<SettingsForm>>(storageKeys.settings,{})}))},[]);
+  const save=()=>{
+   if(writeJson(storageKeys.settings,form)){setSettingsError('');setSaved(true);setTimeout(()=>setSaved(false),2000)}
+   else{setSaved(false);setSettingsError('לא ניתן היה לשמור את ההגדרות בדפדפן.')}
+  };
+  const reset=()=>{
+   if(!window.confirm('האם אתה בטוח? פעולה זו תמחק את כל ההתקדמות שלך.'))return;
+   resetPersonalProgress();
+   setResetDone(true);setTimeout(()=>window.location.reload(),900);
+  };
+  const field=(label:string,key:keyof SettingsForm,type='text')=> <div className="settingField">
+   <label className="settingLabel" htmlFor={`setting-${key}`}>{label}</label>
+   <input id={`setting-${key}`} className="settingInput" type={type} value={form[key]} onChange={e=>setForm(current=>({...current,[key]:e.target.value}))}/>
+  </div>;
+  return <div className="simplePage" dir="rtl">
+   <h2 className="simplePageTitle">⚙ הגדרות</h2>
+   <div className="settingForm">
+    {field('שם מלא','name')}{field('אימייל','email','email')}{field('טלפון','phone','tel')}
+    <button className="primaryBtn" onClick={save}>{saved?'✓ נשמר!':'שמור הגדרות'}</button>
+    {settingsError&&<p className="formError" role="alert">{settingsError}</p>}
+    <div className="settingDivider"/>
+    <h3 className="settingDangerTitle">אזור מסוכן</h3>
+    <button className="dangerBtn" onClick={reset}>{resetDone?'✓ ההתקדמות אופסה':'🗑 אפס התקדמות'}</button>
+    {resetDone&&<p className="settingStatus" role="status">הנתונים המקומיים אופסו. האפליקציה נטענת מחדש…</p>}
+    <p className="settingDangerNote">מוחק קריסטלים והתקדמות מקומית. לא ניתן לשחזר.</p>
+   </div>
+  </div>;
  };
- const reset=()=>{
- if(!window.confirm("האם אתה בטוח? פעולה זו תמחק את כל ההתקדמות שלך."))return;
- resetPersonalProgress();
- setResetDone(true);setTimeout(()=>window.location.reload(),900);
- };
- const field=(label:string,key:"name"|"email"|"phone",type="text")=>
- <div className="settingField">
- <label className="settingLabel" htmlFor={`setting-${key}`}>{label}</label>
- <input id={`setting-${key}`} className="settingInput" type={type} value={form[key]}
- onChange={e=>setForm(f=>({...f,[key]:e.target.value}))}/>
- </div>;
- return <div className="simplePage" dir="rtl">
- <h2 className="simplePageTitle">⚙ הגדרות</h2>
- <div className="settingForm">
- {field("שם מלא","name")}
- {field("אימייל","email","email")}
- {field("טלפון","phone","tel")}
- <button className="primaryBtn" onClick={save}>
- {saved?"✓ נשמר!":"שמור הגדרות"}
- </button>
- {settingsError&&<p className="formError" role="alert">{settingsError}</p>}
- <div className="settingDivider"/>
- <h3 className="settingDangerTitle">אזור מסוכן</h3>
- <button className="dangerBtn" onClick={reset}>
- {resetDone?"✓ ההתקדמות אופסה":"🗑 אפס התקדמות"}
- </button>
- {resetDone&&<p className="settingStatus" role="status">הנתונים המקומיים אופסו. האפליקציה נטענת מחדש…</p>}
- <p className="settingDangerNote">מוחק: קריסטלים, תובנות, התקדמות. לא ניתן לשחזר.</p>
- </div>
- </div>;
-};
-
-const Generic=()=><div className="simplePage" dir="rtl">
- <h2 className="simplePageTitle">{pageByNavigationId(activePage).label}</h2>
- <p className="muted">דף זה בפיתוח.</p>
-</div>;
 
  if(reviewMode)return <><LiquidGlassFilter/><React.Suspense fallback={<RouteLoading/>}><ReviewConsole/></React.Suspense></>;
  if(!entered)return <><LiquidGlassFilter/><WelcomeScreen onStart={enterExperience}/></>;
@@ -198,8 +151,6 @@ const Generic=()=><div className="simplePage" dir="rtl">
    {activePage!=='dashboard'&&<div className="pageBack"><button onClick={goBack}>→ חזרה</button></div>}
    {notice&&<div className="notice" role="status"><span>{notice}</span><button type="button" aria-label="סגור הודעה" onClick={()=>setNotice('')}>×</button></div>}
    {activePage==='dashboard'&&<KnowledgeDashboard onOpenJourney={openJourney}/>}
-   {activePage==='crystals'&&<Crystals/>}
-   {activePage==='add-learning'&&<AddLearning/>}
    {activePage==='sources'&&<Sources/>}
    {activePage==='add-source'&&<AddSource/>}
    {activePage==='settings'&&<Settings/>}
@@ -207,19 +158,13 @@ const Generic=()=><div className="simplePage" dir="rtl">
     {activePage==='review'&&<ReviewConsole/>}
     {activePage==='library'&&<SpiralLibrary
      chapters={journeyChapters}
-     initialChapter={requestedChapter}
      initialSourceNumber={requestedSourceNumber}
      initialLayer={requestedLayer}
-     onInitialChapterOpened={()=>setRequestedChapter(null)}
      onInitialSourceOpened={()=>setRequestedSourceNumber(null)}
      onInitialLayerOpened={()=>setRequestedLayer(null)}
      onSourceClosed={()=>nav('sources')}
     />}
-    {activePage==='transformation'&&<TransformationWorkspace chapters={journeyChapters}/>}
-    {activePage==='media'&&<MediaWorkspace/>}
-    {isEvolution&&<EvolutionWorkspace page={activePage} onNav={nav}/>}
    </React.Suspense>
-   {!['dashboard','library','sources','transformation','media','crystals','add-learning','add-source','review','settings',...evoPageIds].includes(activePage)&&<Generic/>}
    {owner&&editor&&<React.Suspense fallback={null}><AddSourceModal open onClose={()=>setEditor(false)} onImported={setNotice}/></React.Suspense>}
   </main>
   <button className="crystalLauncher" onClick={()=>setCrystalsOpen(true)} aria-label="פתח את אוסף הקריסטלים"><span>◆</span><b>הקריסטלים שלי</b><em>{crystals.length}</em></button>
