@@ -4,11 +4,13 @@ import{normalizeLearningUnitKey,normalizeLearningUnitTitle}from'../../server/kno
 
 const read=path=>fs.readFileSync(path,'utf8');
 const editor=read('src/features/editor/SourcePublicationReview.tsx');
+const consoleUi=read('src/features/editor/ReviewConsole.tsx');
 const api=read('api/reviews.js');
 const migration=read('database/migrations/011_learning_unit_titles.sql');
 const migrations=read('scripts/db/run-migrations.mjs');
 const ensure=read('scripts/db/ensure-production-migrations.mjs');
 const learner=read('server/knowledge/application/publication/learner-publication.service.js');
+const health=read('server/knowledge/application/quality/backend-completion.service.js');
 
 assert.equal(normalizeLearningUnitKey('learning-unit:19'),'learning-unit:19');
 assert.equal(normalizeLearningUnitKey('topic:תפיסה-רגש'),'topic:תפיסה-רגש');
@@ -35,8 +37,19 @@ assert.ok(editor.includes('יחידה קיימת ממפת הלמידה'),'creato
 assert.ok(editor.includes('מסלול יסוד (תאימות לפרקים)'),'legacy chapter placement must be compatibility-only');
 assert.ok(!editor.includes("onError('בחר פרק יעד לפני יצירת הכרטיסיות.')"),'creator editor must not require a fixed chapter');
 
+assert.ok(consoleUi.includes('יחידת לימוד יעד'),'creator console publication copy must describe dynamic placement');
+assert.ok(consoleUi.includes('יחידות ויחידת לימוד'),'source approval follow-up must describe dynamic placement');
+assert.ok(!consoleUi.includes('בחירת יחידות, פרק יעד'),'creator console must not present fixed chapter placement as the current flow');
+assert.ok(!consoleUi.includes('תמונה דורשת כרגע גם תיאור טקסטואלי'),'creator console must not claim text is always required for images');
+assert.ok(consoleUi.includes('תמונות נתמכות ישירות'),'creator console must describe native image intake');
+assert.ok(consoleUi.includes('אם ניתוח ה־AI אינו זמין'),'creator console must describe the safe image fallback');
+
 assert.ok(learner.includes('learning_unit_title'),'learner publication listing must read persisted unit titles');
 assert.ok(learner.includes('row.creator_title'),'learner unit title must prefer persisted creator title');
 assert.ok(learner.includes('creatorTitlePreferred:true'),'learner policy must declare creator title precedence');
 
-console.log('PASS dynamic publication editor (unbounded unit keys + creator titles + flexible placement UI + legacy-safe migration 011)');
+assert.ok(health.includes("healthScope:'LEGACY_COMPATIBILITY_SERVICE'"),'aggregate health must label the retained legacy health service');
+assert.ok(health.includes('effectivePolicy:{fixedChapterCount:false,dynamicLearningUnitKeys:true,dynamicLearningUnitTitles:true'),'aggregate health must expose the effective dynamic publication policy');
+assert.ok(health.includes("version:'backend-completion-v1.4'"),'aggregate health version must reflect the policy clarification');
+
+console.log('PASS dynamic publication editor (unbounded units + creator titles + truthful creator copy + effective policy context)');
