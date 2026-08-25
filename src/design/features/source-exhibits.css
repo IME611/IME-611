@@ -1,0 +1,56 @@
+/* Learner-facing visual exhibits derived from creator-supplied source images. */
+.sourceExhibit{position:relative;margin:24px 0 4px;padding:14px;border:1px solid rgba(184,150,46,.24);border-radius:20px;background:linear-gradient(145deg,rgba(255,255,255,.82),rgba(249,246,239,.70));box-shadow:0 12px 34px rgba(36,30,20,.08);overflow:hidden}
+.sourceExhibitHead{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px}
+.sourceExhibitBadge{display:inline-flex;align-items:center;gap:6px;padding:5px 9px;border-radius:999px;background:rgba(0,96,57,.08);color:#006039;font-size:10px;font-weight:800;letter-spacing:.04em;white-space:nowrap}
+.sourceExhibitSource{font-size:10px;line-height:1.45;color:rgba(26,26,24,.45);text-align:left}
+.sourceExhibitFrame{border-radius:16px;border:1px solid rgba(26,26,24,.07);background:rgba(255,255,255,.78);overflow:hidden}
+.sourceExhibitCaption{display:grid;gap:5px;padding:12px 2px 0}
+.sourceExhibitCaption strong{font-size:14px;line-height:1.45;color:#1A1A18}
+.sourceExhibitCaption span{font-size:12px;line-height:1.65;color:rgba(26,26,24,.62)}
+.sourceExhibitNote{display:block;margin-top:4px;padding:8px 10px;border-radius:10px;background:rgba(184,150,46,.08);color:rgba(26,26,24,.62);font-size:11px;line-height:1.6}
+
+.chakraExhibit{display:grid;grid-template-columns:120px minmax(0,1fr);gap:18px;align-items:center;padding:18px}
+.chakraBody{position:relative;min-height:310px;display:flex;align-items:center;justify-content:center}
+.chakraSpine{position:absolute;top:30px;bottom:28px;width:2px;border-radius:99px;background:linear-gradient(180deg,rgba(123,63,152,.28),rgba(197,43,48,.28))}
+.chakraFigure{position:relative;width:76px;height:260px;opacity:.7}
+.chakraFigure:before{content:'';position:absolute;top:0;left:50%;width:34px;height:34px;transform:translateX(-50%);border:2px solid rgba(26,26,24,.24);border-radius:50%}
+.chakraFigure:after{content:'';position:absolute;top:38px;bottom:0;left:50%;width:54px;transform:translateX(-50%);border:2px solid rgba(26,26,24,.20);border-radius:44% 44% 30% 30%/18% 18% 68% 68%}
+.chakraDots{position:absolute;inset:24px 0 20px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;z-index:2}
+.chakraDot{width:14px;height:14px;border-radius:50%;border:2px solid rgba(255,255,255,.94);box-shadow:0 0 0 1px rgba(26,26,24,.10),0 3px 10px rgba(26,26,24,.12)}
+.chakraRows{display:grid;gap:7px}
+.chakraRow{display:grid;grid-template-columns:15px minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 10px;border-radius:11px;background:rgba(255,255,255,.62);border:1px solid rgba(26,26,24,.055)}
+.chakraRowDot{width:11px;height:11px;border-radius:50%}
+.chakraRow strong{font-size:13px;color:#1A1A18}
+.chakraRow em{font-size:12px;font-style:normal;font-weight:750;color:rgba(26,26,24,.50);direction:ltr}
+
+.auraExhibit{display:grid;grid-template-columns:minmax(220px,.95fr) minmax(0,1.05fr);gap:16px;align-items:center;padding:18px}
+.auraField{position:relative;min-height:305px;display:grid;place-items:center;isolation:isolate}
+.auraRing{position:absolute;border-radius:50%;border:16px solid transparent;opacity:.26;filter:saturate(.8)}
+.auraRing.r1{width:132px;height:242px;border-color:#C52B30}
+.auraRing.r2{width:166px;height:272px;border-color:#E8802D}
+.auraRing.r3{width:202px;height:300px;border-color:#D5B43A}
+.auraRing.r4{width:238px;height:326px;border-color:#5B9B62}
+.auraRing.r5{width:274px;height:352px;border-color:#4A90C4}
+.auraRing.r6{width:310px;height:378px;border-color:#67589E}
+.auraPerson{position:relative;width:62px;height:214px;z-index:2}
+.auraPerson:before{content:'';position:absolute;top:0;left:50%;width:34px;height:34px;transform:translateX(-50%);border-radius:50%;background:rgba(26,26,24,.12);border:2px solid rgba(26,26,24,.30)}
+.auraPerson:after{content:'';position:absolute;top:40px;bottom:0;left:50%;width:48px;transform:translateX(-50%);border-radius:44% 44% 26% 26%/16% 16% 72% 72%;background:rgba(255,255,255,.78);border:2px solid rgba(26,26,24,.28)}
+.auraChakras{position:absolute;top:24px;bottom:24px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;justify-content:space-between;z-index:3}
+.auraCopy{display:grid;gap:10px}
+.auraCopy strong{font-size:16px;color:#1A1A18}
+.auraCopy p{margin:0;font-size:13px;line-height:1.75;color:rgba(26,26,24,.68)}
+.auraCopy ul{margin:0;padding:0 18px 0 0;display:grid;gap:6px;font-size:12px;line-height:1.6;color:rgba(26,26,24,.62)}
+
+@media(max-width:620px){
+  .sourceExhibit{padding:11px;border-radius:18px}
+  .sourceExhibitHead{flex-direction:column;gap:6px}
+  .sourceExhibitSource{text-align:right}
+  .chakraExhibit{grid-template-columns:88px minmax(0,1fr);gap:10px;padding:12px 10px}
+  .chakraBody{min-height:285px}
+  .chakraFigure{width:62px;height:238px}
+  .chakraRow{grid-template-columns:10px minmax(0,1fr);gap:7px;padding:7px 8px}
+  .chakraRow em{grid-column:2;font-size:11px}
+  .auraExhibit{grid-template-columns:1fr;padding:12px}
+  .auraField{min-height:255px;transform:scale(.82);margin:-20px 0}
+  .auraCopy{text-align:right}
+}
