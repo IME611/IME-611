@@ -17,7 +17,9 @@ export type LearningCard={
 };
 
 export type LearningCardChapter={
-  chapterNumber:number;
+  chapterNumber?:number;
+  unitKey?:string;
+  displayNumber?:string;
   title:string;
   subtitle:string;
   guidingQuestion:string;
