@@ -7,9 +7,6 @@ export const primaryNavigation:NavigationItem[]=[
 ];
 
 export const mentalModelNavigation:NavigationGroup[]=[
- {id:'personal',label:'המרחב האישי',items:[
-  {id:'add-learning',label:'הוסף משהו שלמדת',icon:'✎',ownerOnly:true},
- ]},
  {id:'content',label:'תוכן',items:[
   {id:'sources',label:'המקורות שלי',icon:'↗'},
   {id:'add-source',label:'הוסף מקור',icon:'＋',ownerOnly:true},
