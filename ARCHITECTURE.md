@@ -1,99 +1,135 @@
 # E.I.L Architecture
 
 ## Product thesis
-E.I.L is not a document manager and not a generic productivity dashboard. It is a personal-evolution system that turns accumulated source material into a guided process:
 
-**Question → Source → Understanding → Connection → Insight → Awareness → Experiment → Reflection → Deeper understanding.**
+E.I.L is a corpus-first knowledge system with a learner-facing product on top.
 
-The canonical source is preserved in full. Interpretation is always layered on top and must remain traceable back to source material.
+The system accepts source material, preserves canonical source truth, extracts atomic evidence-backed knowledge, deduplicates concepts across sources, asks the creator to resolve uncertain/semantic decisions, builds an emergent dependency graph, and publishes only explicitly approved material to learners.
 
-## Core product invariants
-1. **Source of truth stays intact.** Never overwrite, shorten, or mutate the original source when generating summaries, insights, learning blocks, or recommendations.
-2. **Learning precedes intervention.** A new user should not see advanced reflection/action tools before enough context has been built.
-3. **Progressive disclosure is product logic, not decoration.** Features unlock because the learner has enough context, not because a menu happens to be hidden.
-4. **Every derived insight should be traceable.** Evidence should point back to chapter/source/paragraph whenever possible.
-5. **The journey is cumulative and spiral-shaped.** Later layers revisit earlier questions with a richer model.
-6. **Actions are experiments, not to-do items.** The goal is feedback and learning, not task completion for its own sake.
-7. **Design is a system.** Liquid Glass must come from reusable primitives/tokens, not one-off CSS overrides per screen.
+The 18 repository seed sources currently provide a curated foundation journey. They are **not** the ontology, chapter ceiling, or required order for future knowledge.
 
-## Target repository structure
+## Non-negotiable invariants
+
+1. **Source truth is immutable.** Canonical source text is never rewritten by summaries, AI, UI or publication.
+2. **Evidence is traceable.** Active extraction candidates and canonical claims must resolve to exact source evidence.
+3. **Sources are not chapters.** Presentation may use legacy chapter aliases, but canonical placement uses stable learning-unit keys.
+4. **Taxonomy is emergent.** Concepts and section-topic units are derived from the corpus and deduplicated across sources.
+5. **Sequence is dependency-driven.** Source upload order and fixed chapter count do not define the learning graph.
+6. **AI has advisory authority only.** Semantic matching and multimodal descriptions can assist review; they cannot bypass creator decisions or become evidence by themselves.
+7. **Publication is a separate gate.** Approving a source into the repository does not automatically expose learner cards.
+8. **Frontend is presentation.** UI state may choose views and local preferences; it does not invent canonical domain truth.
+9. **Unknown write/review routes fail closed.** Creator-only review surfaces require authorization before database access.
+10. **Schema changes are forward-only migrations.** HTTP requests never create/migrate tables.
+
+## Knowledge flow
 
 ```text
-src/
-  app/                  # bootstrap, shell orchestration, navigation
-  core/                 # cross-feature domain types + storage/contracts
-  features/
-    dashboard/          # current state / journey overview
-    journey/            # 18-layer learning journey + reader
-    knowledge/          # ingestion, sources, corpus views
-    synthesis/          # connections, insights, mentor
-    evolution/          # focus, experiments, reflection
-    shell/              # sidebar, mobile drawer, global navigation shell
-  components/
-    glass/               # reusable Liquid Glass primitives
-    common/              # generic UI primitives
-  data/                  # static learning path / fallback content
-  lib/                   # pure utilities and infrastructure helpers
-  styles/                # one CSS entrypoint + tokens/material/layout
-  types/                 # only if domain types grow beyond core
-api/
-  knowledge/             # source/corpus endpoints
-  synthesis/             # atlas/insights/mentor/matching
-  system/                # health and operational endpoints
-  _shared/               # shared API helpers
+input
+  text | topic | note | URL | PDF/DOCX/TXT/MD/CSV/JSON/HTML/XML | image
+      ↓
+intake normalization + overlap analysis
+      ↓
+creator review: approve / change / reject
+      ↓
+canonical Source + SourceFragments
+      ↓
+atomic ExtractionCandidates + exact Evidence
+      ↓
+corpus map: canonical concepts + section-topic units
+      ↓
+RelationCandidates
+      ↓
+creator endpoint/relation review
+      ↓
+learning dependency graph
+      ↓
+creator publication placement + learner-facing title + preview
+      ↓
+published learning cards + canonical source library
+```
 
-docs/
-  product/               # product principles, journey model, terminology
-  engineering/           # decisions, migrations, deployment notes
+## Repository boundaries
+
+```text
+server/
+  knowledge/
+    application/     # intake, extraction, matching, relations, learning, publication, quality
+    domain/          # domain contracts where present
+  shared/            # shared PostgreSQL/infrastructure boundaries
+
+database/
+  migrations/        # forward-only canonical migrations (currently 001–012)
+  verification/      # read-only schema/data verification SQL
+
+api/                 # 12 thin Vercel route adapters; multiplex when possible
+  _lib/              # HTTP hardening + creator auth helpers
+
+src/
+  app/               # application orchestration only
+  core/              # shared types + browser storage adapter
+  data/              # curated foundation presentation/fallback data
+  features/
+    navigation/      # single production route/navigation allowlist
+    knowledge-dashboard/
+    journey/
+    sources/
+    editor/
+    crystals/
+    accessibility/
+  design/            # ordered design-system entrypoint and feature styles
+
+scripts/
+  db/                 # migrations, health, production preflight
+  knowledge/          # deterministic corpus/domain regressions
+  quality/            # product/security/build guards
 ```
 
 ## Dependency direction
-- `app` may depend on all features.
-- features may depend on `core`, `components`, `data`, and `lib`.
-- features should not import another feature's internals. Shared behavior moves to `core` or `components`.
-- `components` must not depend on product-specific feature state.
-- `core` must not depend on React view code.
-- CSS enters the application through **one ordered entrypoint**: `src/styles/index.css`.
 
-## State strategy
-Today some state is browser-local (`localStorage`). Treat this as an adapter, not the domain model. All local storage access should eventually go through `src/core/storage.ts` so a future account/database implementation can replace the adapter without rewriting feature components.
+- `api/` validates transport and delegates to `server/` services; it does not own domain truth or schema creation.
+- `server/knowledge/` does not depend on learner React code.
+- learner/editor features may call public API boundaries and shared `src/core` adapters.
+- feature code should not write `localStorage` directly; browser persistence goes through `src/core/storage.ts` or a dedicated feature adapter.
+- production navigation is declared only in `src/features/navigation/navigation.config.ts`. Unknown/unauthorized hashes normalize to the dashboard.
+- CSS enters through `src/design/index.css`.
 
-Stable storage keys should be defined once. Avoid scattering `eil-*` string literals across components.
+## Canonical vs presentation identity
 
-## Feature extension rule
-When adding a feature:
-1. Decide which stage of the E.I.L loop it belongs to.
-2. Create a folder under `src/features/<feature>`.
-3. Export a small public API from that feature folder.
-4. Do not add global CSS selectors unless they are design-system primitives.
-5. Add navigation/unlock rules centrally, not inside random components.
-6. If it derives knowledge, preserve source references.
-7. If it changes user state, isolate persistence behind an adapter.
+Legacy foundation material may carry numeric chapter/source numbers for compatibility. New publication uses:
 
-## Design system rule
-Do not create `liquid-glass-v5.css`, `v6`, etc. The migration target is:
+- `learning_unit_key` — stable machine identity;
+- `learning_unit_title` — creator-controlled learner-facing title;
+- optional `legacy-chapter:N` aliases for the foundation presentation.
 
-```text
-src/styles/
-  tokens.css
-  typography.css
-  glass.css
-  layout.css
-  responsive.css
-  index.css
-```
+No service may restore a `1..18` ceiling for canonical learning units.
 
-Future glass components should share the same variables for blur, opacity, edge light, refraction highlight, caustic colors, radius, and shadow depth.
+## Review / AI authority
 
-## Migration policy
-Refactors happen on a branch and preserve production behavior. Prefer a compatibility period over a big-bang rewrite. Move entrypoints first, then components, then state adapters, then styles/API internals. Delete legacy files only after a successful build/preview proves that no imports remain.
+Creator decisions are required at the boundaries where semantic uncertainty can change truth:
+
+- intake approval/rejection/change;
+- unresolved relation endpoints and relation approval;
+- publication candidate selection, learning-unit placement and publish action.
+
+AI Gateway capability is optional at runtime. When unavailable, deterministic concept-aware matching and creator-supplied image descriptions are safe fallbacks. A configured provider is not reported as a successful live probe unless a probe was explicitly requested and passed.
+
+## Runtime / deployment
+
+- PostgreSQL migrations are checksum recorded in `schema_migrations` and protected by an advisory lock.
+- Production preflight runs migrations + live DB quality once per Vercel deployment; deterministic code regressions run for every function build unit.
+- The Vercel Hobby project currently uses 12 Node.js Functions. Do not add a thirteenth adapter accidentally; reuse/multiplex existing routes.
+- Production build entrypoint is `npm run vercel-build`.
 
 ## Definition of healthy architecture
-A future engineer or AI agent should be able to answer these questions in under two minutes:
-- Where is the journey logic? `src/features/journey`
-- Where is feature unlock/navigation logic? `src/app/navigation.ts`
-- Where is local persistence? `src/core/storage.ts`
-- Where are source/corpus APIs? `api/knowledge`
-- Where is synthesis logic? `api/synthesis` + `src/features/synthesis`
-- Where is Liquid Glass defined? `src/styles/glass.css` / `src/components/glass`
-- Where are product principles documented? `docs/product` and this file
+
+An engineer or agent should be able to locate the authoritative boundary quickly:
+
+- source/corpus truth: `server/knowledge/` + PostgreSQL canonical tables;
+- migrations: `database/migrations/`;
+- production quality: `scripts/knowledge/verify-quality-gates.mjs` + `scripts/quality/run-prebuild.mjs`;
+- learner journey: `src/features/journey/`;
+- route allowlist: `src/features/navigation/navigation.config.ts`;
+- creator review/publication UI: `src/features/editor/`;
+- local browser state: `src/core/storage.ts` and dedicated feature adapters;
+- API contract map: `api/README.md`;
+- live database operations: `docs/engineering/LIVE_DB_RUNBOOK.md`.

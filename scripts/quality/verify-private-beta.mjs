@@ -103,7 +103,7 @@ assert.match(cardScript,/S01-U01/,'pilot cards must retain source-unit traceabil
 assert.match(app,/const journeyChapters=embeddedChapters/,'the reader must preserve the curated marker-based Claude chapter edition');
 assert.doesNotMatch(navigation,/id:'research'/,'research search must be removed from primary navigation');
 assert.match(storage,/readText\(storageKeys\.accessMode,'learner'\)/,'a fresh browser must enter the learner journey, not creator mode');
-assert.match(navigation,/id:'add-learning'.*ownerOnly:true/,'standalone learning capture must stay in creator mode because learner notes belong to crystals');
+assert.doesNotMatch(navigation,/id:'add-learning'/,'standalone local-only learning capture must not remain a production route; creator content enters through source intake');
 assert.match(navigation,/id:'add-source'.*ownerOnly:true/,'source ingestion must stay in creator mode');
 assert.match(navigation,/id:'review'.*ownerOnly:true/,'source-card publication must stay in creator mode');
 assert.match(sourceIntakeApi,/\/api\/intake/,'new sources must pass through intake analysis before canonical ingestion');
@@ -115,8 +115,8 @@ assert.doesNotMatch(sourceIntakeModal,/fetch\(['"]\/api\/import/,'the source mod
 assert.match(knowledgeApi,/source_publications p WHERE p\.source_id=s\.id AND p\.status='PUBLISHED'/,'repository-only intake sources must stay hidden from the public source API');
 assert.doesNotMatch(navigation,/id:'crystals'/,'the navigation must not duplicate the persistent crystal launcher');
 assert.match(navigationShell,/navigationForMode\(owner\)/,'desktop and mobile navigation must filter items through the same access policy');
-assert.match(app,/activePage=owner\|\|!isOwnerOnlyNavigation\(page\)\?page:'dashboard'/,'learner routes must fail closed when an owner-only hash is requested');
-assert.match(app,/replaceNav\('dashboard'\)/,'a blocked creator hash must be replaced with the learner dashboard URL');
+assert.match(app,/activePage=isKnownNavigation\(page\)&&\(owner\|\|!isOwnerOnlyNavigation\(page\)\)\?page:'dashboard'/,'unknown and learner-forbidden hashes must normalize to the safe dashboard');
+assert.match(app,/page!==activePage\)replaceNav\(activePage\)/,'unknown and unauthorized hashes must be replaced with the normalized safe route');
 assert.match(app,/className="sourceItem" onClick=\{\(\)=>openSource\(source\.number\)\}/,'source cards must open canonical documents independently of the learning sequence');
 assert.match(journey,/chapters\.find\(item=>item\.sourceFile===pilot\.sourceFile\)/,'reordered learning chapters must resolve their own canonical source by file');
 assert.match(journey,/usePublishedLearningCards\(chapter\.number\)/,'each live journey chapter must be able to receive explicitly published source cards');
@@ -166,7 +166,7 @@ const learnerNavigation=navigationForMode(false);
 const learnerNavigationIds=[...learnerNavigation.primary,...learnerNavigation.groups.flatMap(group=>group.items)].map(item=>item.id);
 assert.deepEqual(learnerNavigationIds,['dashboard','library','sources','settings'],'learner navigation must stay focused on the journey, full sources and settings');
 assert.equal(isOwnerOnlyNavigation('add-source'),true,'direct source-ingestion routes must be recognized as creator-only');
-assert.equal(isOwnerOnlyNavigation('add-learning'),true,'standalone learning capture must be recognized as creator-only');
+assert.equal(isOwnerOnlyNavigation('add-learning'),false,'removed local-only learning capture must not remain a recognized production route');
 assert.equal(isOwnerOnlyNavigation('review'),true,'direct publication-review routes must be recognized as creator-only');
 assert.equal(pilotCardChapters.length,9,'the card-format draft must cover the first nine learning chapters');
 assert.equal(pilotCardChapters.flatMap(chapter=>chapter.cards).length,60,'the first nine chapters must contain all 60 traceable cards');

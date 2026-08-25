@@ -7,9 +7,6 @@ export const primaryNavigation:NavigationItem[]=[
 ];
 
 export const mentalModelNavigation:NavigationGroup[]=[
- {id:'personal',label:'המרחב האישי',items:[
-  {id:'add-learning',label:'הוסף משהו שלמדת',icon:'✎',ownerOnly:true},
- ]},
  {id:'content',label:'תוכן',items:[
   {id:'sources',label:'המקורות שלי',icon:'↗'},
   {id:'add-source',label:'הוסף מקור',icon:'＋',ownerOnly:true},
@@ -21,7 +18,8 @@ export const mentalModelNavigation:NavigationGroup[]=[
 ];
 
 export const allNavigationItems=[...primaryNavigation,...mentalModelNavigation.flatMap(g=>g.items)];
-export const pageByNavigationId=(id:string)=>allNavigationItems.find(item=>item.id===id)??primaryNavigation[0];
+const navigationIds=new Set(allNavigationItems.map(item=>item.id));
+export const isKnownNavigation=(id:string)=>navigationIds.has(id);
 export const isOwnerOnlyNavigation=(id:string)=>allNavigationItems.some(item=>item.id===id&&item.ownerOnly===true);
 export const navigationForMode=(owner:boolean)=>({
  primary:primaryNavigation.filter(item=>owner||!item.ownerOnly),

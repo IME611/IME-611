@@ -7,13 +7,14 @@ export const storageKeys={
   originAnswer:'eil-origin-answer',
   railCollapsed:'eil-rail',
   localItems:'eil-items',
+  settings:'eil-settings',
 } as const;
 
 export function readText(key:string,fallback=''){try{return localStorage.getItem(key)||fallback}catch{return fallback}}
-export function writeText(key:string,value:string){try{localStorage.setItem(key,value)}catch{}}
+export function writeText(key:string,value:string):boolean{try{localStorage.setItem(key,value);return true}catch{return false}}
 export function readJson<T>(key:string,fallback:T):T{try{const raw=localStorage.getItem(key);return raw?JSON.parse(raw) as T:fallback}catch{return fallback}}
-export function writeJson(key:string,value:unknown){try{localStorage.setItem(key,JSON.stringify(value))}catch{}}
-export function removeStored(key:string){try{localStorage.removeItem(key)}catch{}}
+export function writeJson(key:string,value:unknown):boolean{try{localStorage.setItem(key,JSON.stringify(value));return true}catch{return false}}
+export function removeStored(key:string):boolean{try{localStorage.removeItem(key);return true}catch{return false}}
 const PERSONAL_PROGRESS_KEYS=new Set([
   'eil-actions',
   'eil-card-progress-v1',

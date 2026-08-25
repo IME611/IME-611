@@ -1,67 +1,90 @@
 # E.I.L Agent / Engineer Map
 
-Read `ARCHITECTURE.md` before changing structure.
-Read `docs/engineering/FRONTEND_CONSTITUTION.md` before changing frontend architecture, React components, state, API clients, accessibility, or design-system boundaries.
+Read `ARCHITECTURE.md` before changing structure or domain boundaries.
+Read `docs/engineering/FRONTEND_CONSTITUTION.md` before changing learner/editor React architecture, state, API clients, accessibility, or design-system boundaries.
+Read `docs/engineering/LIVE_DB_RUNBOOK.md` before changing migrations or production DB checks.
 
 ## Start here by task
-- App boot / routing / shell orchestration → `src/app/`
-- Sidebar / mobile navigation → `src/features/shell/`
-- Dashboard / current state → `src/features/dashboard/`
-- 18-layer learning journey / full source reader → `src/features/journey/`
-- Sources / ingestion / corpus → `src/features/knowledge/` and `server/knowledge/`
-- Connections / insights / mentor / provenance-backed synthesis → `src/features/synthesis/` and `server/synthesis/`
-- Focus / experiments / reflection / transformation → `src/features/evolution/` and `src/features/transformation/`
-- LearningPath contracts and progress → `src/core/learning-path/` and `src/data/learning-paths/`
-- Persistence contracts → `src/core/` and feature-local repository ports
-- Liquid Glass / typography / responsive / all visual-system work → `src/design/`
-- Public HTTP adapters → `api/` (keep thin; reusable logic belongs in `server/`)
+
+- App orchestration → `src/app/App.tsx`
+- Production navigation / route allowlist → `src/features/navigation/`
+- Learner dashboard → `src/features/knowledge-dashboard/`
+- Foundation + dynamic learner journey → `src/features/journey/`
+- Learner source library / intake modal → `src/features/sources/`
+- Creator review / relation resolution / publication placement → `src/features/editor/`
+- Browser-local persistence → `src/core/storage.ts` and feature-owned adapters
+- Canonical intake / extraction / overlap / corpus map / relations / learning / publication → `server/knowledge/`
+- PostgreSQL schema history → `database/migrations/`
+- Live DB and deterministic verification → `scripts/db/`, `scripts/knowledge/`, `scripts/quality/`
+- Public HTTP adapters → `api/` (12 deployed Vercel Functions; keep thin and multiplex safely)
+- Visual-system work → `src/design/`
 
 ## Non-negotiable product/domain rules
-- Never destroy or replace source text with a summary.
-- Derived content must remain traceable to canonical source/evidence where the backend supports provenance.
-- Frontend must never invent Domain Truth. UI cannot promote an Insight to `SUPPORTED`, declare provenance complete, or bypass evidence validation.
-- If canonical provenance is unavailable, fail safely as draft/hypothesis/unknown; never fabricate certainty.
-- Do not reveal advanced tools earlier just because they exist; respect progressive disclosure.
-- Do not hardcode navigation/unlock rules inside feature components; use LearningPath/app policy.
 
-## Non-negotiable frontend rules
-- Feature-owned components, hooks, API clients, types, utilities, state, and tests should be co-located.
-- Components render/interact; hooks coordinate frontend behavior; services own HTTP; utilities stay pure; Domain owns truth/invariants.
-- Avoid direct raw `fetch()` calls scattered through presentation components.
-- Do not add Zustand, TanStack Query, Context, memoization, or another dependency speculatively; add them when a real ownership/performance problem justifies them.
-- Do not pass raw `setState`/`dispatch` through component APIs; expose intent callbacks.
-- New/touched data-driven UI handles loading, error, empty, success, and unavailable states where relevant.
-- Accessibility is required: semantic HTML, keyboard operation, focus-visible, labels, contrast, and reduced-motion considerations.
-- Avoid `any` in new TypeScript; prefer `unknown` + validation at boundaries.
-- TSX files around 150 lines should be reviewed for responsibility; 250 lines is a warning threshold, not a reason for artificial splitting.
+- Sources are evidence, not chapters. The 18 seed sources are a foundation presentation, not a canonical ceiling.
+- Never overwrite, shorten, or replace canonical source text with a summary.
+- Active derived knowledge must remain traceable to exact source evidence.
+- Frontend must never invent Domain Truth or mark uncertain provenance as supported.
+- Concepts/topics are deduplicated across sources; source order does not define the ontology.
+- Learning sequence is dependency-driven and unbounded. Never reintroduce a fixed `1..18` canonical learning-unit constraint.
+- Intake approval, unresolved relation decisions, and learner publication remain creator-controlled.
+- AI semantic/vision output is advisory only. It cannot become evidence or bypass review.
+- Source approval and learner publication are separate gates.
+- Unknown review modes fail closed before DB access.
+
+## Frontend / product-surface rules
+
+- `src/features/navigation/navigation.config.ts` is the single production route allowlist.
+- Do not expose dormant prototypes by accepting arbitrary hash routes. Unknown/unauthorized routes normalize to the dashboard.
+- Creator content must enter through the canonical intake workflow; do not add local-only note/upload dead ends that look like corpus ingestion.
+- Components render/interact; domain services own canonical truth.
+- New/touched data-driven UI handles loading, error, empty, success and unavailable states where relevant.
+- Accessibility is required: semantic HTML, keyboard operation, focus-visible, labels, contrast and reduced-motion considerations.
+- Avoid `any` in new TypeScript; prefer validated `unknown` at boundaries.
+- Do not add state libraries, query libraries or dependencies speculatively.
+
+## Persistence rules
+
+- Do not access `localStorage` directly from app/feature presentation code; use `src/core/storage.ts` or a dedicated feature adapter.
+- Stable storage keys belong in one adapter, not scattered string literals.
+- Browser-local preferences/progress are presentation/user state; they are never canonical knowledge.
+
+## API / security rules
+
+- Top-level `api/*.js` files are deployed URL adapters. Keep business logic in `server/`.
+- The Hobby project currently has a 12-Function budget. Reuse an existing adapter unless a deliberate platform change is approved.
+- Creator-only routes must authorize **before** database access or mutation.
+- Public health endpoints are read-only.
+- HTTP requests must never create/migrate tables. New persistence is introduced only through additive files under `database/migrations/`.
+- Apply schema changes forward-only; never edit an already-applied migration because checksums are enforced.
+- Do not weaken hardening/auth or log secrets/raw sensitive payloads for diagnostics.
+
+## Build / deployment rules
+
+- CI baseline is Node 24.
+- Use the committed lockfile and `npm ci` for reproducible installs.
+- Run `npm run verify:private-beta` and `npm run build` before merge.
+- Production uses `npm run vercel-build`, which performs the production preflight and deterministic regressions.
+- Check the exact-head Vercel Preview before merge and the exact merged Production deployment afterward.
+- Production preflight must retain single-deployment migration/DB execution; do not reintroduce duplicate live DB checks per Function build unit.
 
 ## Design-system rules
-- All visual-system work belongs under `src/design/`.
-- Do not add new global CSS version files such as `liquid-glass-v5.css`.
-- Extend canonical tokens/primitives instead.
-- Feature/domain logic must not depend on Liquid Glass or any other theme.
-- Visual changes must remain replaceable without rewriting Knowledge, LearningPath, Synthesis, or Transformation logic.
 
-## Repository / migration rules
-- Do not access `localStorage` directly in new feature code; use the relevant repository/storage adapter.
-- Avoid importing feature internals across feature boundaries.
-- Public files in `api/` are deployed URL adapters; keep them thin and do not casually create new routes when an existing adapter can safely multiplex the application action.
-- Check Vercel Preview/Build before merging changes that affect runtime or deployment shape.
-- The repository is being migrated incrementally from older flat structures. New work uses the target folders above; improve legacy code when touched rather than pausing product delivery for purity refactors.
+- Visual-system work belongs under `src/design/` and enters through `src/design/index.css`.
+- Extend existing tokens/primitives instead of adding versioned CSS layers.
+- Theme/visual changes must remain replaceable without rewriting canonical knowledge or publication logic.
 
-## Product loop
-`Question → Learn → Connect → Understand → Awareness → Experiment → Reflect → Revisit question`
+## Definition of done for autonomous engineering work
 
-If a proposed feature does not strengthen this loop, challenge why it belongs in E.I.L before implementing it.
+Before declaring a technical change complete:
 
-## Frontend change checklist
-Before merging new or materially changed frontend work, confirm:
-- Domain/Provenance authority is preserved.
-- Feature code is co-located and responsibilities are clear.
-- Server state and local UI state are not duplicated accidentally.
-- Loading/error/empty/unavailable states are explicit.
-- The interaction is keyboard accessible and readable.
-- No unnecessary dependency, abstraction, CSS version layer, or state manager was introduced.
-- Preview/build passes.
+1. deterministic regression coverage exists for the invariant being changed;
+2. GitHub quality gate is green on the exact head;
+3. Vercel Preview is READY on that same head;
+4. merge uses the expected head SHA;
+5. Production is READY on the merged commit;
+6. relevant live HTTP/DB behavior is verified without unsafe writes;
+7. runtime errors are checked;
+8. no canonical content, relation decision, publication decision, or paid AI action was fabricated to make a test green.
 
-`docs/engineering/FRONTEND_CONSTITUTION.md` is the detailed source of truth for these frontend rules.
+Human creator decisions (for example semantic relation approval) and subjective visual taste are not replaced by automation.
