@@ -17,7 +17,7 @@ export function KnowledgeDashboard({onOpenJourney}:Props){
  const{state}=useLearningProgress(journeyPath);
  const done=state.completedStageIds.length,total=journeyPath.stages.length;
  const pct=Math.round((done/total)*100);
- const nextFoundation=Math.min(total,done+1);
+ const nextFoundation=journeyPath.stages.find(stage=>!state.completedStageIds.includes(stage.id))?.order??total;
 
  return <div className="knowledgeDashboard" dir="rtl">
   <section className="dashHero" aria-labelledby="dashboard-title">
@@ -33,7 +33,7 @@ export function KnowledgeDashboard({onOpenJourney}:Props){
    <div className="dashHeroProgress" aria-label={`השלמת ${pct}% ממסלול היסוד`}>
     <span className="dashHeroProgressLabel">התקדמות במסלול היסוד</span>
     <strong>{pct}<small>%</small></strong>
-    <span>{done===total?'18 פרקי היסוד הושלמו':`הפרק הבא במסלול: ${nextFoundation}`}</span>
+    <span>{done===total?'18 פרקי היסוד הושלמו':`הפרק הראשון שעדיין לא הושלם: ${nextFoundation}`}</span>
    </div>
   </section>
 
