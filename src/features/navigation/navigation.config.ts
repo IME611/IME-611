@@ -21,7 +21,8 @@ export const mentalModelNavigation:NavigationGroup[]=[
 ];
 
 export const allNavigationItems=[...primaryNavigation,...mentalModelNavigation.flatMap(g=>g.items)];
-export const pageByNavigationId=(id:string)=>allNavigationItems.find(item=>item.id===id)??primaryNavigation[0];
+const navigationIds=new Set(allNavigationItems.map(item=>item.id));
+export const isKnownNavigation=(id:string)=>navigationIds.has(id);
 export const isOwnerOnlyNavigation=(id:string)=>allNavigationItems.some(item=>item.id===id&&item.ownerOnly===true);
 export const navigationForMode=(owner:boolean)=>({
  primary:primaryNavigation.filter(item=>owner||!item.ownerOnly),
