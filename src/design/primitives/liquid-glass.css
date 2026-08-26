@@ -1,25 +1,26 @@
 /* Reusable E.I.L Liquid Glass primitives.
-   Feature styles should compose these classes instead of recreating glass recipes. */
+   The recipe is derived from the creator-approved welcome reference so the
+   same material language can be reused across Dashboard, Journey and Sources. */
 
 .eilLiquidBackdrop {
   position: relative;
   isolation: isolate;
   background:
-    radial-gradient(ellipse 62% 52% at 50% 28%, rgba(255,255,255,.92) 0%, rgba(255,255,255,.48) 42%, transparent 74%),
-    linear-gradient(132deg, var(--eil-milk-0) 0%, var(--eil-milk-1) 46%, var(--eil-milk-warm) 72%, var(--eil-milk-2) 100%);
+    radial-gradient(ellipse 58% 46% at 49% 40%, rgba(255,255,255,.22), rgba(255,255,255,0) 78%),
+    radial-gradient(circle 300px at 86% 80%, rgba(211,171,105,.15), rgba(211,171,105,0) 72%),
+    linear-gradient(105deg, var(--eil-milk-0) 0%, var(--eil-milk-1) 48%, var(--eil-milk-2) 100%);
 }
 
 .eilLiquidBackdrop::before {
   content: '';
   position: absolute;
-  inset: -12%;
+  inset: 0;
   z-index: -2;
   pointer-events: none;
   background:
-    radial-gradient(ellipse 58% 38% at 50% 44%, rgba(255,255,255,.54), transparent 72%),
-    linear-gradient(112deg, rgba(255,255,255,.20), transparent 38% 68%, rgba(231,215,195,.14));
-  filter: blur(30px);
-  transform: scale(1.05);
+    radial-gradient(circle 150px at 12.5% 18.5%, rgba(255,255,255,.82) 0%, rgba(255,255,255,.40) 30%, rgba(255,255,255,0) 75%),
+    radial-gradient(circle 130px at 26% 25.5%, rgba(255,255,255,.72) 0%, rgba(255,255,255,.34) 30%, rgba(255,255,255,0) 76%),
+    radial-gradient(circle 145px at 6% 34%, rgba(255,255,255,.86) 0%, rgba(255,255,255,.38) 30%, rgba(255,255,255,0) 74%);
 }
 
 .eilLiquidBackdrop::after {
@@ -29,20 +30,20 @@
   z-index: -1;
   pointer-events: none;
   background:
-    linear-gradient(180deg, rgba(255,255,255,.18), transparent 24% 76%, rgba(176,151,111,.035)),
-    radial-gradient(ellipse 78% 20% at 50% 100%, rgba(92,73,48,.055), transparent 74%);
+    radial-gradient(ellipse 48% 26% at 8% 88%, rgba(255,255,255,.48), transparent 72%),
+    radial-gradient(ellipse 75% 18% at 50% 102%, rgba(255,255,255,.56), transparent 72%);
 }
 
 .eilLiquidSurface {
   position: relative;
   overflow: hidden;
   background: var(--eil-liquid-fill);
-  backdrop-filter: blur(var(--eil-liquid-blur)) saturate(138%) brightness(1.04);
-  -webkit-backdrop-filter: blur(var(--eil-liquid-blur)) saturate(138%) brightness(1.04);
+  backdrop-filter: blur(var(--eil-liquid-blur)) saturate(125%);
+  -webkit-backdrop-filter: blur(var(--eil-liquid-blur)) saturate(125%);
   border: 1px solid var(--eil-liquid-edge);
   border-top-color: var(--eil-liquid-rim);
   border-left-color: var(--eil-liquid-rim-soft);
-  border-radius: var(--eil-liquid-radius);
+  border-radius: 28px;
   box-shadow: var(--eil-liquid-inner), var(--eil-liquid-shadow);
 }
 
@@ -50,10 +51,12 @@
 .eilLiquidButton::before {
   content: '';
   position: absolute;
-  inset: 0;
+  inset: 2px;
   border-radius: inherit;
   pointer-events: none;
-  background: linear-gradient(130deg, rgba(255,255,255,.58) 0%, rgba(255,255,255,.16) 28%, transparent 58%);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.54), rgba(255,255,255,.08) 28%, transparent 54%),
+    radial-gradient(ellipse 30% 72% at 8% 48%, rgba(255,255,255,.50), transparent 76%);
   mix-blend-mode: screen;
 }
 
@@ -63,22 +66,20 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 18px;
   min-height: 64px;
   padding: 0 34px;
   border-radius: 999px;
-  background: var(--eil-liquid-fill-strong);
+  background:
+    radial-gradient(ellipse 48% 90% at 12% 18%, rgba(255,255,255,.62), rgba(255,255,255,0) 72%),
+    linear-gradient(180deg, rgba(255,255,255,.50), rgba(255,248,239,.28));
   color: var(--eil-tourmaline);
-  border: 1px solid rgba(180,151,91,.36);
-  border-top-color: rgba(255,255,255,.92);
-  border-left-color: rgba(255,255,255,.66);
-  backdrop-filter: blur(22px) saturate(142%) brightness(1.05);
-  -webkit-backdrop-filter: blur(22px) saturate(142%) brightness(1.05);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.90),
-    inset 0 -1px 0 rgba(176,145,84,.10),
-    0 14px 34px rgba(70,53,31,.10),
-    0 3px 9px rgba(70,53,31,.06);
+  border: 1px solid var(--eil-liquid-edge);
+  border-top-color: var(--eil-liquid-rim);
+  border-left-color: var(--eil-liquid-rim-soft);
+  backdrop-filter: blur(var(--eil-liquid-blur)) saturate(125%);
+  -webkit-backdrop-filter: blur(var(--eil-liquid-blur)) saturate(125%);
+  box-shadow: var(--eil-liquid-inner), var(--eil-liquid-shadow);
   font: inherit;
   font-weight: 700;
   cursor: pointer;
@@ -86,17 +87,19 @@
 }
 
 .eilLiquidButton:hover {
-  transform: translateY(-2px);
-  background: rgba(255,255,255,.46);
+  transform: translateY(-1px);
+  background:
+    radial-gradient(ellipse 48% 90% at 12% 18%, rgba(255,255,255,.68), rgba(255,255,255,0) 72%),
+    linear-gradient(180deg, rgba(255,255,255,.56), rgba(255,248,239,.32));
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.94),
-    inset 0 -1px 0 rgba(176,145,84,.10),
-    0 18px 42px rgba(70,53,31,.12),
-    0 4px 12px rgba(70,53,31,.07);
+    inset 0 2px 0 rgba(255,255,255,1),
+    inset 0 -2px 0 rgba(214,180,112,.14),
+    0 16px 34px rgba(172,124,56,.13),
+    0 2px 8px rgba(172,124,56,.08);
 }
 
 .eilLiquidButton:active {
-  transform: translateY(0) scale(.995);
+  transform: scale(.995);
 }
 
 .eilLiquidButton:focus-visible {
@@ -112,7 +115,7 @@
 .eilBrandMark {
   direction: ltr;
   color: var(--eil-crystal-gold);
-  text-shadow: 0 1px 0 rgba(255,255,255,.82), 0 4px 14px rgba(151,117,54,.09);
+  text-shadow: 0 1px 0 rgba(255,255,255,.58);
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -1,138 +1,327 @@
-/* ============================================
-   E.I.L WELCOME — approved milky Liquid Glass
-   ============================================ */
+/* =========================================================
+   E.I.L WELCOME — pixel matched to the creator-approved UI
+   Reference viewport: 1672 × 941. The desktop percentages
+   below preserve that composition while remaining responsive.
+   ========================================================= */
 
 .welcomeScreen {
+  --welcome-text: #1a1408;
+  --welcome-gold: #d0aa5e;
+  --welcome-bg-left: #fbf4ee;
+  --welcome-bg-mid: #f6eee8;
+  --welcome-bg-right: #f0e3d9;
+
   position: fixed;
   inset: 0;
   width: 100%;
   min-height: 100dvh;
   overflow: hidden;
-  display: grid;
-  place-items: center;
-  padding: clamp(26px, 4.5vw, 58px);
-  font-family: var(--eil-font);
-  color: var(--eil-tourmaline);
+  isolation: isolate;
+  font-family: Arial, "Segoe UI", var(--eil-font);
+  color: var(--welcome-text);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+
+  background:
+    radial-gradient(circle 150px at 12.5% 18.5%, rgba(255,255,255,.82) 0%, rgba(255,255,255,.40) 30%, rgba(255,255,255,0) 75%),
+    radial-gradient(circle 130px at 26% 25.5%, rgba(255,255,255,.72) 0%, rgba(255,255,255,.34) 30%, rgba(255,255,255,0) 76%),
+    radial-gradient(circle 145px at 6% 34%, rgba(255,255,255,.86) 0%, rgba(255,255,255,.38) 30%, rgba(255,255,255,0) 74%),
+    radial-gradient(ellipse 48% 26% at 8% 88%, rgba(255,255,255,.48), transparent 72%),
+    radial-gradient(circle 300px at 86% 80%, rgba(211,171,105,.15), rgba(211,171,105,0) 72%),
+    radial-gradient(ellipse 58% 46% at 49% 40%, rgba(255,255,255,.22), rgba(255,255,255,0) 78%),
+    linear-gradient(105deg, var(--welcome-bg-left) 0%, var(--welcome-bg-mid) 48%, var(--welcome-bg-right) 100%);
+}
+
+/* The generic Liquid Glass backdrop is reusable throughout E.I.L;
+   the welcome owns its exact reference background. */
+.welcomeScreen.eilLiquidBackdrop {
+  background:
+    radial-gradient(circle 150px at 12.5% 18.5%, rgba(255,255,255,.82) 0%, rgba(255,255,255,.40) 30%, rgba(255,255,255,0) 75%),
+    radial-gradient(circle 130px at 26% 25.5%, rgba(255,255,255,.72) 0%, rgba(255,255,255,.34) 30%, rgba(255,255,255,0) 76%),
+    radial-gradient(circle 145px at 6% 34%, rgba(255,255,255,.86) 0%, rgba(255,255,255,.38) 30%, rgba(255,255,255,0) 74%),
+    radial-gradient(ellipse 48% 26% at 8% 88%, rgba(255,255,255,.48), transparent 72%),
+    radial-gradient(circle 300px at 86% 80%, rgba(211,171,105,.15), rgba(211,171,105,0) 72%),
+    radial-gradient(ellipse 58% 46% at 49% 40%, rgba(255,255,255,.22), rgba(255,255,255,0) 78%),
+    linear-gradient(105deg, var(--welcome-bg-left) 0%, var(--welcome-bg-mid) 48%, var(--welcome-bg-right) 100%);
+}
+
+.welcomeScreen.eilLiquidBackdrop::before,
+.welcomeScreen.eilLiquidBackdrop::after {
+  content: none;
+}
+
+.welcomeOrb {
+  position: absolute;
+  z-index: 0;
+  display: block;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.welcomeOrbA {
+  width: 92px;
+  height: 92px;
+  left: 9.6%;
+  top: 14.2%;
+  background: rgba(255,255,255,.72);
+  filter: blur(14px);
+}
+
+.welcomeOrbB {
+  width: 96px;
+  height: 96px;
+  left: 23.1%;
+  top: 21%;
+  background: rgba(255,255,255,.64);
+  filter: blur(15px);
+}
+
+.welcomeOrbC {
+  width: 88px;
+  height: 88px;
+  left: 3.4%;
+  top: 29.5%;
+  background: rgba(255,255,255,.78);
+  filter: blur(13px);
+}
+
+.welcomeFloorGlow {
+  position: absolute;
+  z-index: 0;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 20.2%;
+  pointer-events: none;
+  background: radial-gradient(ellipse 75% 45% at 50% 95%, rgba(255,255,255,.74), rgba(255,255,255,0) 72%);
+  filter: blur(12px);
 }
 
 .welcomeContent {
-  width: min(940px, 92vw);
-  height: min(790px, 86dvh);
-  min-height: 620px;
-  display: grid;
-  grid-template-rows: 22% 1fr 24%;
-  align-items: center;
-  justify-items: center;
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
   text-align: center;
 }
 
 .welcomeBrandMark {
-  align-self: end;
-  font-size: clamp(26px, 2.45vw, 40px);
-  font-weight: 700;
-  letter-spacing: .38em;
-  padding-left: .38em;
+  position: absolute;
+  top: 17.53%;
+  left: 50%;
+  transform: translateX(-50%);
+  direction: ltr;
+  padding-left: .34em;
+  color: var(--welcome-gold);
+  font-family: Arial, "Segoe UI", sans-serif;
+  font-size: clamp(28px, 2.33vw, 39px);
+  font-weight: 600;
   line-height: 1;
+  letter-spacing: .34em;
+  text-shadow: 0 1px 0 rgba(255,255,255,.58);
 }
 
 .welcomeHook {
+  position: absolute;
+  top: 29.97%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(800px, 92vw);
   margin: 0;
-  max-width: 800px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  font-size: clamp(34px, 3.15vw, 56px);
-  font-weight: 900;
-  letter-spacing: -.035em;
-  line-height: 1.22;
-  text-wrap: balance;
+  color: var(--welcome-text);
+  font-family: Arial, "Segoe UI", var(--eil-font);
+  font-size: clamp(38px, 3.41vw, 57px);
+  font-weight: 800;
+  line-height: 1.39;
+  letter-spacing: -.018em;
+  text-align: center;
+  text-shadow:
+    0 3px 3px rgba(0,0,0,.26),
+    0 1px 0 rgba(255,255,255,.50);
 }
 
 .welcomeHook span {
   display: block;
+  white-space: nowrap;
 }
 
-.welcomeCta {
-  align-self: start;
-  width: min(455px, 56vw);
-  min-height: 72px;
-  font-size: clamp(18px, 1.45vw, 22px);
-  letter-spacing: -.01em;
+.welcomeCta.eilLiquidButton {
+  position: absolute;
+  top: 71.73%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: clamp(310px, 24.55vw, 412px);
+  height: clamp(68px, 10.63vh, 100px);
+  min-height: 0;
+  padding: 0 40px;
+  gap: 21px;
+  overflow: hidden;
+  border-radius: 999px;
+  border: 1px solid rgba(213,176,105,.45);
+  border-top-color: rgba(255,255,255,.96);
+  border-left-color: rgba(255,255,255,.74);
+  background:
+    radial-gradient(ellipse 48% 90% at 12% 18%, rgba(255,255,255,.62), rgba(255,255,255,0) 72%),
+    linear-gradient(180deg, rgba(255,255,255,.50), rgba(255,248,239,.28));
+  color: var(--welcome-text);
+  backdrop-filter: blur(18px) saturate(125%);
+  -webkit-backdrop-filter: blur(18px) saturate(125%);
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,.98),
+    inset 0 -2px 0 rgba(214,180,112,.12),
+    0 14px 30px rgba(172,124,56,.11),
+    0 2px 8px rgba(172,124,56,.08);
+  font-family: Arial, "Segoe UI", var(--eil-font);
+  font-size: clamp(20px, 1.62vw, 27px);
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.welcomeCta.eilLiquidButton::before {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.54), rgba(255,255,255,.08) 28%, transparent 54%),
+    radial-gradient(ellipse 30% 72% at 8% 48%, rgba(255,255,255,.50), transparent 76%);
+  mix-blend-mode: screen;
+}
+
+.welcomeCta.eilLiquidButton::after {
+  content: '';
+  position: absolute;
+  left: 14%;
+  right: 14%;
+  bottom: -9px;
+  height: 18px;
+  border-radius: 50%;
+  background: rgba(235,198,124,.20);
+  filter: blur(11px);
+  pointer-events: none;
+}
+
+.welcomeCta.eilLiquidButton:hover {
+  transform: translateX(-50%) translateY(-1px);
+  background:
+    radial-gradient(ellipse 48% 90% at 12% 18%, rgba(255,255,255,.68), rgba(255,255,255,0) 72%),
+    linear-gradient(180deg, rgba(255,255,255,.56), rgba(255,248,239,.32));
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,1),
+    inset 0 -2px 0 rgba(214,180,112,.14),
+    0 16px 34px rgba(172,124,56,.13),
+    0 2px 8px rgba(172,124,56,.08);
+}
+
+.welcomeCta.eilLiquidButton:active {
+  transform: translateX(-50%) scale(.995);
 }
 
 .welcomeCtaLabel,
 .welcomeArrow {
   position: relative;
-  z-index: 1;
+  z-index: 2;
 }
 
 .welcomeArrow {
   direction: ltr;
-  font-size: 1.15em;
-  font-weight: 500;
-  opacity: .72;
-  transition: transform .22s ease;
-}
-
-.welcomeCta:hover .welcomeArrow {
-  transform: translateX(-3px);
+  font-size: 1.11em;
+  font-weight: 400;
+  line-height: 1;
+  transform: translateY(-1px);
+  opacity: .92;
 }
 
 @media (max-width: 900px) {
-  .welcomeContent {
-    width: min(760px, 94vw);
-    min-height: 560px;
-    height: min(720px, 88dvh);
-    grid-template-rows: 20% 1fr 24%;
+  .welcomeBrandMark {
+    top: 16%;
+    font-size: clamp(25px, 5vw, 34px);
   }
 
   .welcomeHook {
-    font-size: clamp(30px, 5vw, 44px);
+    top: 29%;
+    width: min(720px, 94vw);
+    font-size: clamp(34px, 5.8vw, 50px);
+    line-height: 1.36;
   }
 
-  .welcomeCta {
-    width: min(430px, 72vw);
+  .welcomeCta.eilLiquidButton {
+    top: 71%;
+    width: min(390px, 68vw);
+    height: 82px;
+    font-size: 23px;
   }
+
+  .welcomeOrbB { left: 18%; }
 }
 
 @media (max-width: 640px) {
   .welcomeScreen {
-    padding: 24px 18px 32px;
-  }
-
-  .welcomeContent {
-    width: 100%;
-    min-height: 0;
-    height: 100%;
-    grid-template-rows: 22% 1fr 24%;
+    min-height: 100svh;
   }
 
   .welcomeBrandMark {
-    font-size: clamp(23px, 7vw, 30px);
+    top: 12.5%;
+    font-size: clamp(22px, 7vw, 28px);
+    letter-spacing: .32em;
+    padding-left: .32em;
   }
 
   .welcomeHook {
-    max-width: 92vw;
-    font-size: clamp(28px, 8.2vw, 38px);
-    line-height: 1.26;
+    top: 28%;
+    width: 92vw;
+    font-size: clamp(28px, 8.1vw, 38px);
+    line-height: 1.34;
+    letter-spacing: -.02em;
   }
 
-  .welcomeCta {
-    width: min(390px, 88vw);
-    min-height: 64px;
+  .welcomeHook span {
+    white-space: normal;
+  }
+
+  .welcomeCta.eilLiquidButton {
+    top: auto;
+    bottom: 12.5%;
+    width: min(360px, 82vw);
+    height: 68px;
+    padding: 0 30px;
+    gap: 16px;
+    font-size: 20px;
+  }
+
+  .welcomeOrbA {
+    width: 70px;
+    height: 70px;
+    left: 6%;
+    top: 15%;
+  }
+
+  .welcomeOrbB {
+    width: 74px;
+    height: 74px;
+    left: 26%;
+    top: 21%;
+  }
+
+  .welcomeOrbC {
+    width: 66px;
+    height: 66px;
+    left: 1%;
+    top: 31%;
   }
 }
 
 @media (max-height: 680px) and (min-width: 641px) {
-  .welcomeContent {
-    min-height: 0;
-    height: 92dvh;
-    grid-template-rows: 18% 1fr 22%;
-  }
+  .welcomeBrandMark { top: 12%; }
+  .welcomeHook { top: 25%; font-size: clamp(34px, 4vw, 48px); }
+  .welcomeCta.eilLiquidButton { top: 73%; height: 70px; }
+}
 
-  .welcomeHook {
-    font-size: clamp(30px, 4.4vw, 44px);
+@media (prefers-reduced-motion: reduce) {
+  .welcomeCta.eilLiquidButton {
+    transition: none;
   }
 }
