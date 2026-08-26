@@ -1,159 +1,138 @@
 /* ============================================
-   WELCOME SCREEN — Luxury Cream + Gold + Green
+   E.I.L WELCOME — approved milky Liquid Glass
    ============================================ */
 
 .welcomeScreen {
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 20px 16px 40px;
-  position: relative;
-  overflow: hidden;
-
-  background:
-    radial-gradient(60vw 50vw at 8% 92%, rgba(0,96,57,.12), transparent 65%),
-    radial-gradient(50vw 42vw at 92% 8%,  rgba(184,150,46,.13), transparent 62%),
-    linear-gradient(160deg, #F8F3EA 0%, #EDE8DE 55%, #E8F0EC 100%);
-}
-
-/* Brand */
-.welcomeBrand {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: .22em;
-  color: rgba(26,26,24,.40);
-}
-
-/* Glass card */
-.welcomeGlass {
-  width: min(480px, 94vw);
-  background: rgba(255,255,255,.72);
-  backdrop-filter: blur(24px) saturate(130%);
-  -webkit-backdrop-filter: blur(24px) saturate(130%);
-  border: 1px solid rgba(184,150,46,.28);
-  border-radius: 28px;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.95),
-    inset 0 -1px 0 rgba(184,150,46,.12),
-    0 24px 64px rgba(26,20,8,.12),
-    0 6px 16px rgba(26,20,8,.06);
-  padding: clamp(28px,5vw,48px) clamp(24px,5vw,44px);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0;
-}
-
-/* Kicker */
-.welcomeKicker {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: .16em;
-  text-transform: uppercase;
-  color: rgba(184,150,46,.80);
-  margin-bottom: 18px;
-  display: block;
-  text-align: center;
-}
-
-/* Main hook */
-.welcomeHook {
-  font-size: clamp(22px, 5vw, 30px);
-  font-weight: 800;
-  line-height: 1.30;
-  letter-spacing: -.02em;
-  color: #1A1A18;
-  text-align: center;
-  text-wrap: balance;
-  margin: 0 0 18px;
-}
-
-/* Gold divider */
-.welcomeGoldLine {
-  width: 60px;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(184,150,46,.70), transparent);
-  margin: 0 auto 18px;
-}
-
-/* Sub text */
-.welcomeSubHook {
-  font-size: clamp(14px, 3.5vw, 16px);
-  line-height: 1.65;
-  color: rgba(26,26,24,.55);
-  text-align: center;
-  text-wrap: balance;
-  margin: 0 0 28px;
-}
-
-/* CTA Button */
-.welcomeCta {
+  position: fixed;
+  inset: 0;
   width: 100%;
-  padding: 16px 24px;
-  background: #FAF6EE;
-  color: #8A6A1A;
-  border: 1.5px solid rgba(184,150,46,.55);
-  border-radius: 16px;
-  font-size: 17px;
-  font-weight: 700;
-  cursor: pointer;
-  display: flex;
+  min-height: 100dvh;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  padding: clamp(26px, 4.5vw, 58px);
+  font-family: var(--eil-font);
+  color: var(--eil-tourmaline);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.welcomeContent {
+  width: min(940px, 92vw);
+  height: min(790px, 86dvh);
+  min-height: 620px;
+  display: grid;
+  grid-template-rows: 22% 1fr 24%;
   align-items: center;
-  justify-content: center;
-  gap: 10px;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.90),
-    0 4px 16px rgba(184,150,46,.18);
-  transition: background .18s, transform .15s;
-  letter-spacing: -.01em;
-}
-.welcomeCta:hover { background: #FFF8E8; transform: translateY(-1px) }
-.welcomeArrow { font-size: 20px; opacity: .80 }
-
-/* Bottom hint */
-.welcomeHint {
-  margin-top: 20px;
-  font-size: 12px;
-  color: rgba(26,26,24,.32);
-  letter-spacing: .06em;
+  justify-items: center;
   text-align: center;
 }
 
-@media (max-width: 400px) {
-  .welcomeGlass { padding: 24px 18px 28px }
-  .welcomeHook { font-size: 20px }
+.welcomeBrandMark {
+  align-self: end;
+  font-size: clamp(26px, 2.45vw, 40px);
+  font-weight: 700;
+  letter-spacing: .38em;
+  padding-left: .38em;
+  line-height: 1;
 }
 
-/* EIL centered label above kicker */
-.welcomeEilLabel {
-  display: block;
-  text-align: center;
-  font-size: 28px;
-  font-weight: 800;
-  letter-spacing: .35em;
-  color: rgba(184,150,46,.70);
-  margin-bottom: 6px;
-}
-
-/* 4-line hook */
 .welcomeHook {
-  font-size: clamp(20px, 4.5vw, 28px);
-  font-weight: 800;
-  line-height: 1.38;
-  letter-spacing: -.02em;
-  color: #1A1A18;
-  text-align: center;
-  margin: 0 0 18px;
+  margin: 0;
+  max-width: 800px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0;
+  font-size: clamp(34px, 3.15vw, 56px);
+  font-weight: 900;
+  letter-spacing: -.035em;
+  line-height: 1.22;
+  text-wrap: balance;
 }
+
 .welcomeHook span {
   display: block;
+}
+
+.welcomeCta {
+  align-self: start;
+  width: min(455px, 56vw);
+  min-height: 72px;
+  font-size: clamp(18px, 1.45vw, 22px);
+  letter-spacing: -.01em;
+}
+
+.welcomeCtaLabel,
+.welcomeArrow {
+  position: relative;
+  z-index: 1;
+}
+
+.welcomeArrow {
+  direction: ltr;
+  font-size: 1.15em;
+  font-weight: 500;
+  opacity: .72;
+  transition: transform .22s ease;
+}
+
+.welcomeCta:hover .welcomeArrow {
+  transform: translateX(-3px);
+}
+
+@media (max-width: 900px) {
+  .welcomeContent {
+    width: min(760px, 94vw);
+    min-height: 560px;
+    height: min(720px, 88dvh);
+    grid-template-rows: 20% 1fr 24%;
+  }
+
+  .welcomeHook {
+    font-size: clamp(30px, 5vw, 44px);
+  }
+
+  .welcomeCta {
+    width: min(430px, 72vw);
+  }
+}
+
+@media (max-width: 640px) {
+  .welcomeScreen {
+    padding: 24px 18px 32px;
+  }
+
+  .welcomeContent {
+    width: 100%;
+    min-height: 0;
+    height: 100%;
+    grid-template-rows: 22% 1fr 24%;
+  }
+
+  .welcomeBrandMark {
+    font-size: clamp(23px, 7vw, 30px);
+  }
+
+  .welcomeHook {
+    max-width: 92vw;
+    font-size: clamp(28px, 8.2vw, 38px);
+    line-height: 1.26;
+  }
+
+  .welcomeCta {
+    width: min(390px, 88vw);
+    min-height: 64px;
+  }
+}
+
+@media (max-height: 680px) and (min-width: 641px) {
+  .welcomeContent {
+    min-height: 0;
+    height: 92dvh;
+    grid-template-rows: 18% 1fr 22%;
+  }
+
+  .welcomeHook {
+    font-size: clamp(30px, 4.4vw, 44px);
+  }
 }

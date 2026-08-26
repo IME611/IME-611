@@ -1,5 +1,6 @@
-/* E.I.L Design System — v2 Luxury Cream */
+/* E.I.L Design System — v3 Liquid Glass Foundation */
 @import './primitives/tokens.css';
+@import './primitives/liquid-glass.css';
 @import './foundations/eil-base.css';
 @import './features/shell.css';
 @import './features/sources.css';

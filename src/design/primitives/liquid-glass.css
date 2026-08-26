@@ -1,0 +1,122 @@
+/* Reusable E.I.L Liquid Glass primitives.
+   Feature styles should compose these classes instead of recreating glass recipes. */
+
+.eilLiquidBackdrop {
+  position: relative;
+  isolation: isolate;
+  background:
+    radial-gradient(ellipse 62% 52% at 50% 28%, rgba(255,255,255,.92) 0%, rgba(255,255,255,.48) 42%, transparent 74%),
+    linear-gradient(132deg, var(--eil-milk-0) 0%, var(--eil-milk-1) 46%, var(--eil-milk-warm) 72%, var(--eil-milk-2) 100%);
+}
+
+.eilLiquidBackdrop::before {
+  content: '';
+  position: absolute;
+  inset: -12%;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 58% 38% at 50% 44%, rgba(255,255,255,.54), transparent 72%),
+    linear-gradient(112deg, rgba(255,255,255,.20), transparent 38% 68%, rgba(231,215,195,.14));
+  filter: blur(30px);
+  transform: scale(1.05);
+}
+
+.eilLiquidBackdrop::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.18), transparent 24% 76%, rgba(176,151,111,.035)),
+    radial-gradient(ellipse 78% 20% at 50% 100%, rgba(92,73,48,.055), transparent 74%);
+}
+
+.eilLiquidSurface {
+  position: relative;
+  overflow: hidden;
+  background: var(--eil-liquid-fill);
+  backdrop-filter: blur(var(--eil-liquid-blur)) saturate(138%) brightness(1.04);
+  -webkit-backdrop-filter: blur(var(--eil-liquid-blur)) saturate(138%) brightness(1.04);
+  border: 1px solid var(--eil-liquid-edge);
+  border-top-color: var(--eil-liquid-rim);
+  border-left-color: var(--eil-liquid-rim-soft);
+  border-radius: var(--eil-liquid-radius);
+  box-shadow: var(--eil-liquid-inner), var(--eil-liquid-shadow);
+}
+
+.eilLiquidSurface::before,
+.eilLiquidButton::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(130deg, rgba(255,255,255,.58) 0%, rgba(255,255,255,.16) 28%, transparent 58%);
+  mix-blend-mode: screen;
+}
+
+.eilLiquidButton {
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 64px;
+  padding: 0 34px;
+  border-radius: 999px;
+  background: var(--eil-liquid-fill-strong);
+  color: var(--eil-tourmaline);
+  border: 1px solid rgba(180,151,91,.36);
+  border-top-color: rgba(255,255,255,.92);
+  border-left-color: rgba(255,255,255,.66);
+  backdrop-filter: blur(22px) saturate(142%) brightness(1.05);
+  -webkit-backdrop-filter: blur(22px) saturate(142%) brightness(1.05);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.90),
+    inset 0 -1px 0 rgba(176,145,84,.10),
+    0 14px 34px rgba(70,53,31,.10),
+    0 3px 9px rgba(70,53,31,.06);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform .22s ease, box-shadow .22s ease, background .22s ease;
+}
+
+.eilLiquidButton:hover {
+  transform: translateY(-2px);
+  background: rgba(255,255,255,.46);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.94),
+    inset 0 -1px 0 rgba(176,145,84,.10),
+    0 18px 42px rgba(70,53,31,.12),
+    0 4px 12px rgba(70,53,31,.07);
+}
+
+.eilLiquidButton:active {
+  transform: translateY(0) scale(.995);
+}
+
+.eilLiquidButton:focus-visible {
+  outline: 3px solid var(--eil-crystal-gold-soft);
+  outline-offset: 5px;
+}
+
+.eilCrystalInk {
+  color: var(--eil-tourmaline);
+  text-shadow: var(--eil-tourmaline-text-shadow);
+}
+
+.eilBrandMark {
+  direction: ltr;
+  color: var(--eil-crystal-gold);
+  text-shadow: 0 1px 0 rgba(255,255,255,.82), 0 4px 14px rgba(151,117,54,.09);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .eilLiquidButton {
+    transition: none;
+  }
+}
