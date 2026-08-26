@@ -19,12 +19,32 @@
   --eil-green: #006039;
   --eil-green-mid: #007a48;
 
-  /* Glass */
+  /* Existing glass compatibility */
   --glass-fill: rgba(255,255,255,.65);
   --glass-border: rgba(184,150,46,.22);
   --glass-shadow: 0 16px 48px rgba(26,20,8,.10);
   --glass-blur: 20px;
   --glass-radius: 20px;
+
+  /* E.I.L Liquid Glass foundation — reusable across the product */
+  --eil-milk-0: #FCFAF6;
+  --eil-milk-1: #F8F2E9;
+  --eil-milk-2: #EFE8DE;
+  --eil-milk-warm: #F6EDE3;
+  --eil-tourmaline: #211D19;
+  --eil-tourmaline-soft: #403932;
+  --eil-crystal-gold: #C7A65A;
+  --eil-crystal-gold-soft: rgba(199,166,90,.34);
+  --eil-liquid-fill: rgba(255,255,255,.22);
+  --eil-liquid-fill-strong: rgba(255,255,255,.38);
+  --eil-liquid-rim: rgba(255,255,255,.82);
+  --eil-liquid-rim-soft: rgba(255,255,255,.46);
+  --eil-liquid-edge: rgba(173,148,103,.22);
+  --eil-liquid-shadow: 0 22px 60px rgba(63,50,34,.10), 0 5px 18px rgba(63,50,34,.06);
+  --eil-liquid-inner: inset 0 1px 0 rgba(255,255,255,.88), inset 0 -1px 0 rgba(181,153,103,.10);
+  --eil-liquid-blur: 26px;
+  --eil-liquid-radius: 28px;
+  --eil-tourmaline-text-shadow: 0 1px 0 rgba(255,255,255,.84), 0 2px 6px rgba(28,23,18,.15), 0 12px 28px rgba(28,23,18,.07);
 
   /* Layer colors */
   --layer-a: #1E3A5F;
