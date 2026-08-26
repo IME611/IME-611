@@ -3,6 +3,11 @@ interface WelcomeScreenProps { onStart: () => void }
 export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
   return (
     <main className="welcomeScreen eilLiquidBackdrop" dir="rtl" aria-labelledby="welcome-hook">
+      <span className="welcomeOrb welcomeOrbA" aria-hidden="true" />
+      <span className="welcomeOrb welcomeOrbB" aria-hidden="true" />
+      <span className="welcomeOrb welcomeOrbC" aria-hidden="true" />
+      <span className="welcomeFloorGlow" aria-hidden="true" />
+
       <section className="welcomeContent">
         <div className="welcomeBrandMark eilBrandMark" aria-label="E.I.L">E · I · L</div>
 
