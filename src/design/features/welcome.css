@@ -1,8 +1,9 @@
 /* =========================================================
-   E.I.L WELCOME — creator-approved composition + real liquid glass
+   E.I.L WELCOME — creator-approved composition + Android-safe liquid glass
    Reference viewport: 1672 × 941. Desktop geometry stays pinned.
-   The CTA deliberately uses a very low-opacity optical fill so it reads
-   as glass on Android/Chrome instead of an opaque white pill.
+   The CTA keeps its center almost transparent; optical depth is built from
+   edge light, a dedicated lens layer and a soft caustic instead of a white
+   screen-blended wash that turns opaque on bright mobile backgrounds.
    ========================================================= */
 
 .welcomeScreen {
@@ -11,7 +12,7 @@
   --welcome-bg-left: #fbf4ee;
   --welcome-bg-mid: #f6eee8;
   --welcome-bg-right: #f0e3d9;
-  --welcome-glass-edge: rgba(255,255,255,.76);
+  --welcome-glass-edge: rgba(255,255,255,.72);
   --welcome-glass-gold-edge: rgba(205,163,88,.34);
   --welcome-glass-filter: url("#eil-liquid-glass-filter");
 
@@ -118,9 +119,8 @@
 /*
    Liquid Glass CTA
    ----------------
-   The old version used ~50% white fill, which Android rendered as a white
-   frosted pill. This version keeps the substrate visible, then constructs the
-   glass from edge light, internal lens highlights and a soft optical caustic.
+   The bright substrate means a broad screen-blended highlight reads as white.
+   Keep the body nearly transparent and concentrate contrast at the optical rim.
 */
 .welcomeCta.eilLiquidButton {
   position:absolute;
@@ -136,24 +136,24 @@
   isolation:isolate;
   border-radius:999px;
   border:1px solid var(--welcome-glass-gold-edge);
-  border-top-color:rgba(255,255,255,.92);
-  border-left-color:rgba(255,255,255,.68);
-  border-right-color:rgba(230,205,157,.34);
-  border-bottom-color:rgba(196,151,72,.28);
+  border-top-color:rgba(255,255,255,.82);
+  border-left-color:rgba(255,255,255,.60);
+  border-right-color:rgba(223,192,136,.38);
+  border-bottom-color:rgba(179,128,46,.32);
   background:
-    radial-gradient(ellipse 38% 72% at 12% 12%, rgba(255,255,255,.34), rgba(255,255,255,0) 70%),
-    radial-gradient(ellipse 46% 110% at 94% 94%, rgba(217,174,100,.08), rgba(217,174,100,0) 72%),
-    linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,250,242,.08) 55%, rgba(255,247,235,.11));
+    radial-gradient(ellipse 28% 52% at 11% 8%, rgba(255,255,255,.10), rgba(255,255,255,0) 72%),
+    radial-gradient(ellipse 38% 95% at 97% 98%, rgba(210,157,72,.045), rgba(210,157,72,0) 74%),
+    linear-gradient(180deg, rgba(255,255,255,.055), rgba(232,214,185,.022) 56%, rgba(194,148,73,.028));
   color:var(--welcome-text);
-  backdrop-filter:blur(12px) saturate(145%) brightness(1.025);
-  -webkit-backdrop-filter:blur(12px) saturate(145%) brightness(1.025);
+  backdrop-filter:blur(6px) saturate(132%) contrast(1.045);
+  -webkit-backdrop-filter:blur(6px) saturate(132%) contrast(1.045);
   box-shadow:
-    inset 0 1.5px 1px rgba(255,255,255,.96),
-    inset 0 -1px 1px rgba(184,143,69,.22),
-    inset 10px 0 24px rgba(255,255,255,.10),
-    inset -10px 0 22px rgba(223,183,112,.07),
-    0 12px 30px rgba(154,112,45,.09),
-    0 2px 6px rgba(154,112,45,.08);
+    inset 0 1px 0 rgba(255,255,255,.88),
+    inset 0 -1px 0 rgba(171,120,42,.26),
+    inset 10px 0 24px rgba(137,213,239,.025),
+    inset -12px 0 26px rgba(230,174,97,.045),
+    0 11px 28px rgba(154,112,45,.075),
+    0 2px 5px rgba(154,112,45,.06);
   font-family:Arial,"Segoe UI",var(--eil-font);
   font-size:clamp(20px,1.62vw,27px);
   font-weight:700;
@@ -161,23 +161,41 @@
   cursor:pointer;
 }
 
-/* glass rim + moving specular streak */
+/* Narrow top rim only — never paint a bright layer across the whole glass. */
 .welcomeCta.eilLiquidButton::before {
   content:'';
   position:absolute;
-  z-index:0;
-  inset:1px;
+  z-index:1;
+  top:1px;
+  left:8%;
+  right:8%;
+  height:20%;
+  border-radius:999px;
+  pointer-events:none;
+  background:radial-gradient(ellipse at 50% 0%, rgba(255,255,255,.76), rgba(255,255,255,.18) 42%, rgba(255,255,255,0) 78%);
+  filter:blur(.6px);
+  opacity:.76;
+  mix-blend-mode:normal;
+  box-shadow:none;
+}
+
+/* Dedicated optical lens: very low alpha, chromatic edges, transparent center. */
+.welcomeCtaLens {
+  position:absolute;
+  z-index:1;
+  inset:3px;
   border-radius:inherit;
   pointer-events:none;
   background:
-    linear-gradient(168deg, rgba(255,255,255,.78) 0%, rgba(255,255,255,.20) 12%, rgba(255,255,255,0) 31% 70%, rgba(226,188,116,.10) 88%, rgba(255,255,255,.24) 100%),
-    radial-gradient(ellipse 34% 46% at 18% 8%, rgba(255,255,255,.66), transparent 74%),
-    radial-gradient(ellipse 18% 78% at 92% 50%, rgba(255,245,225,.18), transparent 76%);
+    radial-gradient(ellipse 20% 90% at 2% 50%, rgba(120,218,247,.055), rgba(120,218,247,0) 72%),
+    radial-gradient(ellipse 24% 92% at 99% 50%, rgba(244,173,100,.075), rgba(244,173,100,0) 74%),
+    radial-gradient(ellipse 54% 34% at 50% 100%, rgba(205,160,83,.045), rgba(205,160,83,0) 78%);
+  opacity:.92;
+  mix-blend-mode:normal;
   box-shadow:
-    inset 0 0 0 1px rgba(255,255,255,.30),
-    inset 0 8px 18px rgba(255,255,255,.11),
-    inset 0 -8px 18px rgba(205,163,88,.035);
-  mix-blend-mode:screen;
+    inset 0 0 0 1px rgba(255,255,255,.12),
+    inset 0 7px 16px rgba(255,255,255,.025),
+    inset 0 -7px 16px rgba(173,122,44,.025);
 }
 
 /* optical caustic under the lens */
@@ -185,49 +203,48 @@
   content:'';
   position:absolute;
   z-index:-1;
-  left:9%;
-  right:9%;
-  bottom:-12px;
-  height:24px;
+  left:10%;
+  right:10%;
+  bottom:-11px;
+  height:22px;
   border-radius:50%;
   pointer-events:none;
-  background:
-    radial-gradient(ellipse at 50% 20%, rgba(255,255,255,.52), rgba(240,204,136,.19) 38%, rgba(240,204,136,0) 72%);
-  filter:blur(9px);
-  opacity:.82;
+  background:radial-gradient(ellipse at 50% 20%, rgba(255,255,255,.24), rgba(221,177,101,.14) 38%, rgba(221,177,101,0) 74%);
+  filter:blur(8px);
+  opacity:.66;
 }
 
-/* Chromium/WebKit builds that accept an SVG backdrop filter get real optical
-   displacement/chromatic separation; all other browsers keep the CSS lens. */
+/* Browsers that accept SVG backdrop filters get true displacement. The visual
+   fallback above does not depend on this feature and is the Android baseline. */
 @supports (backdrop-filter: url("#eil-liquid-glass-filter")) {
   .welcomeCta.eilLiquidButton {
-    backdrop-filter:var(--welcome-glass-filter) blur(9px) saturate(150%) brightness(1.03);
+    backdrop-filter:var(--welcome-glass-filter) blur(5px) saturate(140%) contrast(1.045);
   }
 }
 @supports (-webkit-backdrop-filter: url("#eil-liquid-glass-filter")) {
   .welcomeCta.eilLiquidButton {
-    -webkit-backdrop-filter:var(--welcome-glass-filter) blur(9px) saturate(150%) brightness(1.03);
+    -webkit-backdrop-filter:var(--welcome-glass-filter) blur(5px) saturate(140%) contrast(1.045);
   }
 }
 
 .welcomeCta.eilLiquidButton:hover {
   transform:translateX(-50%) translateY(-1px);
   background:
-    radial-gradient(ellipse 38% 72% at 12% 12%, rgba(255,255,255,.42), rgba(255,255,255,0) 70%),
-    radial-gradient(ellipse 46% 110% at 94% 94%, rgba(217,174,100,.10), rgba(217,174,100,0) 72%),
-    linear-gradient(180deg, rgba(255,255,255,.21), rgba(255,250,242,.09) 55%, rgba(255,247,235,.12));
+    radial-gradient(ellipse 28% 52% at 11% 8%, rgba(255,255,255,.13), rgba(255,255,255,0) 72%),
+    radial-gradient(ellipse 38% 95% at 97% 98%, rgba(210,157,72,.06), rgba(210,157,72,0) 74%),
+    linear-gradient(180deg, rgba(255,255,255,.075), rgba(232,214,185,.03) 56%, rgba(194,148,73,.035));
   box-shadow:
-    inset 0 1.5px 1px rgba(255,255,255,1),
-    inset 0 -1px 1px rgba(184,143,69,.24),
-    inset 10px 0 24px rgba(255,255,255,.12),
-    inset -10px 0 22px rgba(223,183,112,.08),
-    0 15px 34px rgba(154,112,45,.11),
-    0 2px 6px rgba(154,112,45,.08);
+    inset 0 1px 0 rgba(255,255,255,.94),
+    inset 0 -1px 0 rgba(171,120,42,.29),
+    inset 10px 0 24px rgba(137,213,239,.035),
+    inset -12px 0 26px rgba(230,174,97,.055),
+    0 14px 32px rgba(154,112,45,.09),
+    0 2px 5px rgba(154,112,45,.06);
 }
 .welcomeCta.eilLiquidButton:active { transform:translateX(-50%) scale(.995); }
 
-.welcomeCtaLabel,.welcomeArrow { position:relative; z-index:2; }
-.welcomeCtaLabel { text-shadow:0 1px 0 rgba(255,255,255,.34); }
+.welcomeCtaLabel,.welcomeArrow { position:relative; z-index:3; }
+.welcomeCtaLabel { text-shadow:0 1px 0 rgba(255,255,255,.26); }
 .welcomeArrow { direction:ltr; font-size:1.11em; font-weight:400; line-height:1; transform:translateY(-1px); opacity:.92; }
 
 @media (max-width:900px) {
@@ -251,30 +268,41 @@
     padding:0 30px;
     gap:16px;
     font-size:20px;
-    /* On Android, lower opacity is critical: the backdrop must stay visible. */
     background:
-      radial-gradient(ellipse 42% 78% at 11% 10%, rgba(255,255,255,.31), rgba(255,255,255,0) 70%),
-      radial-gradient(ellipse 48% 115% at 95% 96%, rgba(219,176,102,.075), rgba(219,176,102,0) 72%),
-      linear-gradient(180deg, rgba(255,255,255,.15), rgba(255,250,242,.055) 58%, rgba(255,247,235,.09));
-    backdrop-filter:blur(10px) saturate(150%) brightness(1.02);
-    -webkit-backdrop-filter:blur(10px) saturate(150%) brightness(1.02);
+      radial-gradient(ellipse 24% 50% at 10% 7%, rgba(255,255,255,.075), rgba(255,255,255,0) 72%),
+      radial-gradient(ellipse 35% 100% at 98% 98%, rgba(205,151,64,.04), rgba(205,151,64,0) 74%),
+      linear-gradient(180deg, rgba(255,255,255,.035), rgba(224,201,163,.016) 58%, rgba(180,128,45,.024));
+    backdrop-filter:blur(4px) saturate(128%) contrast(1.055);
+    -webkit-backdrop-filter:blur(4px) saturate(128%) contrast(1.055);
     box-shadow:
-      inset 0 1.5px 1px rgba(255,255,255,.96),
-      inset 0 -1px 1px rgba(184,143,69,.20),
-      inset 8px 0 20px rgba(255,255,255,.09),
-      inset -8px 0 20px rgba(223,183,112,.06),
-      0 12px 28px rgba(154,112,45,.08),
-      0 2px 5px rgba(154,112,45,.07);
+      inset 0 1px 0 rgba(255,255,255,.84),
+      inset 0 -1px 0 rgba(163,111,36,.28),
+      inset 8px 0 20px rgba(116,210,240,.025),
+      inset -9px 0 22px rgba(232,165,86,.05),
+      0 10px 25px rgba(154,112,45,.07),
+      0 2px 4px rgba(154,112,45,.055);
   }
 
   .welcomeCta.eilLiquidButton::before {
-    background:
-      linear-gradient(168deg, rgba(255,255,255,.72) 0%, rgba(255,255,255,.17) 12%, rgba(255,255,255,0) 31% 71%, rgba(226,188,116,.08) 88%, rgba(255,255,255,.20) 100%),
-      radial-gradient(ellipse 36% 48% at 18% 8%, rgba(255,255,255,.58), transparent 74%),
-      radial-gradient(ellipse 18% 78% at 92% 50%, rgba(255,245,225,.15), transparent 76%);
+    left:10%;
+    right:10%;
+    height:18%;
+    background:radial-gradient(ellipse at 50% 0%, rgba(255,255,255,.68), rgba(255,255,255,.14) 43%, rgba(255,255,255,0) 78%);
+    opacity:.70;
+    mix-blend-mode:normal;
   }
 
-  .welcomeCta.eilLiquidButton::after { bottom:-9px; height:20px; opacity:.72; }
+  .welcomeCtaLens {
+    inset:2px;
+    background:
+      radial-gradient(ellipse 22% 92% at 1% 50%, rgba(105,210,242,.065), rgba(105,210,242,0) 72%),
+      radial-gradient(ellipse 26% 94% at 99% 50%, rgba(239,166,91,.085), rgba(239,166,91,0) 74%),
+      radial-gradient(ellipse 55% 30% at 50% 100%, rgba(189,137,56,.05), rgba(189,137,56,0) 80%);
+    opacity:.90;
+    mix-blend-mode:normal;
+  }
+
+  .welcomeCta.eilLiquidButton::after { bottom:-8px; height:18px; opacity:.56; }
 
   .welcomeOrbA { width:70px; height:70px; left:6%; top:15%; }
   .welcomeOrbB { width:74px; height:74px; left:26%; top:21%; }
