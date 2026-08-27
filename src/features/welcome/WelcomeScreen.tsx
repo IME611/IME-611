@@ -19,6 +19,7 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
         </h1>
 
         <button className="welcomeCta eilLiquidButton" type="button" onClick={onStart}>
+          <span className="welcomeCtaLens" aria-hidden="true" />
           <span className="welcomeCtaLabel">בואו נתחיל</span>
           <span className="welcomeArrow" aria-hidden="true">←</span>
         </button>
