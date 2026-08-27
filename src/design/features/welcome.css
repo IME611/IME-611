@@ -1,76 +1,78 @@
 /* =========================================================
-   E.I.L WELCOME — creator-approved composition + Android-safe liquid glass
-   Reference viewport: 1672 × 941. Desktop geometry stays pinned.
-   The CTA keeps its center almost transparent; optical depth is built from
-   edge light, a dedicated lens layer and a soft caustic instead of a white
-   screen-blended wash that turns opaque on bright mobile backgrounds.
+   E.I.L WELCOME — creator-approved composition + deterministic Liquid Glass
+   Desktop geometry remains pinned to the approved 1672 × 941 reference.
+   Mobile switches to a spacious editorial flow and uses a browser-independent
+   optical lens, so Brave/Android cannot collapse the CTA into a flat white pill.
    ========================================================= */
 
 .welcomeScreen {
-  --welcome-text: #1a1408;
-  --welcome-gold: #d0aa5e;
-  --welcome-bg-left: #fbf4ee;
-  --welcome-bg-mid: #f6eee8;
-  --welcome-bg-right: #f0e3d9;
-  --welcome-glass-edge: rgba(255,255,255,.72);
-  --welcome-glass-gold-edge: rgba(205,163,88,.34);
-  --welcome-glass-filter: url("#eil-liquid-glass-filter");
-
-  position: fixed;
-  inset: 0;
-  width: 100%;
-  min-height: 100dvh;
-  overflow: hidden;
-  isolation: isolate;
-  font-family: Arial, "Segoe UI", var(--eil-font);
-  color: var(--welcome-text);
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
+  --welcome-text:#1a1408;
+  --welcome-gold:#d0aa5e;
+  --welcome-bg-left:#fbf4ee;
+  --welcome-bg-mid:#f6eee8;
+  --welcome-bg-right:#f0e3d9;
+  --welcome-glass-filter:url("#eil-liquid-glass-filter");
+  position:fixed;
+  inset:0;
+  width:100%;
+  min-height:100dvh;
+  overflow:hidden;
+  isolation:isolate;
+  color:var(--welcome-text);
+  font-family:Arial,"Segoe UI",sans-serif;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
   background:
-    radial-gradient(circle 150px at 12.5% 18.5%, rgba(255,255,255,.82) 0%, rgba(255,255,255,.40) 30%, rgba(255,255,255,0) 75%),
-    radial-gradient(circle 130px at 26% 25.5%, rgba(255,255,255,.72) 0%, rgba(255,255,255,.34) 30%, rgba(255,255,255,0) 76%),
-    radial-gradient(circle 145px at 6% 34%, rgba(255,255,255,.86) 0%, rgba(255,255,255,.38) 30%, rgba(255,255,255,0) 74%),
-    radial-gradient(ellipse 48% 26% at 8% 88%, rgba(255,255,255,.48), transparent 72%),
-    radial-gradient(circle 300px at 86% 80%, rgba(211,171,105,.15), rgba(211,171,105,0) 72%),
-    radial-gradient(ellipse 58% 46% at 49% 40%, rgba(255,255,255,.22), rgba(255,255,255,0) 78%),
-    linear-gradient(105deg, var(--welcome-bg-left) 0%, var(--welcome-bg-mid) 48%, var(--welcome-bg-right) 100%);
+    radial-gradient(ellipse 58% 46% at 49% 40%,rgba(255,255,255,.24),rgba(255,255,255,0) 78%),
+    radial-gradient(circle 360px at 87% 82%,rgba(210,175,100,.16),rgba(210,175,100,0) 72%),
+    linear-gradient(105deg,var(--welcome-bg-left) 0%,var(--welcome-bg-mid) 48%,var(--welcome-bg-right) 100%);
 }
 
-.welcomeScreen.eilLiquidBackdrop {
-  background:
-    radial-gradient(circle 150px at 12.5% 18.5%, rgba(255,255,255,.82) 0%, rgba(255,255,255,.40) 30%, rgba(255,255,255,0) 75%),
-    radial-gradient(circle 130px at 26% 25.5%, rgba(255,255,255,.72) 0%, rgba(255,255,255,.34) 30%, rgba(255,255,255,0) 76%),
-    radial-gradient(circle 145px at 6% 34%, rgba(255,255,255,.86) 0%, rgba(255,255,255,.38) 30%, rgba(255,255,255,0) 74%),
-    radial-gradient(ellipse 48% 26% at 8% 88%, rgba(255,255,255,.48), transparent 72%),
-    radial-gradient(circle 300px at 86% 80%, rgba(211,171,105,.15), rgba(211,171,105,0) 72%),
-    radial-gradient(ellipse 58% 46% at 49% 40%, rgba(255,255,255,.22), rgba(255,255,255,0) 78%),
-    linear-gradient(105deg, var(--welcome-bg-left) 0%, var(--welcome-bg-mid) 48%, var(--welcome-bg-right) 100%);
-}
-
+.welcomeScreen.eilLiquidBackdrop { isolation:isolate; }
 .welcomeScreen.eilLiquidBackdrop::before,
-.welcomeScreen.eilLiquidBackdrop::after { content: none; }
+.welcomeScreen.eilLiquidBackdrop::after { content:none; }
 
 .welcomeOrb {
-  position: absolute;
-  z-index: 0;
-  display: block;
-  border-radius: 50%;
-  pointer-events: none;
+  position:absolute;
+  z-index:0;
+  border-radius:50%;
+  pointer-events:none;
+  filter:blur(80px);
 }
-.welcomeOrbA { width:92px; height:92px; left:9.6%; top:14.2%; background:rgba(255,255,255,.72); filter:blur(14px); }
-.welcomeOrbB { width:96px; height:96px; left:23.1%; top:21%; background:rgba(255,255,255,.64); filter:blur(15px); }
-.welcomeOrbC { width:88px; height:88px; left:3.4%; top:29.5%; background:rgba(255,255,255,.78); filter:blur(13px); }
+.welcomeOrbA {
+  width:300px;
+  height:300px;
+  top:-5%;
+  left:-8%;
+  background:rgba(255,248,230,.70);
+}
+.welcomeOrbB {
+  width:360px;
+  height:360px;
+  bottom:5%;
+  left:-10%;
+  background:rgba(255,245,220,.60);
+}
+.welcomeOrbC {
+  width:280px;
+  height:280px;
+  right:-5%;
+  bottom:8%;
+  background:rgba(210,175,100,.25);
+}
 
 .welcomeFloorGlow {
   position:absolute;
   z-index:0;
-  left:0;
-  right:0;
-  bottom:-1px;
-  height:20.2%;
+  left:-12%;
+  right:-12%;
+  bottom:-9%;
+  height:30%;
   pointer-events:none;
-  background:radial-gradient(ellipse 75% 45% at 50% 95%, rgba(255,255,255,.74), rgba(255,255,255,0) 72%);
-  filter:blur(12px);
+  background:
+    radial-gradient(ellipse 62% 42% at 50% 18%,rgba(255,255,255,.72),rgba(255,255,255,.18) 42%,rgba(255,255,255,0) 76%),
+    radial-gradient(ellipse 24% 22% at 63% 10%,rgba(223,182,104,.16),rgba(223,182,104,0) 72%);
+  filter:blur(16px);
 }
 
 .welcomeContent {
@@ -90,12 +92,11 @@
   direction:ltr;
   padding-left:.34em;
   color:var(--welcome-gold);
-  font-family:Arial,"Segoe UI",sans-serif;
   font-size:clamp(28px,2.33vw,39px);
   font-weight:600;
   line-height:1;
   letter-spacing:.34em;
-  text-shadow:0 1px 0 rgba(255,255,255,.58);
+  text-shadow:0 1px 0 rgba(255,255,255,.62);
 }
 
 .welcomeHook {
@@ -106,22 +107,18 @@
   width:min(800px,92vw);
   margin:0;
   color:var(--welcome-text);
-  font-family:Arial,"Segoe UI",var(--eil-font);
   font-size:clamp(38px,3.41vw,57px);
   font-weight:800;
   line-height:1.39;
   letter-spacing:-.018em;
   text-align:center;
-  text-shadow:0 3px 3px rgba(0,0,0,.26),0 1px 0 rgba(255,255,255,.50);
+  text-shadow:0 3px 3px rgba(0,0,0,.24),0 1px 0 rgba(255,255,255,.52);
 }
 .welcomeHook span { display:block; white-space:nowrap; }
 
-/*
-   Liquid Glass CTA
-   ----------------
-   The bright substrate means a broad screen-blended highlight reads as white.
-   Keep the body nearly transparent and concentrate contrast at the optical rim.
-*/
+/* Deterministic Liquid Glass. The body itself is almost transparent; the glass
+   is perceived through rim light, internal reflections, warm/cool refraction
+   and a caustic. No screen-blend wash is used. */
 .welcomeCta.eilLiquidButton {
   position:absolute;
   top:71.73%;
@@ -135,67 +132,92 @@
   overflow:visible;
   isolation:isolate;
   border-radius:999px;
-  border:1px solid var(--welcome-glass-gold-edge);
-  border-top-color:rgba(255,255,255,.82);
-  border-left-color:rgba(255,255,255,.60);
-  border-right-color:rgba(223,192,136,.38);
-  border-bottom-color:rgba(179,128,46,.32);
+  border:1px solid rgba(195,151,79,.30);
+  border-top-color:rgba(255,255,255,.96);
+  border-left-color:rgba(255,255,255,.78);
+  border-right-color:rgba(227,195,140,.46);
+  border-bottom-color:rgba(177,125,43,.34);
   background:
-    radial-gradient(ellipse 28% 52% at 11% 8%, rgba(255,255,255,.10), rgba(255,255,255,0) 72%),
-    radial-gradient(ellipse 38% 95% at 97% 98%, rgba(210,157,72,.045), rgba(210,157,72,0) 74%),
-    linear-gradient(180deg, rgba(255,255,255,.055), rgba(232,214,185,.022) 56%, rgba(194,148,73,.028));
+    radial-gradient(ellipse 36% 110% at 8% 34%,rgba(255,255,255,.18),rgba(255,255,255,0) 72%),
+    radial-gradient(ellipse 38% 120% at 96% 64%,rgba(219,171,91,.10),rgba(219,171,91,0) 74%),
+    linear-gradient(180deg,rgba(255,255,255,.055),rgba(239,222,196,.045) 54%,rgba(199,155,86,.055));
   color:var(--welcome-text);
-  backdrop-filter:blur(6px) saturate(132%) contrast(1.045);
-  -webkit-backdrop-filter:blur(6px) saturate(132%) contrast(1.045);
+  backdrop-filter:blur(5px) saturate(140%) contrast(1.04);
+  -webkit-backdrop-filter:blur(5px) saturate(140%) contrast(1.04);
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.88),
-    inset 0 -1px 0 rgba(171,120,42,.26),
-    inset 10px 0 24px rgba(137,213,239,.025),
-    inset -12px 0 26px rgba(230,174,97,.045),
-    0 11px 28px rgba(154,112,45,.075),
-    0 2px 5px rgba(154,112,45,.06);
-  font-family:Arial,"Segoe UI",var(--eil-font);
+    inset 0 2px 1px rgba(255,255,255,.94),
+    inset 0 -1.5px 1px rgba(168,112,31,.26),
+    inset 14px 0 26px rgba(255,255,255,.10),
+    inset -16px 0 30px rgba(210,156,73,.075),
+    0 14px 34px rgba(131,88,25,.11),
+    0 3px 8px rgba(131,88,25,.07);
+  font:inherit;
   font-size:clamp(20px,1.62vw,27px);
   font-weight:700;
   line-height:1;
   cursor:pointer;
 }
 
-/* Narrow top rim only — never paint a bright layer across the whole glass. */
 .welcomeCta.eilLiquidButton::before {
   content:'';
   position:absolute;
-  z-index:1;
+  z-index:2;
   top:1px;
-  left:8%;
-  right:8%;
+  left:7%;
+  right:7%;
   height:20%;
   border-radius:999px;
   pointer-events:none;
-  background:radial-gradient(ellipse at 50% 0%, rgba(255,255,255,.76), rgba(255,255,255,.18) 42%, rgba(255,255,255,0) 78%);
-  filter:blur(.6px);
-  opacity:.76;
+  background:radial-gradient(ellipse at 50% 0%,rgba(255,255,255,.92),rgba(255,255,255,.34) 40%,rgba(255,255,255,0) 78%);
+  filter:blur(.8px);
+  opacity:.92;
   mix-blend-mode:normal;
   box-shadow:none;
 }
 
-/* Dedicated optical lens: very low alpha, chromatic edges, transparent center. */
 .welcomeCtaLens {
   position:absolute;
   z-index:1;
-  inset:3px;
+  inset:2px;
+  overflow:hidden;
   border-radius:inherit;
   pointer-events:none;
-  background:
-    radial-gradient(ellipse 20% 90% at 2% 50%, rgba(120,218,247,.055), rgba(120,218,247,0) 72%),
-    radial-gradient(ellipse 24% 92% at 99% 50%, rgba(244,173,100,.075), rgba(244,173,100,0) 74%),
-    radial-gradient(ellipse 54% 34% at 50% 100%, rgba(205,160,83,.045), rgba(205,160,83,0) 78%);
-  opacity:.92;
   mix-blend-mode:normal;
+  background:
+    radial-gradient(ellipse 19% 118% at 0% 50%,rgba(116,213,244,.10),rgba(116,213,244,0) 69%),
+    radial-gradient(ellipse 22% 118% at 100% 50%,rgba(244,172,92,.13),rgba(244,172,92,0) 70%),
+    radial-gradient(ellipse 76% 54% at 50% 112%,rgba(192,139,53,.10),rgba(192,139,53,0) 69%),
+    radial-gradient(ellipse 76% 52% at 50% -12%,rgba(255,255,255,.18),rgba(255,255,255,0) 70%);
   box-shadow:
-    inset 0 0 0 1px rgba(255,255,255,.12),
-    inset 0 7px 16px rgba(255,255,255,.025),
-    inset 0 -7px 16px rgba(173,122,44,.025);
+    inset 0 0 0 1px rgba(255,255,255,.22),
+    inset 0 8px 20px rgba(255,255,255,.055),
+    inset 0 -9px 22px rgba(170,115,35,.055);
+}
+
+.welcomeCtaLens::before {
+  content:'';
+  position:absolute;
+  inset:8% 7%;
+  border-radius:inherit;
+  background:
+    linear-gradient(103deg,transparent 0 9%,rgba(255,255,255,.56) 15%,rgba(255,255,255,.14) 21%,transparent 31% 68%,rgba(255,239,211,.20) 78%,transparent 89%),
+    radial-gradient(ellipse 20% 46% at 34% 22%,rgba(255,255,255,.52),rgba(255,255,255,0) 72%),
+    radial-gradient(ellipse 18% 44% at 66% 77%,rgba(255,255,255,.28),rgba(255,255,255,0) 72%);
+  filter:blur(4px);
+  opacity:.74;
+}
+
+.welcomeCtaLens::after {
+  content:'';
+  position:absolute;
+  left:9%;
+  right:9%;
+  bottom:8%;
+  height:30%;
+  border-radius:50%;
+  background:radial-gradient(ellipse at 50% 100%,rgba(255,255,255,.36),rgba(255,245,229,.12) 44%,rgba(255,255,255,0) 76%);
+  filter:blur(3px);
+  opacity:.70;
 }
 
 /* optical caustic under the lens */
@@ -205,108 +227,140 @@
   z-index:-1;
   left:10%;
   right:10%;
-  bottom:-11px;
-  height:22px;
+  bottom:-13px;
+  height:25px;
   border-radius:50%;
   pointer-events:none;
-  background:radial-gradient(ellipse at 50% 20%, rgba(255,255,255,.24), rgba(221,177,101,.14) 38%, rgba(221,177,101,0) 74%);
-  filter:blur(8px);
-  opacity:.66;
+  background:radial-gradient(ellipse at 50% 12%,rgba(255,255,255,.52),rgba(232,190,114,.23) 36%,rgba(232,190,114,0) 74%);
+  filter:blur(9px);
+  opacity:.78;
 }
 
-/* Browsers that accept SVG backdrop filters get true displacement. The visual
-   fallback above does not depend on this feature and is the Android baseline. */
-@supports (backdrop-filter: url("#eil-liquid-glass-filter")) {
+@supports (backdrop-filter:url("#eil-liquid-glass-filter")) {
   .welcomeCta.eilLiquidButton {
-    backdrop-filter:var(--welcome-glass-filter) blur(5px) saturate(140%) contrast(1.045);
+    backdrop-filter:var(--welcome-glass-filter) blur(5px) saturate(140%) contrast(1.04);
   }
 }
-@supports (-webkit-backdrop-filter: url("#eil-liquid-glass-filter")) {
+@supports (-webkit-backdrop-filter:url("#eil-liquid-glass-filter")) {
   .welcomeCta.eilLiquidButton {
-    -webkit-backdrop-filter:var(--welcome-glass-filter) blur(5px) saturate(140%) contrast(1.045);
+    -webkit-backdrop-filter:var(--welcome-glass-filter) blur(5px) saturate(140%) contrast(1.04);
   }
 }
 
 .welcomeCta.eilLiquidButton:hover {
   transform:translateX(-50%) translateY(-1px);
-  background:
-    radial-gradient(ellipse 28% 52% at 11% 8%, rgba(255,255,255,.13), rgba(255,255,255,0) 72%),
-    radial-gradient(ellipse 38% 95% at 97% 98%, rgba(210,157,72,.06), rgba(210,157,72,0) 74%),
-    linear-gradient(180deg, rgba(255,255,255,.075), rgba(232,214,185,.03) 56%, rgba(194,148,73,.035));
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.94),
-    inset 0 -1px 0 rgba(171,120,42,.29),
-    inset 10px 0 24px rgba(137,213,239,.035),
-    inset -12px 0 26px rgba(230,174,97,.055),
-    0 14px 32px rgba(154,112,45,.09),
-    0 2px 5px rgba(154,112,45,.06);
+    inset 0 2px 1px rgba(255,255,255,1),
+    inset 0 -1.5px 1px rgba(168,112,31,.30),
+    inset 14px 0 28px rgba(255,255,255,.13),
+    inset -16px 0 32px rgba(210,156,73,.09),
+    0 17px 38px rgba(131,88,25,.13),
+    0 3px 8px rgba(131,88,25,.08);
 }
 .welcomeCta.eilLiquidButton:active { transform:translateX(-50%) scale(.995); }
 
-.welcomeCtaLabel,.welcomeArrow { position:relative; z-index:3; }
-.welcomeCtaLabel { text-shadow:0 1px 0 rgba(255,255,255,.26); }
+.welcomeCtaLabel,.welcomeArrow { position:relative; z-index:4; }
+.welcomeCtaLabel { text-shadow:0 1px 0 rgba(255,255,255,.40); }
 .welcomeArrow { direction:ltr; font-size:1.11em; font-weight:400; line-height:1; transform:translateY(-1px); opacity:.92; }
 
-@media (max-width:900px) {
+@media (max-width:900px) and (min-width:641px) {
   .welcomeBrandMark { top:16%; font-size:clamp(25px,5vw,34px); }
   .welcomeHook { top:29%; width:min(720px,94vw); font-size:clamp(34px,5.8vw,50px); line-height:1.36; }
   .welcomeCta.eilLiquidButton { top:71%; width:min(390px,68vw); height:82px; font-size:23px; }
-  .welcomeOrbB { left:18%; }
 }
 
 @media (max-width:640px) {
   .welcomeScreen { min-height:100svh; }
-  .welcomeBrandMark { top:12.5%; font-size:clamp(22px,7vw,28px); letter-spacing:.32em; padding-left:.32em; }
-  .welcomeHook { top:28%; width:92vw; font-size:clamp(28px,8.1vw,38px); line-height:1.34; letter-spacing:-.02em; }
+
+  .welcomeContent {
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-start;
+    height:100svh;
+  }
+
+  .welcomeBrandMark {
+    position:relative;
+    top:auto;
+    left:auto;
+    transform:none;
+    margin-top:15vh;
+    padding-left:.40em;
+    font-size:16px;
+    font-weight:500;
+    letter-spacing:.40em;
+  }
+
+  .welcomeHook {
+    position:relative;
+    top:auto;
+    left:auto;
+    transform:none;
+    width:min(94vw,520px);
+    margin:80px 0 0;
+    font-size:clamp(28px,5vw,40px);
+    line-height:1.34;
+    letter-spacing:-.02em;
+    text-shadow:0 2px 3px rgba(0,0,0,.23),0 1px 0 rgba(255,255,255,.54);
+  }
   .welcomeHook span { white-space:normal; }
 
   .welcomeCta.eilLiquidButton {
+    position:relative;
     top:auto;
-    bottom:12.5%;
-    width:min(360px,82vw);
+    left:auto;
+    bottom:auto;
+    transform:none;
+    width:min(340px,88vw);
     height:68px;
+    margin-top:80px;
     padding:0 30px;
     gap:16px;
+    flex:none;
     font-size:20px;
     background:
-      radial-gradient(ellipse 24% 50% at 10% 7%, rgba(255,255,255,.075), rgba(255,255,255,0) 72%),
-      radial-gradient(ellipse 35% 100% at 98% 98%, rgba(205,151,64,.04), rgba(205,151,64,0) 74%),
-      linear-gradient(180deg, rgba(255,255,255,.035), rgba(224,201,163,.016) 58%, rgba(180,128,45,.024));
+      radial-gradient(ellipse 36% 115% at 8% 38%,rgba(255,255,255,.16),rgba(255,255,255,0) 70%),
+      radial-gradient(ellipse 38% 122% at 97% 62%,rgba(219,171,91,.095),rgba(219,171,91,0) 72%),
+      linear-gradient(180deg,rgba(255,255,255,.035),rgba(232,207,171,.040) 55%,rgba(191,141,60,.055));
     backdrop-filter:blur(4px) saturate(128%) contrast(1.055);
     -webkit-backdrop-filter:blur(4px) saturate(128%) contrast(1.055);
     box-shadow:
-      inset 0 1px 0 rgba(255,255,255,.84),
-      inset 0 -1px 0 rgba(163,111,36,.28),
-      inset 8px 0 20px rgba(116,210,240,.025),
-      inset -9px 0 22px rgba(232,165,86,.05),
-      0 10px 25px rgba(154,112,45,.07),
-      0 2px 4px rgba(154,112,45,.055);
+      inset 0 2px 1px rgba(255,255,255,.94),
+      inset 0 -1.5px 1px rgba(166,109,27,.30),
+      inset 12px 0 24px rgba(255,255,255,.11),
+      inset -14px 0 26px rgba(211,155,69,.085),
+      0 13px 30px rgba(131,88,25,.11),
+      0 3px 7px rgba(131,88,25,.07);
   }
 
   .welcomeCta.eilLiquidButton::before {
-    left:10%;
-    right:10%;
-    height:18%;
-    background:radial-gradient(ellipse at 50% 0%, rgba(255,255,255,.68), rgba(255,255,255,.14) 43%, rgba(255,255,255,0) 78%);
-    opacity:.70;
-    mix-blend-mode:normal;
+    left:8%;
+    right:8%;
+    height:20%;
+    opacity:.94;
   }
 
   .welcomeCtaLens {
     inset:2px;
     background:
-      radial-gradient(ellipse 22% 92% at 1% 50%, rgba(105,210,242,.065), rgba(105,210,242,0) 72%),
-      radial-gradient(ellipse 26% 94% at 99% 50%, rgba(239,166,91,.085), rgba(239,166,91,0) 74%),
-      radial-gradient(ellipse 55% 30% at 50% 100%, rgba(189,137,56,.05), rgba(189,137,56,0) 80%);
-    opacity:.90;
-    mix-blend-mode:normal;
+      radial-gradient(ellipse 22% 118% at 0% 50%,rgba(101,207,241,.11),rgba(101,207,241,0) 68%),
+      radial-gradient(ellipse 25% 118% at 100% 50%,rgba(242,166,84,.15),rgba(242,166,84,0) 70%),
+      radial-gradient(ellipse 72% 52% at 50% 112%,rgba(187,131,43,.115),rgba(187,131,43,0) 70%),
+      radial-gradient(ellipse 70% 48% at 50% -10%,rgba(255,255,255,.20),rgba(255,255,255,0) 70%);
   }
 
-  .welcomeCta.eilLiquidButton::after { bottom:-8px; height:18px; opacity:.56; }
+  .welcomeCtaLens::before { opacity:.82; filter:blur(3.2px); }
+  .welcomeCta.eilLiquidButton::after { bottom:-10px; height:21px; opacity:.78; }
 
-  .welcomeOrbA { width:70px; height:70px; left:6%; top:15%; }
-  .welcomeOrbB { width:74px; height:74px; left:26%; top:21%; }
-  .welcomeOrbC { width:66px; height:66px; left:1%; top:31%; }
+  .welcomeCta.eilLiquidButton:hover { transform:translateY(-1px); }
+  .welcomeCta.eilLiquidButton:active { transform:scale(.995); }
+}
+
+@media (max-width:640px) and (max-height:760px) {
+  .welcomeBrandMark { margin-top:11vh; }
+  .welcomeHook { margin-top:54px; }
+  .welcomeCta.eilLiquidButton { margin-top:54px; }
 }
 
 @media (max-height:680px) and (min-width:641px) {
