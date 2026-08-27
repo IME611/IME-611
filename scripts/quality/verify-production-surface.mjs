@@ -28,7 +28,8 @@ assert.match(designIndex,/primitives\/liquid-glass\.css/,'shared Liquid Glass pr
 assert.match(welcome,/eilLiquidBackdrop/,'welcome must compose the shared Liquid Glass backdrop');
 assert.match(welcome,/eilLiquidButton/,'welcome CTA must compose the shared Liquid Glass button');
 assert.match(welcome,/eilCrystalInk/,'welcome headline must use the reusable crystal-ink treatment');
-assert.doesNotMatch(welcomeCss,/url\s*\(/,'welcome presentation must not depend on a raster background asset');
+assert.doesNotMatch(welcomeCss,/url\([^)]*\.(?:avif|png|jpe?g|webp|gif|svg)(?:[?#][^)]*)?\)/i,'welcome presentation must not depend on a raster/vector background asset');
+assert.match(welcomeCss,/url\("#eil-liquid-glass-filter"\)/,'welcome may use the internal SVG optical filter fragment');
 assert.doesNotMatch(main,/welcome\/luxury\.css/,'welcome must not bypass the design-system stylesheet graph');
 assert.equal(fs.existsSync('src/design/features/welcome/luxury.css'),false,'temporary standalone welcome stylesheet must be removed');
 assert.equal(fs.existsSync('public/assets/welcome-approved.avif'),false,'welcome must not depend on the approved raster reference at runtime');
