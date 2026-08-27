@@ -22,10 +22,15 @@
   font-family:Arial,"Segoe UI",sans-serif;
   -webkit-font-smoothing:antialiased;
   text-rendering:optimizeLegibility;
-  background:
-    radial-gradient(ellipse 58% 46% at 49% 40%,rgba(255,255,255,.24),rgba(255,255,255,0) 78%),
-    radial-gradient(circle 360px at 87% 82%,rgba(210,175,100,.16),rgba(210,175,100,0) 72%),
-    linear-gradient(105deg,var(--welcome-bg-left) 0%,var(--welcome-bg-mid) 48%,var(--welcome-bg-right) 100%);
+  background-color:#f3ebe4;
+  background-image:
+    radial-gradient(circle 150px at 12.5% 18.5%,rgba(255,255,255,.82) 0%,rgba(255,255,255,.40) 30%,rgba(255,255,255,0) 75%),
+    radial-gradient(circle 130px at 26% 25.5%,rgba(255,255,255,.72) 0%,rgba(255,255,255,.34) 30%,rgba(255,255,255,0) 76%),
+    radial-gradient(circle 145px at 6% 34%,rgba(255,255,255,.86) 0%,rgba(255,255,255,.38) 30%,rgba(255,255,255,0) 74%),
+    radial-gradient(ellipse 48% 26% at 8% 88%,rgba(255,255,255,.48),transparent 72%),
+    radial-gradient(circle 300px at 86% 80%,rgba(211,171,105,.15),rgba(211,171,105,0) 72%),
+    radial-gradient(ellipse 58% 46% at 49% 40%,rgba(255,255,255,.10),rgba(255,255,255,0) 78%),
+    linear-gradient(105deg,#f7efe9 0%,#f1e8e1 48%,#eaded3 100%);
 }
 
 .welcomeScreen.eilLiquidBackdrop { isolation:isolate; }
@@ -37,29 +42,10 @@
   z-index:0;
   border-radius:50%;
   pointer-events:none;
-  filter:blur(80px);
 }
-.welcomeOrbA {
-  width:300px;
-  height:300px;
-  top:-5%;
-  left:-8%;
-  background:rgba(255,248,230,.70);
-}
-.welcomeOrbB {
-  width:360px;
-  height:360px;
-  bottom:5%;
-  left:-10%;
-  background:rgba(255,245,220,.60);
-}
-.welcomeOrbC {
-  width:280px;
-  height:280px;
-  right:-5%;
-  bottom:8%;
-  background:rgba(210,175,100,.25);
-}
+.welcomeOrbA { width:92px; height:92px; left:9.6%; top:14.2%; background:rgba(255,255,255,.72); filter:blur(14px); }
+.welcomeOrbB { width:96px; height:96px; left:23.1%; top:21%; background:rgba(255,255,255,.64); filter:blur(15px); }
+.welcomeOrbC { width:88px; height:88px; left:3.4%; top:29.5%; background:rgba(255,255,255,.78); filter:blur(13px); }
 
 .welcomeFloorGlow {
   position:absolute;
@@ -137,7 +123,8 @@
   border-left-color:rgba(255,255,255,.78);
   border-right-color:rgba(227,195,140,.46);
   border-bottom-color:rgba(177,125,43,.34);
-  background:
+  background-color:rgba(180,150,120,.15);
+  background-image:
     radial-gradient(ellipse 36% 110% at 8% 34%,rgba(255,255,255,.18),rgba(255,255,255,0) 72%),
     radial-gradient(ellipse 38% 120% at 96% 64%,rgba(219,171,91,.10),rgba(219,171,91,0) 74%),
     linear-gradient(180deg,rgba(255,255,255,.055),rgba(239,222,196,.045) 54%,rgba(199,155,86,.055));
@@ -319,7 +306,8 @@
     gap:16px;
     flex:none;
     font-size:20px;
-    background:
+    background-color:rgba(180,150,120,.15);
+    background-image:
       radial-gradient(ellipse 36% 115% at 8% 38%,rgba(255,255,255,.16),rgba(255,255,255,0) 70%),
       radial-gradient(ellipse 38% 122% at 97% 62%,rgba(219,171,91,.095),rgba(219,171,91,0) 72%),
       linear-gradient(180deg,rgba(255,255,255,.035),rgba(232,207,171,.040) 55%,rgba(191,141,60,.055));
@@ -355,6 +343,31 @@
 
   .welcomeCta.eilLiquidButton:hover { transform:translateY(-1px); }
   .welcomeCta.eilLiquidButton:active { transform:scale(.995); }
+
+  .welcomeOrbA {
+    filter:blur(80px);
+    width:300px;
+    height:300px;
+    top:-5%;
+    left:-8%;
+    background:rgba(255,248,230,.70);
+  }
+  .welcomeOrbB {
+    filter:blur(80px);
+    width:360px;
+    height:360px;
+    bottom:5%;
+    left:-10%;
+    background:rgba(255,245,220,.60);
+  }
+  .welcomeOrbC {
+    filter:blur(80px);
+    width:280px;
+    height:280px;
+    right:-5%;
+    bottom:8%;
+    background:rgba(210,175,100,.25);
+  }
 }
 
 @media (max-width:640px) and (max-height:760px) {
