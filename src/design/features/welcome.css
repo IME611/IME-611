@@ -345,28 +345,28 @@
   .welcomeCta.eilLiquidButton:active { transform:scale(.995); }
 
   .welcomeOrbA {
-    filter:blur(90px);
-    width:340px;
-    height:340px;
-    top:-8%;
-    left:-12%;
-    background:rgba(255,248,235,.75);
+    filter:blur(80px);
+    width:300px;
+    height:300px;
+    top:-5%;
+    left:-8%;
+    background:rgba(255,248,230,.70);
   }
   .welcomeOrbB {
-    filter:blur(100px);
-    width:400px;
-    height:400px;
-    bottom:2%;
-    left:-14%;
-    background:rgba(255,245,225,.65);
+    filter:blur(80px);
+    width:360px;
+    height:360px;
+    bottom:5%;
+    left:-10%;
+    background:rgba(255,245,220,.60);
   }
   .welcomeOrbC {
-    filter:blur(100px);
-    width:320px;
-    height:320px;
-    right:-8%;
-    bottom:5%;
-    background:rgba(215,175,100,.30);
+    filter:blur(80px);
+    width:280px;
+    height:280px;
+    right:-5%;
+    bottom:8%;
+    background:rgba(210,175,100,.25);
   }
 }
 
