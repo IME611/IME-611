@@ -4,12 +4,11 @@ import fs from'node:fs';
 const read=path=>fs.readFileSync(path,'utf8');
 const app=read('src/app/App.tsx');
 const navigation=read('src/features/navigation/navigation.config.ts');
+const navigationShell=read('src/features/navigation/NavigationShell.tsx');
 const storage=read('src/core/storage.ts');
 const main=read('src/main.tsx');
 const designIndex=read('src/design/index.css');
 const welcome=read('src/features/welcome/WelcomeScreen.tsx');
-const welcomeCss=read('src/design/features/welcome.css');
-const liquidGlass=read('src/design/primitives/liquid-glass.css');
 
 assert.match(navigation,/isKnownNavigation/,'navigation config must be the route allowlist');
 assert.doesNotMatch(navigation,/add-learning/,'local-only learning capture must not be a production route');
@@ -24,19 +23,21 @@ assert.match(app,/writeJson\(storageKeys\.settings,form\)/,'settings must write 
 assert.equal(fs.existsSync('src/app/navigation.ts'),false,'obsolete parallel navigation map must be removed');
 assert.match(storage,/settings:'eil-settings'/,'settings storage key must be centralized');
 
-assert.match(designIndex,/primitives\/liquid-glass\.css/,'shared Liquid Glass primitives must be part of the design system');
-assert.match(welcome,/eilLiquidBackdrop/,'welcome must compose the shared Liquid Glass backdrop');
-assert.match(welcome,/eilLiquidButton/,'welcome CTA must compose the shared Liquid Glass button');
-assert.match(welcome,/eilCrystalInk/,'welcome headline must use the reusable crystal-ink treatment');
-assert.doesNotMatch(welcomeCss,/url\([^)]*\.(?:avif|png|jpe?g|webp|gif|svg)(?:[?#][^)]*)?\)/i,'welcome presentation must not depend on a raster/vector background asset');
-assert.match(welcomeCss,/url\("#eil-liquid-glass-filter"\)/,'welcome may use the internal SVG optical filter fragment');
-assert.doesNotMatch(main,/welcome\/luxury\.css/,'welcome must not bypass the design-system stylesheet graph');
-assert.equal(fs.existsSync('src/design/features/welcome/luxury.css'),false,'temporary standalone welcome stylesheet must be removed');
-assert.equal(fs.existsSync('public/assets/welcome-approved.avif'),false,'welcome must not depend on the approved raster reference at runtime');
-assert.match(liquidGlass,/\.eilLiquidSurface/,'design system must expose a reusable Liquid Glass surface primitive');
-assert.match(liquidGlass,/\.eilLiquidButton/,'design system must expose a reusable Liquid Glass button primitive');
+assert.equal(designIndex.trim(),"/* E.I.L UI baseline — structure and accessibility only.\n   Visual design intentionally starts from zero. */\n@import './foundation.css';\n@import './layout.css';\n@import './responsive.css';\n@import './accessibility.css';",'design index must expose only the neutral UI baseline');
+assert.doesNotMatch(app,/LiquidGlass|bindLiquidGlass|design\/glass/,'application shell must not mount legacy visual effects');
+assert.doesNotMatch(navigationShell,/design\/primitives|GlassNavigation/,'navigation must use semantic elements rather than visual wrappers');
+assert.doesNotMatch(welcome,/eilLiquid|welcomeOrb|welcomeFloorGlow|welcomeCtaLens|style=|#[0-9a-f]{3,8}/i,'welcome must remain neutral and free of the removed visual system');
+assert.match(app,/className="skipLink" href="#main-content"/,'application must expose keyboard skip navigation');
+assert.match(app,/<main id="main-content" tabIndex=\{-1\}>/,'main application content must expose a focusable skip target');
+assert.match(welcome,/id="main-content"/,'welcome must expose the same main-content landmark');
+
+const removedDesignPaths=[
+ 'src/design/primitives/LiquidGlassFilter.tsx','src/design/primitives/liquid-glass.css','src/design/primitives/tokens.css',
+ 'src/design/glass/runtime.ts','src/design/glass/system.css','src/design/features/welcome.css','src/design/features/learner-polish.css'
+];
+for(const path of removedDesignPaths)assert.equal(fs.existsSync(path),false,`${path} must stay deleted during the accessibility-first reset`);
 
 const apiFunctions=fs.readdirSync('api',{withFileTypes:true}).filter(entry=>entry.isFile()&&entry.name.endsWith('.js')).map(entry=>entry.name).sort();
 assert.equal(apiFunctions.length,12,`Hobby production surface must remain at 12 functions, found ${apiFunctions.length}: ${apiFunctions.join(', ')}`);
 
-console.log('PASS production surface (declared routes + reusable Liquid Glass UI + centralized storage + 12 functions)');
+console.log('PASS production surface (declared routes + neutral accessible UI baseline + centralized storage + 12 functions)');
