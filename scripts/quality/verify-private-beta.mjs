@@ -50,6 +50,20 @@ assert.match(embeddedChapter2,/title:"הכלי החיצוני"/,'chapter 2 must 
 assert.match(embeddedChapter2,/sourceFile:"פרק2_הכלי_החיצוני\.docx"/,'chapter 2 must preserve its canonical source mapping');
 for(const contract of['eil-crystals-v1','eil-learning-progress:','eil-transformation-drafts:v1'])assert.ok(storage.includes(contract),`reset contract missing ${contract}`);
 
+class MemoryStorage{
+ #data=new Map();
+ get length(){return this.#data.size}
+ key(index){return[...this.#data.keys()][index]??null}
+ getItem(key){return this.#data.has(String(key))?this.#data.get(String(key)):null}
+ setItem(key,value){this.#data.set(String(key),String(value))}
+ removeItem(key){this.#data.delete(String(key))}
+ clear(){this.#data.clear()}
+}
+const memory=new MemoryStorage();
+globalThis.CustomEvent??=class CustomEvent{constructor(type){this.type=type}};
+globalThis.window={localStorage:memory,dispatchEvent(){return true}};
+globalThis.localStorage=memory;
+
 const moduleLoader=await createServer({root,server:{middlewareMode:true},appType:'custom',logLevel:'silent'});
 const[{lifeResearchV1},{emptyLearningProgress,completeLearningStage},{saveLearningProgress,loadLearningProgress},{pilotCardChapters},{cardProgressRepository},{navigationForMode,isOwnerOnlyNavigation}]=await Promise.all([
  moduleLoader.ssrLoadModule('/src/data/learning-paths/life-research-v1.ts'),
