@@ -1,4 +1,3 @@
-import{GlassButton}from'../../design/primitives/Glass';
 import{DashboardHero}from'./components/DashboardHero';
 import{JourneyProgressCard}from'./components/JourneyProgressCard';
 import{UnderstandingCard}from'./components/UnderstandingCard';
@@ -22,7 +21,7 @@ export function ProductDashboard({onNav,onAdd}:ProductDashboardProps){
  const next=experiment&&experiment.status!=='COMPLETED'?{label:'חזור למה שאתה בודק עכשיו',description:'כבר יש ניסוי שמחובר לתובנה מבוססת מקור. אל תפתח כיוון חדש לפני שחזרת עם תצפית.',action:'פתח את הניסוי',page:'transformation'}:supportedInsight?{label:'הפוך הבנה לבדיקה בחיים',description:'יש תובנה מבוססת ראיות. השלב הבא הוא לא לקרוא עוד — אלא לבדוק מה היא משנה בהתנהגות או בתשומת הלב.',action:'צור ניסוי',page:'transformation'}:{label:'העמק בשאלה הבאה במסע',description:`השלב הפעיל הוא: ${dashboard.activeStage.guidingQuestion}`,action:'המשך ללמוד',page:'library'};
  const selected=provenance.state.status==='idle'?null:provenance.state.insightId;
  return <div className="pdDashboard">
-  <header className="pdIntro"><div><span className="pdEyebrow">E.I.L / TODAY</span><h1>איפה אני, מה הבנתי, ומה הצעד הבא?</h1><p>כל השאר נשאר זמין בשכבה עמוקה יותר — בלי להעמיס על הרגע הנוכחי.</p></div>{dashboard.owner&&<GlassButton className="pdAdd" type="button" onClick={onAdd}>＋ הוסף מקור</GlassButton>}</header>
+  <header className="pdIntro"><div><span className="pdEyebrow">E.I.L / TODAY</span><h1>איפה אני, מה הבנתי, ומה הצעד הבא?</h1><p>כל השאר נשאר זמין בשכבה עמוקה יותר — בלי להעמיס על הרגע הנוכחי.</p></div>{dashboard.owner&&<button className="pdAdd" type="button" onClick={onAdd}>＋ הוסף מקור</button>}</header>
   <DashboardHero transformation={dashboard.latestTransformation} reflection={data.reflections[0]??null}/>
   <div className="pdGrid"><JourneyProgressCard activeStage={dashboard.activeStage} completed={dashboard.completed} total={dashboard.total} owner={dashboard.owner} onContinue={()=>onNav('library')}/><ActiveExperimentCard experiment={experiment} onOpen={()=>onNav('transformation')}/></div>
   <UnderstandingCard insights={data.insights} selectedInsightId={selected} provenanceRows={provenance.state.status==='success'?provenance.state.rows:[]} provenanceStatus={provenance.state.status} provenanceMessage={provenance.state.status==='error'?provenance.state.message:undefined} onOpenProvenance={provenance.load} onCloseProvenance={provenance.close} onOpenInsights={()=>onNav('insights')}/>
