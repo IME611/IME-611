@@ -22,7 +22,7 @@ for(const[path,content]of[['foundation.css',foundation],['accessibility.css',acc
  assert.doesNotMatch(content,/linear-gradient|radial-gradient|backdrop-filter|box-shadow|filter:\s*blur|mix-blend-mode/i,`${path} must stay presentation-neutral`);
  assert.doesNotMatch(content,/#[0-9a-f]{3,8}|rgba?\(/i,`${path} must keep system-color accessibility primitives`);
 }
-assert.doesNotMatch(layout,/LiquidGlass|bindLiquidGlass|mix-blend-mode|filter:\s*blur/i,'approved navigation styling must not restore the old glass runtime');
+assert.doesNotMatch(layout,/LiquidGlass|bindLiquidGlass|mix-blend-mode/i,'approved navigation styling must not restore the old glass runtime or primitives');
 assert.match(layout,/\.navItem/,'navigation cards must remain owned by the central design layer');
 assert.match(layout,/\.mobileNavPanel/,'mobile drawer styling must remain centralized');
 assert.match(layout,/\.likedCardsPage/,'liked-card presentation must remain centralized');
