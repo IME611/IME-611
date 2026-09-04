@@ -25,7 +25,7 @@ function resolveImport(fromFile,specifier){
  if(!specifier.startsWith('.'))return null;
  const base=path.resolve(path.dirname(fromFile),specifier);
  const candidates=[];
- if(path.extname(base))candidates.push(base);
+ if(extensions.includes(path.extname(base)))candidates.push(base);
  else{
   for(const ext of extensions)candidates.push(base+ext);
   for(const ext of extensions)candidates.push(path.join(base,'index'+ext));
