@@ -6,10 +6,9 @@ Current structure:
 
 ```text
 server/
-  knowledge/        # canonical sources, intake, extraction, corpus map, relations, learning, publication, quality
-  learning-paths/   # learning-path services/contracts
-  shared/           # shared infrastructure and backend utilities
-  synthesis/        # synthesis/connection behavior separated from canonical source truth
+  knowledge/   # canonical sources, intake, extraction, corpus map, relations, learning, publication, quality
+  shared/      # shared infrastructure and backend utilities
+  synthesis/   # synthesis/connection behavior separated from canonical source truth
 ```
 
 `server/knowledge/` is organized further into `application/`, `domain/` and `infrastructure/` boundaries where appropriate.
@@ -21,4 +20,5 @@ Rules:
 - Derived knowledge carries evidence/provenance references where possible.
 - Canonical writes remain creator-authorized and review-gated.
 - HTTP request handling never creates or migrates database schema.
-- Do not create placeholder server folders for hypothetical future domains; add a drawer only when implemented responsibility exists.
+- Do not keep dormant server implementations or placeholder domains; Git history is the archive.
+- The server reachability guard fails when a `server/` implementation is no longer reachable from an API or intentional script entry point.
