@@ -15,12 +15,14 @@ The repository is organized by responsibility. Production code should have one o
 `src/features/`
 - `accessibility/` — reusable accessibility interaction helpers.
 - `crystals/` — saved learner insights and personal collection state/UI.
-- `editor/` — creator review and publication UI.
+- `editor/` — creator review and publication controls.
 - `journey/` — learning sequence, card reader, source evidence and learner progress.
 - `knowledge-dashboard/` — learner home/current progress overview.
 - `navigation/` — production navigation allowlist and desktop/mobile navigation.
 - `sources/` — source intake and canonical source reader UI.
 - `welcome/` — semantic entry screen.
+
+`src/lib/` — small presentation-neutral browser utilities that are genuinely shared/reachable. Do not use this as a dumping ground for product logic.
 
 `src/design/` — neutral UI foundation only: structural layout, responsive behavior and accessibility presentation rules. Product colors/effects are intentionally absent during the UX rebuild.
 
@@ -32,11 +34,11 @@ The frontend prebuild reachability audit starts at `src/main.tsx` and fails if i
 
 `server/knowledge/` — canonical source, intake, extraction, matching, relations, learning, publication and quality domain/application logic.
 
-`server/learning-paths/` — backend learning-path services/contracts.
-
 `server/shared/` — infrastructure and helpers shared across server domains.
 
 `server/synthesis/` — synthesis/connection logic that is intentionally separate from canonical source truth.
+
+The server reachability audit treats `api/` and intentional `scripts/` as entry points and fails if implementation files under `server/` become orphaned.
 
 ## Canonical data and schema
 
@@ -70,6 +72,7 @@ Root documents (`README.md`, `ARCHITECTURE.md`, `AGENTS.md`, `DEPLOY.md`) descri
 - source intake/reading UI → `src/features/sources/`
 - creator review/publication → `src/features/editor/`
 - browser persistence/shared frontend contracts → `src/core/`
+- generic browser utilities → `src/lib/` only when truly cross-feature
 - structural/responsive/accessibility CSS → `src/design/`
 - canonical knowledge/domain behavior → `server/knowledge/`
 - stable HTTP transport → `api/`
