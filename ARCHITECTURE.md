@@ -73,15 +73,15 @@ src/
   data/              # curated foundation presentation/fallback data
   features/
     navigation/      # single production route/navigation allowlist
-    knowledge-dashboard/
+    knowledge-dashboard/ # intentionally empty home surface during menu-first UX phase
     journey/
     sources/
     editor/
-    crystals/
+    crystals/        # internal saved-card persistence/domain naming; learner UI says "הכרטיסיות שאהבתי"
     accessibility/
     welcome/
   lib/               # small shared browser utilities only
-  design/            # neutral structural/responsive/accessibility UI baseline
+  design/            # neutral baseline + approved navigation/saved-card presentation
 
 scripts/
   db/                 # migrations, health, production preflight
@@ -96,8 +96,9 @@ scripts/
 - learner/editor features may call public API boundaries and shared `src/core` adapters.
 - feature code should not write `localStorage` directly; browser persistence goes through `src/core/storage.ts` or a dedicated feature adapter.
 - production navigation is declared only in `src/features/navigation/navigation.config.ts`. Unknown/unauthorized hashes normalize to the dashboard.
+- creator-only source-management routes are filtered from learner navigation and rejected by the route allowlist policy for learner mode.
 - CSS enters through `src/design/index.css`.
-- `src/design/` contains no product domain logic and currently carries no branded visual theme.
+- `src/design/` contains no product domain logic. Its currently approved visual scope is the shell/navigation, saved-card collection and lightweight placeholders; deeper product views remain independently reviewable.
 - frontend implementation must be reachable from `src/main.tsx`; server implementation must be reachable from `api/` or an intentional `scripts/` entry point.
 
 ## Canonical vs presentation identity
