@@ -9,7 +9,7 @@
     "build": "tsc -b && vite build",
     "vercel-build": "node scripts/db/vercel-build.mjs",
     "preview": "vite preview",
-    "verify:private-beta": "node scripts/quality/verify-private-beta.mjs && node scripts/quality/verify-learner-source-library.mjs && node scripts/quality/verify-db-url-normalization.mjs && node scripts/quality/verify-learner-journey-coherence.mjs && node scripts/quality/verify-review-auth-boundary.mjs && node scripts/quality/verify-api-write-surface.mjs && node scripts/quality/verify-production-surface.mjs && node scripts/quality/verify-ui-foundation.mjs && node scripts/quality/verify-frontend-reachability.mjs && node scripts/quality/verify-server-reachability.mjs && node scripts/quality/verify-repository-truth.mjs && node scripts/knowledge/verify-dynamic-publication-editor.mjs",
+    "verify:private-beta": "node scripts/quality/verify-private-beta.mjs && node scripts/quality/verify-learner-source-library.mjs && node scripts/quality/verify-db-url-normalization.mjs && node scripts/quality/verify-learner-journey-coherence.mjs && node scripts/quality/verify-review-auth-boundary.mjs && node scripts/quality/verify-api-write-surface.mjs && node scripts/quality/verify-production-surface.mjs && node scripts/quality/verify-ui-foundation.mjs && node scripts/quality/verify-repository-layout.mjs && node scripts/quality/verify-frontend-reachability.mjs && node scripts/quality/verify-server-reachability.mjs && node scripts/quality/verify-repository-truth.mjs && node scripts/knowledge/verify-dynamic-publication-editor.mjs",
     "quality": "npm run verify:private-beta && npm run build",
     "db:migrate": "node scripts/db/run-migrations.mjs",
     "db:health": "node scripts/db/health-check.mjs",
