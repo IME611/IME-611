@@ -8,7 +8,7 @@ Read `docs/engineering/LIVE_DB_RUNBOOK.md` before changing migrations or product
 
 - App orchestration → `src/app/App.tsx`
 - Production navigation / route allowlist → `src/features/navigation/`
-- Learner dashboard → `src/features/knowledge-dashboard/`
+- Home surface (currently intentionally empty) → `src/features/knowledge-dashboard/`
 - Foundation + dynamic learner journey → `src/features/journey/`
 - Learner source library / intake modal → `src/features/sources/`
 - Creator review / relation resolution / publication placement → `src/features/editor/`
@@ -17,7 +17,7 @@ Read `docs/engineering/LIVE_DB_RUNBOOK.md` before changing migrations or product
 - PostgreSQL schema history → `database/migrations/`
 - Live DB and deterministic verification → `scripts/db/`, `scripts/knowledge/`, `scripts/quality/`
 - Public HTTP adapters → `api/` (12 deployed Vercel Functions; keep thin and multiplex safely)
-- Structural/responsive/accessibility CSS → `src/design/`
+- UI foundation + approved navigation-shell presentation → `src/design/`
 
 ## Non-negotiable product/domain rules
 
@@ -73,10 +73,12 @@ Read `docs/engineering/LIVE_DB_RUNBOOK.md` before changing migrations or product
 ## UI-foundation rules during the UX rebuild
 
 - `src/design/index.css` is the single CSS entry point.
-- `src/design/` currently owns only neutral foundation, structural layout, responsive behavior and accessibility presentation rules.
-- Do not reintroduce product palettes, gradients, Glass, decorative tokens/primitives or visual-theme layers until the information architecture, navigation, interaction model and accessibility pass are intentionally complete.
+- `foundation.css` and `accessibility.css` remain neutral system-level baselines.
+- The creator has approved a scoped visual direction for the navigation shell, menu cards, saved-card collection and lightweight placeholders: calm light surfaces, dark navy emphasis, restrained gold accents, rounded cards and subtle depth.
+- Do not spread that styling into the journey, source/review surfaces or welcome experience without an explicit UX/design decision for those views.
+- Do not restore Liquid Glass, old visual primitives, duplicate theme layers or feature-owned CSS.
 - Product/domain logic must remain outside `src/design/`.
-- Future visual design must remain replaceable without rewriting canonical knowledge or publication logic.
+- Visual presentation must remain replaceable without rewriting canonical knowledge or publication logic.
 
 ## Definition of done for autonomous engineering work
 
