@@ -128,16 +128,16 @@ export default function SpiralLibrary({chapters,initialChapter,initialSourceNumb
   if(chapter)return <ChapterExperience key={chapter.number} chapter={chapter} layer={layer} onBack={()=>setActiveNum(null)} onComplete={handleComplete} onPrevious={previousChapter?()=>openChapter(previousChapter.number):undefined}/>;
 
   return <div className="spiralLibrary" dir="rtl">
-    <header className="spiralHeader"><div><span className="spiralEyebrow">המסע שלי</span><h1 className="spiralTitle">ההתקדמות שלי במסע</h1><p className="spiralSubtitle">חמש שכבות, מסע אחד. אפשר לפתוח כל נושא ולחזור אליו בכל שלב.</p></div><div className="spiralProgressSummary"><strong>{pct}%</strong><span>{doneCount} מתוך {foundationTotal} נושאים הושלמו</span></div></header>
+    <header className="spiralHeader"><div><span className="spiralEyebrow">המסע שלי</span><h1 className="spiralTitle">ההתקדמות שלי במסע</h1><p className="spiralSubtitle">זה לא רצף של פרקים. כל שכבה חוזרת אל שאלת ״מי אני?״ מזווית עמוקה יותר, ומחברת את מה שכבר למדת למה שמגיע אחריה.</p></div><div className="spiralProgressSummary"><strong>{pct}%</strong><span>{doneCount} מתוך {foundationTotal} נושאים הושלמו</span></div></header>
     <div className="spiralProgress"><div className="spiralProgressBar" role="progressbar" aria-label="התקדמות במסע" aria-valuemin={0} aria-valuemax={100} aria-valuenow={pct}><div className="spiralProgressFill" style={{width:`${pct}%`}}/></div></div>
 
     <div className="spiralLayers">{JOURNEY_LAYERS.map(layerItem=>{
       const layerNums=layerItem.nums as readonly number[],layerChapters=chapters.filter(item=>layerNums.includes(item.number)),layerDone=layerChapters.filter(item=>completed(item.number)).length,isOpen=openLayer===layerItem.id,bodyId=`journey-layer-${layerItem.id}`;
       return <section key={layerItem.id} className={`spiralLayer${isOpen?' spiralLayer--open':''}`}>
-        <button type="button" className="spiralLayerHeader" onClick={()=>setOpenLayer(isOpen?'':layerItem.id)} aria-expanded={isOpen} aria-controls={bodyId}>
+        <button type="button" className="spiralLayerHeader" onClick={()=>setOpenLayer(isOpen?'':layerItem.id)} aria-expanded={isOpen} aria-controls={bodyId} aria-label={`${isOpen?'סגור':'פתח'}: ${layerItem.shortLabel}`}>
           <span className="spiralLayerMarker" aria-hidden="true">{layerItem.marker}</span>
-          <span className="spiralLayerLeft"><span className="spiralLayerLabel">{layerItem.shortLabel}</span><span className="spiralLayerRange">פרקים {layerItem.chapterRange}</span></span>
-          <span className="spiralLayerRight"><span className="spiralLayerCount">{layerDone}/{layerItem.nums.length}</span><span className="spiralLayerChevron" aria-hidden="true">{isOpen?'−':'+'}</span></span>
+          <span className="spiralLayerLeft"><span className="spiralLayerLabel">{layerItem.shortLabel}</span><span className="spiralLayerRange">{layerItem.cue}</span></span>
+          <span className="spiralLayerRight"><span className="spiralLayerCount">{layerDone}/{layerItem.nums.length}</span></span>
         </button>
         <div id={bodyId} className="spiralLayerBody" hidden={!isOpen}><p className="spiralLayerFullWhy">{layerItem.why}</p><div className="spiralCards">{layerChapters.map(item=><ChapterCard key={item.number} chapter={item} displayTitle={getPilotCardChapter(item.number)?.title} unlocked={unlocked(item.number)} completed={completed(item.number)} onClick={()=>openChapter(item.number)}/>)}</div></div>
       </section>;
