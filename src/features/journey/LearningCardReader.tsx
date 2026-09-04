@@ -29,13 +29,11 @@ export function LearningCardReader({chapter,layerLabel,onBack,onComplete,onPrevi
 
   const previous=()=>{
     if(position>0)setPosition(position-1);
-    else onPreviousChapter?.();
-    window.scrollTo({top:0});
+    else if(onPreviousChapter){onPreviousChapter();window.scrollTo({top:0})}
   };
   const next=()=>{
-    if(isLast)onComplete();
+    if(isLast){onComplete();window.scrollTo({top:0})}
     else setPosition(position+1);
-    window.scrollTo({top:0});
   };
   const goTo=(index:number)=>setPosition(index);
   const onKeyDown=(event:KeyboardEvent<HTMLDivElement>)=>{
@@ -53,7 +51,7 @@ export function LearningCardReader({chapter,layerLabel,onBack,onComplete,onPrevi
   };
   const displayNumber=chapter.displayNumber??(chapter.chapterNumber?String(chapter.chapterNumber).padStart(2,'0'):'חדש');
   const previousLabel=position>0?'הכרטיס הקודם':'הפרק הקודם';
-  const nextLabel=isLast?(completionLabel??'סיימתי — לפרק הבא ←'):'הכרטיס הבא';
+  const nextLabel=isLast?(completionLabel??'סיימתי — לפרק הבא'):'הכרטיס הבא';
 
   return <div className="learningCardReader" dir="rtl">
     <div className="learningJourneyTopbar">
