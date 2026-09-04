@@ -1,22 +1,6 @@
-/* E.I.L Design System — v3 Liquid Glass Foundation */
-@import './primitives/tokens.css';
-@import './primitives/liquid-glass.css';
-@import './foundations/eil-base.css';
-@import './features/shell.css';
-@import './features/sources.css';
-@import './features/review-console.css';
-@import './features/source-publication.css';
-@import './features/navigation.css';
-@import './features/journey.css';
-@import './features/dynamic-publications.css';
-@import './features/knowledge-dashboard.css';
-@import './features/welcome.css';
-@import './features/cards.css';
-@import './features/crystals.css';
-@import './features/errors.css';
-@import './features/learner-polish.css';
-@import './features/published-source-library.css';
+/* E.I.L UI baseline — structure and accessibility only.
+   Visual design intentionally starts from zero. */
+@import './foundation.css';
+@import './layout.css';
 @import './responsive.css';
 @import './accessibility.css';
-
-.reviewConsole h1,.reviewConsole h2,.reviewConsole h3{color:#edf2f7}
