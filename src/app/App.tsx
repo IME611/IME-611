@@ -4,8 +4,6 @@ import{KnowledgeDashboard}from'../features/knowledge-dashboard/KnowledgeDashboar
 import{DesktopNavigation,MobileNavigation}from'../features/navigation/NavigationShell';
 import{useAppNavigation}from'../features/navigation/useAppNavigation';
 import{isKnownNavigation,isOwnerOnlyNavigation}from'../features/navigation/navigation.config';
-import{useCrystalCollection}from'../features/crystals/model/useCrystalCollection';
-import type{JourneyLayerId}from'../features/journey/model/journey-layers';
 import{WelcomeScreen}from'../features/welcome/WelcomeScreen';
 import type{Chapter}from'../core/types';
 import{journeyStorage,readJson,readText,resetPersonalProgress,storageKeys,writeJson,writeText}from'../core/storage';
@@ -13,12 +11,22 @@ import{journeyStorage,readJson,readText,resetPersonalProgress,storageKeys,writeJ
 const SpiralLibrary=React.lazy(()=>import('../features/journey/SpiralLibrary'));
 const AddSourceModal=React.lazy(()=>import('../features/sources/AddSourceModal').then(module=>({default:module.AddSourceModal})));
 const PublicSourceDocument=React.lazy(()=>import('../features/sources/PublicSourceDocument').then(module=>({default:module.PublicSourceDocument})));
-const CrystalCollectionDrawer=React.lazy(()=>import('../features/crystals/CrystalCollectionDrawer').then(module=>({default:module.CrystalCollectionDrawer})));
+const LikedCardsPage=React.lazy(()=>import('../features/crystals/LikedCardsPage').then(module=>({default:module.LikedCardsPage})));
 const ReviewConsole=React.lazy(()=>import('../features/editor/ReviewConsole').then(module=>({default:module.ReviewConsole})));
 
 const RouteLoading=()=> <div className="routeLoading" role="status" aria-live="polite"><span>טוען את המרחב…</span></div>;
 type PublicSourceSummary={id:string;type:string;title:string;author?:string|null;original_uri?:string|null;mime_type?:string|null;metadata?:Record<string,unknown>|null;created_at?:string|null;fragment_count?:number};
 type SettingsForm={name:string;email:string;phone:string};
+type FuturePageDefinition={title:string;description:string;icon:string};
+
+const FUTURE_PAGES:Record<string,FuturePageDefinition>={
+ 'practical-tools':{title:'כלים פרקטיים',description:'כאן נרכז בהדרגה צ׳קליסטים, טבלאות, שאלות עבודה וכלים שימושיים ליישום הידע.',icon:'⌘'},
+ exercises:{title:'התרגולים שלי',description:'אזור למשימות קצרות ותרגילים שמחברים בין הפרקים לבין יישום אישי.',icon:'◎'},
+ 'connection-map':{title:'מפת החיבורים',description:'כאן נציג בהמשך איך רעיונות, מושגים ופרקים מתחברים זה לזה לאורך המסע.',icon:'⌁'},
+ notes:{title:'הערות ותובנות',description:'מרחב מרוכז למחשבות, הערות ותובנות אישיות שנאספות לאורך הדרך.',icon:'✎'},
+};
+
+function FuturePage({title,description,icon}:FuturePageDefinition){return <div className="simplePage futurePage" dir="rtl"><span className="futurePageIcon" aria-hidden="true">{icon}</span><h1 className="simplePageTitle">{title}</h1><p className="simplePageSub">{description}</p><span className="futurePageStatus">נרחיב את האזור הזה בהמשך</span></div>}
 
 export default function App(){
  const{page,navigate:nav,replace:replaceNav,back:goBack}=useAppNavigation();
@@ -28,14 +36,11 @@ export default function App(){
  const[editor,setEditor]=useState(false);
  const[online,setOnline]=useState(false);
  const[notice,setNotice]=useState('');
- const[crystalsOpen,setCrystalsOpen]=useState(false);
  const[requestedSourceNumber,setRequestedSourceNumber]=useState<number|null>(null);
- const[requestedLayer,setRequestedLayer]=useState<JourneyLayerId|null>(null);
  const[sourceChapters,setSourceChapters]=useState<Chapter[]>([]);
  const[publicSources,setPublicSources]=useState<PublicSourceSummary[]>([]);
  const[selectedPublicSourceId,setSelectedPublicSourceId]=useState<string|null>(null);
  const[entered,setEntered]=useState(()=>{try{return sessionStorage.getItem('eil-welcome-entered')==='1'}catch{return false}});
- const{records:crystals}=useCrystalCollection();
  const reviewMode=typeof window!=='undefined'&&new URLSearchParams(window.location.search).get('editor')==='review';
 
  useEffect(()=>{
@@ -71,15 +76,15 @@ export default function App(){
  });
  const openNew=()=>{if(!owner){setNotice('העלאת מקור זמינה במצב יוצר בלבד.');return}setEditor(true)};
  const enterExperience=()=>{try{sessionStorage.setItem('eil-welcome-entered','1')}catch{}setEntered(true);nav('dashboard')};
- const openJourney=(layerId?:JourneyLayerId)=>{setSelectedPublicSourceId(null);setRequestedSourceNumber(null);setRequestedLayer(layerId??null);nav('library')};
- const openSource=(sourceNumber:number)=>{setSelectedPublicSourceId(null);setRequestedLayer(null);setRequestedSourceNumber(sourceNumber);nav('library')};
+ const openSource=(sourceNumber:number)=>{setSelectedPublicSourceId(null);setRequestedSourceNumber(sourceNumber);nav('library')};
+ const futurePage=FUTURE_PAGES[activePage];
 
  const Sources=()=>{
   if(selectedPublicSourceId)return <React.Suspense fallback={<RouteLoading/>}><PublicSourceDocument sourceId={selectedPublicSourceId} onBack={()=>setSelectedPublicSourceId(null)}/></React.Suspense>;
   const totalSources=sourceCatalogue.length+publishedExtraSources.length;
   return <div className="simplePage sourceLibraryPage" dir="rtl">
    <h1 className="simplePageTitle">↗ המקורות שלי</h1>
-   <p className="simplePageSub">{totalSources} מקורות מלאים שפורסמו ללומדים ושעליהם מבוסס הידע באתר</p>
+   <p className="simplePageSub">{totalSources} מקורות מלאים שפורסמו ושעליהם מבוסס הידע באתר. האזור הזה גלוי במצב יוצר בלבד.</p>
    <section className="sourceLibrarySection" aria-labelledby="foundation-sources-title">
     <div className="sourceLibrarySectionHead"><div><span>FOUNDATION SOURCES</span><h2 id="foundation-sources-title">מקורות היסוד</h2></div><b>{sourceCatalogue.length}</b></div>
     <div className="sourceList">{sourceCatalogue.map(source=><button key={source.number} type="button" className="sourceItem" onClick={()=>openSource(source.number)} aria-label={`פתח מקור: ${source.title}`}>
@@ -138,7 +143,7 @@ export default function App(){
     <h2 className="settingDangerTitle">אזור מסוכן</h2>
     <button type="button" className="dangerBtn" onClick={reset}>{resetDone?'✓ ההתקדמות אופסה':'🗑 אפס התקדמות'}</button>
     {resetDone&&<p className="settingStatus" role="status">הנתונים המקומיים אופסו. האפליקציה נטענת מחדש…</p>}
-    <p className="settingDangerNote">מוחק קריסטלים והתקדמות מקומית. לא ניתן לשחזר.</p>
+    <p className="settingDangerNote">מוחק כרטיסיות שאהבת והתקדמות מקומית. לא ניתן לשחזר.</p>
    </div>
   </div>;
  };
@@ -152,24 +157,24 @@ export default function App(){
   <main id="main-content" tabIndex={-1}>
    {activePage!=='dashboard'&&<div className="pageBack"><button type="button" onClick={goBack}>→ חזרה</button></div>}
    {notice&&<div className="notice" role="status"><span>{notice}</span><button type="button" aria-label="סגור הודעה" onClick={()=>setNotice('')}>×</button></div>}
-   {activePage==='dashboard'&&<KnowledgeDashboard onOpenJourney={openJourney}/>}
+   {activePage==='dashboard'&&<KnowledgeDashboard/>}
    {activePage==='sources'&&<Sources/>}
    {activePage==='add-source'&&<AddSource/>}
    {activePage==='settings'&&<Settings/>}
+   {futurePage&&<FuturePage {...futurePage}/>}
    <React.Suspense fallback={<RouteLoading/>}>
+    {activePage==='liked-cards'&&<LikedCardsPage/>}
     {activePage==='review'&&<ReviewConsole/>}
     {activePage==='library'&&<SpiralLibrary
      chapters={journeyChapters}
      initialSourceNumber={requestedSourceNumber}
-     initialLayer={requestedLayer}
+     initialLayer={null}
      onInitialSourceOpened={()=>setRequestedSourceNumber(null)}
-     onInitialLayerOpened={()=>setRequestedLayer(null)}
-     onSourceClosed={()=>nav('sources')}
+     onInitialLayerOpened={()=>{}}
+     onSourceClosed={()=>owner?nav('sources'):nav('library')}
     />}
    </React.Suspense>
    {owner&&editor&&<React.Suspense fallback={null}><AddSourceModal open onClose={()=>setEditor(false)} onImported={setNotice}/></React.Suspense>}
   </main>
-  <button type="button" className="crystalLauncher" onClick={()=>setCrystalsOpen(true)} aria-label="פתח את אוסף הקריסטלים"><span aria-hidden="true">◆</span><b>הקריסטלים שלי</b><em>{crystals.length}</em></button>
-  {crystalsOpen&&<React.Suspense fallback={null}><CrystalCollectionDrawer open onClose={()=>setCrystalsOpen(false)}/></React.Suspense>}
  </div></>;
 }
