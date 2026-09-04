@@ -25,5 +25,6 @@ main:focus{outline:none}
 @media(forced-colors:active){
  *{forced-color-adjust:auto}
  :where(button,a,input,textarea,select,[tabindex]):focus-visible{outline:3px solid Highlight}
- .productNav,.modal,.crystalDrawer,.sourceLibrarySection,.sourceItem,.notice{border-color:CanvasText}
+ .productNav,.mobileNavPanel,.modal,.sourceLibrarySection,.sourceItem,.notice,.navItem,.crystalSavedCard,.futurePage{border-color:CanvasText}
+ .navItem[aria-current="page"],.navItem.active{background:Highlight;color:HighlightText}
 }
