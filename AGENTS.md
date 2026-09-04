@@ -1,7 +1,7 @@
 # E.I.L Agent / Engineer Map
 
 Read `ARCHITECTURE.md` before changing structure or domain boundaries.
-Read `docs/engineering/FRONTEND_CONSTITUTION.md` before changing learner/editor React architecture, state, API clients, accessibility, or design-system boundaries.
+Read `docs/engineering/FRONTEND_CONSTITUTION.md` before changing learner/editor React architecture, state, API clients, accessibility, or UI-foundation boundaries.
 Read `docs/engineering/LIVE_DB_RUNBOOK.md` before changing migrations or production DB checks.
 
 ## Start here by task
@@ -17,7 +17,7 @@ Read `docs/engineering/LIVE_DB_RUNBOOK.md` before changing migrations or product
 - PostgreSQL schema history → `database/migrations/`
 - Live DB and deterministic verification → `scripts/db/`, `scripts/knowledge/`, `scripts/quality/`
 - Public HTTP adapters → `api/` (12 deployed Vercel Functions; keep thin and multiplex safely)
-- Visual-system work → `src/design/`
+- Structural/responsive/accessibility CSS → `src/design/`
 
 ## Non-negotiable product/domain rules
 
@@ -42,6 +42,7 @@ Read `docs/engineering/LIVE_DB_RUNBOOK.md` before changing migrations or product
 - Accessibility is required: semantic HTML, keyboard operation, focus-visible, labels, contrast and reduced-motion considerations.
 - Avoid `any` in new TypeScript; prefer validated `unknown` at boundaries.
 - Do not add state libraries, query libraries or dependencies speculatively.
+- Do not keep dormant/replaced implementations under `src`; the frontend reachability guard treats Git history as the archive.
 
 ## Persistence rules
 
@@ -58,6 +59,7 @@ Read `docs/engineering/LIVE_DB_RUNBOOK.md` before changing migrations or product
 - HTTP requests must never create/migrate tables. New persistence is introduced only through additive files under `database/migrations/`.
 - Apply schema changes forward-only; never edit an already-applied migration because checksums are enforced.
 - Do not weaken hardening/auth or log secrets/raw sensitive payloads for diagnostics.
+- Do not keep unreachable backend implementations under `server`; every server module must be reachable from an API or intentional script entry point.
 
 ## Build / deployment rules
 
@@ -68,11 +70,13 @@ Read `docs/engineering/LIVE_DB_RUNBOOK.md` before changing migrations or product
 - Check the exact-head Vercel Preview before merge and the exact merged Production deployment afterward.
 - Production preflight must retain single-deployment migration/DB execution; do not reintroduce duplicate live DB checks per Function build unit.
 
-## Design-system rules
+## UI-foundation rules during the UX rebuild
 
-- Visual-system work belongs under `src/design/` and enters through `src/design/index.css`.
-- Extend existing tokens/primitives instead of adding versioned CSS layers.
-- Theme/visual changes must remain replaceable without rewriting canonical knowledge or publication logic.
+- `src/design/index.css` is the single CSS entry point.
+- `src/design/` currently owns only neutral foundation, structural layout, responsive behavior and accessibility presentation rules.
+- Do not reintroduce product palettes, gradients, Glass, decorative tokens/primitives or visual-theme layers until the information architecture, navigation, interaction model and accessibility pass are intentionally complete.
+- Product/domain logic must remain outside `src/design/`.
+- Future visual design must remain replaceable without rewriting canonical knowledge or publication logic.
 
 ## Definition of done for autonomous engineering work
 
