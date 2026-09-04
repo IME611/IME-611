@@ -35,6 +35,7 @@ const checks=[
  'scripts/quality/verify-production-surface.mjs',
  'scripts/quality/verify-ui-foundation.mjs',
  'scripts/quality/verify-frontend-reachability.mjs',
+ 'scripts/quality/verify-server-reachability.mjs',
  'scripts/quality/verify-repository-truth.mjs',
  'scripts/knowledge/verify-dynamic-publication-editor.mjs',
  'scripts/knowledge/verify-atomic-extractor.mjs',
