@@ -1,1 +1,0 @@
-const KEY='eil-items';export function readLocal<T>():T[]{try{return JSON.parse(localStorage.getItem(KEY)||'[]')}catch{return[]}}export function writeLocal<T>(items:T[]){try{localStorage.setItem(KEY,JSON.stringify(items))}catch{}}export function clearLocal(){try{localStorage.removeItem(KEY)}catch{}}
