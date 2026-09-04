@@ -1,14 +1,15 @@
-# Static Product Data
+# Frontend product data
 
-This folder currently contains authored/fallback frontend data. It is not the canonical source corpus.
+This folder contains the authored/fallback data that is currently reachable from the learner frontend. It is presentation data, not the canonical source corpus.
 
-Target drawers:
-- `journey/` — authored learning path, stage/world labels, question bridges.
-- `taxonomy/` — knowledge categories and topic taxonomy.
-- `fallback/` — fallback chapter metadata/text used only when the source API is unavailable.
+Current contents:
+- `chapters-embedded.ts` — embedded foundation source/chapter material used by the learner experience and as an offline/fallback catalogue.
+- `chapters.ts` — active chapter presentation metadata used by the authored learning path.
+- `learning-path.ts` — presentation labels, questions and ordering metadata.
+- `learning-paths/` — typed learning-path definitions used by journey state/progress.
 
 Rules:
-- Canonical source text lives in server-side `data/` and must remain intact.
-- Frontend fallback data must never silently become the source of truth.
-- Authored journey logic is product configuration; keep it separate from generated synthesis.
-- When moving a data file, update imports in the same commit and verify a preview build before deleting the old path.
+- Canonical source truth lives server-side and must never be replaced by frontend fallback data.
+- Do not keep superseded chapter/taxonomy snapshots here; Git history is the archive.
+- New static frontend data belongs here only when it is intentionally imported by the production entry graph.
+- The frontend reachability guard will fail the build if an implementation/data module under `src` becomes orphaned.
