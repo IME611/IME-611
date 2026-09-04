@@ -1,5 +1,25 @@
-html,body,#root{max-width:100%;overflow-x:hidden}main{min-width:0}.pageTitle,.dashboardGrid,.learningFlow,.mediaLayerGrid,.genericGrid{min-width:0}.pageTitle h1,.journeyHeader h1,.chapterCover h1{overflow-wrap:anywhere}.interactiveDiagram,.mediaCard,.glassCard,.glassSurface{max-width:100%}.videoModal{max-height:calc(100dvh - 24px);overflow:auto}.videoModal video{max-height:70dvh;object-fit:contain}.mobileNavPanel{overscroll-behavior:contain}.mobileNavPanel nav{padding-bottom:max(18px,env(safe-area-inset-bottom))}
-@media(max-width:1100px){.pageTitle,.dashboardGrid,.journeyLibrary,.learningChapter,.mediaWorkspace,.pageBack{max-width:100%}.dashboardGrid{grid-template-columns:1fr!important}.chapterCover{grid-template-columns:1fr!important}.learningFlow{grid-template-columns:1fr!important}.worldTrack{overflow-x:auto;scroll-snap-type:x proximity;padding-bottom:8px}.journeyNode{scroll-snap-align:start;min-width:min(320px,78vw)}}
-@media(max-width:900px){main{padding-right:0!important;padding-left:0!important;padding-top:72px!important}.topbar{padding-inline:14px!important}.globalSearch{width:100%!important}.pageTitle,.journeyLibrary,.learningChapter,.mediaWorkspace,.pageBack,main>section,main>.notice{margin-left:14px!important;margin-right:14px!important}.mobileNavButton{min-height:44px}.mobileNavPanel{top:max(8px,env(safe-area-inset-top));right:8px;bottom:max(8px,env(safe-area-inset-bottom));width:min(360px,calc(100vw - 16px));border-radius:24px}.navItem,.navAdd,.mobileNavPanel header>button{min-height:44px}.pageBack{display:grid;grid-template-columns:1fr 1fr}.pageBack button{min-height:42px}.journeyContract{overflow-x:auto;justify-content:flex-start!important;padding-bottom:6px}.journeyContract>div{min-width:150px}.mediaLayerGrid{grid-template-columns:1fr!important}.videoModalBackdrop{padding:10px}.videoModal{width:100%;border-radius:22px}.mediaFallback{min-height:240px;padding:28px 18px}}
-@media(max-width:640px){.pageTitle{align-items:flex-start!important;flex-direction:column!important;gap:14px}.pageTitle .primary{width:100%}.journeyHeader{grid-template-columns:1fr!important}.modeSwitch{width:100%;display:grid!important;grid-template-columns:1fr 1fr}.modeSwitch button{min-height:44px}.chapterCover,.chapterQuestion,.learningStep,.sourceGate{padding:18px!important;border-radius:22px!important}.chapterOrb{width:92px!important;height:92px!important}.learningRail{overflow-x:auto;justify-content:flex-start!important}.learningRail span{min-width:84px}.connectionLine{overflow-x:auto;justify-content:flex-start!important}.connectionLine>*{flex:0 0 auto}.mediaLayerHeading>button{width:100%}.mediaCard{min-height:0!important}.interactiveDiagram{min-height:320px!important;padding-bottom:40px}.diagramCenter{width:106px;height:106px}.diagramOrbit button{position:static!important;transform:none!important;min-width:0!important;width:100%;text-align:center}.diagramOrbit{position:absolute;inset:auto 0 0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.diagramOrbit button:nth-child(5){grid-column:1/-1}.interactiveDiagram>p{position:static;margin-top:190px;text-align:center}.frequencyReadout{align-items:flex-start;flex-direction:column;gap:4px}.frequencyActions{display:grid;grid-template-columns:1fr}.frequencyActions button{min-height:44px;width:100%}.mediaSummaryStats{grid-template-columns:1fr!important}.videoModal header{align-items:flex-start;gap:10px}.videoModal header button{flex:0 0 44px;width:44px;height:44px}.mediaFallback{min-height:210px}.overlay{padding:8px!important}.modal{width:100%!important;max-height:calc(100dvh - 16px)!important;overflow:auto;border-radius:22px!important}.actions{display:grid!important;grid-template-columns:1fr 1fr}.actions button{min-height:44px}}
-@media(max-width:390px){.pageTitle,.journeyLibrary,.learningChapter,.mediaWorkspace,.pageBack,main>section,main>.notice{margin-left:10px!important;margin-right:10px!important}.mobileNavPanel{right:5px;width:calc(100vw - 10px)}.modeSwitch{grid-template-columns:1fr}.pageBack{grid-template-columns:1fr}.frequencyReadout strong{font-size:30px!important}.chapterBadges{display:grid!important;grid-template-columns:1fr}.mediaLayerHeading h2{font-size:21px}.mediaCard{padding:16px!important}}
+/* Responsive behavior only. No visual theme decisions. */
+
+@media(max-width:900px){
+ .app{display:block}
+ .app>main{padding:1rem;padding-block-start:4.5rem}
+ .productNav{display:none}
+ .mobileNavButton{display:inline-flex;align-items:center;gap:.5rem;position:fixed;top:.75rem;inset-inline-start:.75rem;z-index:80}
+ .sourceList{grid-template-columns:1fr}
+ .sourceItem{grid-template-columns:auto minmax(0,1fr)}
+ .sourceOpen{grid-column:2}
+ .actions{grid-auto-flow:row;grid-auto-columns:1fr;width:100%}
+ .actions>button{width:100%}
+ .crystalLauncher{inset-inline-end:.75rem;bottom:.75rem}
+}
+
+@media(max-width:640px){
+ .app>main{padding-inline:.75rem}
+ .welcomeScreen{padding:1.25rem}
+ .welcomeContent{gap:1.5rem}
+ .welcomeHook{font-size:clamp(1.8rem,8vw,2.5rem)}
+ .welcomeCta{width:min(100%,22rem)}
+ .modal{width:calc(100vw - 1rem);max-height:calc(100dvh - 1rem);padding:1rem}
+ .crystalDrawer{width:100vw}
+ .sourceItem{padding:.75rem}
+}
