@@ -11,6 +11,7 @@ const app=read('src/app/App.tsx');
 const dashboard=read('src/features/knowledge-dashboard/KnowledgeDashboard.tsx');
 const journey=read('src/features/journey/SpiralLibrary.tsx');
 const cardReader=read('src/features/journey/LearningCardReader.tsx');
+const cardExhibit=read('src/features/journey/CardSourceExhibit.tsx');
 const savedCardComposer=read('src/features/crystals/CrystalCardComposer.tsx');
 const likedCardsPage=read('src/features/crystals/LikedCardsPage.tsx');
 const navigation=read('src/features/navigation/navigation.config.ts');
@@ -26,8 +27,9 @@ assert.doesNotMatch(dashboard,/useLearningProgress|JOURNEY_LAYERS|dashHero/,'jou
 assert.match(app,/activePage==='liked-cards'&&<LikedCardsPage\/>/,'liked cards must be reachable from the menu');
 assert.doesNotMatch(app,/crystalLauncher|CrystalCollectionDrawer/,'saved cards must not duplicate a floating home launcher');
 assert.match(likedCardsPage,/הכרטיסיות שאהבתי/,'saved-card collection must use the approved learner-facing name');
-assert.match(savedCardComposer,/שמור בכרטיסיות שאהבתי/,'card save action must use the approved learner-facing name');
+assert.match(savedCardComposer,/שמורה בכרטיסיות שאהבתי|♡ שמור/,'card save action must use the liked-card learner flow');
 assert.doesNotMatch(savedCardComposer,/שמור בקריסטלים|הכרטיס שמור בקריסטלים/,'old crystal wording must not remain in the learner save flow');
+assert.doesNotMatch(likedCardsPage,/sourceLabel|provenanceLabel/,'liked cards must not expose source/provenance metadata');
 
 for(const id of['dashboard','library','liked-cards','practical-tools','exercises','connection-map','notes','settings'])assert.ok(navigation.includes(`id:'${id}'`),`approved learner menu route missing ${id}`);
 assert.match(navigation,/id:'sources'.*ownerOnly:true/,'source library must stay creator-only');
@@ -37,11 +39,17 @@ assert.match(navigationShell,/navigationForMode\(owner\)/,'desktop and mobile na
 assert.match(app,/activePage=isKnownNavigation\(page\)&&\(owner\|\|!isOwnerOnlyNavigation\(page\)\)\?page:'dashboard'/,'unknown and forbidden hashes must normalize to dashboard');
 
 assert.doesNotMatch(journey,/spiralSearchInput|spiralContinue|spiralReflect/,'journey must stay focused on clickable topics and one reading flow');
-assert.match(journey,/const unlocked\s*=\s*\(_num: number\) => true/,'all chapter topics must remain open and clickable');
+assert.match(journey,/const unlocked\s*=\s*\(_num\s*:\s*number\)\s*=>\s*true/,'all chapter topics must remain open and clickable');
 assert.match(journey,/סיימתי — לפרק הבא/,'chapter completion and next navigation must share one clear action');
 assert.match(journey,/getPilotCardChapter/,'guided journey must use the reviewed short-card pilot');
+assert.doesNotMatch(journey,/חדש במאגר|יחידה שפורסמה מהמאגר|מקור מאושר|מקורות מאושרים/,'learner journey copy must not expose repository/editorial workflow language');
+assert.match(cardReader,/aria-roledescription="carousel"/,'learning cards must render as an accessible carousel');
+assert.match(cardReader,/onTouchStart=\{onTouchStart\}/,'carousel must support touch swiping');
+assert.match(cardReader,/learningCarouselDots/,'carousel must expose direct card-position controls');
 assert.match(cardReader,/כרטיס \{position\+1\} מתוך/,'card reader must communicate short in-chapter progress');
-assert.match(cardReader,/if\(isLast\)onComplete\(\)/,'last card must own the completion action');
+assert.match(cardReader,/if\(isLast\)\{onComplete\(\)/,'last card must own the completion action');
+assert.doesNotMatch(cardReader,/current\.sourceLabel|current\.provenanceLabel|evidenceRefs|canonicalSourceDetails|\/api\/sources/,'learner card UI must not expose or fetch internal source/provenance metadata');
+assert.doesNotMatch(cardExhibit,/העלה היוצר|AuraFlow/,'learner exhibits must not expose creator/source names');
 assert.match(savedCardComposer,/הערה אישית/,'saved cards must support one optional personal note');
 assert.match(sourceIntakeApi,/\/api\/intake/,'new sources must pass through intake analysis before canonical ingestion');
 assert.match(sourceIntakeModal,/sourceIntakeApi\.analyze/,'creator upload must compare a source with the corpus');
@@ -100,4 +108,4 @@ saveLearningProgress(lifeResearchV1,progress);
 assert.equal(loadLearningProgress(lifeResearchV1).activeStageId,lifeResearchV1.stages[2].id,'saved progress must resume correctly');
 await moduleLoader.close();
 
-console.log('PASS private beta surface (menu hub + private creator sources + saved-card UX + traceable cards + local progress + canonical intake flow)');
+console.log('PASS private beta surface (menu hub + private creator sources + carousel cards + learner metadata privacy + local progress + canonical intake flow)');
