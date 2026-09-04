@@ -35,7 +35,7 @@ function resolveImport(fromFile,specifier){
 
 function importSpecifiers(content){
  const patterns=[
-  /(?:import|export)\s*(?:[^'"()]*?\s+from\s*)?['"]([^'"]+)['"]/g,
+  /(?:import|export)\s*(?:[^'"()]*?from\s*)?['"]([^'"]+)['"]/g,
   /import\s*\(\s*['"]([^'"]+)['"]\s*\)/g,
  ];
  const values=[];
