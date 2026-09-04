@@ -53,6 +53,11 @@ export default function App(){
  useEffect(()=>{if(!reviewMode)writeText(storageKeys.railCollapsed,collapsed?'1':'0')},[collapsed,reviewMode]);
  useEffect(()=>{if(!reviewMode&&page!==activePage)replaceNav(activePage)},[activePage,page,replaceNav,reviewMode]);
  useEffect(()=>{if(activePage!=='sources'&&selectedPublicSourceId)setSelectedPublicSourceId(null)},[activePage,selectedPublicSourceId]);
+ useEffect(()=>{
+  if(reviewMode||!entered)return;
+  const frame=window.requestAnimationFrame(()=>document.getElementById('main-content')?.focus());
+  return()=>window.cancelAnimationFrame(frame);
+ },[activePage,selectedPublicSourceId,entered,reviewMode]);
 
  // The curated 18-item foundation remains a learner presentation layer. Canonical
  // source truth and newly published material come from the API and are never
@@ -73,10 +78,10 @@ export default function App(){
   if(selectedPublicSourceId)return <React.Suspense fallback={<RouteLoading/>}><PublicSourceDocument sourceId={selectedPublicSourceId} onBack={()=>setSelectedPublicSourceId(null)}/></React.Suspense>;
   const totalSources=sourceCatalogue.length+publishedExtraSources.length;
   return <div className="simplePage sourceLibraryPage" dir="rtl">
-   <h2 className="simplePageTitle">↗ המקורות שלי</h2>
+   <h1 className="simplePageTitle">↗ המקורות שלי</h1>
    <p className="simplePageSub">{totalSources} מקורות מלאים שפורסמו ללומדים ושעליהם מבוסס הידע באתר</p>
    <section className="sourceLibrarySection" aria-labelledby="foundation-sources-title">
-    <div className="sourceLibrarySectionHead"><div><span>FOUNDATION SOURCES</span><h3 id="foundation-sources-title">מקורות היסוד</h3></div><b>{sourceCatalogue.length}</b></div>
+    <div className="sourceLibrarySectionHead"><div><span>FOUNDATION SOURCES</span><h2 id="foundation-sources-title">מקורות היסוד</h2></div><b>{sourceCatalogue.length}</b></div>
     <div className="sourceList">{sourceCatalogue.map(source=><button key={source.number} type="button" className="sourceItem" onClick={()=>openSource(source.number)} aria-label={`פתח מקור: ${source.title}`}>
      <span className="sourceNum">{String(source.number).padStart(2,'0')}</span>
      <span className="sourceInfo"><span className="sourceName">{source.title}</span><span className="sourceFile">{source.sourceFile}</span></span>
@@ -84,7 +89,7 @@ export default function App(){
     </button>)}</div>
    </section>
    {publishedExtraSources.length>0&&<section className="sourceLibrarySection sourceLibrarySection--published" aria-labelledby="published-sources-title">
-    <div className="sourceLibrarySectionHead"><div><span>NEW PUBLISHED SOURCES</span><h3 id="published-sources-title">מקורות חדשים שפורסמו</h3></div><b>{publishedExtraSources.length}</b></div>
+    <div className="sourceLibrarySectionHead"><div><span>NEW PUBLISHED SOURCES</span><h2 id="published-sources-title">מקורות חדשים שפורסמו</h2></div><b>{publishedExtraSources.length}</b></div>
     <p className="sourceLibraryHint">מקורות שעברו קליטה, בדיקה ופרסום מפורש. לחיצה פותחת את חומר המקור הקנוני המלא.</p>
     <div className="sourceList">{publishedExtraSources.map(source=>{
      const metadata=source.metadata||{},sourceFile=typeof metadata.sourceFile==='string'?metadata.sourceFile:source.original_uri||source.mime_type||source.type;
@@ -99,9 +104,9 @@ export default function App(){
  };
 
  const AddSource=()=> <div className="simplePage" dir="rtl">
-  <h2 className="simplePageTitle">＋ הוסף מקור</h2>
+  <h1 className="simplePageTitle">＋ הוסף מקור</h1>
   <p className="simplePageSub">העלה מסמך, מאמר, תמונה, קישור או חומר גלם אחר למסלול הקליטה והבדיקה.</p>
-  <button className="primaryBtn" onClick={openNew}>+ העלה מקור</button>
+  <button type="button" className="primaryBtn" onClick={openNew}>+ העלה מקור</button>
  </div>;
 
  const Settings=()=>{
@@ -124,14 +129,14 @@ export default function App(){
    <input id={`setting-${key}`} className="settingInput" type={type} value={form[key]} onChange={e=>setForm(current=>({...current,[key]:e.target.value}))}/>
   </div>;
   return <div className="simplePage" dir="rtl">
-   <h2 className="simplePageTitle">⚙ הגדרות</h2>
+   <h1 className="simplePageTitle">⚙ הגדרות</h1>
    <div className="settingForm">
     {field('שם מלא','name')}{field('אימייל','email','email')}{field('טלפון','phone','tel')}
-    <button className="primaryBtn" onClick={save}>{saved?'✓ נשמר!':'שמור הגדרות'}</button>
+    <button type="button" className="primaryBtn" onClick={save}>{saved?'✓ נשמר!':'שמור הגדרות'}</button>
     {settingsError&&<p className="formError" role="alert">{settingsError}</p>}
     <div className="settingDivider"/>
-    <h3 className="settingDangerTitle">אזור מסוכן</h3>
-    <button className="dangerBtn" onClick={reset}>{resetDone?'✓ ההתקדמות אופסה':'🗑 אפס התקדמות'}</button>
+    <h2 className="settingDangerTitle">אזור מסוכן</h2>
+    <button type="button" className="dangerBtn" onClick={reset}>{resetDone?'✓ ההתקדמות אופסה':'🗑 אפס התקדמות'}</button>
     {resetDone&&<p className="settingStatus" role="status">הנתונים המקומיים אופסו. האפליקציה נטענת מחדש…</p>}
     <p className="settingDangerNote">מוחק קריסטלים והתקדמות מקומית. לא ניתן לשחזר.</p>
    </div>
@@ -145,7 +150,7 @@ export default function App(){
   <DesktopNavigation page={activePage} onNavigate={nav} onAdd={openNew} collapsed={collapsed} onCollapsedChange={setCollapsed} online={online}/>
   <MobileNavigation page={activePage} onNavigate={nav} onAdd={openNew} online={online}/>
   <main id="main-content" tabIndex={-1}>
-   {activePage!=='dashboard'&&<div className="pageBack"><button onClick={goBack}>→ חזרה</button></div>}
+   {activePage!=='dashboard'&&<div className="pageBack"><button type="button" onClick={goBack}>→ חזרה</button></div>}
    {notice&&<div className="notice" role="status"><span>{notice}</span><button type="button" aria-label="סגור הודעה" onClick={()=>setNotice('')}>×</button></div>}
    {activePage==='dashboard'&&<KnowledgeDashboard onOpenJourney={openJourney}/>}
    {activePage==='sources'&&<Sources/>}
@@ -164,7 +169,7 @@ export default function App(){
    </React.Suspense>
    {owner&&editor&&<React.Suspense fallback={null}><AddSourceModal open onClose={()=>setEditor(false)} onImported={setNotice}/></React.Suspense>}
   </main>
-  <button className="crystalLauncher" onClick={()=>setCrystalsOpen(true)} aria-label="פתח את אוסף הקריסטלים"><span aria-hidden="true">◆</span><b>הקריסטלים שלי</b><em>{crystals.length}</em></button>
+  <button type="button" className="crystalLauncher" onClick={()=>setCrystalsOpen(true)} aria-label="פתח את אוסף הקריסטלים"><span aria-hidden="true">◆</span><b>הקריסטלים שלי</b><em>{crystals.length}</em></button>
   {crystalsOpen&&<React.Suspense fallback={null}><CrystalCollectionDrawer open onClose={()=>setCrystalsOpen(false)}/></React.Suspense>}
  </div></>;
 }
