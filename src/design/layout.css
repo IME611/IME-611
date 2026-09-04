@@ -89,6 +89,110 @@
 .welcomeHook span{display:block}
 .welcomeCta{min-width:14rem}
 
+/* Journey UX: learner-facing hierarchy, cards and carousel. */
+.spiralLibrary,.learningCardReader,.spiralChapter{width:min(60rem,100%);margin-inline:auto}
+.spiralLibrary{gap:1rem}
+.spiralHeader{display:flex;align-items:flex-end;justify-content:space-between;gap:2rem;padding-block:.5rem 1rem}
+.spiralHeader>div:first-child{display:grid;gap:.4rem}
+.spiralEyebrow,.publishedUnitsKicker{font-size:.78rem;letter-spacing:.08em;color:var(--eil-gold);font-weight:800}
+.spiralTitle{margin:0;font-size:clamp(2rem,4vw,3rem);letter-spacing:-.02em}
+.spiralSubtitle{margin:0;color:var(--eil-muted);font-size:1.02rem}
+.spiralProgressSummary{display:grid;justify-items:end;gap:.1rem;flex:0 0 auto;color:var(--eil-muted)}
+.spiralProgressSummary strong{font-size:2.35rem;line-height:1;color:var(--eil-navy);font-weight:700}
+.spiralProgress{display:block}
+.spiralProgressBar{height:.55rem;overflow:hidden;border-radius:999px;background:#e5e2db}
+.spiralProgressFill{height:100%;border-radius:inherit;background:var(--eil-navy)}
+.spiralLayers{display:grid;gap:.8rem;margin-block-start:.5rem}
+.spiralLayer{overflow:hidden;border:1px solid var(--eil-line)!important;border-radius:18px;background:var(--eil-card);box-shadow:0 8px 24px rgba(36,42,48,.035)}
+.spiralLayerHeader{width:100%;display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:1rem;padding:1rem 1.15rem;border:0;background:transparent;color:var(--eil-ink);text-align:start;text-decoration:none}
+.spiralLayerHeader:hover{background:#faf8f3}
+.spiralLayerMarker{display:grid;place-items:center;width:2.55rem;height:2.55rem;border-radius:50%;background:#f7f0df;color:var(--eil-gold);font-weight:800}
+.spiralLayerLeft{display:grid;gap:.15rem}
+.spiralLayerLabel{font-size:1.05rem;font-weight:800}
+.spiralLayerRange{font-size:.86rem;color:var(--eil-muted)}
+.spiralLayerRight{display:flex;align-items:center;gap:.75rem;color:var(--eil-muted)}
+.spiralLayerCount{font-variant-numeric:tabular-nums}
+.spiralLayerChevron{display:grid;place-items:center;width:2rem;height:2rem;font-size:1.3rem;color:var(--eil-navy)}
+.spiralLayerBody{padding:0 1.15rem 1.15rem;border-top:1px solid var(--eil-line)}
+.spiralLayerFullWhy{margin:.95rem 0;color:var(--eil-muted);line-height:1.65}
+.spiralCards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,15.5rem),1fr));gap:.75rem}
+.spiralCard{min-height:6rem;display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto 1fr;gap:.3rem .8rem;padding:1rem;border:1px solid var(--eil-line);border-radius:14px;background:#fff;color:var(--eil-ink);text-align:start;box-shadow:none}
+.spiralCard:hover{border-color:#d3c6ae;background:#fffdf9}
+.spiralCardNum{grid-column:1;font-size:.78rem;color:var(--eil-muted);font-weight:700}
+.spiralCardBody{grid-column:1;display:grid;gap:.2rem;align-content:start}
+.spiralCardTitle{font-size:1rem;font-weight:800;line-height:1.35}
+.spiralCardStatus{font-size:.8rem;color:#4c745d;font-weight:700}
+.spiralCardIcon{grid-column:2;grid-row:1/3;align-self:center;color:var(--eil-gold);font-size:1.25rem}
+.publishedUnitsSection{display:grid;gap:1rem;margin-block-start:1rem;padding:1.25rem!important;border:1px solid var(--eil-line)!important;border-radius:18px;background:#fbfaf7}
+.publishedUnitsHead{display:grid;gap:.3rem}
+.publishedUnitsHead h2,.publishedUnitsHead p{margin:0}
+.publishedUnitsHead p,.publishedUnitMeta,.publishedUnitsError{color:var(--eil-muted)}
+
+.learningCardReader{display:grid;gap:1.2rem;padding-block:.25rem 2rem}
+.learningJourneyTopbar{display:flex;align-items:center;justify-content:space-between;gap:1rem;min-height:3rem}
+.spiralBack{width:auto;min-height:42px;padding:.5rem .7rem;border:0;background:transparent;color:var(--eil-navy);font-weight:700;text-decoration:none}
+.spiralBack:hover{text-decoration:underline;text-underline-offset:.22em}
+.learningJourneyLayer{color:var(--eil-muted);font-size:.9rem}
+.learningCardChapterHead,.spiralChapterHeader{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:start;gap:1rem;padding-block:.4rem .5rem}
+.learningCardChapterNumber,.spiralChapterNum{display:inline-flex;align-items:center;justify-content:center;min-height:2.35rem;padding:.4rem .65rem;border-radius:999px;background:#f7f0df;color:#7b5d20;font-size:.82rem;font-weight:800;white-space:nowrap}
+.learningCardChapterHead h1,.spiralChapterTitle{margin:0;font-size:clamp(1.75rem,3.5vw,2.6rem);letter-spacing:-.02em}
+.learningCardChapterHead p,.spiralChapterSub{margin:.35rem 0 0;color:var(--eil-muted);font-size:1rem}
+.learningCardContext,.spiralQuestion{display:grid;gap:.5rem;padding:1.1rem 1.2rem!important;border:1px solid var(--eil-line)!important;border-radius:16px;background:#fbfaf7}
+.learningCardContext>span,.spiralQuestionLabel{font-size:.78rem;color:var(--eil-gold);font-weight:800}
+.learningCardContext>p,.spiralQuestion>p{margin:0;font-size:1.08rem;line-height:1.6;font-weight:700;max-width:60ch}
+.learningWhy{margin-block-start:.15rem;border-top:1px solid var(--eil-line);padding-block-start:.65rem;color:var(--eil-muted)}
+.learningWhy summary{cursor:pointer;color:var(--eil-navy);font-weight:700}
+.learningWhy p{margin:.55rem 0 0;line-height:1.65;font-weight:400!important}
+.learningCarousel{display:grid;gap:.9rem;touch-action:pan-y}
+.learningCarouselToolbar{width:min(48rem,100%);margin-inline:auto;display:flex;align-items:center;justify-content:space-between;gap:1rem;color:var(--eil-muted)}
+.learningCardType{font-size:.82rem;font-weight:800;color:var(--eil-gold)}
+.learningCardProgress{font-size:.9rem;font-variant-numeric:tabular-nums}
+.learningCarouselStage{display:grid;grid-template-areas:"next card previous";grid-template-columns:3.5rem minmax(0,1fr) 3.5rem;align-items:center;gap:1rem}
+.learningCarouselArrow{width:3.5rem;height:3.5rem;padding:0;border:1px solid var(--eil-line);border-radius:50%;background:var(--eil-card);color:var(--eil-navy);display:flex;align-items:center;justify-content:center;gap:.4rem;box-shadow:0 8px 20px rgba(36,42,48,.06)}
+.learningCarouselArrow:hover:not(:disabled){border-color:#cdbd9e;background:#fffdf8}
+.learningCarouselArrow:disabled{opacity:.35}
+.learningCarouselArrow--previous{grid-area:previous}
+.learningCarouselArrow--next{grid-area:next}
+.learningCarouselArrowIcon{font-size:1.35rem;line-height:1}
+.learningCarouselArrowText{display:none}
+.learningCard{grid-area:card;min-height:25rem;display:flex;flex-direction:column;justify-content:center;gap:1rem;padding:clamp(1.5rem,4vw,2.75rem)!important;border:1px solid var(--eil-line)!important;border-radius:26px;background:var(--eil-card);box-shadow:0 18px 48px rgba(32,39,46,.07)}
+.learningCard h2{margin:0;font-size:clamp(1.55rem,3vw,2.15rem);line-height:1.25;max-width:24ch}
+.learningCard>p{margin:0;font-size:clamp(1.04rem,2vw,1.16rem);line-height:1.8;max-width:62ch}
+.learningCarouselDots{display:flex;align-items:center;justify-content:center;gap:.45rem;direction:ltr}
+.learningCarouselDots button{width:.62rem;height:.62rem;min-height:0;padding:0;border:0;border-radius:999px;background:#cdc8be}
+.learningCarouselDots button.isCurrent{width:1.8rem;background:var(--eil-navy)}
+.learningCarouselSwipeHint{display:none;margin:0;text-align:center;color:var(--eil-muted);font-size:.82rem}
+.sourceExhibit{display:grid;gap:.75rem;margin:1rem 0 0;padding:1rem;border-top:1px solid var(--eil-line);background:#fbfaf7;border-radius:14px}
+.sourceExhibitHead{display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.sourceExhibitHead strong{font-size:.95rem}
+.sourceExhibitContent{padding:0!important;border:0!important}
+.sourceExhibitContent h3{font-size:1rem}
+.sourceExhibitContent ul{margin-block-end:0}
+.sourceExhibitCaption p{margin-block-end:.4rem}
+.sourceExhibitCaption small{color:var(--eil-muted);line-height:1.55}
+.cardCrystalComposer{width:min(48rem,100%);margin-inline:auto;display:grid;gap:.75rem;padding:1rem 1.1rem!important;border:1px solid var(--eil-line)!important;border-radius:16px;background:#faf9f6}
+.cardCrystalPrimary{display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.cardCrystalPrimary>div{display:grid;gap:.15rem}
+.cardCrystalPrimary h3,.cardCrystalPrimary p{margin:0}
+.cardCrystalPrimary h3{font-size:1rem}
+.cardCrystalPrimary p{color:var(--eil-muted);font-size:.9rem}
+.cardCrystalSave{width:auto;min-width:6.5rem;border-color:#d6c7a9;border-radius:999px;background:#fffaf0;color:#70541e;font-weight:800}
+.cardCrystalSecondaryActions{display:flex;align-items:center;gap:.4rem}
+.cardCrystalSecondaryActions button{width:auto;min-height:38px;padding:.35rem .55rem;border:0;background:transparent;color:var(--eil-muted);font-size:.88rem}
+.cardCrystalNote{display:grid;gap:.55rem;padding-block-start:.75rem;border-top:1px solid var(--eil-line)}
+.cardCrystalLabel{font-weight:700;font-size:.9rem}
+.cardCrystalNote textarea{border-color:var(--eil-line);border-radius:12px;background:#fff}
+.cardCrystalNoteSave{width:max-content;border-radius:10px;border-color:var(--eil-line);background:var(--eil-card);font-weight:700}
+.cardCrystalStatus{margin:0;color:#4c745d;font-size:.88rem;font-weight:700}
+.spiralChapter{display:grid;gap:1.2rem;padding-block:.25rem 2rem}
+.spiralContent{display:grid;gap:.8rem;padding:clamp(1.25rem,3vw,2.25rem)!important;border:1px solid var(--eil-line)!important;border-radius:22px;background:var(--eil-card);box-shadow:0 12px 34px rgba(36,42,48,.045)}
+.spiralContent p{margin:0;line-height:1.78}
+.spiralBullet{display:flex;align-items:flex-start;gap:.65rem}
+.spiralBullet p{margin:0}
+.spiralChapterNav{display:flex;align-items:center;justify-content:space-between;gap:.75rem;padding-block-start:.25rem}
+.spiralChapterNav button{border-radius:12px;border-color:var(--eil-line);background:var(--eil-card)}
+.spiralChapterComplete{background:var(--eil-navy)!important;color:#fff!important;border-color:var(--eil-navy)!important;font-weight:800}
+
 /* Generic content structures remain readable while the deeper product views stay neutral. */
 :where(.knowledgeDashboard,.spiralLibrary,.reviewConsole) section,:where(.knowledgeDashboard,.spiralLibrary,.reviewConsole) article{padding:1rem;border:1px solid CanvasText}
 :where(.knowledgeDashboard,.spiralLibrary,.reviewConsole) :where(ul,ol){padding-inline-start:1.5rem}
