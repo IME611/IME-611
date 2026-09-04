@@ -45,10 +45,10 @@ export function KnowledgeDashboard({onOpenJourney}:Props){
     {JOURNEY_LAYERS.map(layer=>{
      const layerDone=journeyPath.stages.filter(stage=>(layer.nums as readonly number[]).includes(stage.order)&&state.completedStageIds.includes(stage.id)).length;
      const layerPct=Math.round((layerDone/layer.nums.length)*100);
-     return <button key={layer.id} type="button" className="dashLayer" onClick={()=>onOpenJourney(layer.id)} aria-label={`פתח את ${layer.shortLabel}, ${layerPct}% הושלמו`} style={{'--lc':layer.color,'--lt':layer.textColor} as React.CSSProperties}>
+     return <button key={layer.id} type="button" className="dashLayer" onClick={()=>onOpenJourney(layer.id)} aria-label={`פתח את ${layer.shortLabel}, ${layerPct}% הושלמו`}>
       <span className="dashLayerIndex" aria-hidden="true">{layer.marker}</span>
       <span className="dashLayerInfo"><span className="dashLayerName">{layer.shortLabel}</span><span className="dashLayerChapters">פרקי יסוד {layer.chapterRange}</span></span>
-      <span className="dashLayerBar" aria-hidden="true"><span className="dashLayerFill" style={{width:`${layerPct}%`,background:layer.color}}/></span>
+      <span className="dashLayerBar" aria-hidden="true"><span className="dashLayerFill" style={{width:`${layerPct}%`}}/></span>
       <span className="dashLayerPct">{layerPct}%</span>
       <span className="dashLayerArrow" aria-hidden="true">←</span>
      </button>;
