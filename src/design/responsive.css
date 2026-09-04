@@ -14,6 +14,9 @@
  .actions>button{width:100%}
  .emptyHome{min-height:calc(100dvh - 6.6rem)}
  .likedCardsFoot{align-items:flex-start;flex-wrap:wrap}
+ .spiralHeader{align-items:start}
+ .learningCarouselStage{grid-template-columns:3.25rem minmax(0,1fr) 3.25rem;gap:.75rem}
+ .learningCarouselArrow{width:3.25rem;height:3.25rem}
 }
 
 @media(max-width:640px){
@@ -32,4 +35,44 @@
  .likedCardsPage{gap:1rem}
  .crystalSavedCard footer{align-items:flex-start;flex-wrap:wrap}
  .likedCardsFoot{display:grid;gap:.6rem}
+
+ .spiralLibrary,.learningCardReader,.spiralChapter{width:100%}
+ .spiralHeader{display:grid;gap:1rem;padding-block-start:0}
+ .spiralProgressSummary{justify-items:start}
+ .spiralProgressSummary strong{font-size:2rem}
+ .spiralTitle{font-size:clamp(1.9rem,9vw,2.45rem)}
+ .spiralSubtitle{font-size:.96rem}
+ .spiralLayerHeader{grid-template-columns:auto minmax(0,1fr) auto;gap:.7rem;padding:.9rem}
+ .spiralLayerMarker{width:2.25rem;height:2.25rem}
+ .spiralLayerBody{padding:0 .9rem .9rem}
+ .spiralCards{grid-template-columns:1fr}
+ .spiralCard{min-height:5.4rem;padding:.9rem}
+
+ .learningJourneyTopbar{align-items:flex-start}
+ .learningJourneyLayer{text-align:end;max-width:50%}
+ .learningCardChapterHead,.spiralChapterHeader{grid-template-columns:1fr;gap:.65rem}
+ .learningCardChapterNumber,.spiralChapterNum{width:max-content}
+ .learningCardChapterHead h1,.spiralChapterTitle{font-size:clamp(1.65rem,8vw,2.2rem)}
+ .learningCardContext,.spiralQuestion{padding:1rem!important}
+ .learningCarouselToolbar{padding-inline:.1rem}
+ .learningCarouselStage{grid-template-areas:"card card" "next previous";grid-template-columns:1fr 1fr;gap:.75rem}
+ .learningCard{min-height:22rem;padding:1.35rem!important;border-radius:22px}
+ .learningCard h2{font-size:clamp(1.45rem,7vw,1.9rem)}
+ .learningCard>p{font-size:1.02rem;line-height:1.72}
+ .learningCarouselArrow{position:static;width:100%;height:auto;min-height:3rem;border-radius:12px;box-shadow:none;padding:.55rem .75rem}
+ .learningCarouselArrow--previous{justify-self:stretch}
+ .learningCarouselArrow--next{justify-self:stretch}
+ .learningCarouselArrowText{display:inline;font-size:.88rem;font-weight:700}
+ .learningCarouselArrowIcon{font-size:1rem}
+ .learningCarouselSwipeHint{display:block}
+ .learningCarouselDots{gap:.38rem}
+ .sourceExhibit{padding:.85rem;margin-block-start:.5rem}
+ .cardCrystalComposer{padding:.9rem!important}
+ .cardCrystalPrimary{align-items:flex-start}
+ .cardCrystalPrimary p{font-size:.85rem}
+ .cardCrystalSave{min-width:5.5rem}
+ .cardCrystalSecondaryActions{flex-wrap:wrap}
+ .spiralChapterNav{display:grid;grid-template-columns:1fr;gap:.6rem}
+ .spiralChapterNav button{width:100%}
+ .spiralContent{padding:1.1rem!important;border-radius:18px}
 }
