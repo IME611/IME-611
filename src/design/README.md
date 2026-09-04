@@ -2,15 +2,17 @@
 
 This directory owns presentation only. Product logic, knowledge logic, persistence, API behavior, provenance, review rules and learning-path behavior do not belong here.
 
-## Current phase: accessibility-first reset
+## Current phase: navigation-first visual direction
 
-The previous visual system was intentionally removed. There is currently **no E.I.L visual theme**: no brand palette, Liquid Glass, gradients, decorative shadows, visual polish layer or welcome-screen pixel-match contract.
+The full-product visual system is still intentionally restrained, but the creator has now approved a scoped visual direction for the **application shell and navigation hub**: calm light surfaces, dark navy emphasis, restrained gold accents, rounded navigation cards and subtle depth.
 
-The active stylesheet graph is deliberately small:
+This approval is limited to the shell/navigation, saved-card collection and lightweight placeholder surfaces. The deeper learner journey, source/review surfaces and welcome experience remain structurally driven until their UX is reviewed separately. Liquid Glass and the removed legacy visual runtime remain out of scope.
 
-- `foundation.css` — browser normalization, readable typography and native/system colors.
-- `layout.css` — structural layout only.
-- `responsive.css` — responsive behavior only.
+The active stylesheet graph remains deliberately small:
+
+- `foundation.css` — browser normalization, readable typography and native/system-color baseline.
+- `layout.css` — product layout plus the approved navigation/saved-card presentation.
+- `responsive.css` — responsive behavior and mobile shell presentation.
 - `accessibility.css` — keyboard focus, skip navigation, reduced motion, forced colors and touch targets.
 - `index.css` — the only stylesheet imported by the application.
 
@@ -18,10 +20,10 @@ The active stylesheet graph is deliberately small:
 
 1. Feature and domain code must not import CSS directly.
 2. `src/main.tsx` imports only `src/design/index.css`.
-3. A future visual design may replace this presentation layer without changing domain behavior.
-4. Accessibility and information architecture are established before visual styling.
-5. Do not add brand colors, glass, gradients, animation systems, decorative shadows or theme tokens until the creator approves a new design direction.
-6. New CSS must describe either structure, responsiveness or accessibility during this phase.
+3. Product/domain behavior must remain independent from the visual layer.
+4. New visual work is introduced only after an explicit product/UX decision; do not silently spread the current navigation styling into unrelated views.
+5. Do not restore Liquid Glass, old visual primitives, duplicate theme systems or feature-owned CSS.
+6. Keep the navigation shell accessible, replaceable and responsive without changing canonical knowledge or publication logic.
 
 ## Accessibility baseline
 

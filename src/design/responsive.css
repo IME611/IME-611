@@ -1,25 +1,35 @@
-/* Responsive behavior only. No visual theme decisions. */
+/* Responsive behavior for the current product shell. */
 
 @media(max-width:900px){
- .app{display:block}
- .app>main{padding:1rem;padding-block-start:4.5rem}
+ .app{display:block;min-height:100dvh}
+ .app>main{padding:1rem;padding-block-start:5.6rem;min-height:100dvh}
  .productNav{display:none}
- .mobileNavButton{display:inline-flex;align-items:center;gap:.5rem;position:fixed;top:.75rem;inset-inline-start:.75rem;z-index:80}
+ .mobileNavButton{display:inline-flex;align-items:center;justify-content:center;flex-direction:row-reverse;gap:.65rem;position:fixed;top:.9rem;right:.9rem;z-index:80;min-width:7.5rem;padding:.65rem .85rem;border:1px solid var(--eil-line);border-radius:14px;background:rgba(255,255,255,.94);color:var(--eil-ink);box-shadow:0 9px 24px rgba(25,31,37,.09);backdrop-filter:blur(8px);font-family:Georgia,"Times New Roman",serif;font-weight:700;letter-spacing:.04em}
+ .mobileNavGlyph{font-family:Arial,"Segoe UI",sans-serif;font-size:1.3rem;font-weight:400;line-height:1}
+ .mobileNavPanel{width:min(28rem,90vw)}
  .sourceList{grid-template-columns:1fr}
  .sourceItem{grid-template-columns:auto minmax(0,1fr)}
  .sourceOpen{grid-column:2}
  .actions{grid-auto-flow:row;grid-auto-columns:1fr;width:100%}
  .actions>button{width:100%}
- .crystalLauncher{inset-inline-end:.75rem;bottom:.75rem}
+ .emptyHome{min-height:calc(100dvh - 6.6rem)}
+ .likedCardsFoot{align-items:flex-start;flex-wrap:wrap}
 }
 
 @media(max-width:640px){
- .app>main{padding-inline:.75rem}
+ .app>main{padding-inline:.85rem;padding-block-start:5.2rem}
+ .mobileNavButton{top:.75rem;right:.75rem;min-width:7rem}
+ .mobileNavPanel{width:94vw;padding-inline:.85rem}
+ .mobileNavPanel .navItem{min-height:4.35rem;padding:.7rem .75rem}
+ .mobileNavHead b{font-size:1.75rem}
  .welcomeScreen{padding:1.25rem}
  .welcomeContent{gap:1.5rem}
  .welcomeHook{font-size:clamp(1.8rem,8vw,2.5rem)}
  .welcomeCta{width:min(100%,22rem)}
  .modal{width:calc(100vw - 1rem);max-height:calc(100dvh - 1rem);padding:1rem}
- .crystalDrawer{width:100vw}
  .sourceItem{padding:.75rem}
+ .futurePage{margin-block-start:1.5rem;padding:1.4rem;border-radius:18px}
+ .likedCardsPage{gap:1rem}
+ .crystalSavedCard footer{align-items:flex-start;flex-wrap:wrap}
+ .likedCardsFoot{display:grid;gap:.6rem}
 }

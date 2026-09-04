@@ -2,18 +2,29 @@ export type NavigationItem={id:string;label:string;question?:string;icon:string;
 export type NavigationGroup={id:string;label:string;items:NavigationItem[]};
 
 export const primaryNavigation:NavigationItem[]=[
- {id:'dashboard',label:'דף הבית',icon:'⌂'},
- {id:'library',label:'ההתקדמות שלי במסע',icon:'◎'},
+ {id:'dashboard',label:'דף הבית',question:'חזרה לנקודת הפתיחה',icon:'⌂'},
 ];
 
 export const mentalModelNavigation:NavigationGroup[]=[
- {id:'content',label:'תוכן',items:[
-  {id:'sources',label:'המקורות שלי',icon:'↗'},
-  {id:'add-source',label:'הוסף מקור',icon:'＋',ownerOnly:true},
-  {id:'review',label:'בקרת תוכן ופרסום',icon:'✓',ownerOnly:true},
+ {id:'journey',label:'המסע שלי',items:[
+  {id:'library',label:'ההתקדמות שלי במסע',question:'איפה אני נמצא ומה הלאה',icon:'◫'},
  ]},
- {id:'system',label:'מערכת',items:[
-  {id:'settings',label:'הגדרות',icon:'⚙'},
+ {id:'saved',label:'הספרייה שלי',items:[
+  {id:'liked-cards',label:'הכרטיסיות שאהבתי',question:'כל מה שסימנתי ושמרתי',icon:'♡'},
+ ]},
+ {id:'tools',label:'הכלים שלי',items:[
+  {id:'practical-tools',label:'כלים פרקטיים',question:'צ׳קליסטים, טבלאות וכלים ליישום',icon:'⌘'},
+  {id:'exercises',label:'התרגולים שלי',question:'משימות ותרגילים לפי פרק',icon:'◎'},
+ ]},
+ {id:'connections',label:'הרחבה וקשרים',items:[
+  {id:'connection-map',label:'מפת החיבורים',question:'איך הרעיונות מתחברים',icon:'⌁'},
+  {id:'notes',label:'הערות ותובנות',question:'המחשבות שלי לאורך הדרך',icon:'✎'},
+ ]},
+ {id:'system',label:'פרטי ומערכת',items:[
+  {id:'settings',label:'הגדרות',question:'התאמה אישית של המערכת',icon:'⚙'},
+  {id:'add-source',label:'הוסף מקור',question:'קליטת חומר חדש',icon:'＋',ownerOnly:true},
+  {id:'review',label:'בקרת תוכן ופרסום',question:'בדיקה לפני פרסום',icon:'✓',ownerOnly:true},
+  {id:'sources',label:'המקורות שלי',question:'לשימוש אישי בלבד',icon:'↗',ownerOnly:true},
  ]},
 ];
 
