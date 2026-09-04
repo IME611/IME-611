@@ -20,6 +20,7 @@ The 18 repository seed sources currently provide a curated foundation journey. T
 8. **Frontend is presentation.** UI state may choose views and local preferences; it does not invent canonical domain truth.
 9. **Unknown write/review routes fail closed.** Creator-only review surfaces require authorization before database access.
 10. **Schema changes are forward-only migrations.** HTTP requests never create/migrate tables.
+11. **Dormant code is not architecture.** Replaced/unreachable frontend or server implementations are removed; Git history is the archive.
 
 ## Knowledge flow
 
@@ -54,8 +55,10 @@ published learning cards + canonical source library
 server/
   knowledge/
     application/     # intake, extraction, matching, relations, learning, publication, quality
-    domain/          # domain contracts where present
-  shared/            # shared PostgreSQL/infrastructure boundaries
+    domain/          # knowledge-domain contracts where present
+    infrastructure/  # persistence/external infrastructure where present
+  shared/            # shared PostgreSQL/corpus infrastructure
+  synthesis/         # synthesis/connection behavior separate from canonical source truth
 
 database/
   migrations/        # forward-only canonical migrations (currently 001–012)
@@ -76,12 +79,14 @@ src/
     editor/
     crystals/
     accessibility/
-  design/            # ordered design-system entrypoint and feature styles
+    welcome/
+  lib/               # small shared browser utilities only
+  design/            # neutral structural/responsive/accessibility UI baseline
 
 scripts/
   db/                 # migrations, health, production preflight
   knowledge/          # deterministic corpus/domain regressions
-  quality/            # product/security/build guards
+  quality/            # product/security/build/repository-structure guards
 ```
 
 ## Dependency direction
@@ -92,6 +97,8 @@ scripts/
 - feature code should not write `localStorage` directly; browser persistence goes through `src/core/storage.ts` or a dedicated feature adapter.
 - production navigation is declared only in `src/features/navigation/navigation.config.ts`. Unknown/unauthorized hashes normalize to the dashboard.
 - CSS enters through `src/design/index.css`.
+- `src/design/` contains no product domain logic and currently carries no branded visual theme.
+- frontend implementation must be reachable from `src/main.tsx`; server implementation must be reachable from `api/` or an intentional `scripts/` entry point.
 
 ## Canonical vs presentation identity
 
@@ -116,9 +123,11 @@ AI Gateway capability is optional at runtime. When unavailable, deterministic co
 ## Runtime / deployment
 
 - PostgreSQL migrations are checksum recorded in `schema_migrations` and protected by an advisory lock.
+- The database schema is migration-driven; there is no parallel mutable `schema.sql` authority.
 - Production preflight runs migrations + live DB quality once per Vercel deployment; deterministic code regressions run for every function build unit.
 - The Vercel Hobby project currently uses 12 Node.js Functions. Do not add a thirteenth adapter accidentally; reuse/multiplex existing routes.
 - Production build entrypoint is `npm run vercel-build`.
+- `verify:private-beta` and production prebuild both enforce frontend/server reachability so dead implementations cannot accumulate silently.
 
 ## Definition of healthy architecture
 
@@ -132,4 +141,5 @@ An engineer or agent should be able to locate the authoritative boundary quickly
 - creator review/publication UI: `src/features/editor/`;
 - local browser state: `src/core/storage.ts` and dedicated feature adapters;
 - API contract map: `api/README.md`;
+- repository folder map: `docs/engineering/REPOSITORY_MAP.md`;
 - live database operations: `docs/engineering/LIVE_DB_RUNBOOK.md`.

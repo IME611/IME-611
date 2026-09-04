@@ -1,52 +1,82 @@
 # Repository Map — E.I.L
 
-Think of the repository as a cabinet. Each drawer has one responsibility and should be replaceable without opening unrelated drawers.
+The repository is organized by responsibility. Production code should have one obvious home; obsolete alternatives are removed rather than kept beside the active implementation.
 
-## Product / UI
-`src/app/` — composition, routing/navigation, feature unlock orchestration.
+## Frontend
 
-`src/core/` — shared domain contracts, stable types, persistence adapters. No React presentation.
+`src/main.tsx` — single browser entry point.
+
+`src/app/` — application composition, route orchestration and top-level feature wiring.
+
+`src/core/` — shared frontend domain contracts, stable types, errors and browser persistence. No visual styling.
+
+`src/data/` — curated foundation presentation/fallback data that is still required by the learner product.
 
 `src/features/`
-- `dashboard/` — current state and journey overview.
-- `journey/` — the 18-layer spiral learning experience and full-source reader.
-- `knowledge/` — source ingestion/library-facing UI.
-- `synthesis/` — connections, insights, mentor-facing UI.
-- `evolution/` — awareness, experiments, reflection.
-- `shell/` — sidebar/mobile/global shell.
+- `accessibility/` — reusable accessibility interaction helpers.
+- `crystals/` — saved learner insights and personal collection state/UI.
+- `editor/` — creator review and publication controls.
+- `journey/` — learning sequence, card reader, source evidence and learner progress.
+- `knowledge-dashboard/` — learner home/current progress overview.
+- `navigation/` — production navigation allowlist and desktop/mobile navigation.
+- `sources/` — source intake and canonical source reader UI.
+- `welcome/` — semantic entry screen.
 
-`src/design/` — **all visual styling**. This drawer is intentionally isolated so future redesigns do not alter product logic.
+`src/lib/` — small presentation-neutral browser utilities that are genuinely shared/reachable. Do not use this as a dumping ground for product logic.
 
-`src/data/` — static/fallback product data and the authored learning path. Future migration target: split by `journey/`, `taxonomy/`, and `fallback/` subfolders.
+`src/design/` — neutral UI foundation only: structural layout, responsive behavior and accessibility presentation rules. Product colors/effects are intentionally absent during the UX rebuild.
 
-`src/lib/` — pure technical helpers with no product meaning.
+The frontend prebuild reachability audit starts at `src/main.tsx` and fails if implementation files under `src` become orphaned.
 
 ## Backend
-`api/` — stable public HTTP route adapters. File paths here are URL contracts, so keep them thin rather than moving them casually.
 
-`server/shared/` — backend infrastructure shared by domains (canonical corpus loader etc.).
+`api/` — stable Vercel HTTP route adapters. File paths are public route contracts; keep adapters thin and preserve the 12-function budget.
 
-Future server drawers:
-- `server/knowledge/` — corpus, sources, ingestion.
-- `server/synthesis/` — atlas, matching, insights, mentor retrieval/synthesis.
-- `server/evolution/` — user learning/experiment state once moved server-side.
+`server/knowledge/` — canonical source, intake, extraction, matching, relations, learning, publication and quality domain/application logic.
 
-## Canonical data
-`data/` — server-side canonical corpus artifacts and source mapping. Never replace these with summaries.
+`server/shared/` — infrastructure and helpers shared across server domains.
 
-`database/` — persistence schema/contracts.
+`server/synthesis/` — synthesis/connection logic that is intentionally separate from canonical source truth.
+
+The server reachability audit treats `api/` and intentional `scripts/` as entry points and fails if implementation files under `server/` become orphaned.
+
+## Canonical data and schema
+
+`data/` — server-side canonical corpus artifacts and mappings. Never replace canonical source truth with summaries.
+
+`database/migrations/` — forward-only schema migrations.
+
+`database/verification/` — read-only schema/data verification SQL.
+
+## Automation and quality
+
+`scripts/db/` — migrations, live database health and deployment preflight.
+
+`scripts/knowledge/` — deterministic knowledge/corpus regression checks and maintenance operations.
+
+`scripts/quality/` — production, security, UI and repository-structure guards.
 
 ## Documentation
-`docs/product/` — what E.I.L means and how the learning loop works.
-`docs/engineering/` — architecture decisions, repository maps, migrations, deployment notes.
+
+`docs/product/` — product model, learning architecture and corpus/product working documents.
+
+`docs/engineering/` — current engineering contracts, repository map, UI foundation and operations runbooks.
+
+Root documents (`README.md`, `ARCHITECTURE.md`, `AGENTS.md`, `DEPLOY.md`) describe the repository/product at the highest level.
 
 ## Change routing
-Before editing, identify the drawer:
-- visual change → `src/design/`
-- journey order/question logic → `src/features/journey/` + authored journey data
-- navigation/unlocks → `src/app/`
-- source preservation/import → `server/knowledge/` or thin `api/` adapter
-- connection/insight/mentor algorithms → `server/synthesis/`
-- shared type or persistence contract → `src/core/`
 
-If a change requires editing three unrelated drawers, first ask whether a missing abstraction is causing the coupling.
+- frontend orchestration → `src/app/`
+- learner navigation → `src/features/navigation/`
+- journey behavior/content presentation → `src/features/journey/`
+- source intake/reading UI → `src/features/sources/`
+- creator review/publication → `src/features/editor/`
+- browser persistence/shared frontend contracts → `src/core/`
+- generic browser utilities → `src/lib/` only when truly cross-feature
+- structural/responsive/accessibility CSS → `src/design/`
+- canonical knowledge/domain behavior → `server/knowledge/`
+- stable HTTP transport → `api/`
+- migrations → `database/migrations/`
+- regression/quality enforcement → `scripts/`
+
+If a change appears to require a new parallel implementation of an existing responsibility, consolidate the existing owner instead of adding another drawer.
