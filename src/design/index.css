@@ -1,6 +1,8 @@
-/* E.I.L UI baseline — structure and accessibility only.
-   Visual design intentionally starts from zero. */
+/* E.I.L central design entry point. */
 @import './foundation.css';
 @import './layout.css';
 @import './responsive.css';
 @import './accessibility.css';
+
+/* The journey owns its own back navigation; hide the generic shell control there. */
+.app>main:has(> .spiralLibrary,> .learningCardReader,> .spiralChapter)>.pageBack{display:none}
