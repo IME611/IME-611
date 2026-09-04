@@ -1,27 +1,12 @@
-# E.I.L Design Drawer
+# UI baseline
 
-This folder owns **presentation only**. Product logic, knowledge logic, persistence, API behavior, and journey rules must never live here.
+The previous visual design system has been removed.
 
-## Rule of isolation
-- Application styling enters through `src/design/index.css` only.
-- Feature code must not import CSS files directly.
-- A redesign can replace this entire folder without changing domain behavior.
-- Visual React primitives may live under `src/design/primitives/`, but they must remain stateless and domain-agnostic.
-- Do not add `v5`, `v6`, or `final-final` style files. Consolidate into named responsibilities.
+This directory currently contains only:
+- `system.css` — functional browser/layout normalization needed to keep the product usable while UX is rebuilt.
+- `accessibility.css` — focus, reduced-motion, touch-target and assistive-technology rules.
+- `index.css` — the single stylesheet entry point imported by the application.
 
-## Canonical drawers
-- `primitives/tokens.css` — color, blur, translucency, borders, radii, shadows, motion and layout tokens.
-- `primitives/primitives.css` — reusable Liquid Glass material behavior.
-- `primitives/Glass.tsx` — stateless visual primitives: `GlassSurface`, `GlassCard`, `GlassNavigation`, `GlassButton`, `GlassInput`, `GlassTextarea`, `GlassModal`.
-- `foundations/` — base layout/reset and progressive-display presentation.
-- `features/` — feature-specific layout only; no domain logic.
-- `glass/system.css` — Stage 5 visual authority for the complete product, loaded last.
-- `glass/legacy/` and `glass/current.css` — historical compatibility layers; never extend these with new design decisions.
+No product palette, decorative effects, Liquid Glass, gradients, shadows, visual tokens, or branded component styling should be added until the information architecture, navigation, interaction model, responsive behavior and accessibility pass are complete.
 
-## Liquid Glass contract
-Every primary surface uses the same optical model: translucent background sampling, strong top-edge reflection, soft chromatic refraction, restrained inner rim, deep shadow separation, and motion that shifts the highlight rather than moving the content aggressively.
-
-Typography prioritizes readability over spectacle. Long-form source text remains high contrast and stable; provenance, callouts, actions and navigation receive stronger glass treatment. `prefers-reduced-motion` disables non-essential movement.
-
-## Design boundary
-Design changes must be possible without touching `src/core`, `server/`, `api/`, persistence rules, provenance rules, or LearningPath logic. Feature files may consume stateless visual primitives, but the primitives may never import from a feature or domain module.
+Product/domain logic must remain outside this directory.

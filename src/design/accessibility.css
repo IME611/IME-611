@@ -1,10 +1,9 @@
-:root{--focus-ring:0 0 0 3px rgba(184,150,46,.34),0 0 0 6px rgba(0,96,57,.18)}
-:where(button,a,input,textarea,select,[tabindex]):focus-visible{outline:2px solid #006039;outline-offset:3px;box-shadow:var(--focus-ring)}
-:where(button,[role="button"]){touch-action:manipulation}
-:where(button,input,textarea,select){font:inherit}
-:where(button:disabled,[aria-disabled="true"]){cursor:not-allowed;opacity:.55}
-[role="dialog"]:focus{outline:none}
+/* Accessibility rules only. Uses system colors rather than a product palette. */
+:where(a,button,input,textarea,select,[tabindex]):focus-visible{outline:3px solid Highlight;outline-offset:3px}
+:where(button:disabled,[aria-disabled="true"]){cursor:not-allowed;opacity:.6}
+:where([aria-busy="true"]){cursor:progress}
 .srOnly{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
-.skipLink{position:fixed;top:10px;left:10px;z-index:1000;transform:translateY(-160%);padding:10px 14px;border-radius:12px;background:#006039;color:#fff}.skipLink:focus{transform:none}
-@media(prefers-contrast:more){:root{--focus-ring:0 0 0 4px #fff,0 0 0 7px #006039}.glassSurface,.glassCard,.glassNavigation,.mediaCard,.videoModal{border-color:rgba(26,26,24,.55)!important}.muted,.mediaCard header p,.mediaDisclosure p,.frequencyActions small{color:rgba(26,26,24,.88)!important}}
+.skipLink{position:fixed;inset-block-start:0;inset-inline-start:0;z-index:2147483647;transform:translateY(-120%);padding:.75rem 1rem;background:Canvas;color:CanvasText;border:2px solid CanvasText}
+.skipLink:focus{transform:none}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+@media(forced-colors:active){:where(a,button,input,textarea,select,[tabindex]):focus-visible{outline:3px solid Highlight}}
