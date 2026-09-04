@@ -1,0 +1,25 @@
+/* Responsive behavior only. No visual theme decisions. */
+
+@media(max-width:900px){
+ .app{display:block}
+ .app>main{padding:1rem;padding-block-start:4.5rem}
+ .productNav{display:none}
+ .mobileNavButton{display:inline-flex;align-items:center;gap:.5rem;position:fixed;top:.75rem;inset-inline-start:.75rem;z-index:80}
+ .sourceList{grid-template-columns:1fr}
+ .sourceItem{grid-template-columns:auto minmax(0,1fr)}
+ .sourceOpen{grid-column:2}
+ .actions{grid-auto-flow:row;grid-auto-columns:1fr;width:100%}
+ .actions>button{width:100%}
+ .crystalLauncher{inset-inline-end:.75rem;bottom:.75rem}
+}
+
+@media(max-width:640px){
+ .app>main{padding-inline:.75rem}
+ .welcomeScreen{padding:1.25rem}
+ .welcomeContent{gap:1.5rem}
+ .welcomeHook{font-size:clamp(1.8rem,8vw,2.5rem)}
+ .welcomeCta{width:min(100%,22rem)}
+ .modal{width:calc(100vw - 1rem);max-height:calc(100dvh - 1rem);padding:1rem}
+ .crystalDrawer{width:100vw}
+ .sourceItem{padding:.75rem}
+}

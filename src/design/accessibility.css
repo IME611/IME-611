@@ -1,9 +1,29 @@
-/* Accessibility rules only. Uses system colors rather than a product palette. */
-:where(a,button,input,textarea,select,[tabindex]):focus-visible{outline:3px solid Highlight;outline-offset:3px}
+/* Accessibility is a product requirement, not a visual theme. */
+
+:where(button,a,input,textarea,select,[tabindex]):focus-visible{outline:3px solid Highlight;outline-offset:3px}
+:where(button,[role="button"]){touch-action:manipulation}
+:where(button,input,textarea,select){font:inherit}
 :where(button:disabled,[aria-disabled="true"]){cursor:not-allowed;opacity:.6}
-:where([aria-busy="true"]){cursor:progress}
+[role="dialog"]:focus{outline:none}
+
 .srOnly{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
-.skipLink{position:fixed;inset-block-start:0;inset-inline-start:0;z-index:2147483647;transform:translateY(-120%);padding:.75rem 1rem;background:Canvas;color:CanvasText;border:2px solid CanvasText}
-.skipLink:focus{transform:none}
-@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
-@media(forced-colors:active){:where(a,button,input,textarea,select,[tabindex]):focus-visible{outline:3px solid Highlight}}
+.skipLink{position:fixed;top:.5rem;inset-inline-start:.5rem;z-index:1000;transform:translateY(-180%);padding:.7rem 1rem;border:2px solid CanvasText;background:Canvas;color:CanvasText;text-decoration:none}
+.skipLink:focus-visible{transform:none}
+
+:target{scroll-margin-block-start:5rem}
+main:focus{outline:none}
+
+@media(pointer:coarse){
+ :where(button,a,input,select,[role="button"]){min-height:44px}
+}
+
+@media(prefers-reduced-motion:reduce){
+ html{scroll-behavior:auto!important}
+ *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+}
+
+@media(forced-colors:active){
+ *{forced-color-adjust:auto}
+ :where(button,a,input,textarea,select,[tabindex]):focus-visible{outline:3px solid Highlight}
+ .productNav,.modal,.crystalDrawer,.sourceLibrarySection,.sourceItem,.notice{border-color:CanvasText}
+}

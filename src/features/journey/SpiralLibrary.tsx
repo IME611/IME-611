@@ -31,10 +31,9 @@ function stageForNum(num: number): LearningStage | undefined {
   return journeyPath.stages.find(s => s.order === num);
 }
 
-function ChapterCard({ chapter, displayTitle, layer, unlocked, completed, onClick }: {
+function ChapterCard({ chapter, displayTitle, unlocked, completed, onClick }: {
   chapter: Chapter;
   displayTitle?: string;
-  layer: JourneyLayer;
   unlocked: boolean;
   completed: boolean;
   onClick: () => void;
@@ -43,7 +42,6 @@ function ChapterCard({ chapter, displayTitle, layer, unlocked, completed, onClic
     <button
       type="button"
       className={`spiralCard${completed ? ' spiralCard--done' : ''}${!unlocked ? ' spiralCard--locked' : ''}`}
-      style={{ '--lc': layer.color, '--lt': layer.textColor } as React.CSSProperties}
       onClick={onClick}
       disabled={!unlocked}
     >
@@ -57,7 +55,7 @@ function ChapterCard({ chapter, displayTitle, layer, unlocked, completed, onClic
 }
 
 function PublishedUnitCard({unit,onClick}:{unit:PublishedLearningUnit;onClick:()=>void}){
-  return <button type="button" className="spiralCard publishedUnitCard" onClick={onClick} style={{'--lc':'#006039','--lt':'#006039'} as React.CSSProperties}>
+  return <button type="button" className="spiralCard publishedUnitCard" onClick={onClick}>
     <span className="spiralCardNum publishedUnitBadge">חדש</span>
     <span className="spiralCardBody">
       <span className="spiralCardTitle">{unit.title}</span>
@@ -86,11 +84,11 @@ function ChapterView({ chapter, layer, onBack, onComplete, onPrevious, canGoPrev
     <div className="spiralChapter" dir="rtl">
       <div className="spiralChapterTop">
         <button className="spiralBack" type="button" onClick={onBack}>{sourceOnly?'→ חזרה למקורות':'← חזרה למסע'}</button>
-        <span className="spiralChapterPos" style={{ color: layer.textColor }}>{sourceOnly?'מסמך מקור מלא':layer.label}</span>
+        <span className="spiralChapterPos">{sourceOnly?'מסמך מקור מלא':layer.label}</span>
       </div>
 
-      <header className="spiralChapterHeader" style={{ borderColor: layer.color }}>
-        <div className="spiralChapterNum" style={{ background: layer.textColor }}>
+      <header className="spiralChapterHeader">
+        <div className="spiralChapterNum">
           {String(chapter.number).padStart(2, '0')}
         </div>
         <div>
@@ -100,13 +98,13 @@ function ChapterView({ chapter, layer, onBack, onComplete, onPrevious, canGoPrev
       </header>
 
       {!sourceOnly&&stage?.guidingQuestion && (
-        <div className="spiralQuestion" style={{ borderColor: layer.color }}>
+        <div className="spiralQuestion">
           <span className="spiralQuestionLabel">השאלה שהפרק עונה עליה</span>
           <p>{stage.guidingQuestion}</p>
         </div>
       )}
 
-      {!sourceOnly&&<div className="spiralWhy" style={{ background: `${layer.color}18` }}>
+      {!sourceOnly&&<div className="spiralWhy">
         <span className="spiralWhyLabel">למה הפרק הזה כאן — בדיוק בנקודה הזו</span>
         <p>{layer.why}</p>
       </div>}
@@ -122,12 +120,12 @@ function ChapterView({ chapter, layer, onBack, onComplete, onPrevious, canGoPrev
           if (t.startsWith('##HIGHLIGHT##')) return <div key={i} className="chHighlight">{t.replace('##HIGHLIGHT##','').trim()}</div>;
           if (t.startsWith('##BIG##')) return <div key={i} className="chBig">{t.replace('##BIG##','').trim()}</div>;
           if (t.startsWith('##GROUP##')) return <div key={i} className="chGroup">{t.replace('##GROUP##','').trim()}</div>;
-          if (t.startsWith('##SYSTEM##')) return <div key={i} className="chSystem"><span className="chSystemDot" style={{background:layer.color}} aria-hidden="true"/>  <span>{t.replace('##SYSTEM##','').trim()}</span></div>;
+          if (t.startsWith('##SYSTEM##')) return <div key={i} className="chSystem"><span className="chSystemDot" aria-hidden="true"/> <span>{t.replace('##SYSTEM##','').trim()}</span></div>;
           if (t.startsWith('##WINK##')) return <div key={i} className="chWink">{t.replace('##WINK##','').trim()}</div>;
           if ((/^פרק\s*\d+/u.test(t) || /^\d+\.\s+/u.test(t)) && t.length < 120)
             return <h3 key={i} className="spiralContentH3">{t}</h3>;
           if (/^[-•✓→]/u.test(t))
-            return <div className="spiralBullet" key={i}><span style={{color:layer.color}} aria-hidden="true">•</span><p>{t.replace(/^[-•✓→]\s*/u,'')}</p></div>;
+            return <div className="spiralBullet" key={i}><span aria-hidden="true">•</span><p>{t.replace(/^[-•✓→]\s*/u,'')}</p></div>;
           return <p key={i} className="spiralPara">{t}</p>;
         })}
       </article>
@@ -176,7 +174,6 @@ function ChapterView({ chapter, layer, onBack, onComplete, onPrevious, canGoPrev
         <button
           className="spiralComplete spiralChapterComplete"
           type="button"
-          style={{ background: "#006039", color: "#fff", opacity: 1 }}
           onClick={onComplete}
         >
           {isFinal ? 'סיימתי את המסע' : 'סיימתי — לפרק הבא ←'}
@@ -189,7 +186,7 @@ function ChapterView({ chapter, layer, onBack, onComplete, onPrevious, canGoPrev
 function ChapterExperience({chapter,chapters,layer,onBack,onComplete,onPrevious}:{chapter:Chapter;chapters:Chapter[];layer:JourneyLayer;onBack:()=>void;onComplete:()=>void;onPrevious?:()=>void}){
   const published=usePublishedLearningCards(chapter.number),pilot=getPilotCardChapter(chapter.number),stage=stageForNum(chapter.number);
   const sourceChapter=pilot?chapters.find(item=>item.sourceFile===pilot.sourceFile)??chapter:chapter;
-  if(published.loading&&!pilot)return <div className="spiralChapter journeyCardsLoading" dir="rtl"><div className="spiralChapterTop"><button className="spiralBack" type="button" onClick={onBack}>← חזרה לנושאים</button><span className="spiralChapterPos" style={{color:layer.textColor}}>{layer.label}</span></div><p>טוען את הכרטיסיות של הפרק…</p></div>;
+  if(published.loading&&!pilot)return <div className="spiralChapter journeyCardsLoading" dir="rtl"><div className="spiralChapterTop"><button className="spiralBack" type="button" onClick={onBack}>← חזרה לנושאים</button><span className="spiralChapterPos">{layer.label}</span></div><p>טוען את הכרטיסיות של הפרק…</p></div>;
   const combinedCards=[...(pilot?.cards||[]),...published.cards].map((card,index)=>({...card,order:index+1}));
   const cardChapter:LearningCardChapter|null=combinedCards.length?{
     chapterNumber:chapter.number,
@@ -200,7 +197,7 @@ function ChapterExperience({chapter,chapters,layer,onBack,onComplete,onPrevious}
     sourceFile:pilot?.sourceFile??chapter.sourceFile,
     cards:combinedCards,
   }:null;
-  if(cardChapter)return <LearningCardReader chapter={cardChapter} sourceChapter={sourceChapter} layerLabel={layer.label} color={layer.textColor} onBack={onBack} onComplete={onComplete} onPreviousChapter={onPrevious}/>;
+  if(cardChapter)return <LearningCardReader chapter={cardChapter} sourceChapter={sourceChapter} layerLabel={layer.label} onBack={onBack} onComplete={onComplete} onPreviousChapter={onPrevious}/>;
   return <ChapterView chapter={chapter} layer={layer} onBack={onBack} onComplete={onComplete} onPrevious={onPrevious} canGoPrevious={Boolean(onPrevious)} isFinal={chapter.number===18}/>;
 }
 
@@ -219,7 +216,7 @@ function DynamicUnitExperience({unit,onBack}:{unit:PublishedLearningUnit;onBack:
     sourceFile:'מקור מאושר',
     cards:published.cards,
   };
-  return <LearningCardReader chapter={chapter} layerLabel="חדש במאגר" color="#006039" onBack={onBack} onComplete={onBack} backLabel="← חזרה למסע" completionLabel="סיימתי — חזרה למסע ←"/>;
+  return <LearningCardReader chapter={chapter} layerLabel="חדש במאגר" onBack={onBack} onComplete={onBack} backLabel="← חזרה למסע" completionLabel="סיימתי — חזרה למסע ←"/>;
 }
 
 export default function SpiralLibrary({ chapters, initialChapter, initialSourceNumber, initialLayer, onInitialChapterOpened, onInitialSourceOpened, onInitialLayerOpened, onSourceClosed }: Props) {
@@ -275,7 +272,7 @@ export default function SpiralLibrary({ chapters, initialChapter, initialSourceN
     setActiveSourceNum(null);
     if(targetLayer)setOpenLayer(targetLayer.id);
     setActiveNum(chapterNumber);
-    scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0 });
   };
 
   if(activeSourceNum){
@@ -306,7 +303,7 @@ export default function SpiralLibrary({ chapters, initialChapter, initialSourceN
       if(nextLayer)setOpenLayer(nextLayer.id);
       setActiveNum(next);
     } else { setActiveNum(null); }
-    scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0 });
   };
 
   if (chapter) {
@@ -335,24 +332,23 @@ export default function SpiralLibrary({ chapters, initialChapter, initialSourceN
           const bodyId=`journey-layer-${l.id}`;
 
           return (
-            <div key={l.id} className={`spiralLayer${isOpen ? ' spiralLayer--open' : ''}`} style={{'--lc':l.color,'--lt':l.textColor} as React.CSSProperties}>
+            <div key={l.id} className={`spiralLayer${isOpen ? ' spiralLayer--open' : ''}`}>
               <button
                 type="button"
                 className="spiralLayerHeader"
-                style={{ borderColor: l.color, background: isOpen ? `${l.color}12` : 'transparent' }}
                 onClick={() => setOpenLayer(isOpen ? '' : l.id)}
                 aria-expanded={isOpen}
                 aria-controls={bodyId}
               >
                 <div className="spiralLayerLeft">
-                  <div className="spiralLayerDot" style={{ background: l.color }} aria-hidden="true" />
+                  <div className="spiralLayerDot" aria-hidden="true" />
                   <div>
-                    <div className="spiralLayerLabel" style={{ color: l.textColor }}>{l.label}</div>
+                    <div className="spiralLayerLabel">{l.label}</div>
                   </div>
                 </div>
                 <div className="spiralLayerRight">
-                  <span className="spiralLayerCount" style={{ color: l.textColor }}>{layerDone}/{l.nums.length}</span>
-                  <span className="spiralLayerChevron" style={{ display:'inline-block', transform: isOpen ? 'rotate(180deg)' : 'none', transition:'transform .25s' }} aria-hidden="true">▾</span>
+                  <span className="spiralLayerCount">{layerDone}/{l.nums.length}</span>
+                  <span className="spiralLayerChevron" aria-hidden="true">{isOpen?'▴':'▾'}</span>
                 </div>
               </button>
 
@@ -364,7 +360,6 @@ export default function SpiralLibrary({ chapters, initialChapter, initialSourceN
                       key={ch.number}
                       chapter={ch}
                       displayTitle={getPilotCardChapter(ch.number)?.title}
-                      layer={l}
                       unlocked={unlocked(ch.number)}
                       completed={completed(ch.number)}
                       onClick={() => openChapter(ch.number)}
@@ -384,7 +379,7 @@ export default function SpiralLibrary({ chapters, initialChapter, initialSourceN
           <p>היחידות האלו פורסמו מתוך מקורות חדשים. הן זמינות ללמידה ולבדיקת המקור, אך אינן משנות אוטומטית את סדר מסלול היסוד.</p>
         </div>
         <div className="spiralCards">
-          {dynamicUnits.map(unit=><PublishedUnitCard key={unit.key} unit={unit} onClick={()=>{setActiveDynamicUnitKey(unit.key);scrollTo({top:0,behavior:'smooth'})}}/>)}
+          {dynamicUnits.map(unit=><PublishedUnitCard key={unit.key} unit={unit} onClick={()=>{setActiveDynamicUnitKey(unit.key);window.scrollTo({top:0})}}/>)}
         </div>
       </section>:null}
       {publishedUnits.error?<p className="publishedUnitsError" role="status">היחידות החדשות לא נטענו כרגע. מסלול היסוד ממשיך לפעול כרגיל.</p>:null}

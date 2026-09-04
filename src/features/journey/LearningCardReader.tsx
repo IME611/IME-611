@@ -30,7 +30,6 @@ type Props={
   chapter:LearningCardChapter;
   sourceChapter?:Chapter;
   layerLabel:string;
-  color:string;
   onBack:()=>void;
   onComplete:()=>void;
   onPreviousChapter?:()=>void;
@@ -38,7 +37,7 @@ type Props={
   completionLabel?:string;
 };
 
-export function LearningCardReader({chapter,sourceChapter,layerLabel,color,onBack,onComplete,onPreviousChapter,backLabel='← חזרה לנושאים',completionLabel}:Props){
+export function LearningCardReader({chapter,sourceChapter,layerLabel,onBack,onComplete,onPreviousChapter,backLabel='← חזרה לנושאים',completionLabel}:Props){
   const progressKey=chapter.unitKey??chapter.chapterNumber??chapter.title;
   const chapterIdentity=chapter.unitKey??(chapter.chapterNumber?`legacy-chapter:${chapter.chapterNumber}`:chapter.title);
   const{position,setPosition}=useCardProgress(progressKey,chapter.cards.length);
@@ -54,19 +53,19 @@ export function LearningCardReader({chapter,sourceChapter,layerLabel,color,onBac
   const previous=()=>{
     if(position>0)setPosition(position-1);
     else onPreviousChapter?.();
-    window.scrollTo({top:0,behavior:'smooth'});
+    window.scrollTo({top:0});
   };
   const next=()=>{
     if(isLast)onComplete();
     else{
       setPosition(position+1);
-      window.scrollTo({top:0,behavior:'smooth'});
+      window.scrollTo({top:0});
     }
   };
   const displayNumber=chapter.displayNumber??(chapter.chapterNumber?String(chapter.chapterNumber).padStart(2,'0'):'חדש');
   const canShowSource=Boolean(current.sourceId||sourceChapter);
 
-  return <div className="learningCardReader" dir="rtl" style={{'--card-accent':color} as React.CSSProperties}>
+  return <div className="learningCardReader" dir="rtl">
     <div className="spiralChapterTop">
       <button className="spiralBack" type="button" onClick={onBack}>{backLabel}</button>
       <span className="spiralChapterPos">{layerLabel}</span>

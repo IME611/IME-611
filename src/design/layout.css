@@ -1,0 +1,60 @@
+/* Structural layout only. Visual styling is intentionally absent. */
+
+.app{min-height:100vh;display:grid;grid-template-columns:auto minmax(0,1fr)}
+.app>main{min-width:0;padding:2rem;max-width:1280px;width:100%;margin-inline:auto}
+.productNav{width:18rem;min-height:100vh;padding:1rem;border-inline-end:1px solid CanvasText;display:flex;flex-direction:column;gap:1rem}
+.productNav.collapsed{width:5rem}
+.productNav header,.productNav footer,.modalHead,.sourceLibrarySectionHead,.crystalGroupHead,.crystalSavedCard footer,.crystalDrawerFoot{display:flex;align-items:center;justify-content:space-between;gap:.75rem}
+.productNav nav,.productNav nav section,.sourceList,.settingForm,.crystalGroups,.actions{display:grid;gap:.75rem}
+.productNav nav section{padding-block-start:.75rem}
+.productNav nav h2{font-size:1rem;margin:0}
+.navItem,.navAdd,.navBrand,.navCollapse{width:100%;text-align:start}
+.navItem{display:flex;align-items:center;gap:.75rem}
+.navItem i{font-style:normal}
+.navItem span{display:grid;gap:.15rem}
+.navItem small{font-weight:400}
+.productNav.collapsed .navItem,.productNav.collapsed .navBrand,.productNav.collapsed .navCollapse{justify-content:center;text-align:center}
+.mobileNavButton{display:none}
+.mobileNavBackdrop,.overlay,.crystalOverlay{position:fixed;inset:0;z-index:100;display:grid;place-items:center;background:Canvas}
+.mobileNavPanel,.modal,.crystalDrawer{width:min(46rem,calc(100vw - 2rem));max-height:calc(100vh - 2rem);overflow:auto;padding:1.25rem;border:1px solid CanvasText;background:Canvas;color:CanvasText}
+.mobileNavPanel{height:100%;max-height:none;margin-inline-start:auto;width:min(22rem,90vw);place-self:stretch start}
+.mobileNavPanel nav,.mobileNavPanel nav section{display:grid;gap:.75rem}
+.mobileNavPanel header{display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.simplePage,.knowledgeDashboard,.spiralLibrary,.reviewConsole{display:grid;gap:1.25rem}
+.simplePageTitle,.simplePageSub{margin:0}
+.sourceLibrarySection{display:grid;gap:1rem;padding-block:1rem;border-top:1px solid CanvasText}
+.sourceList{grid-template-columns:repeat(auto-fit,minmax(min(100%,18rem),1fr))}
+.sourceItem{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:1rem;text-align:start}
+.sourceInfo{display:grid;gap:.25rem;min-width:0}
+.sourceName{font-weight:700}
+.sourceFile{overflow-wrap:anywhere}
+.settingForm{max-width:42rem}
+.settingField{display:grid;gap:.4rem}
+.settingLabel{font-weight:700}
+.settingDivider{border-top:1px solid CanvasText;margin-block:.5rem}
+.notice{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.75rem;border:1px solid CanvasText;margin-block-end:1rem}
+.pageBack{margin-block-end:1rem}
+.routeLoading{padding:2rem;text-align:center}
+.crystalLauncher{position:fixed;inset-inline-end:1rem;bottom:1rem;z-index:40;display:flex;align-items:center;gap:.5rem}
+.crystalDrawer{place-self:stretch start;width:min(34rem,94vw);max-height:100vh;height:100%;border-block:0;border-inline-start:1px solid CanvasText}
+.crystalDrawer header{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem}
+.crystalGroups section{display:grid;gap:.75rem;padding-block:1rem;border-top:1px solid CanvasText}
+.crystalSavedCard{padding:1rem;border:1px solid CanvasText}
+.crystalSavedCard blockquote{display:grid;gap:.35rem}
+.crystalDrawerFoot{padding-block-start:1rem;border-top:1px solid CanvasText}
+.actions{grid-auto-flow:column;justify-content:start;align-items:center;grid-auto-columns:max-content}
+.dropZone{display:grid;gap:.5rem;padding:1rem;border:1px dashed CanvasText}
+.dropZone input[type="file"]{width:100%}
+.formError,.formSuccess,.settingStatus{font-weight:700}
+.welcomeScreen{min-height:100vh;display:grid;place-items:center;padding:2rem;background:Canvas;color:CanvasText}
+.welcomeContent{width:min(52rem,100%);display:grid;gap:2rem;text-align:center;justify-items:center}
+.welcomeBrandMark{margin:0;font-weight:700;letter-spacing:.25em}
+.welcomeHook{margin:0;display:grid;gap:.35rem;font-size:clamp(2rem,5vw,3.5rem)}
+.welcomeHook span{display:block}
+.welcomeCta{min-width:14rem}
+
+/* Generic content structures remain readable while visual design is reset. */
+:where(.knowledgeDashboard,.spiralLibrary,.reviewConsole) section,:where(.knowledgeDashboard,.spiralLibrary,.reviewConsole) article{padding:1rem;border:1px solid CanvasText}
+:where(.knowledgeDashboard,.spiralLibrary,.reviewConsole) :where(ul,ol){padding-inline-start:1.5rem}
+:where(.knowledgeDashboard,.spiralLibrary,.reviewConsole) table{width:100%;border-collapse:collapse;display:block;overflow-x:auto}
+:where(.knowledgeDashboard,.spiralLibrary,.reviewConsole) th,:where(.knowledgeDashboard,.spiralLibrary,.reviewConsole) td{padding:.6rem;border:1px solid CanvasText;text-align:start}
