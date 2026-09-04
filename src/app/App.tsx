@@ -7,8 +7,6 @@ import{isKnownNavigation,isOwnerOnlyNavigation}from'../features/navigation/navig
 import{useCrystalCollection}from'../features/crystals/model/useCrystalCollection';
 import type{JourneyLayerId}from'../features/journey/model/journey-layers';
 import{WelcomeScreen}from'../features/welcome/WelcomeScreen';
-import{LiquidGlassFilter}from'../design/primitives/LiquidGlassFilter';
-import{bindLiquidGlassPointerTracking}from'../design/glass/runtime';
 import type{Chapter}from'../core/types';
 import{journeyStorage,readJson,readText,resetPersonalProgress,storageKeys,writeJson,writeText}from'../core/storage';
 
@@ -53,7 +51,6 @@ export default function App(){
   }).catch(()=>{});
  },[reviewMode]);
  useEffect(()=>{if(!reviewMode)writeText(storageKeys.railCollapsed,collapsed?'1':'0')},[collapsed,reviewMode]);
- useEffect(()=>{if(reviewMode)return;return bindLiquidGlassPointerTracking()},[reviewMode]);
  useEffect(()=>{if(!reviewMode&&page!==activePage)replaceNav(activePage)},[activePage,page,replaceNav,reviewMode]);
  useEffect(()=>{if(activePage!=='sources'&&selectedPublicSourceId)setSelectedPublicSourceId(null)},[activePage,selectedPublicSourceId]);
 
@@ -141,13 +138,13 @@ export default function App(){
   </div>;
  };
 
- if(reviewMode)return <><LiquidGlassFilter/><React.Suspense fallback={<RouteLoading/>}><ReviewConsole/></React.Suspense></>;
- if(!entered)return <><LiquidGlassFilter/><WelcomeScreen onStart={enterExperience}/></>;
+ if(reviewMode)return <><a className="skipLink" href="#main-content">דלג לתוכן</a><main id="main-content" tabIndex={-1}><React.Suspense fallback={<RouteLoading/>}><ReviewConsole/></React.Suspense></main></>;
+ if(!entered)return <><a className="skipLink" href="#main-content">דלג לתוכן</a><WelcomeScreen onStart={enterExperience}/></>;
 
- return <><LiquidGlassFilter/><div className="app">
+ return <><a className="skipLink" href="#main-content">דלג לתוכן</a><div className="app">
   <DesktopNavigation page={activePage} onNavigate={nav} onAdd={openNew} collapsed={collapsed} onCollapsedChange={setCollapsed} online={online}/>
   <MobileNavigation page={activePage} onNavigate={nav} onAdd={openNew} online={online}/>
-  <main>
+  <main id="main-content" tabIndex={-1}>
    {activePage!=='dashboard'&&<div className="pageBack"><button onClick={goBack}>→ חזרה</button></div>}
    {notice&&<div className="notice" role="status"><span>{notice}</span><button type="button" aria-label="סגור הודעה" onClick={()=>setNotice('')}>×</button></div>}
    {activePage==='dashboard'&&<KnowledgeDashboard onOpenJourney={openJourney}/>}
@@ -167,7 +164,7 @@ export default function App(){
    </React.Suspense>
    {owner&&editor&&<React.Suspense fallback={null}><AddSourceModal open onClose={()=>setEditor(false)} onImported={setNotice}/></React.Suspense>}
   </main>
-  <button className="crystalLauncher" onClick={()=>setCrystalsOpen(true)} aria-label="פתח את אוסף הקריסטלים"><span>◆</span><b>הקריסטלים שלי</b><em>{crystals.length}</em></button>
+  <button className="crystalLauncher" onClick={()=>setCrystalsOpen(true)} aria-label="פתח את אוסף הקריסטלים"><span aria-hidden="true">◆</span><b>הקריסטלים שלי</b><em>{crystals.length}</em></button>
   {crystalsOpen&&<React.Suspense fallback={null}><CrystalCollectionDrawer open onClose={()=>setCrystalsOpen(false)}/></React.Suspense>}
  </div></>;
 }
