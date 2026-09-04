@@ -4,7 +4,6 @@ import { journeyPath } from './model/journey-stage';
 import { JOURNEY_LAYERS, isJourneyLayerId, journeyLayerForChapter } from './model/journey-layers';
 import type { JourneyLayerId } from './model/journey-layers';
 import type { LearningStage } from '../../core/learning-path/learning-path.types';
-import { useCrystalCollection } from '../crystals/model/useCrystalCollection';
 import { getPilotCardChapter } from './data/pilot-card-script';
 import { LearningCardReader } from './LearningCardReader';
 import { usePublishedLearningCards } from './model/usePublishedLearningCards';
@@ -75,9 +74,6 @@ function ChapterView({ chapter, layer, onBack, onComplete, onPrevious, canGoPrev
   isFinal: boolean;
   sourceOnly?: boolean;
 }) {
-  const [crystalText, setCrystalText] = useState('');
-  const [crystalStatus, setCrystalStatus] = useState<'idle'|'saved'|'error'>('idle');
-  const { save: saveCrystal } = useCrystalCollection();
   const stage = stageForNum(chapter.number);
 
   return (
@@ -129,45 +125,6 @@ function ChapterView({ chapter, layer, onBack, onComplete, onPrevious, canGoPrev
           return <p key={i} className="spiralPara">{t}</p>;
         })}
       </article>
-
-      {!sourceOnly&&<div className="crystalSaveCard">
-        <div className="crystalSaveHeader">
-          <span className="crystalSaveIcon" aria-hidden="true">◆</span>
-          <div>
-            <div className="crystalSaveTitle">שמור כקריסטל</div>
-            <div className="crystalSaveSub">תובנה שתישמר ב"המרחב האישי" שלך</div>
-          </div>
-        </div>
-        <textarea
-          className="crystalSaveInput"
-          value={crystalText}
-          onChange={e=>{setCrystalText(e.target.value);setCrystalStatus('idle')}}
-          placeholder={crystalStatus==='saved'?"✓ נשמר בקריסטלים שלך!":"כתוב תובנה שתרצה לשמור מהפרק הזה..."}
-          rows={3}
-        />
-        <button className="crystalSaveBtn" disabled={!crystalText.trim()} onClick={() => {
-          const text=crystalText.trim();
-          if (!text) return;
-          const saved=saveCrystal({
-            fragmentId:`personal-${chapter.number}-${Date.now()}-${Math.random().toString(36).slice(2,8)}`,
-            conceptId:`chapter-${chapter.number}`,
-            topic:clean(chapter.title),
-            subtopic:'תובנה אישית',
-            text,
-            sourceLabel:`פרק ${chapter.number} — ${clean(chapter.title)}`,
-            provenanceLabel:`נכתב לאחר קריאת פרק ${chapter.number}`,
-            savedAt:new Date().toISOString(),
-          });
-          if(saved){
-            setCrystalText('');
-            setCrystalStatus('saved');
-            setTimeout(() => setCrystalStatus('idle'), 3000);
-          }else setCrystalStatus('error');
-        }}>
-          {crystalStatus==='saved' ? "✓ נשמר בקריסטלים!" : "◆ שמור קריסטל"}
-        </button>
-        {crystalStatus==='error'&&<p className="formError" role="alert">לא ניתן היה לשמור את הקריסטל בדפדפן. נסה שוב.</p>}
-      </div>}
 
       {!sourceOnly&&<nav className="spiralChapterNav" aria-label="ניווט בין פרקים">
         <button className="spiralChapterNavBtn" type="button" onClick={onPrevious} disabled={!canGoPrevious}>→ הפרק הקודם</button>
