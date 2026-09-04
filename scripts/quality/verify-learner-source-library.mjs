@@ -7,7 +7,8 @@ const app=read('src/app/App.tsx');
 const dashboard=read('src/features/knowledge-dashboard/KnowledgeDashboard.tsx');
 const sourceReader=read('src/features/sources/PublicSourceDocument.tsx');
 const knowledgeApi=read('api/knowledge.js');
-const styles=read('src/design/index.css');
+const designIndex=read('src/design/index.css');
+const layout=read('src/design/layout.css');
 
 assert.match(dashboard,/find\(stage=>!state\.completedStageIds\.includes\(stage\.id\)\)/,'dashboard resume target must be the first actually incomplete foundation stage');
 assert.doesNotMatch(dashboard,/Math\.min\(total,done\+1\)/,'dashboard must not infer the next chapter from completion count when learning is non-sequential');
@@ -20,6 +21,8 @@ assert.match(sourceReader,/raw_text/,'published source reader must render canoni
 assert.match(sourceReader,/המקור נשמר בשלמותו/,'published source reader must explain the canonical-source boundary');
 assert.match(knowledgeApi,/NOT EXISTS\(SELECT 1 FROM source_publications p WHERE p\.source_id=s\.id\)/,'seed sources without publication rows must remain learner-visible');
 assert.match(knowledgeApi,/p\.status='PUBLISHED'/,'new intake sources must remain hidden until explicitly published');
-assert.match(styles,/published-source-library\.css/,'published source library styles must be part of the shipped design system');
+assert.match(designIndex,/layout\.css/,'neutral structural layout must be part of the shipped UI baseline');
+assert.match(layout,/\.sourceList/,'source library must retain a usable structural list layout after the visual reset');
+assert.match(layout,/\.sourceItem/,'source items must retain structural layout after the visual reset');
 
-console.log('PASS learner source library (first-incomplete resume + publication-gated source catalogue + canonical UUID reader)');
+console.log('PASS learner source library (first-incomplete resume + publication-gated source catalogue + canonical UUID reader + neutral structural layout)');
