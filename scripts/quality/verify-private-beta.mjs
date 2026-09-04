@@ -47,7 +47,7 @@ assert.match(cardReader,/aria-roledescription="carousel"/,'learning cards must r
 assert.match(cardReader,/onTouchStart=\{onTouchStart\}/,'carousel must support touch swiping');
 assert.match(cardReader,/learningCarouselDots/,'carousel must expose direct card-position controls');
 assert.match(cardReader,/כרטיס \{position\+1\} מתוך/,'card reader must communicate short in-chapter progress');
-assert.match(cardReader,/if\(isLast\)onComplete\(\)/,'last card must own the completion action');
+assert.match(cardReader,/if\(isLast\)\{onComplete\(\)/,'last card must own the completion action');
 assert.doesNotMatch(cardReader,/current\.sourceLabel|current\.provenanceLabel|evidenceRefs|canonicalSourceDetails|\/api\/sources/,'learner card UI must not expose or fetch internal source/provenance metadata');
 assert.doesNotMatch(cardExhibit,/העלה היוצר|AuraFlow/,'learner exhibits must not expose creator/source names');
 assert.match(savedCardComposer,/הערה אישית/,'saved cards must support one optional personal note');
