@@ -1,5 +1,8 @@
 /* Responsive behavior for the current product shell. */
 
+/* The journey owns its own back navigation; the generic shell control would duplicate it. */
+.app>main:has(> .spiralLibrary,> .learningCardReader,> .spiralChapter)>.pageBack{display:none}
+
 @media(max-width:900px){
  .app{display:block;min-height:100dvh}
  .app>main{padding:1rem;padding-block-start:5.6rem;min-height:100dvh}
