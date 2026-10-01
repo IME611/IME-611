@@ -91,6 +91,20 @@ export function Blocks({ blocks, count }: { blocks: Block[]; count: number }) {
                 </aside>
               </Reveal>
             );
+          case "tradition":
+            if (!b.approved) return null;
+            return (
+              <Reveal key={i}>
+                <details className="b-tradition">
+                  <summary>
+                    <span>מקור יהודי</span>
+                    <small>זווית נוספת — אפשר לאמץ, אפשר לא</small>
+                  </summary>
+                  <p>{lines(b.text)}</p>
+                  <cite>{b.source}</cite>
+                </details>
+              </Reveal>
+            );
           case "echo":
             return (
               <Reveal key={i}>

@@ -20,7 +20,12 @@ export type Block =
   /** קריצה לקורא */
   | { type: "wink"; lines: string[] }
   /** חוט ספירלי — חזרה לרעיון מפרק קודם והעלאתו קומה */
-  | { type: "echo"; chapterId: string; text: string };
+  | { type: "echo"; chapterId: string; text: string }
+  /**
+   * מקור יהודי — מוצג כאפשרות, לא כהוכחה. הקורא יכול לאמץ או לא.
+   * מוצג באתר רק כשעידן ו-Claude עברו עליו ביחד וסימנו approved: true.
+   */
+  | { type: "tradition"; text: string; source: string; approved: boolean };
 
 export type Chapter = {
   id: string;

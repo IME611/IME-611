@@ -383,3 +383,13 @@ textarea:focus, input:focus { outline: none; border-color: var(--gold); }
   .chapters { padding-right: 0; margin-top: 16px; }
   .stages::before { display: none; }
 }
+
+/* מקור יהודי — שכבה אופציונלית, סגורה כברירת מחדל */
+.b-tradition { margin: 32px 0; border-radius: 16px; border: 1px solid var(--gold-soft); background: var(--paper); }
+.b-tradition summary { list-style: none; cursor: pointer; padding: 14px 18px; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; }
+.b-tradition summary::-webkit-details-marker { display: none; }
+.b-tradition summary span { font-family: var(--serif); color: var(--gold); font-size: 18px; }
+.b-tradition summary span::before { content: "✡ "; font-size: 14px; }
+.b-tradition summary small { color: var(--ink-3); font-size: 14px; }
+.b-tradition p { margin: 0; padding: 0 18px; font-family: var(--serif); font-size: 20px; }
+.b-tradition cite { display: block; padding: 8px 18px 16px; color: var(--ink-3); font-size: 14px; font-style: normal; }
