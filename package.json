@@ -1,47 +1,23 @@
 {
   "name": "eil",
   "private": true,
-  "version": "0.3.0",
+  "version": "2.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "prebuild": "node scripts/quality/run-prebuild.mjs",
-    "build": "tsc -b && vite build",
-    "vercel-build": "node scripts/db/vercel-build.mjs",
-    "preview": "vite preview",
-    "verify:private-beta": "node scripts/quality/verify-private-beta.mjs && node scripts/quality/verify-learner-source-library.mjs && node scripts/quality/verify-db-url-normalization.mjs && node scripts/quality/verify-learner-journey-coherence.mjs && node scripts/quality/verify-review-auth-boundary.mjs && node scripts/quality/verify-api-write-surface.mjs && node scripts/quality/verify-production-surface.mjs && node scripts/quality/verify-ui-foundation.mjs && node scripts/quality/verify-repository-layout.mjs && node scripts/quality/verify-frontend-reachability.mjs && node scripts/quality/verify-server-reachability.mjs && node scripts/quality/verify-repository-truth.mjs && node scripts/knowledge/verify-dynamic-publication-editor.mjs",
-    "quality": "npm run verify:private-beta && npm run build",
-    "db:migrate": "node scripts/db/run-migrations.mjs",
-    "db:health": "node scripts/db/health-check.mjs",
-    "db:golden": "node scripts/db/golden-thread.mjs",
-    "db:verify": "npm run db:health && npm run db:golden",
-    "db:verify-extraction": "node scripts/db/run-verification-sql.mjs database/verification/005_verify_atomic_extraction.sql",
-    "knowledge:verify": "npm run knowledge:verify-extraction && npm run knowledge:verify-overlap && npm run knowledge:verify-map && npm run knowledge:verify-relations && npm run knowledge:verify-endpoint-suggestions && npm run knowledge:verify-intake && npm run knowledge:verify-library",
-    "knowledge:verify-extraction": "node scripts/knowledge/verify-atomic-extractor.mjs",
-    "knowledge:verify-overlap": "node scripts/knowledge/verify-overlap-engine.mjs",
-    "knowledge:verify-map": "node scripts/knowledge/verify-corpus-map.mjs",
-    "knowledge:verify-relations": "node scripts/knowledge/verify-relation-extractor.mjs",
-    "knowledge:verify-endpoint-suggestions": "node scripts/knowledge/verify-relation-endpoint-suggestions.mjs",
-    "knowledge:verify-intake": "node scripts/knowledge/verify-intake-workflow.mjs",
-    "knowledge:verify-library": "node scripts/knowledge/verify-content-library.mjs",
-    "knowledge:bootstrap-extraction": "node scripts/knowledge/bootstrap-atomic-extraction.mjs"
+    "build": "vite build",
+    "typecheck": "tsc --noEmit",
+    "preview": "vite preview"
   },
   "dependencies": {
-    "@vitejs/plugin-react": "6.1.0",
-    "@vercel/oidc": "3.8.5",
-    "vite": "8.2.2",
-    "typescript": "7.0.2",
     "react": "19.2.8",
-    "react-dom": "19.2.8",
-    "lucide-react": "1.34.0",
-    "pg": "8.23.0",
-    "mammoth": "1.12.1",
-    "pdf-parse": "2.4.5",
-    "@napi-rs/canvas": "0.1.100"
+    "react-dom": "19.2.8"
   },
   "devDependencies": {
+    "@vitejs/plugin-react": "6.1.0",
+    "vite": "8.2.2",
+    "typescript": "7.0.2",
     "@types/react": "19.2.18",
-    "@types/react-dom": "19.2.5",
-    "@types/node": "26.3.0"
+    "@types/react-dom": "19.2.5"
   }
 }

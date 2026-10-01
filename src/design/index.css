@@ -1,6 +1,0 @@
-/* E.I.L UI baseline — structure and accessibility only.
-   Visual design intentionally starts from zero. */
-@import './foundation.css';
-@import './layout.css';
-@import './responsive.css';
-@import './accessibility.css';
