@@ -17,11 +17,11 @@ export function Journey() {
         <h1 className="journey-title">המסע</h1>
         <p className="journey-lead">
           מסע אחד, צעד אחר צעד — ממה שאתה רואה כשאתה מסתכל על עצמך, ועד המקור שממנו הכל מגיע.
-          כל פרק נבנה על הקודם. אין מבחנים. רק התבוננות.
+          כל תחנה נבנית על הקודמת. אין מבחנים. רק התבוננות.
         </p>
-        <div className="journey-progress" aria-label={`${doneCount} מתוך ${journeyOrder.length} פרקים`}>
+        <div className="journey-progress" aria-label={`${doneCount} מתוך ${journeyOrder.length} תחנות`}>
           <div className="journey-progress-bar"><span style={{ width: `${pct}%` }} /></div>
-          <small>{doneCount} / {journeyOrder.length} פרקים</small>
+          <small>{doneCount} / {journeyOrder.length} תחנות</small>
         </div>
       </section>
 

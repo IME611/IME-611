@@ -31,7 +31,7 @@ export function ChapterScreen({ id }: { id: string }) {
   if (!chapter || idx < 0 || (idx > firstOpen && firstOpen !== -1)) {
     return (
       <div className="chapter-missing">
-        <p>הפרק הזה עוד נעול.</p>
+        <p>התחנה הזו עוד נעולה.</p>
         <a href="#/journey">חזרה למסע</a>
       </div>
     );
@@ -39,7 +39,6 @@ export function ChapterScreen({ id }: { id: string }) {
 
   const stage = journeyOrder[idx].stage;
   const next = journeyOrder[idx + 1];
-  const isDone = completed.includes(id);
 
   const finish = () => {
     actions.setReflection(id, note);
@@ -81,7 +80,7 @@ export function ChapterScreen({ id }: { id: string }) {
 
         <div className="crystal">
           <span className="crystal-gem" aria-hidden>◆</span>
-          <p className="eyebrow">הקריסטל של הפרק</p>
+          <p className="eyebrow">הקריסטל של התחנה</p>
           <p className="crystal-text">{chapter.crystal}</p>
           {saved ? (
             <button className="btn-ghost" onClick={() => actions.removeCrystal(id)}>נשמר במרחב שלי ✓</button>
@@ -96,7 +95,7 @@ export function ChapterScreen({ id }: { id: string }) {
         </div>
 
         <button className="btn-primary" onClick={finish}>
-          {isDone ? "המשך במסע" : "סיימתי את הפרק — המשך"}
+          ממשיכים
         </button>
       </section>
     </article>

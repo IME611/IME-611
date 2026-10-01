@@ -14,7 +14,7 @@ export function Welcome() {
         </h1>
         <a className="welcome-cta" href="#/journey">תחילת המסע</a>
         <p className="welcome-meta">
-          {journey.length} שלבים · {journeyOrder.length} פרקים · מסע מבפנים החוצה
+          {journey.length} שלבים · {journeyOrder.length} תחנות · מסע מבפנים החוצה
         </p>
       </div>
     </div>

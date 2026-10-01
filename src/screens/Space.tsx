@@ -18,7 +18,7 @@ export function Space() {
       {ordered.length === 0 ? (
         <div className="empty">
           <span className="crystal-gem" aria-hidden>◆</span>
-          <p>עוד אין כאן קריסטלים. בסוף כל פרק אפשר לשמור את התובנה שלו.</p>
+          <p>עוד אין כאן קריסטלים. בסוף כל תחנה אפשר לשמור את התובנה שלה.</p>
           <a className="btn-ghost" href="#/journey">למסע</a>
         </div>
       ) : (
