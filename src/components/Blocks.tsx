@@ -1,6 +1,6 @@
 import { useEffect, useRef, type ReactNode } from "react";
 import type { Block } from "../content/types";
-import { chaptersById } from "../content";
+import { chaptersById, countItems } from "../content";
 
 /** מופיע בעדינות כשנכנס למסך — קצב של "נפילת אסימון" */
 function Reveal({ children, className = "" }: { children: ReactNode; className?: string }) {
@@ -28,9 +28,12 @@ function Reveal({ children, className = "" }: { children: ReactNode; className?:
   );
 }
 
+/** מקף שבא אחרי מילה נצמד אליה — כדי שלא ייפול לבד לשורה חדשה במובייל */
+const glue = (l: string) => l.replace(/ —/g, "\u00A0—");
+
 const lines = (t: string) => t.split("\n").map((l, i, a) => (
   <span key={i}>
-    {l}
+    {glue(l)}
     {i < a.length - 1 && <br />}
   </span>
 ));
@@ -110,7 +113,10 @@ export function Blocks({ blocks, count }: { blocks: Block[]; count: number }) {
               <Reveal key={i}>
                 <aside className="b-echo">
                   <small>זוכר? {chaptersById[b.chapterId]?.title ?? ""}</small>
-                  <p>{b.text}</p>
+                  <p>{(() => {
+                    const ref = chaptersById[b.chapterId];
+                    return b.text.replaceAll("{{count}}", ref ? String(countItems(ref)) : "");
+                  })()}</p>
                 </aside>
               </Reveal>
             );

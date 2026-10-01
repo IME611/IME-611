@@ -1,9 +1,11 @@
 import type { Chapter } from "./types";
 import { journey } from "./journey";
 import { ch01 } from "./chapters/ch01";
+import { ch04 } from "./chapters/ch04";
+import { ch05 } from "./chapters/ch05";
 
 /** כל פרק שנכתב נרשם כאן. */
-const written: Chapter[] = [ch01];
+const written: Chapter[] = [ch01, ch04, ch05];
 
 export const chaptersById: Record<string, Chapter> = Object.fromEntries(written.map((c) => [c.id, c]));
 

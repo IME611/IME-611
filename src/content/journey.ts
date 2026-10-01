@@ -26,6 +26,7 @@ export const journey: Stage[] = [
     chapters: [
       { id: "2", title: "הכלי החיצוני" },
       { id: "8", title: "תדר, צליל וצורה" },
+      { id: "9", title: "הגוף כתדר" },
     ],
   },
   {
@@ -58,6 +59,7 @@ export const journey: Stage[] = [
     chapters: [
       { id: "10", title: "נוירופלסטיות" },
       { id: "11", title: "זהויות ואמונות" },
+      { id: "14", title: "חוקי היקום" },
       { id: "15", title: "חזון ומימוש" },
       { id: "16", title: "סבל, קושי ומשמעות" },
     ],

@@ -19,7 +19,7 @@ export type Block =
   | { type: "group"; title: string; intro?: string; items: { name: string; detail: string }[]; media?: string }
   /** קריצה לקורא */
   | { type: "wink"; lines: string[] }
-  /** חוט ספירלי — חזרה לרעיון מפרק קודם והעלאתו קומה */
+  /** חוט ספירלי — חזרה לרעיון מפרק קודם והעלאתו קומה. {{count}} כאן = מספר הפריטים בפרק המוזכר */
   | { type: "echo"; chapterId: string; text: string }
   /**
    * מקור יהודי — מוצג כאפשרות, לא כהוכחה. הקורא יכול לאמץ או לא.
