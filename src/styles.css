@@ -393,3 +393,9 @@ textarea:focus, input:focus { outline: none; border-color: var(--gold); }
 .b-tradition summary small { color: var(--ink-3); font-size: 14px; }
 .b-tradition p { margin: 0; padding: 0 18px; font-family: var(--serif); font-size: 20px; }
 .b-tradition cite { display: block; padding: 8px 18px 16px; color: var(--ink-3); font-size: 14px; font-style: normal; }
+
+/* ניסוי הנקודה העיוורת */
+.b-blindspot { margin: 2.2rem 0; padding: 1.6rem 1.2rem; border-radius: 18px; background: #fff; border: 1px solid rgba(184,150,46,.35); text-align: center; }
+.b-blindspot-row { display: flex; justify-content: space-between; align-items: center; width: min(78%, 260px); margin: 1.4rem auto; }
+.b-blindspot-dot { width: 22px; height: 22px; border-radius: 50%; background: #b8962e; }
+.b-blindspot-cross { font-size: 26px; line-height: 1; color: #1d1d1b; }

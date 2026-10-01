@@ -86,6 +86,19 @@ export function Blocks({ blocks, count }: { blocks: Block[]; count: number }) {
                 </section>
               </Reveal>
             );
+          case "blindspot":
+            return (
+              <Reveal key={i}>
+                <aside className="b-blindspot">
+                  <p className="b-pause-title">ניסוי: הנקודה העיוורת</p>
+                  <div className="b-blindspot-row" dir="ltr" aria-hidden>
+                    <span className="b-blindspot-dot" />
+                    <span className="b-blindspot-cross">✚</span>
+                  </div>
+                  <p className="b-pause-text">{lines(b.text)}</p>
+                </aside>
+              </Reveal>
+            );
           case "wink":
             return (
               <Reveal key={i}>

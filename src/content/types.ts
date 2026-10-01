@@ -17,6 +17,8 @@ export type Block =
   | { type: "big"; text: string }
   /** קבוצת מערכות/פריטים — כותרת במרכז ורשימה מתחתיה */
   | { type: "group"; title: string; intro?: string; items: { name: string; detail: string }[]; media?: string }
+  /** ניסוי הנקודה העיוורת — עיגול משמאל, צלב מימין (לעין שמאל) */
+  | { type: "blindspot"; text: string }
   /** קריצה לקורא */
   | { type: "wink"; lines: string[] }
   /** חוט ספירלי — חזרה לרעיון מפרק קודם והעלאתו קומה. {{count}} כאן = מספר הפריטים בפרק המוזכר */
