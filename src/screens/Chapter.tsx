@@ -4,6 +4,7 @@ import { STAGE_ORDINALS } from "../content/journey";
 import { Blocks } from "../components/Blocks";
 import { actions, useStore } from "../store";
 import { go } from "../router";
+import { reviewMode } from "../review";
 
 function useReadProgress() {
   const [p, setP] = useState(0);
@@ -28,7 +29,7 @@ export function ChapterScreen({ id }: { id: string }) {
 
   const idx = journeyOrder.findIndex((c) => c.id === id);
   const firstOpen = journeyOrder.findIndex((c) => !completed.includes(c.id));
-  if (!chapter || idx < 0 || (idx > firstOpen && firstOpen !== -1)) {
+  if (!chapter || idx < 0 || (!reviewMode && idx > firstOpen && firstOpen !== -1)) {
     return (
       <div className="chapter-missing">
         <p>התחנה הזו עוד נעולה.</p>

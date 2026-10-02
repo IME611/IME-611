@@ -2,6 +2,7 @@ import { journey, journeyOrder } from "../content";
 import { STAGE_ORDINALS } from "../content/journey";
 import { useStore } from "../store";
 import { RingMap } from "../components/RingMap";
+import { reviewMode } from "../review";
 
 export function Journey() {
   const { completed, name } = useStore();
@@ -21,6 +22,7 @@ export function Journey() {
               : `עברת ${doneCount} מתוך ${journeyOrder.length} תחנות. כל נקודה מוזהבת היא תחנה שכבר שלך.`}
           </p>
         </div>
+        {reviewMode && <p className="review-flag">מצב סקירה: כל התחנות פתוחות. לכיבוי — הוסף ?review=0 לכתובת.</p>}
         <p className="eyebrow">{name ? `${name}, ברוך הבא` : "ברוך הבא"}</p>
         <h1 className="journey-title">המסע</h1>
         <p className="journey-lead">
@@ -48,7 +50,7 @@ export function Journey() {
                   const entry = journeyOrder[idx];
                   const isDone = done.has(c.id);
                   const isCurrent = idx === currentIndex;
-                  const open = (isDone || isCurrent) && entry.ready;
+                  const open = (isDone || isCurrent || reviewMode) && entry.ready;
                   const status = isDone ? "נקרא" : isCurrent ? (entry.ready ? "התחל" : "בהכנה") : "נעול";
                   const inner = (
                     <>

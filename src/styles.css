@@ -476,3 +476,4 @@ textarea:focus, input:focus { outline: none; border-color: var(--gold); }
 .tool-why strong { display: block; color: var(--green); font-size: 13.5px; margin-bottom: 2px; }
 .tool-station { margin: 0; font-size: 14px; color: var(--ink-3); }
 .tool-station a { color: var(--green); }
+.review-flag { margin: 0 0 16px; padding: 8px 14px; border: 1px dashed var(--gold); border-radius: 12px; font-size: 14px; color: var(--ink-2); }

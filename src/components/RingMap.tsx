@@ -1,5 +1,6 @@
 import { journey, journeyOrder } from "../content";
 import { go } from "../router";
+import { reviewMode } from "../review";
 
 /**
  * מפת המעגלים: המסע מבפנים החוצה.
@@ -68,7 +69,7 @@ export function RingMap({ done = new Set(), currentId, decorative = false }: Pro
         dots.map((d) => {
           const isDone = done.has(d.id);
           const isCurrent = d.id === currentId;
-          const open = !decorative && d.ready && (isDone || isCurrent);
+          const open = !decorative && d.ready && (isDone || isCurrent || reviewMode);
           return (
             <g
               key={d.id}
