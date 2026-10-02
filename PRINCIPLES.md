@@ -43,5 +43,13 @@
 - טקסט שחור; רגעי השתאות ונקודות חשובות — ירוק רולקס (#006039) מודגש.
 - קישוטי זהב דקים: קו בסרגל העליון, קישוט כותרת, מסגרת כפולה בעצירות ובקריסטל.
 
+## מקור אמת אחד (2.10.2026)
+עידן סוגר את פרויקט E.I.L ב-ChatGPT וממשיך רק כאן. **המסמך הזה הוא מקור האמת.**
+ההחלטות מ-1.10.2026 (מסע סגור ומובל, תחנות בסדר נעול, בלי העלאות) גוברות על הסיכום של ChatGPT.
+
+נשמר מהתקופה של ChatGPT ומיושם: E.I.L = Everything I Learned · React בלבד, בלי Next · Sources are Evidence, not Chapters · "אנחנו לא לומדים בקו ישר" · Knowledge is public, Journey is personal · My Crystals · Reading is not learning.
+
+רעיונות מאז שאינם החלטה (לא לממש בלי אישור): Workspace רחב (Library, Inbox, Mentor, Research…), 5 Worlds, Knowledge Cards, גרף Nodes, Dependency Graph / Topic Registry / Overlap Matrix. אפשרות עתידית: ספרייה לעיון חופשי אחרי סיום המסע.
+
 ## פתוח להחלטה
 - הגדרת "קריסטל" — מה זה ואיפה להציג.
