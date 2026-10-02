@@ -29,7 +29,9 @@ export function ChapterScreen({ id }: { id: string }) {
 
   const idx = journeyOrder.findIndex((c) => c.id === id);
   const firstOpen = journeyOrder.findIndex((c) => !completed.includes(c.id));
-  if (!chapter || idx < 0 || (!reviewMode && idx > firstOpen && firstOpen !== -1)) {
+  // פרולוג: טיוטה — נראה רק במצב סקירה עד שעידן מאשר
+  const isPrologue = id === "prologue" && reviewMode && Boolean(chapter);
+  if (!isPrologue && (!chapter || idx < 0 || (!reviewMode && idx > firstOpen && firstOpen !== -1))) {
     return (
       <div className="chapter-missing">
         <p>התחנה הזו עוד נעולה.</p>
@@ -38,12 +40,12 @@ export function ChapterScreen({ id }: { id: string }) {
     );
   }
 
-  const stage = journeyOrder[idx].stage;
-  const next = journeyOrder[idx + 1];
+  const stage = isPrologue ? null : journeyOrder[idx].stage;
+  const next = isPrologue ? journeyOrder[0] : journeyOrder[idx + 1];
 
   const finish = () => {
     actions.setReflection(id, note);
-    actions.complete(id);
+    if (!isPrologue) actions.complete(id);
     go(next?.ready ? `chapter/${next.id}` : "journey");
   };
 
@@ -53,7 +55,7 @@ export function ChapterScreen({ id }: { id: string }) {
 
       <header className="chapter-head">
         <a className="back" href="#/journey">→ המסע</a>
-        <p className="eyebrow">שלב {STAGE_ORDINALS[stage.number - 1]} · {stage.name}</p>
+        <p className="eyebrow">{stage ? `שלב ${STAGE_ORDINALS[stage.number - 1]} · ${stage.name}` : "פרולוג · טיוטה לאישור"}</p>
         <h1 className="chapter-title">{chapter.title}</h1>
         <p className="chapter-sub">{chapter.subtitle}</p>
       </header>

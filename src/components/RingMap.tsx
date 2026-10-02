@@ -36,7 +36,7 @@ export function RingMap({ done = new Set(), currentId, decorative = false }: Pro
 
   return (
     <svg
-      className={`ringmap ${decorative ? "is-decorative" : ""}`}
+      className={`ringmap ${decorative ? "is-decorative" : ""} ${!decorative && done.size >= journeyOrder.length ? "is-complete" : ""}`}
       viewBox={`0 0 ${SIZE} ${SIZE}`}
       role={decorative ? undefined : "img"}
       aria-hidden={decorative || undefined}

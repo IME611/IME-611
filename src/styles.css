@@ -525,3 +525,9 @@ textarea:focus, input:focus { outline: none; border-color: var(--gold); }
 .welcome { background: transparent; }
 .welcome-cta { background: rgba(255, 255, 255, 0.72); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
 textarea, input { background: rgba(255, 255, 255, 0.8); }
+/* המסע הושלם: המקור נדלק */
+.ringmap.is-complete .rm-ring { stroke-opacity: .75; }
+.ringmap.is-complete .rm-label-source { font-weight: 700; font-size: 15px; }
+.ringmap.is-complete > circle:first-of-type { animation: rm-source 4s ease-in-out infinite; transform-origin: center; transform-box: fill-box; }
+@keyframes rm-source { 0%, 100% { opacity: .7; } 50% { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .ringmap.is-complete > circle:first-of-type { animation: none; } }

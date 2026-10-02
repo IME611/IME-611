@@ -20,11 +20,12 @@ import { ch15 } from "./chapters/ch15";
 import { ch16 } from "./chapters/ch16";
 import { ch17 } from "./chapters/ch17";
 import { ch18 } from "./chapters/ch18";
+import { chprologue } from "./chapters/chprologue";
 
 /** כל פרק שנכתב נרשם כאן. */
 const written: Chapter[] = [ch01, ch04, ch05, ch12, ch02, ch08, ch09, ch03, chorigin, chinformation, ch06, ch07, ch13, ch10, ch11, ch14, ch15, ch16, ch17, ch18];
 
-export const chaptersById: Record<string, Chapter> = Object.fromEntries(written.map((c) => [c.id, c]));
+export const chaptersById: Record<string, Chapter> = Object.fromEntries([...written, chprologue].map((c) => [c.id, c]));
 
 /** רשימה שטוחה של כל הפרקים לפי סדר המסע */
 export const journeyOrder = journey.flatMap((stage) =>

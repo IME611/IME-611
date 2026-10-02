@@ -19,10 +19,12 @@ export function Journey() {
           <p className="journey-map-caption">
             {doneCount === 0
               ? "המסע נע מבפנים החוצה: מהמעגל הפנימי — אתה — ועד המעגל החיצוני, המקור."
-              : `עברת ${doneCount} מתוך ${journeyOrder.length} תחנות. כל נקודה מוזהבת היא תחנה שכבר שלך.`}
+              : doneCount === journeyOrder.length
+                ? "עברת את כל המעגלים. מכאן — הקשר הוא שלך."
+                : `עברת ${doneCount} מתוך ${journeyOrder.length} תחנות. כל נקודה מוזהבת היא תחנה שכבר שלך.`}
           </p>
         </div>
-        {reviewMode && <p className="review-flag">מצב סקירה: כל התחנות פתוחות. לכיבוי — הוסף ?review=0 לכתובת.</p>}
+        {reviewMode && <p className="review-flag">מצב סקירה: כל התחנות פתוחות. <a href="#/chapter/prologue">פרולוג (טיוטה לאישור)</a>. לכיבוי — הוסף ?review=0 לכתובת.</p>}
         <p className="eyebrow">{name ? `${name}, ברוך הבא` : "ברוך הבא"}</p>
         <h1 className="journey-title">המסע</h1>
         <p className="journey-lead">
