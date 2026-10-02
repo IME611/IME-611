@@ -1,0 +1,5 @@
+Read /home/claude/eil/content-archive/WRITER_BRIEF.md first and follow it exactly. Then read the four example stations it lists, PRINCIPLES.md, types.ts and PARKING.md.
+Journey order (ids): stage1 מי אני: 1,4,5,12 · stage2 איפה אני: 2,8,9 · stage3 זה לא מקרי: 3,origin,information · stage4 מה אני באמת: 6,7,13 · stage5 למה אני פה: 10,11,14,15,16 · stage6 המקור: 17,18.
+`echo` blocks may point to any station id that comes EARLIER in this order (they will all exist).
+Write only your own station files. When done, run `cd /home/claude/eil && npx tsc --noEmit` (it must pass — your files are not imported yet, so also run a quick check: create /tmp/claude-0/chk_<yourname>.ts importing your exports with `import type { Chapter } from "/home/claude/eil/src/content/types"` and assigning them to Chapter-typed consts, then `npx tsc --noEmit --skipLibCheck --target es2022 --moduleResolution bundler --module esnext /tmp/claude-0/chk_<yourname>.ts`).
+Report in under 120 words: files written, block counts, and any fact you were unsure about and therefore left out.

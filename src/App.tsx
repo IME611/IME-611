@@ -3,6 +3,7 @@ import { Welcome } from "./screens/Welcome";
 import { Journey } from "./screens/Journey";
 import { ChapterScreen } from "./screens/Chapter";
 import { Space } from "./screens/Space";
+import { Tools } from "./screens/Tools";
 
 function useRoute() {
   const read = () => window.location.hash.replace(/^#\/?/, "");
@@ -24,6 +25,7 @@ function Header({ route }: { route: string }) {
       <a href="#/journey" className="topbar-brand" aria-label="המסע">E·I·L</a>
       <nav className="topbar-nav">
         <a href="#/journey" className={route === "journey" ? "is-active" : ""}>המסע</a>
+        <a href="#/tools" className={route === "tools" ? "is-active" : ""}>כלים</a>
         <a href="#/space" className={route === "space" ? "is-active" : ""}>המרחב שלי</a>
       </nav>
     </header>
@@ -38,7 +40,7 @@ export function App() {
     <>
       <Header route={screen} />
       <main className="page">
-        {screen === "chapter" && param ? <ChapterScreen key={param} id={param} /> : screen === "space" ? <Space /> : <Journey />}
+        {screen === "chapter" && param ? <ChapterScreen key={param} id={param} /> : screen === "space" ? <Space /> : screen === "tools" ? <Tools /> : <Journey />}
       </main>
     </>
   );

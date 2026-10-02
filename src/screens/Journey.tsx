@@ -1,6 +1,7 @@
 import { journey, journeyOrder } from "../content";
 import { STAGE_ORDINALS } from "../content/journey";
 import { useStore } from "../store";
+import { RingMap } from "../components/RingMap";
 
 export function Journey() {
   const { completed, name } = useStore();
@@ -8,21 +9,24 @@ export function Journey() {
   // הפרק הנוכחי = הראשון שעוד לא הושלם. כל מה שאחריו נעול.
   const currentIndex = journeyOrder.findIndex((c) => !done.has(c.id));
   const doneCount = journeyOrder.filter((c) => done.has(c.id)).length;
-  const pct = Math.round((doneCount / journeyOrder.length) * 100);
 
   return (
     <div className="journey">
       <section className="journey-intro">
+        <div className="journey-map">
+          <RingMap done={done} currentId={journeyOrder[currentIndex]?.id} />
+          <p className="journey-map-caption">
+            {doneCount === 0
+              ? "המסע נע מבפנים החוצה: מהמעגל הפנימי — אתה — ועד המעגל החיצוני, המקור."
+              : `עברת ${doneCount} מתוך ${journeyOrder.length} תחנות. כל נקודה מוזהבת היא תחנה שכבר שלך.`}
+          </p>
+        </div>
         <p className="eyebrow">{name ? `${name}, ברוך הבא` : "ברוך הבא"}</p>
         <h1 className="journey-title">המסע</h1>
         <p className="journey-lead">
           מסע אחד, צעד אחר צעד — ממה שאתה רואה כשאתה מסתכל על עצמך, ועד המקור שממנו הכל מגיע.
           כל תחנה נבנית על הקודמת. אין מבחנים. רק התבוננות.
         </p>
-        <div className="journey-progress" aria-label={`${doneCount} מתוך ${journeyOrder.length} תחנות`}>
-          <div className="journey-progress-bar"><span style={{ width: `${pct}%` }} /></div>
-          <small>{doneCount} / {journeyOrder.length} תחנות</small>
-        </div>
       </section>
 
       <ol className="stages">

@@ -399,3 +399,80 @@ textarea:focus, input:focus { outline: none; border-color: var(--gold); }
 .b-blindspot-row { display: flex; justify-content: space-between; align-items: center; width: min(78%, 260px); margin: 1.4rem auto; }
 .b-blindspot-dot { width: 22px; height: 22px; border-radius: 50%; background: #b8962e; }
 .b-blindspot-cross { font-size: 26px; line-height: 1; color: #1d1d1b; }
+
+/* ───────── מפת המעגלים ───────── */
+.journey-map {
+  margin: -28px -20px 32px;
+  padding: 28px 20px 22px;
+  background: radial-gradient(90% 70% at 50% 45%, #134132 0%, #0c2b20 70%);
+  border-radius: 0 0 32px 32px;
+  color: #efe6cf;
+  text-align: center;
+}
+@media (min-width: 700px) { .journey-map { margin: 8px 0 36px; border-radius: 32px; } }
+.ringmap { display: block; width: min(100%, 360px); height: auto; margin: 0 auto; overflow: visible; }
+.rm-ring {
+  fill: none;
+  stroke: #e3c77a;
+  stroke-opacity: 0.22;
+  stroke-width: 1;
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: rm-draw 1.6s cubic-bezier(.4,0,.2,1) forwards;
+}
+.rm-ring.is-done { stroke-opacity: 0.6; }
+.rm-core { fill: #e3c77a; }
+.rm-dot circle { fill: rgba(239, 230, 207, 0.22); transition: fill .3s; }
+.rm-dot.is-done circle { fill: #e3c77a; }
+.rm-dot.is-current circle { fill: #f6e4ab; }
+.rm-dot .rm-halo { fill: none !important; stroke: #f6e4ab; stroke-width: 1.2; transform-box: fill-box; transform-origin: center; animation: rm-pulse 2.4s ease-out infinite; }
+.rm-dot.is-open { cursor: pointer; }
+.rm-dot.is-open:focus-visible { outline: none; }
+.rm-dot.is-open:focus-visible circle { stroke: #fff; stroke-width: 2; }
+.rm-label { font-family: var(--serif); font-size: 13px; fill: #efe6cf; opacity: .85; }
+.rm-label-source { fill: #e3c77a; letter-spacing: .04em; }
+.journey-map-caption { max-width: 34ch; margin: 14px auto 0; font-family: var(--serif); font-size: 16px; line-height: 1.6; color: #d9ceb2; }
+@keyframes rm-draw { to { stroke-dashoffset: 0; } }
+@keyframes rm-pulse { 0% { transform: scale(.7); opacity: .9; } 100% { transform: scale(1.9); opacity: 0; } }
+
+/* מסך הפתיחה: המעגלים נמתחים פעם אחת מאחורי המשפט */
+.welcome-rings { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.welcome-rings .ringmap { position: absolute; left: 50%; top: 50%; width: min(140vw, 760px); transform: translate(-50%, -50%); opacity: .6; }
+.ringmap.is-decorative .rm-ring { stroke: var(--gold); stroke-opacity: .2; animation-duration: 2.4s; }
+.ringmap.is-decorative .rm-dot circle { fill: var(--gold); opacity: .28; }
+.ringmap.is-decorative .rm-core { fill: var(--gold); opacity: .5; }
+
+@media (prefers-reduced-motion: reduce) {
+  .rm-ring { animation: none; stroke-dashoffset: 0; }
+  .rm-dot .rm-halo { animation: none; opacity: .5; }
+}
+
+/* ───────── ארגז הכלים ───────── */
+.tool-family { margin-top: 40px; }
+.tool-family-name { margin: 0; font-family: var(--serif); font-weight: 500; font-size: 28px; color: var(--green); }
+.tool-family-intro { margin: 2px 0 12px; font-family: var(--serif); font-style: italic; color: var(--ink-2); font-size: 17px; }
+.tool-list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+.tool { border-bottom: 1px solid var(--line); }
+.tool-head {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2px 16px;
+  width: 100%;
+  padding: 16px 2px;
+  background: none;
+  border: 0;
+  text-align: start;
+  color: inherit;
+}
+.tool-name { font-weight: 700; font-size: 19px; }
+.tool-time { grid-row: 1; grid-column: 2; font-size: 13px; color: var(--ink-3); align-self: center; white-space: nowrap; }
+.tool-promise { grid-column: 1 / -1; color: var(--ink-2); font-size: 16px; }
+.tool.is-open .tool-name { color: var(--green); }
+.tool-body { padding: 2px 2px 22px; }
+.tool-steps { margin: 0 0 16px; padding-inline-start: 22px; font-family: var(--serif); font-size: 18px; line-height: 1.7; }
+.tool-steps li { margin-bottom: 6px; }
+.tool-steps li::marker { color: var(--gold); font-family: var(--sans); font-weight: 700; }
+.tool-why { margin: 0 0 10px; padding: 14px 16px; background: var(--green-soft); border-radius: 14px; font-size: 15.5px; line-height: 1.65; color: var(--ink-2); }
+.tool-why strong { display: block; color: var(--green); font-size: 13.5px; margin-bottom: 2px; }
+.tool-station { margin: 0; font-size: 14px; color: var(--ink-3); }
+.tool-station a { color: var(--green); }
