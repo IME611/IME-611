@@ -3,9 +3,10 @@ import { journey } from "./journey";
 import { ch01 } from "./chapters/ch01";
 import { ch04 } from "./chapters/ch04";
 import { ch05 } from "./chapters/ch05";
+import { ch12 } from "./chapters/ch12";
 
 /** כל פרק שנכתב נרשם כאן. */
-const written: Chapter[] = [ch01, ch04, ch05];
+const written: Chapter[] = [ch01, ch04, ch05, ch12];
 
 export const chaptersById: Record<string, Chapter> = Object.fromEntries(written.map((c) => [c.id, c]));
 
