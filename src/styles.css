@@ -866,3 +866,20 @@ textarea, input { background: rgba(255, 253, 247, 0.4); }
 body { line-height: 1.85; }
 @media (min-width: 700px) { .journey-map { margin-bottom: 80px; } }
 .journey-title { color: var(--emerald); font-weight: 400; }
+
+/* התחנה הנוכחית במפה: טבעת חלולה (לא נקודת זהב) — זהב מלא = רק תחנה שהושלמה */
+.rm-dot.is-current:not(.is-done) circle:not(.rm-halo) { fill: rgba(239, 230, 207, 0.12); stroke: #f6e4ab; stroke-width: 1.6; }
+.rm-gate.is-current:not(.is-done) .rm-core { fill: rgba(239, 230, 207, 0.12); stroke: #f6e4ab; stroke-width: 1.6; }
+
+/* ═════════ כותרות עמוד אחידות: במרכז, עם פיליגרן ═════════ */
+:root { --ornament: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22220%22 height=%2224%22 viewBox=%220 0 220 24%22%3E%3Cdefs%3E%3ClinearGradient id=%22g%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%220%22%3E%3Cstop offset=%220%22 stop-color=%22%238c6a1c%22/%3E%3Cstop offset=%22.3%22 stop-color=%22%23e9cf86%22/%3E%3Cstop offset=%22.5%22 stop-color=%22%23b8902e%22/%3E%3Cstop offset=%22.75%22 stop-color=%22%23f3dea0%22/%3E%3Cstop offset=%221%22 stop-color=%22%239a7524%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d=%22M2 12 H84 M136 12 H218%22 stroke=%22url(%23g)%22 stroke-width=%22.9%22/%3E%3Cpath d=%22M84 12 C92 4 100 4 104 12 C100 20 92 20 84 12Z M136 12 C128 4 120 4 116 12 C120 20 128 20 136 12Z%22 fill=%22none%22 stroke=%22url(%23g)%22 stroke-width=%22.9%22/%3E%3Cpath d=%22M110 3 L117 12 L110 21 L103 12Z%22 fill=%22url(%23g)%22/%3E%3Ccircle cx=%2240%22 cy=%2212%22 r=%221.6%22 fill=%22url(%23g)%22/%3E%3Ccircle cx=%22180%22 cy=%2212%22 r=%221.6%22 fill=%22url(%23g)%22/%3E%3C/svg%3E"); }
+.journey-title { text-align: center; color: var(--emerald); }
+.journey-title::after { content: ""; display: block; width: 220px; height: 24px; margin: 22px auto 26px; background: var(--ornament) center / contain no-repeat; }
+.journey-lead { text-align: center; max-width: 32ch; margin-inline: auto; }
+.eyebrow:has(+ .journey-title) { text-align: center; }
+.tool-family:first-of-type, .inq-group:first-of-type { margin-top: 64px; }
+.inq-index { justify-content: center; margin-top: 28px; }
+.chapter-head { text-align: center; }
+.chapter-head .back { display: block; text-align: start; }
+.chapter-sub { max-width: 30ch; margin-inline: auto; }
+.chapter-title::after { content: ""; display: block; width: 180px; height: 20px; margin: 18px auto 4px; background: var(--ornament) center / contain no-repeat; }
