@@ -1,5 +1,5 @@
 import type { Chapter } from "./types";
-import { journey } from "./journey";
+import { journey, gate } from "./journey";
 import { ch01 } from "./chapters/ch01";
 import { ch04 } from "./chapters/ch04";
 import { ch05 } from "./chapters/ch05";
@@ -25,10 +25,10 @@ import { chprologue } from "./chapters/chprologue";
 /** כל פרק שנכתב נרשם כאן. */
 const written: Chapter[] = [ch01, ch04, ch05, ch12, ch02, ch08, ch09, ch03, chorigin, chinformation, ch06, ch07, ch13, ch10, ch11, ch14, ch15, ch16, ch17, ch18];
 
-export const chaptersById: Record<string, Chapter> = Object.fromEntries([...written, chprologue].map((c) => [c.id, c]));
+export const chaptersById: Record<string, Chapter> = Object.fromEntries([chprologue, ...written].map((c) => [c.id, c]));
 
 /** רשימה שטוחה של כל הפרקים לפי סדר המסע */
-export const journeyOrder = journey.flatMap((stage) =>
+export const journeyOrder = [gate, ...journey].flatMap((stage) =>
   stage.chapters.map((c) => ({ ...c, stage, ready: Boolean(chaptersById[c.id]) })),
 );
 
@@ -36,4 +36,7 @@ export function countItems(chapter: Chapter): number {
   return chapter.blocks.reduce((n, b) => n + (b.type === "group" ? b.items.length : 0), 0);
 }
 
-export { journey };
+/** התחנות עצמן, בלי שער הכניסה — לספירה ולתצוגה */
+export const stationsOrder = journeyOrder.filter((c) => c.stage.number > 0);
+
+export { journey, gate };

@@ -76,4 +76,13 @@ export const journey: Stage[] = [
   },
 ];
 
+/** שער הכניסה: הפרולוג — מי כתב את המסע ולמה. במפת המעגלים זו הנקודה שבמרכז ("אני"). */
+export const gate: Stage = {
+  id: "gate",
+  number: 0,
+  name: "לפני שמתחילים",
+  question: "מי כתב את המסע הזה — ולמה?",
+  chapters: [{ id: "prologue", title: "לפני שמתחילים" }],
+};
+
 export const STAGE_ORDINALS = ["ראשון", "שני", "שלישי", "רביעי", "חמישי", "שישי", "שביעי", "שמיני"];

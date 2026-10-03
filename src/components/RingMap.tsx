@@ -1,4 +1,4 @@
-import { journey, journeyOrder } from "../content";
+import { journey, journeyOrder, stationsOrder } from "../content";
 import { go } from "../router";
 import { reviewMode } from "../review";
 
@@ -40,7 +40,7 @@ export function RingMap({ done = new Set(), currentId, decorative = false }: Pro
       viewBox={`0 0 ${SIZE} ${SIZE}`}
       role={decorative ? undefined : "img"}
       aria-hidden={decorative || undefined}
-      aria-label={decorative ? undefined : `מפת המסע: ${done.size} מתוך ${journeyOrder.length} תחנות הושלמו`}
+      aria-label={decorative ? undefined : `מפת המסע: ${stationsOrder.filter((c) => done.has(c.id)).length} מתוך ${stationsOrder.length} תחנות הושלמו`}
     >
       <defs>
         <radialGradient id="rm-source" cx="50%" cy="50%" r="50%">
@@ -61,7 +61,26 @@ export function RingMap({ done = new Set(), currentId, decorative = false }: Pro
           style={{ animationDelay: `${0.15 * i}s` }}
         />
       ))}
-      <circle className="rm-core" cx={C} cy={C} r={5} />
+      {(() => {
+        // הנקודה שבמרכז = שער הכניסה (הפרולוג)
+        const isDone = done.has("prologue");
+        const isCurrent = currentId === "prologue";
+        const open = !decorative && (isDone || isCurrent || reviewMode);
+        return (
+          <g
+            className={`rm-dot rm-gate ${isDone ? "is-done" : ""} ${isCurrent ? "is-current" : ""} ${open ? "is-open" : ""}`}
+            onClick={open ? () => go("chapter/prologue") : undefined}
+            onKeyDown={open ? (e) => (e.key === "Enter" || e.key === " ") && go("chapter/prologue") : undefined}
+            tabIndex={open ? 0 : undefined}
+            role={open ? "link" : undefined}
+            aria-label={open ? "לפני שמתחילים" : undefined}
+          >
+            {isCurrent && <circle className="rm-halo" cx={C} cy={C} r={13} />}
+            <circle className="rm-core" cx={C} cy={C} r={isCurrent ? 7 : 5.5} />
+            {!decorative && <title>לפני שמתחילים</title>}
+          </g>
+        );
+      })()}
       {!decorative && (
         <text className="rm-label rm-label-core" x={C} y={C + 20} textAnchor="middle">אני</text>
       )}

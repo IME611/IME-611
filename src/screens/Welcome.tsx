@@ -1,4 +1,4 @@
-import { journeyOrder } from "../content";
+import { stationsOrder } from "../content";
 import { RingMap } from "../components/RingMap";
 
 export function Welcome() {
@@ -15,7 +15,7 @@ export function Welcome() {
         </h1>
         <a className="welcome-cta" href="#/journey">תחילת המסע</a>
         <p className="welcome-meta">
-          {journeyOrder.length} תחנות בשישה מעגלים, מבפנים החוצה
+          {stationsOrder.length} תחנות בשישה מעגלים, מבפנים החוצה
         </p>
       </div>
     </div>
