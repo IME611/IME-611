@@ -553,3 +553,8 @@ textarea, input { background: rgba(255, 255, 255, 0.8); }
 .inq-dl dd { margin: 0; font-size: 17px; line-height: 1.65; }
 .inq-station { margin: 14px 0 0; font-size: 14px; color: var(--ink-3); }
 @media (max-width: 400px) { .topbar-nav a { padding: 6px 9px; font-size: 14px; } .topbar-nav { gap: 2px; } }
+.inq-index { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0 0; }
+.inq-index a { padding: 6px 14px; border-radius: 999px; border: 1px solid var(--gold-line); background: var(--glass); font-size: 15px; text-decoration: none; color: var(--ink); }
+.inq-group { margin-top: 40px; scroll-margin-top: 80px; }
+.inq-group .inq-list { margin-top: 14px; }
+.v-מסורת { color: #5b4a8a; }
