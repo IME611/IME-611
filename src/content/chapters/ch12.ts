@@ -79,7 +79,7 @@ export const ch12: Chapter = {
       type: "tradition",
       text: "\"איזהו גיבור? הכובש את יצרו.\" — לא מי שאין לו רגשות ודחפים, אלא מי שיודע לעמוד מולם ולבחור.",
       source: "משנה, מסכת אבות ד, א",
-      approved: false,
+      approved: true,
     },
 
     { type: "heading", text: "סוף השלב הראשון" },

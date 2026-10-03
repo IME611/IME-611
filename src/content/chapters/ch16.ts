@@ -118,7 +118,7 @@ export const ch16: Chapter = {
       type: "tradition",
       text: "נחום איש גם זו נקרא כך כי על כל מה שקרה לו היה אומר \"גם זו לטובה\". לא הכחשה של הקושי — אלא נכונות לחכות ולראות מה עוד יתגלה בו.",
       source: "תלמוד בבלי, מסכת תענית כא, א",
-      approved: false,
+      approved: true,
     },
 
     { type: "heading", text: "סוף השלב החמישי" },

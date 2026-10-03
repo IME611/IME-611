@@ -124,7 +124,7 @@ export const ch09: Chapter = {
       type: "tradition",
       text: "\"לכל זמן, ועת לכל חפץ תחת השמים: עת ללדת ועת למות... עת לבכות ועת לשחוק\". קהלת רואה את החיים כולם כמחזורים — קצב שיש בו זמן לכל דבר.",
       source: "קהלת ג, א–ד",
-      approved: false,
+      approved: true,
     },
 
     { type: "heading", text: "סוף השלב השני" },

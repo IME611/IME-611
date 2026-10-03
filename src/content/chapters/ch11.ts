@@ -70,7 +70,7 @@ export const ch11: Chapter = {
       type: "tradition",
       text: "\"אחרי הפעולות נמשכים הלבבות.\" — האדם לא רק עושה לפי מה שהוא; הוא נעשה לפי מה שהוא עושה.",
       source: "ספר החינוך, מצוה טז",
-      approved: false,
+      approved: true,
     },
 
     { type: "heading", text: "הציפייה של מישהו אחר" },

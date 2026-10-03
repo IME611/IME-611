@@ -531,3 +531,25 @@ textarea, input { background: rgba(255, 255, 255, 0.8); }
 .ringmap.is-complete > circle:first-of-type { animation: rm-source 4s ease-in-out infinite; transform-origin: center; transform-box: fill-box; }
 @keyframes rm-source { 0%, 100% { opacity: .7; } 50% { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .ringmap.is-complete > circle:first-of-type { animation: none; } }
+
+/* ───────── חקירות פתוחות ───────── */
+.inq-list { list-style: none; margin: 28px 0 0; padding: 0; display: grid; gap: 18px; }
+.inq {
+  padding: 22px 20px;
+  border-radius: var(--r);
+  background: var(--glass);
+  backdrop-filter: blur(10px) saturate(1.15);
+  -webkit-backdrop-filter: blur(10px) saturate(1.15);
+  border: 1px solid var(--gold-line);
+}
+.inq-verdict { display: inline-block; margin: 0 0 8px; padding: 2px 12px; border-radius: 999px; font-size: 13px; font-weight: 700; border: 1px solid currentColor; }
+.v-נכון-חלקית { color: var(--green); }
+.v-פרשנות, .v-שאלה-פתוחה { color: #8a6d16; }
+.v-לא-הוכח, .v-לא-מדויק { color: #8c3b2b; }
+.inq-claim { margin: 0 0 6px; font-size: 22px; font-weight: 700; line-height: 1.35; }
+.inq-heard { margin: 0 0 14px; color: var(--ink-3); font-size: 15px; }
+.inq-dl { margin: 0; display: grid; gap: 4px; }
+.inq-dl dt { font-size: 14px; font-weight: 700; color: var(--green); margin-top: 8px; }
+.inq-dl dd { margin: 0; font-size: 17px; line-height: 1.65; }
+.inq-station { margin: 14px 0 0; font-size: 14px; color: var(--ink-3); }
+@media (max-width: 400px) { .topbar-nav a { padding: 6px 9px; font-size: 14px; } .topbar-nav { gap: 2px; } }

@@ -126,7 +126,7 @@ export const chorigin: Chapter = {
       type: "tradition",
       text: "התורה נפתחת במילים \"בראשית ברא אלוהים את השמים ואת הארץ\" — ברא, לא יצר. הרמב\"ן כתב על הפסוק הזה: \"ואין אצלנו בלשון הקודש בהוצאת היש מאין אלא לשון ברא.\"",
       source: "בראשית א, א; פירוש הרמב\"ן שם",
-      approved: false,
+      approved: true,
     },
 
     { type: "heading", text: "ומכאן" },

@@ -130,7 +130,7 @@ export const ch14: Chapter = {
       type: "tradition",
       text: "\"אם לא בריתי יומם ולילה — חקות שמים וארץ לא שמתי.\" — חוקי הטבע מתוארים כאן כברית: סדר קבוע ונאמן, שאפשר לסמוך עליו.",
       source: "ירמיהו לג, כה",
-      approved: false,
+      approved: true,
     },
 
     { type: "heading", text: "ומכאן" },

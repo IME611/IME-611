@@ -101,7 +101,7 @@ export const ch18: Chapter = {
       type: "tradition",
       text: "\"קרוב ה' לכל קוראיו, לכל אשר יקראוהו באמת.\" — לא בנוסח מסוים, לא במקום מסוים. באמת.",
       source: "תהילים קמה, יח",
-      approved: false,
+      approved: true,
     },
     {
       type: "pause",
@@ -113,7 +113,7 @@ export const ch18: Chapter = {
       type: "tradition",
       text: "\"אלוהי, נשמה שנתת בי טהורה היא.\" — פגשנו את הברכה הזו ב\"מערכת ההפעלה\". בסוף המסע אפשר לשמוע בה תשובה לשאלה \"מי אני\": משהו שניתן לי — שלם וטהור — עוד לפני שעשיתי משהו כדי להרוויח אותו.",
       source: "סידור התפילה — ברכות השחר",
-      approved: false,
+      approved: true,
     },
 
     { type: "heading", text: "ומכאן" },
