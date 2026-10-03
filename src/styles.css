@@ -558,3 +558,161 @@ textarea, input { background: rgba(255, 255, 255, 0.8); }
 .inq-group { margin-top: 40px; scroll-margin-top: 80px; }
 .inq-group .inq-list { margin-top: 14px; }
 .v-מסורת { color: #5b4a8a; }
+
+/* ═════════ שכבת מלכות (3.10.2026): זהב מתכתי, שיש קלקטה, מסגרת פיליגרן ═════════ */
+:root {
+  --ivory: #fdfbf5;
+  --foil: linear-gradient(115deg, #7e5d16 0%, #b8902e 14%, #f4dc94 28%, #c9a24a 40%, #8f6b1f 52%, #e2c374 66%, #fff1c2 74%, #b38a2e 86%, #7e5d16 100%);
+  --foil-flat: linear-gradient(90deg, #a07b26, #e7cd7d 50%, #a07b26);
+  --gold: #a8832a;
+  --gold-line: rgba(168, 131, 42, 0.55);
+  --emerald: #00492f;
+  --emerald-deep: #022a1c;
+  --green: #005a38;
+  --ink: #0f0f0e;
+  --ink-2: #3a3731;
+  --glass: rgba(255, 254, 250, 0.72);
+}
+body { background: var(--ivory); }
+body::before {
+  background:
+    radial-gradient(ellipse 70% 100% at 50% 50%, rgba(255, 254, 249, 0.66), rgba(255, 254, 249, 0.22) 100%),
+    url("/marble.jpg") center / cover no-repeat,
+    #fbf8f1;
+}
+/* מסגרת זהב היקפית עם פינות פיליגרן */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 6px;
+  z-index: 5;
+  pointer-events: none;
+  border: 1px solid rgba(168, 131, 42, 0.55);
+  box-shadow: inset 0 0 0 4px rgba(255, 250, 235, 0.0), inset 0 0 0 5px rgba(168, 131, 42, 0.22);
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22140%22 height=%22140%22 viewBox=%220 0 140 140%22%3E%3Cdefs%3E%3ClinearGradient id=%22g%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%238c6a1c%22/%3E%3Cstop offset=%22.3%22 stop-color=%22%23e9cf86%22/%3E%3Cstop offset=%22.5%22 stop-color=%22%23b8902e%22/%3E%3Cstop offset=%22.75%22 stop-color=%22%23f3dea0%22/%3E%3Cstop offset=%221%22 stop-color=%22%239a7524%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Cg transform=%22%22%3E%3Cpath d=%22M4 120 V22 Q4 4 22 4 H120%22 fill=%22none%22 stroke=%22url(%23g)%22 stroke-width=%221.2%22/%3E%3Cpath d=%22M12 96 V30 Q12 12 30 12 H96%22 fill=%22none%22 stroke=%22url(%23g)%22 stroke-width=%22.6%22/%3E%3Cpath d=%22M22 22 C40 22 46 34 40 42 C34 50 24 44 28 36 C31 30 38 32 37 37%22 fill=%22none%22 stroke=%22url(%23g)%22 stroke-width=%221%22/%3E%3Cpath d=%22M22 22 C22 40 34 46 42 40%22 fill=%22none%22 stroke=%22url(%23g)%22 stroke-width=%22.8%22/%3E%3Cpath d=%22M46 12 C58 18 66 18 78 12%22 fill=%22none%22 stroke=%22url(%23g)%22 stroke-width=%22.7%22/%3E%3Cpath d=%22M12 46 C18 58 18 66 12 78%22 fill=%22none%22 stroke=%22url(%23g)%22 stroke-width=%22.7%22/%3E%3Ccircle cx=%2222%22 cy=%2222%22 r=%222.6%22 fill=%22url(%23g)%22/%3E%3Cpath d=%22M126 4 l4 -3 l4 3 l-4 3z M4 126 l-3 4 l3 4 l3 -4z%22 fill=%22url(%23g)%22/%3E%3C/g%3E%3C/svg%3E") top -1px right -1px / 54px 54px no-repeat,
+    url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22140%22 height=%22140%22 viewBox=%220 0 140 140%22%3E%3Cdefs%3E%3ClinearGradient id=%22g%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%238c6a1c%22/%3E%3Cstop offset=%22.3%22 stop-color=%22%23e9cf86%22/%3E%3Cstop offset=%22.5%22 stop-color=%22%23b8902e%22/%3E%3Cstop offset=%22.75%22 stop-color=%22%23f3dea0%22/%3E%3Cstop offset=%221%22 stop-color=%22%239a7524%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Cg transform=%22translate(140 0) scale(-1 1)%22%3E%3Cpath d=%22M4 120 V22 Q4 4 22 4 H120%22 fill=%22none%22 stroke=%22url(%23g)%22 stroke-width=%221.2%22/%3E%3Cpath d=%22M12 96 V30 Q12 12 30 12 H96%22 fill=%22none%22 stroke=%22url(%23g)%22 stroke-width=%22.6%22/%3E%3Cpath d=%22M22 22 C40 22 46 34 40 42 C34 50 24 44 28 36 C31 30 38 32 37 37%22 fill=%22none%22 stroke=%22url(%23g)%22 stroke-width=%221%22/%3E%3Cpath d=%22M22 22 C22 40 34 46 42 40%22 fill=%22none%22 stroke=%22url(%23g)%22 stroke-width=%22.8%22/%3E%3Cpath d=%22M46 12 C58 18 66 18 78 12%22 fill=%22none%22 stroke=%22url(%23g)%22 stroke-width=%22.7%22/%3E%3Cpath d=%22M12 46 C18 58 18 66 12 78%22 fill=%22none%22 stroke=%22url(%23g)%22 stroke-width=%22.7%22/%3E%3Ccircle cx=%2222%22 cy=%2222%22 r=%222.6%22 fill=%22url(%23g)%22/%3E%3Cpath d=%22M126 4 l4 -3 l4 3 l-4 3z M4 126 l-3 4 l3 4 l3 -4z%22 fill=%22url(%23g)%22/%3E%3C/g%3E%3C/svg%3E") top -1px left -1px / 54px 54px no-repeat,
+    url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22140%22 height=%22140%22 viewBox=%220 0 140 140%22%3E%3Cdefs%3E%3ClinearGradient id=%22g%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%238c6a1c%22/%3E%3Cstop offset=%22.3%22 stop-color=%22%23e9cf86%22/%3E%3Cstop offset=%22.5%22 stop-color=%22%23b8902e%22/%3E%3Cstop offset=%22.75%22 stop-color=%22%23f3dea0%22/%3E%3Cstop offset=%221%22 stop-color=%22%239a7524%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Cg transform=%22translate(0 140) scale(1 -1)%22%3E%3Cpath d=%22M4 120 V22 Q4 4 22 4 H120%22 fill=%22none%22 stroke=%22url(%23g)%22 stroke-width=%221.2%22/%3E%3Cpath d=%22M12 96 V30 Q12 12 30 12 H96%22 fill=%22none%22 stroke=%22url(%23g)%22 stroke-width=%22.6%22/%3E%3Cpath d=%22M22 22 C40 22 46 34 40 42 C34 50 24 44 28 36 C31 30 38 32 37 37%22 fill=%22none%22 stroke=%22url(%23g)%22 stroke-width=%221%22/%3E%3Cpath d=%22M22 22 C22 40 34 46 42 40%22 fill=%22none%22 stroke=%22url(%23g)%22 stroke-width=%22.8%22/%3E%3Cpath d=%22M46 12 C58 18 66 18 78 12%22 fill=%22none%22 stroke=%22url(%23g)%22 stroke-width=%22.7%22/%3E%3Cpath d=%22M12 46 C18 58 18 66 12 78%22 fill=%22none%22 stroke=%22url(%23g)%22 stroke-width=%22.7%22/%3E%3Ccircle cx=%2222%22 cy=%2222%22 r=%222.6%22 fill=%22url(%23g)%22/%3E%3Cpath d=%22M126 4 l4 -3 l4 3 l-4 3z M4 126 l-3 4 l3 4 l3 -4z%22 fill=%22url(%23g)%22/%3E%3C/g%3E%3C/svg%3E") bottom -1px right -1px / 54px 54px no-repeat,
+    url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22140%22 height=%22140%22 viewBox=%220 0 140 140%22%3E%3Cdefs%3E%3ClinearGradient id=%22g%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%238c6a1c%22/%3E%3Cstop offset=%22.3%22 stop-color=%22%23e9cf86%22/%3E%3Cstop offset=%22.5%22 stop-color=%22%23b8902e%22/%3E%3Cstop offset=%22.75%22 stop-color=%22%23f3dea0%22/%3E%3Cstop offset=%221%22 stop-color=%22%239a7524%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Cg transform=%22translate(140 140) scale(-1 -1)%22%3E%3Cpath d=%22M4 120 V22 Q4 4 22 4 H120%22 fill=%22none%22 stroke=%22url(%23g)%22 stroke-width=%221.2%22/%3E%3Cpath d=%22M12 96 V30 Q12 12 30 12 H96%22 fill=%22none%22 stroke=%22url(%23g)%22 stroke-width=%22.6%22/%3E%3Cpath d=%22M22 22 C40 22 46 34 40 42 C34 50 24 44 28 36 C31 30 38 32 37 37%22 fill=%22none%22 stroke=%22url(%23g)%22 stroke-width=%221%22/%3E%3Cpath d=%22M22 22 C22 40 34 46 42 40%22 fill=%22none%22 stroke=%22url(%23g)%22 stroke-width=%22.8%22/%3E%3Cpath d=%22M46 12 C58 18 66 18 78 12%22 fill=%22none%22 stroke=%22url(%23g)%22 stroke-width=%22.7%22/%3E%3Cpath d=%22M12 46 C18 58 18 66 12 78%22 fill=%22none%22 stroke=%22url(%23g)%22 stroke-width=%22.7%22/%3E%3Ccircle cx=%2222%22 cy=%2222%22 r=%222.6%22 fill=%22url(%23g)%22/%3E%3Cpath d=%22M126 4 l4 -3 l4 3 l-4 3z M4 126 l-3 4 l3 4 l3 -4z%22 fill=%22url(%23g)%22/%3E%3C/g%3E%3C/svg%3E") bottom -1px left -1px / 54px 54px no-repeat;
+}
+@media (min-width: 700px) { body::after { inset: 14px; background-size: 110px 110px, 110px 110px, 110px 110px, 110px 110px; } }
+
+/* טקסט בזהב־פוליה */
+.foil, .eyebrow, .welcome-brand, .topbar-brand, .crystal-gem, .b-pause-title {
+  background: var(--foil);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.eyebrow { font-weight: 700; letter-spacing: 0.18em; font-size: 12.5px; }
+
+/* סרגל עליון: ירוק אמרלד עמוק, זהב */
+.topbar {
+  background: linear-gradient(180deg, #04382a, #022619);
+  border-bottom: 0;
+  box-shadow: 0 1px 0 rgba(233, 207, 134, 0.6), 0 3px 0 rgba(2, 38, 25, 0.96), 0 4px 0 rgba(233, 207, 134, 0.35), 0 14px 30px rgba(2, 30, 20, 0.18);
+  border-image: none;
+  padding: 14px 24px;
+}
+.topbar-brand { font-weight: 700; font-size: 18px; letter-spacing: 0.42em; }
+.topbar-nav a { color: rgba(246, 236, 210, 0.82); font-weight: 600; letter-spacing: 0.02em; }
+.topbar-nav a.is-active { background: transparent; color: #f6e3a1; box-shadow: inset 0 0 0 1px rgba(233, 207, 134, 0.7); }
+
+/* כרטיסים: זכוכית פנינה במסגרת זהב מתכתי */
+.b-pause, .b-group, .reflection, .crystal, .ch, .b-tradition, .b-blindspot, .tool-why, .inq, .finish-next {
+  border: 1px solid transparent;
+  background: linear-gradient(170deg, rgba(255, 254, 251, 0.97), rgba(251, 247, 236, 0.97)) padding-box, var(--foil) border-box;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 1px 0 #fff inset, 0 18px 40px -18px rgba(90, 65, 10, 0.28), 0 2px 6px rgba(90, 65, 10, 0.05);
+}
+.ch.is-locked { background: linear-gradient(rgba(255,255,255,.4), rgba(255,255,255,.4)) padding-box, linear-gradient(rgba(168,131,42,.3), rgba(168,131,42,.3)) border-box; box-shadow: none; }
+.ch.is-current { background: linear-gradient(#fffdf6, #fffdf6) padding-box, var(--foil) border-box; box-shadow: 0 0 0 3px rgba(233, 207, 134, 0.25), 0 18px 40px -16px rgba(0, 73, 47, 0.35); }
+.b-echo { background: linear-gradient(rgba(236, 246, 239, 0.78), rgba(236, 246, 239, 0.78)) padding-box, linear-gradient(90deg, rgba(0,73,47,.45), rgba(0,73,47,.15)) border-box; border: 1px solid transparent; }
+.b-pause, .crystal { outline: 1px solid rgba(168, 131, 42, 0.35); outline-offset: 6px; }
+
+/* קישוט כותרת: פיליגרן */
+.b-ornament { width: 220px; height: 24px; margin: 0 auto 16px; background: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22220%22 height=%2224%22 viewBox=%220 0 220 24%22%3E%3Cdefs%3E%3ClinearGradient id=%22g%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%220%22%3E%3Cstop offset=%220%22 stop-color=%22%238c6a1c%22/%3E%3Cstop offset=%22.3%22 stop-color=%22%23e9cf86%22/%3E%3Cstop offset=%22.5%22 stop-color=%22%23b8902e%22/%3E%3Cstop offset=%22.75%22 stop-color=%22%23f3dea0%22/%3E%3Cstop offset=%221%22 stop-color=%22%239a7524%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d=%22M2 12 H84 M136 12 H218%22 stroke=%22url(%23g)%22 stroke-width=%22.9%22/%3E%3Cpath d=%22M84 12 C92 4 100 4 104 12 C100 20 92 20 84 12Z M136 12 C128 4 120 4 116 12 C120 20 128 20 136 12Z%22 fill=%22none%22 stroke=%22url(%23g)%22 stroke-width=%22.9%22/%3E%3Cpath d=%22M110 3 L117 12 L110 21 L103 12Z%22 fill=%22url(%23g)%22/%3E%3Ccircle cx=%2240%22 cy=%2212%22 r=%221.6%22 fill=%22url(%23g)%22/%3E%3Ccircle cx=%22180%22 cy=%2212%22 r=%221.6%22 fill=%22url(%23g)%22/%3E%3C/svg%3E") center / contain no-repeat; }
+.b-heading { font-weight: 700; letter-spacing: -0.005em; }
+.b-question::after { height: 1.5px; width: 72px; background: var(--foil-flat); }
+.b-big { font-weight: 800; color: var(--emerald); text-shadow: 0 1px 0 rgba(255,255,255,.8); }
+.chapter-opening { color: var(--emerald); font-weight: 700; }
+.chapter-title { font-weight: 200; }
+.chapter-time { margin: 10px 0 0; font-size: 14px; color: var(--ink-3); letter-spacing: .04em; }
+
+/* כפתורים */
+.btn-primary {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid transparent;
+  background: linear-gradient(160deg, #00603c, var(--emerald) 45%, var(--emerald-deep)) padding-box, var(--foil) border-box;
+  color: #fbf3dc;
+  letter-spacing: 0.06em;
+  font-weight: 700;
+  box-shadow: 0 1px 0 rgba(255,255,255,.25) inset, 0 16px 34px -12px rgba(0, 50, 32, 0.55);
+}
+.btn-primary::after, .welcome-cta::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 35%, rgba(255, 244, 205, 0.45) 50%, transparent 65%);
+  transform: translateX(120%);
+  animation: sheen 5s 1.2s ease-in-out infinite;
+}
+@keyframes sheen { 0%, 70% { transform: translateX(120%); } 100% { transform: translateX(-120%); } }
+.btn-ghost { border: 1px solid transparent; background: linear-gradient(#fffdf7, #fffdf7) padding-box, var(--foil) border-box; font-weight: 600; }
+.welcome-cta {
+  position: relative; overflow: hidden;
+  background: linear-gradient(160deg, #00603c, var(--emerald) 45%, var(--emerald-deep)) padding-box, var(--foil) border-box;
+  border: 1px solid transparent;
+  color: #fbf3dc; letter-spacing: .08em; font-weight: 700;
+  box-shadow: 0 18px 40px -14px rgba(0, 50, 32, 0.6);
+}
+.welcome-brand { font-weight: 800; font-size: 26px; letter-spacing: 0.55em; }
+.welcome-hook { font-weight: 200; }
+
+/* מספרי שלבים: מדליונים */
+.stage-num { background: transparent; color: var(--emerald); border: 0; font-weight: 800; font-size: 22px; position: relative; isolation: isolate; }
+.stage-num::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; border-radius: 50%;
+  background: radial-gradient(circle at 50% 50%, #fffdf6 0 58%, transparent 59%), var(--foil);
+  box-shadow: 0 6px 16px -6px rgba(90, 65, 10, 0.5);
+}
+.stage.is-done .stage-num::before { background: radial-gradient(circle at 50% 50%, var(--emerald) 0 58%, transparent 59%), var(--foil); }
+.stage.is-done .stage-num { background: transparent; color: #f6e3a1; }
+.stages::before { background: var(--foil); opacity: .6; }
+.stage-name { color: var(--emerald); font-weight: 800; }
+.ch-dot.done { background: var(--emerald); border-color: #c9a24a; }
+.ch-dot.current { border-color: var(--emerald); box-shadow: inset 0 0 0 4px #fffdf6, inset 0 0 0 10px var(--emerald); }
+.journey-progress-bar span { background: var(--foil); }
+.read-progress span { background: var(--foil-flat); height: 3px; }
+
+/* מפת המעגלים: קטיפה ירוקה במסגרת זהב */
+.journey-map {
+  background: radial-gradient(90% 70% at 50% 40%, #0d5a3d 0%, #033a26 55%, #011f14 100%) padding-box, var(--foil) border-box;
+  border: 1px solid transparent;
+  box-shadow: 0 30px 60px -30px rgba(1, 31, 20, 0.7), 0 0 0 1px rgba(255,255,255,.04) inset;
+}
+
+/* רגע הסיום */
+.finish { text-align: center; padding: 24px 0 40px; }
+.finish-seal {
+  width: 92px; height: 92px; margin: 8px auto 22px; border-radius: 50%;
+  display: grid; place-items: center;
+  background: radial-gradient(circle at 35% 30%, #fff7d6 0%, #e8c96f 28%, #b58b2c 60%, #7e5d16 100%);
+  box-shadow: 0 0 0 4px #fffdf6, 0 0 0 5px rgba(168,131,42,.6), 0 18px 40px -10px rgba(120, 88, 20, 0.55);
+  animation: seal-in .9s cubic-bezier(.2,1.4,.4,1) both;
+}
+.finish-seal span { font-size: 34px; background: linear-gradient(160deg, #fffaf0, #f1dc9c); -webkit-background-clip: text; background-clip: text; color: transparent; }
+@keyframes seal-in { from { transform: scale(.4) rotate(-30deg); opacity: 0; } to { transform: none; opacity: 1; } }
+.finish-title { margin: 0 0 14px; font-weight: 200; font-size: clamp(36px, 10vw, 52px); line-height: 1.15; }
+.finish-crystal { max-width: 30ch; margin: 0 auto 28px; font-size: 21px; line-height: 1.6; color: var(--ink-2); }
+.finish-map { margin: 0 0 28px; padding: 24px 20px 18px; border-radius: 28px; background: radial-gradient(90% 70% at 50% 40%, #0d5a3d 0%, #033a26 55%, #011f14 100%); }
+.finish-map .ringmap { width: min(100%, 280px); }
+.finish-count { margin: 10px 0 0; color: #e9d8a6; font-size: 15px; letter-spacing: .06em; }
+.finish-next { padding: 26px 22px 22px; border-radius: var(--r); text-align: center; }
+.finish-next-title { margin: 0; font-size: 28px; font-weight: 800; color: var(--emerald); line-height: 1.25; }
+.finish-next-q { margin: 6px 0 20px; font-size: 18px; color: var(--ink-2); }
+.finish-rest { margin-top: 18px; }
+@media (prefers-reduced-motion: reduce) { .finish-seal, .btn-primary::after, .welcome-cta::after { animation: none; } }

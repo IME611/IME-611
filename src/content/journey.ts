@@ -14,7 +14,8 @@ export const journey: Stage[] = [
     chapters: [
       { id: "1", title: "התבוננות" },
       { id: "4", title: "מערכת ההפעלה" },
-      { id: "5", title: "המוח" },
+      { id: "5", title: "המוח בחושך" },
+      { id: "5b", title: "המוח מבפנים" },
       { id: "12", title: "רגשות כמידע" },
     ],
   },
@@ -25,8 +26,10 @@ export const journey: Stage[] = [
     question: "באיזה עולם הגוף הזה חי — ומה מחזיק אותו?",
     chapters: [
       { id: "2", title: "הכלי החיצוני" },
-      { id: "8", title: "תדר, צליל וצורה" },
+      { id: "8", title: "תדר וצליל" },
+      { id: "8b", title: "כשהקול מצייר" },
       { id: "9", title: "הגוף כתדר" },
+      { id: "9b", title: "קצבים שמתאחדים" },
     ],
   },
   {
@@ -36,8 +39,11 @@ export const journey: Stage[] = [
     question: "האם כל זה יכול היה לקרות מעצמו?",
     chapters: [
       { id: "3", title: "הפלא ההנדסי" },
-      { id: "origin", title: "למה יש משהו ולא כלום" },
+      { id: "3b", title: "השען העיוור" },
+      { id: "origin", title: "יום ההולדת של היקום" },
+      { id: "originb", title: "למה יש משהו ולא כלום" },
       { id: "information", title: "המידע שבתוך התא" },
+      { id: "informationb", title: "התרנגולת והביצה" },
     ],
   },
   {
@@ -47,8 +53,11 @@ export const journey: Stage[] = [
     question: "האם אני רק חומר?",
     chapters: [
       { id: "6", title: "גלי המוח" },
+      { id: "6b", title: "מסע בין קצבים" },
       { id: "7", title: "בלוטת האצטרובל" },
-      { id: "13", title: "התודעה והקוונטים" },
+      { id: "7b", title: "מושב הנפש" },
+      { id: "13", title: "איך זה להיות עטלף" },
+      { id: "13b", title: "שני סדקים" },
     ],
   },
   {
@@ -57,11 +66,16 @@ export const journey: Stage[] = [
     name: "למה אני פה",
     question: "אם יש תכנון — מה התפקיד שלי בו?",
     chapters: [
-      { id: "10", title: "נוירופלסטיות" },
-      { id: "11", title: "זהויות ואמונות" },
-      { id: "14", title: "חוקי היקום" },
-      { id: "15", title: "חזון ומימוש" },
-      { id: "16", title: "סבל, קושי ומשמעות" },
+      { id: "10", title: "שביל במוח" },
+      { id: "10b", title: "דרך עוקפת" },
+      { id: "11", title: "אמונה בונה בית" },
+      { id: "11b", title: "עיניים שמצפות" },
+      { id: "14", title: "החוקים שלא מתפוררים" },
+      { id: "14b", title: "\"12 חוקי היקום\"" },
+      { id: "15", title: "שני סוגים של זמן" },
+      { id: "15b", title: "החלום והמכשול" },
+      { id: "16", title: "החירות האחרונה" },
+      { id: "16b", title: "בדיעבד" },
     ],
   },
   {
@@ -70,8 +84,10 @@ export const journey: Stage[] = [
     name: "המקור",
     question: "מה קורה כשהבנה הופכת לחיבור?",
     chapters: [
-      { id: "17", title: "חיבור הכל" },
+      { id: "17", title: "צעד אחורה" },
+      { id: "17b", title: "תודה" },
       { id: "18", title: "מי אני — תשובה" },
+      { id: "18b", title: "קשר ישיר" },
     ],
   },
 ];

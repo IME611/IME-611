@@ -1,4 +1,4 @@
-import { journey, gate, journeyOrder, stationsOrder } from "../content";
+import { journey, gate, journeyOrder, stationsOrder, chaptersById, readMinutes } from "../content";
 import { STAGE_ORDINALS } from "../content/journey";
 import { useStore } from "../store";
 import { RingMap } from "../components/RingMap";
@@ -60,7 +60,7 @@ export function Journey() {
                         {isDone ? "✓" : ""}
                       </span>
                       <span className="ch-title">{c.title}</span>
-                      <span className="ch-status">{status}</span>
+                      <span className="ch-status">{status}{entry.ready && !isDone ? ` · ${readMinutes(chaptersById[c.id])} דק׳` : ""}</span>
                     </>
                   );
                   return (
