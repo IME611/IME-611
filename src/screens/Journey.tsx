@@ -24,9 +24,9 @@ export function Journey() {
                 : `עברת ${doneCount} מתוך ${stationsOrder.length} תחנות. כל נקודה מוזהבת היא תחנה שכבר שלך.`}
           </p>
         </div>
-        {reviewMode && <p className="review-flag">מצב סקירה: כל התחנות פתוחות. לכיבוי — הוסף ?review=0 לכתובת.</p>}
         <p className="eyebrow">{name ? `${name}, ברוך הבא` : "ברוך הבא"}</p>
         <h1 className="journey-title">המסע</h1>
+        <span className="b-ornament journey-ornament" aria-hidden />
         <p className="journey-lead">
           מסע אחד, צעד אחר צעד — ממה שאתה רואה כשאתה מסתכל על עצמך, ועד המקור שממנו הכל מגיע.
           כל תחנה נבנית על הקודמת. אין מבחנים. רק התבוננות.
