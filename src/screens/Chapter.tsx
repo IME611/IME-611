@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { chaptersById, countItems, journeyOrder, readMinutes, stationsOrder } from "../content";
 import { RingMap } from "../components/RingMap";
+import { ReadAloud } from "../components/ReadAloud";
 import { STAGE_ORDINALS } from "../content/journey";
 import { Blocks } from "../components/Blocks";
 import { actions, useStore } from "../store";
@@ -92,6 +93,7 @@ export function ChapterScreen({ id }: { id: string }) {
         <h1 className="chapter-title">{chapter.title}</h1>
         <p className="chapter-sub">{chapter.subtitle}</p>
         <p className="chapter-time">כ־{readMinutes(chapter)} דקות קריאה</p>
+        <ReadAloud chapter={chapter} minutes={readMinutes(chapter)} />
       </header>
 
       <p className="chapter-opening">{chapter.opening}</p>

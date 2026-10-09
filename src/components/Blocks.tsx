@@ -3,7 +3,7 @@ import type { Block } from "../content/types";
 import { chaptersById, countItems } from "../content";
 
 /** מופיע בעדינות כשנכנס למסך — קצב של "נפילת אסימון" */
-function Reveal({ children, className = "" }: { children: ReactNode; className?: string }) {
+function Reveal({ children, className = "", idx }: { children: ReactNode; className?: string; idx?: number }) {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const el = ref.current;
@@ -22,7 +22,7 @@ function Reveal({ children, className = "" }: { children: ReactNode; className?:
     return () => io.disconnect();
   }, []);
   return (
-    <div ref={ref} className={`reveal ${className}`}>
+    <div ref={ref} className={`reveal ${className}`} data-block={idx}>
       {children}
     </div>
   );
@@ -45,16 +45,16 @@ export function Blocks({ blocks, count }: { blocks: Block[]; count: number }) {
       {blocks.map((b, i) => {
         switch (b.type) {
           case "p":
-            return <Reveal key={i}><p className="b-p">{lines(fill(b.text))}</p></Reveal>;
+            return <Reveal key={i} idx={i}><p className="b-p">{lines(fill(b.text))}</p></Reveal>;
           case "heading":
-            return <Reveal key={i} className="b-heading-wrap"><span className="b-ornament" aria-hidden>◆</span><h2 className="b-heading">{fill(b.text)}</h2></Reveal>;
+            return <Reveal key={i} idx={i} className="b-heading-wrap"><span className="b-ornament" aria-hidden>◆</span><h2 className="b-heading">{fill(b.text)}</h2></Reveal>;
           case "question":
-            return <Reveal key={i}><p className="b-question">{fill(b.text)}</p></Reveal>;
+            return <Reveal key={i} idx={i}><p className="b-question">{fill(b.text)}</p></Reveal>;
           case "big":
-            return <Reveal key={i}><p className="b-big">{lines(fill(b.text))}</p></Reveal>;
+            return <Reveal key={i} idx={i}><p className="b-big">{lines(fill(b.text))}</p></Reveal>;
           case "pause":
             return (
-              <Reveal key={i}>
+              <Reveal key={i} idx={i}>
                 <aside className="b-pause">
                   <span className="b-breath" aria-hidden />
                   <p className="b-pause-title">{b.title}</p>
@@ -64,7 +64,7 @@ export function Blocks({ blocks, count }: { blocks: Block[]; count: number }) {
             );
           case "group":
             return (
-              <Reveal key={i}>
+              <Reveal key={i} idx={i}>
                 <section className="b-group">
                   <h3 className="b-group-title">{b.title}</h3>
                   {b.intro && <p className="b-group-intro">{b.intro}</p>}
@@ -88,7 +88,7 @@ export function Blocks({ blocks, count }: { blocks: Block[]; count: number }) {
             );
           case "blindspot":
             return (
-              <Reveal key={i}>
+              <Reveal key={i} idx={i}>
                 <aside className="b-blindspot">
                   <p className="b-pause-title">ניסוי: הנקודה העיוורת</p>
                   <div className="b-blindspot-row" dir="ltr" aria-hidden>
@@ -101,7 +101,7 @@ export function Blocks({ blocks, count }: { blocks: Block[]; count: number }) {
             );
           case "wink":
             return (
-              <Reveal key={i}>
+              <Reveal key={i} idx={i}>
                 <aside className="b-wink">
                   {b.lines.map((l, j) => <p key={j}>{l}</p>)}
                 </aside>
@@ -110,7 +110,7 @@ export function Blocks({ blocks, count }: { blocks: Block[]; count: number }) {
           case "tradition":
             if (!b.approved) return null;
             return (
-              <Reveal key={i}>
+              <Reveal key={i} idx={i}>
                 <details className="b-tradition">
                   <summary>
                     <span>מקור יהודי</span>
@@ -123,7 +123,7 @@ export function Blocks({ blocks, count }: { blocks: Block[]; count: number }) {
             );
           case "echo":
             return (
-              <Reveal key={i}>
+              <Reveal key={i} idx={i}>
                 <aside className="b-echo">
                   <small>זוכר? {chaptersById[b.chapterId]?.title ?? ""}</small>
                   <p>{(() => {
