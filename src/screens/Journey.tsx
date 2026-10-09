@@ -10,7 +10,10 @@ export function Journey() {
   // הפרק הנוכחי = הראשון שעוד לא הושלם. כל מה שאחריו נעול.
   const currentIndex = journeyOrder.findIndex((c) => !done.has(c.id));
   const doneCount = stationsOrder.filter((c) => done.has(c.id)).length;
-  const placeEntry = place ? journeyOrder.find((c) => c.id === place.id) : undefined;
+  // אם עוד לא נשמר מקום (קריאה מלפני שהתכונה נוספה) — ממשיכים מהתחנה שאחרי הרחוקה ביותר שסומנה כנקראה
+  const lastDoneIdx = journeyOrder.reduce((m, c, i) => (done.has(c.id) ? i : m), -1);
+  const fallback = journeyOrder[Math.min(lastDoneIdx + 1, journeyOrder.length - 1)];
+  const placeEntry = (place ? journeyOrder.find((c) => c.id === place.id) : undefined) ?? (doneCount > 0 || done.has("prologue") ? fallback : undefined);
   const placeIdx = placeEntry ? journeyOrder.indexOf(placeEntry) : -1;
   const skipped = placeIdx > 0 ? journeyOrder.slice(0, placeIdx).filter((c) => !done.has(c.id)) : [];
 
