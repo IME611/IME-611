@@ -20,10 +20,11 @@ import { ch15, ch15b } from "./chapters/ch15";
 import { ch16, ch16b } from "./chapters/ch16";
 import { ch17, ch17b } from "./chapters/ch17";
 import { ch18, ch18b } from "./chapters/ch18";
+import { chroutine } from "./chapters/chroutine";
 import { chprologue } from "./chapters/chprologue";
 
 /** כל פרק שנכתב נרשם כאן. */
-const written: Chapter[] = [ch01, ch01b, ch04, ch04b, ch05, ch05b, ch12, ch12b, ch02, ch08, ch08b, ch09, ch09b, ch03, ch03b, chorigin, choriginb, chinformation, chinformationb, ch06, ch06b, ch07, ch07b, ch13, ch13b, ch10, ch10b, ch11, ch11b, ch14, ch14b, ch15, ch15b, ch16, ch16b, ch17, ch17b, ch18, ch18b];
+const written: Chapter[] = [ch01, ch01b, ch04, ch04b, ch05, ch05b, ch12, ch12b, ch02, ch08, ch08b, ch09, ch09b, ch03, ch03b, chorigin, choriginb, chinformation, chinformationb, ch06, ch06b, ch07, ch07b, ch13, ch13b, ch10, ch10b, ch11, ch11b, ch14, ch14b, ch15, ch15b, chroutine, ch16, ch16b, ch17, ch17b, ch18, ch18b];
 
 export const chaptersById: Record<string, Chapter> = Object.fromEntries([chprologue, ...written].map((c) => [c.id, c]));
 

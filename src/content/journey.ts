@@ -77,6 +77,7 @@ export const journey: Stage[] = [
       { id: "14b", title: "12 חוקי היקום" },
       { id: "15", title: "שני סוגים של זמן" },
       { id: "15b", title: "החלום והמכשול" },
+      { id: "routine", title: "השגרה שמתקינה אותי" },
       { id: "16", title: "החירות האחרונה" },
       { id: "16b", title: "בדיעבד" },
     ],
