@@ -5,11 +5,14 @@ import { RingMap } from "../components/RingMap";
 import { reviewMode } from "../review";
 
 export function Journey() {
-  const { completed, name } = useStore();
+  const { completed, name, place } = useStore();
   const done = new Set(completed);
   // הפרק הנוכחי = הראשון שעוד לא הושלם. כל מה שאחריו נעול.
   const currentIndex = journeyOrder.findIndex((c) => !done.has(c.id));
   const doneCount = stationsOrder.filter((c) => done.has(c.id)).length;
+  const placeEntry = place ? journeyOrder.find((c) => c.id === place.id) : undefined;
+  const placeIdx = placeEntry ? journeyOrder.indexOf(placeEntry) : -1;
+  const skipped = placeIdx > 0 ? journeyOrder.slice(0, placeIdx).filter((c) => !done.has(c.id)) : [];
 
   return (
     <div className="journey">
@@ -24,6 +27,26 @@ export function Journey() {
                 : `עברת ${doneCount} מתוך ${stationsOrder.length} תחנות. כל נקודה מוזהבת היא תחנה שכבר שלך.`}
           </p>
         </div>
+        {placeEntry && (
+          <a className="resume-card" href={`#/chapter/${placeEntry.id}`}>
+            <span className="eyebrow">{place && place.block > 0 && !done.has(placeEntry.id) ? "עצרת באמצע" : done.has(placeEntry.id) ? "קראת לאחרונה" : "ממשיכים מכאן"}</span>
+            <span className="resume-title">{placeEntry.title}</span>
+            <span className="resume-sub">
+              {placeEntry.stage.number === 0 ? "שער הכניסה" : `שלב ${STAGE_ORDINALS[placeEntry.stage.number - 1]} · ${placeEntry.stage.name}`}
+              {place && place.block > 0 && !done.has(placeEntry.id) ? " · נמשיך מאותה פסקה" : ""}
+            </span>
+            <span className="resume-go">להמשיך ←</span>
+          </a>
+        )}
+        {skipped.length > 0 && (
+          <p className="skipped-note">
+            {skipped.length === 1 ? "תחנה אחת לפני כן עוד לא סומנה כנקראה" : `${skipped.length} תחנות לפני כן עוד לא סומנו כנקראו`}:{" "}
+            {skipped.slice(0, 4).map((c, i) => (
+              <span key={c.id}>{i > 0 && ", "}<a href={`#/chapter/${c.id}`}>{c.title}</a></span>
+            ))}
+            {skipped.length > 4 && " ועוד"}
+          </p>
+        )}
         <p className="eyebrow">{name ? `${name}, ברוך הבא` : "ברוך הבא"}</p>
         <h1 className="journey-title">המסע</h1>
         <p className="journey-lead">
@@ -58,7 +81,7 @@ export function Journey() {
                       <span className={`ch-dot ${isDone ? "done" : isCurrent ? "current" : ""}`} aria-hidden>
                         {isDone ? "✓" : ""}
                       </span>
-                      <span className="ch-title">{c.title}</span>
+                      <span className="ch-title">{c.title}{place?.id === c.id && <span className="here-badge">עצרת כאן</span>}</span>
                       <span className="ch-status">{status}{entry.ready && !isDone ? ` · ${readMinutes(chaptersById[c.id])} דק׳` : ""}</span>
                     </>
                   );

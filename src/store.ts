@@ -7,10 +7,12 @@ type State = {
   completed: string[];
   crystals: Crystal[];
   reflections: Record<string, string>;
+  /** איפה הקורא עצר: תחנה, וקטע בתוכה (0 = תחילת התחנה) */
+  place: { id: string; block: number; at: string } | null;
 };
 
 const KEY = "eil-v2";
-const empty: State = { name: "", completed: [], crystals: [], reflections: {} };
+const empty: State = { name: "", completed: [], crystals: [], reflections: {}, place: null };
 
 function load(): State {
   try {
@@ -48,5 +50,10 @@ export const actions = {
   saveCrystal: (c: Omit<Crystal, "savedAt">) =>
     set({ crystals: [...state.crystals.filter((x) => x.chapterId !== c.chapterId), { ...c, savedAt: new Date().toISOString() }] }),
   removeCrystal: (chapterId: string) => set({ crystals: state.crystals.filter((x) => x.chapterId !== chapterId) }),
+  setPlace: (id: string, block: number) => {
+    const p = state.place;
+    if (p && p.id === id && p.block === block) return;
+    set({ place: { id, block, at: new Date().toISOString() } });
+  },
   reset: () => set({ ...empty, name: state.name }),
 };

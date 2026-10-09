@@ -22,13 +22,39 @@ function useReadProgress() {
   return p;
 }
 
+/** שומר את הקטע העליון שנראה במסך — כדי לחזור בדיוק לאותה נקודה */
+function useTrackPlace(id: string, enabled: boolean) {
+  useEffect(() => {
+    if (!enabled) return;
+    let t = 0;
+    const on = () => {
+      window.clearTimeout(t);
+      t = window.setTimeout(() => {
+        const els = Array.from(document.querySelectorAll<HTMLElement>("[data-block]"));
+        const top = els.find((e) => e.getBoundingClientRect().bottom > window.innerHeight * 0.3);
+        const block = window.scrollY < 200 ? 0 : top ? Number(top.dataset.block) : 0;
+        actions.setPlace(id, block);
+      }, 400);
+    };
+    actions.setPlace(id, 0);
+    window.addEventListener("scroll", on, { passive: true });
+    return () => {
+      window.clearTimeout(t);
+      window.removeEventListener("scroll", on);
+    };
+  }, [id, enabled]);
+}
+
 export function ChapterScreen({ id }: { id: string }) {
   const chapter = chaptersById[id];
-  const { completed, crystals, reflections } = useStore();
+  const { completed, crystals, reflections, place } = useStore();
+  const [resumeAt] = useState(() => (place && place.id === id && place.block > 1 ? place.block : 0));
+  const [showResume, setShowResume] = useState(resumeAt > 0);
   const progress = useReadProgress();
   const saved = crystals.find((c) => c.chapterId === id);
   const [note, setNote] = useState(reflections[id] ?? "");
   const [finished, setFinished] = useState(false);
+  useTrackPlace(id, Boolean(chapter) && !finished && !showResume);
 
   const idx = journeyOrder.findIndex((c) => c.id === id);
   const firstOpen = journeyOrder.findIndex((c) => !completed.includes(c.id));
@@ -47,6 +73,7 @@ export function ChapterScreen({ id }: { id: string }) {
   const finish = () => {
     actions.setReflection(id, note);
     actions.complete(id);
+    if (next) actions.setPlace(next.id, 0);
     setFinished(true);
     window.scrollTo(0, 0);
   };
@@ -95,6 +122,24 @@ export function ChapterScreen({ id }: { id: string }) {
         <p className="chapter-time">כ־{readMinutes(chapter)} דקות קריאה</p>
         <ReadAloud chapter={chapter} minutes={readMinutes(chapter)} />
       </header>
+
+      {showResume && (
+        <div className="resume-bar">
+          <span>עצרת באמצע התחנה הזו.</span>
+          <button
+            className="btn-ghost"
+            onClick={() => {
+              setShowResume(false);
+              const el = document.querySelector<HTMLElement>(`[data-block="${resumeAt}"]`);
+              el?.classList.add("is-in");
+              el?.scrollIntoView({ behavior: "smooth", block: "center" });
+            }}
+          >
+            להמשיך מאיפה שעצרתי
+          </button>
+          <button className="btn-link" onClick={() => setShowResume(false)}>מההתחלה</button>
+        </div>
+      )}
 
       <p className="chapter-opening">{chapter.opening}</p>
 
