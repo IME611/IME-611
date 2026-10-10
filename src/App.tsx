@@ -30,7 +30,7 @@ function Header({ route }: { route: string }) {
       <a href="#/journey" className="topbar-brand" aria-label="המסע">E·I·L</a>
       <nav className="topbar-nav">
         <a href="#/journey" className={route === "journey" ? "is-active" : ""}>המסע</a>
-        <a href="#/tools" className={route === "tools" ? "is-active" : ""}>כלים{hasNewTool && <span className="nav-dot" aria-label="יש כלי חדש" />}</a>
+        <a href="#/tools" className={route === "tools" ? "is-active" : ""}>כלים{hasNewTool && <span className="nav-dot"><span className="sr-only">יש כלי חדש</span></span>}</a>
         <a href="#/inquiries" className={route === "inquiries" ? "is-active" : ""}>חקירות</a>
         <a href="#/space" className={route === "space" ? "is-active" : ""}>המרחב שלי</a>
       </nav>

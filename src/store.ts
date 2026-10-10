@@ -1,4 +1,5 @@
 import { useSyncExternalStore } from "react";
+import { reviewMode } from "./review";
 
 export type Crystal = { chapterId: string; chapterTitle: string; text: string; note: string; savedAt: string };
 
@@ -15,13 +16,25 @@ type State = {
   toolsEarly: string[];
 };
 
-const KEY = "eil-v2";
+/** במצב סקירה ההתקדמות נשמרת בנפרד, כדי לא לערבב עם החוויה האמיתית */
+const KEY = reviewMode ? "eil-v2-review" : "eil-v2";
 const empty: State = { name: "", completed: [], crystals: [], reflections: {}, place: null, toolsSeen: [], toolsEarly: [] };
 
 function load(): State {
   try {
     const raw = localStorage.getItem(KEY);
-    return raw ? { ...empty, ...JSON.parse(raw) } : empty;
+    if (!raw) return empty;
+    const d = JSON.parse(raw) ?? {};
+    const strs = (v: unknown) => (Array.isArray(v) ? v.filter((x) => typeof x === "string") : []);
+    return {
+      name: typeof d.name === "string" ? d.name : "",
+      completed: strs(d.completed),
+      crystals: Array.isArray(d.crystals) ? d.crystals.filter((c: Crystal) => c && typeof c.chapterId === "string" && typeof c.text === "string") : [],
+      reflections: d.reflections && typeof d.reflections === "object" && !Array.isArray(d.reflections) ? d.reflections : {},
+      place: d.place && typeof d.place.id === "string" && typeof d.place.block === "number" ? d.place : null,
+      toolsSeen: strs(d.toolsSeen),
+      toolsEarly: strs(d.toolsEarly),
+    };
   } catch {
     return empty;
   }

@@ -1,6 +1,7 @@
 import { useEffect, useRef, type ReactNode } from "react";
 import type { Block } from "../content/types";
 import { chaptersById, countItems } from "../content";
+import { reviewMode } from "../review";
 
 /** מופיע בעדינות כשנכנס למסך — קצב של "נפילת אסימון" */
 function Reveal({ children, className = "", idx }: { children: ReactNode; className?: string; idx?: number }) {
@@ -76,7 +77,7 @@ export function Blocks({ blocks, count }: { blocks: Block[]; count: number }) {
                       </li>
                     ))}
                   </ul>
-                  {b.media && (
+                  {b.media && reviewMode && (
                     <div className="b-media" role="img" aria-label={b.media}>
                       <span className="b-media-play" aria-hidden>▶</span>
                       <span>{b.media}</span>
@@ -104,7 +105,7 @@ export function Blocks({ blocks, count }: { blocks: Block[]; count: number }) {
                     ))}
                   </ol>
                   {b.outro && <p className="b-steps-outro">{lines(b.outro)}</p>}
-                  {b.media && (
+                  {b.media && reviewMode && (
                     <div className="b-media" role="img" aria-label={b.media}>
                       <span className="b-media-play" aria-hidden>▶</span>
                       <span>{b.media}</span>

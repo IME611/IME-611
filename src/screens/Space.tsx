@@ -18,7 +18,7 @@ export function Space() {
       {ordered.length === 0 ? (
         <div className="empty">
           <span className="crystal-gem" aria-hidden>◆</span>
-          <p>עוד אין כאן קריסטלים. בסוף כל תחנה אפשר לשמור את התובנה שלה.</p>
+          <p>עוד אין כאן קריסטלים. קריסטל הוא התובנה של התחנה במשפט אחד, ובסוף כל תחנה אפשר לשמור אותו כאן.</p>
           <a className="btn-ghost" href="#/journey">למסע</a>
         </div>
       ) : (
@@ -36,6 +36,24 @@ export function Space() {
           ))}
         </ul>
       )}
+
+      {(() => {
+        const notes = journeyOrder.filter((c) => reflections[c.id]?.trim() && !crystals.some((x) => x.chapterId === c.id));
+        if (!notes.length) return null;
+        return (
+          <section className="my-notes">
+            <h2 className="tool-family-name">מה שכתבתי לעצמי</h2>
+            <ul className="crystal-list">
+              {notes.map((c) => (
+                <li key={c.id} className="crystal">
+                  <p className="eyebrow">{c.title}</p>
+                  <p className="crystal-note">״{reflections[c.id]}״</p>
+                </li>
+              ))}
+            </ul>
+          </section>
+        );
+      })()}
 
       <section className="settings">
         <h2>הגדרות</h2>

@@ -7,6 +7,7 @@ export function Welcome() {
       <div className="welcome-rings" aria-hidden><RingMap decorative /></div>
       <div className="welcome-inner">
         <p className="welcome-brand">E · I · L</p>
+        <p className="welcome-sub">כל מה שלמדתי</p>
         <h1 className="welcome-hook">
           <span>רגע של מודעות אמיתית</span>
           <span>יכול לשנות</span>

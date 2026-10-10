@@ -44,7 +44,7 @@ export { journey, gate };
 
 /** זמן קריאה משוער בדקות (כ־150 מילים לדקה — קריאה רגועה, עם עצירות) */
 export function readMinutes(chapter: Chapter): number {
-  const text = [chapter.opening, ...chapter.blocks.map((b) => JSON.stringify(b)), chapter.reflection, chapter.crystal].join(" ");
+  const text = [chapter.opening, ...chapter.blocks.filter((b) => b.type !== "tradition").map((b) => JSON.stringify(b)), chapter.reflection, chapter.crystal].join(" ");
   const words = text.match(/[֐-׿]+/g)?.length ?? 0;
   return Math.max(2, Math.round(words / 150));
 }

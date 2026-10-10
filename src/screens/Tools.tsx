@@ -3,11 +3,12 @@ import { chaptersById, journeyOrder } from "../content";
 import { STAGE_ORDINALS } from "../content/journey";
 import { toolFamilies, type Tool } from "../content/tools";
 import { isFirstAid, isUnlocked, toolsInJourneyOrder } from "../toolsUnlock";
+import { reviewMode } from "../review";
 import { actions, useStore } from "../store";
 
 const familyOf = (t: Tool) => toolFamilies.find((f) => f.tools.some((x) => x.id === t.id));
 
-function ToolItem({ tool, unlocked, isNew, startOpen }: { tool: Tool; unlocked: boolean; isNew: boolean; startOpen: boolean }) {
+function ToolItem({ tool, unlocked, isNew, startOpen, stationOpen }: { tool: Tool; unlocked: boolean; isNew: boolean; startOpen: boolean; stationOpen: boolean }) {
   const [open, setOpen] = useState(startOpen);
   const station = chaptersById[tool.station];
   useEffect(() => {
@@ -33,7 +34,7 @@ function ToolItem({ tool, unlocked, isNew, startOpen }: { tool: Tool; unlocked: 
               <button className="btn-ghost" onClick={() => actions.openToolEarly(tool.id)}>
                 לפתוח עכשיו
               </button>
-              {station && (
+              {station && stationOpen && (
                 <a className="btn-link" href={`#/chapter/${station.id}`}>
                   לקרוא קודם את התחנה
                 </a>
@@ -65,7 +66,7 @@ function ToolItem({ tool, unlocked, isNew, startOpen }: { tool: Tool; unlocked: 
           </p>
           {station && (
             <p className="tool-station">
-              צומח מהתחנה <a href={`#/chapter/${station.id}`}>{station.title}</a>
+              צומח מהתחנה {stationOpen ? <a href={`#/chapter/${station.id}`}>{station.title}</a> : <span>"{station.title}"</span>}
               {familyOf(tool) && <span className="tool-family-tag">{familyOf(tool)!.name}</span>}
             </p>
           )}
@@ -81,6 +82,8 @@ export function Tools({ focus }: { focus?: string }) {
   const seen = new Set(toolsSeen);
   const unlocked = (t: Tool) => isUnlocked(t, done, toolsEarly);
   const openCount = toolsInJourneyOrder.filter(unlocked).length;
+  const firstOpen = journeyOrder.find((c) => !done.has(c.id))?.id;
+  const stationOpen = (id: string) => reviewMode || done.has(id) || id === firstOpen;
 
   useEffect(() => {
     if (!focus) return;
@@ -99,7 +102,7 @@ export function Tools({ focus }: { focus?: string }) {
     byStage.get(st.id)!.tools.push(t);
   }
   const item = (t: Tool) => (
-    <ToolItem key={t.id} tool={t} unlocked={unlocked(t)} isNew={!isFirstAid(t) && done.has(t.station) && !toolsEarly.includes(t.id) && !seen.has(t.id)} startOpen={focus === t.id} />
+    <ToolItem key={t.id} tool={t} unlocked={unlocked(t)} isNew={!isFirstAid(t) && done.has(t.station) && !toolsEarly.includes(t.id) && !seen.has(t.id)} startOpen={focus === t.id} stationOpen={stationOpen(t.station)} />
   );
 
   return (

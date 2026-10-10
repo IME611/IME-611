@@ -13,13 +13,25 @@ export function Journey() {
   // אם עוד לא נשמר מקום (קריאה מלפני שהתכונה נוספה) — ממשיכים מהתחנה שאחרי הרחוקה ביותר שסומנה כנקראה
   const lastDoneIdx = journeyOrder.reduce((m, c, i) => (done.has(c.id) ? i : m), -1);
   const fallback = journeyOrder[Math.min(lastDoneIdx + 1, journeyOrder.length - 1)];
-  const placeEntry = (place ? journeyOrder.find((c) => c.id === place.id) : undefined) ?? (doneCount > 0 || done.has("prologue") ? fallback : undefined);
+  const placeEntry = (place ? journeyOrder.find((c) => c.id === place.id) : undefined) ?? fallback;
+  const fresh = !place && done.size === 0;
   const placeIdx = placeEntry ? journeyOrder.indexOf(placeEntry) : -1;
   const skipped = placeIdx > 0 ? journeyOrder.slice(0, placeIdx).filter((c) => !done.has(c.id)) : [];
 
   return (
     <div className="journey">
       <section className="journey-intro">
+        {placeEntry && (
+          <a className="resume-card" href={`#/chapter/${placeEntry.id}`}>
+            <span className="eyebrow">{fresh ? "מתחילים כאן" : place && place.block > 0 && !done.has(placeEntry.id) ? "עצרת באמצע" : done.has(placeEntry.id) ? "קראת לאחרונה" : "ממשיכים מכאן"}</span>
+            <span className="resume-title">{placeEntry.title}</span>
+            <span className="resume-sub">
+              {placeEntry.stage.number === 0 ? "שער הכניסה" : `שלב ${STAGE_ORDINALS[placeEntry.stage.number - 1]}, ${placeEntry.stage.name}`}
+              {place && place.block > 0 && !done.has(placeEntry.id) ? ". נמשיך מאותה פסקה" : ""}
+            </span>
+            <span className="resume-go">{fresh ? "להתחיל ←" : "להמשיך ←"}</span>
+          </a>
+        )}
         <div className="journey-map">
           <RingMap done={done} currentId={journeyOrder[currentIndex]?.id} />
           <p className="journey-map-caption">
@@ -30,17 +42,6 @@ export function Journey() {
                 : `עברת ${doneCount} מתוך ${stationsOrder.length} תחנות. כל נקודה מוזהבת היא תחנה שכבר שלך.`}
           </p>
         </div>
-        {placeEntry && (
-          <a className="resume-card" href={`#/chapter/${placeEntry.id}`}>
-            <span className="eyebrow">{place && place.block > 0 && !done.has(placeEntry.id) ? "עצרת באמצע" : done.has(placeEntry.id) ? "קראת לאחרונה" : "ממשיכים מכאן"}</span>
-            <span className="resume-title">{placeEntry.title}</span>
-            <span className="resume-sub">
-              {placeEntry.stage.number === 0 ? "שער הכניסה" : `שלב ${STAGE_ORDINALS[placeEntry.stage.number - 1]}, ${placeEntry.stage.name}`}
-              {place && place.block > 0 && !done.has(placeEntry.id) ? ". נמשיך מאותה פסקה" : ""}
-            </span>
-            <span className="resume-go">להמשיך ←</span>
-          </a>
-        )}
         {skipped.length > 0 && (
           <p className="skipped-note">
             {skipped.length === 1 ? "תחנה אחת לפני כן עוד לא סומנה כנקראה" : `${skipped.length} תחנות לפני כן עוד לא סומנו כנקראו`}:{" "}

@@ -62,7 +62,7 @@ export function ChapterScreen({ id }: { id: string }) {
   if (!chapter || idx < 0 || (!reviewMode && idx > firstOpen && firstOpen !== -1)) {
     return (
       <div className="chapter-missing">
-        <p>התחנה הזו עוד נעולה.</p>
+        <p>{chapter ? "התחנה הזו עוד נעולה. היא תיפתח כשתגיע אליה במסע." : "התחנה הזו לא נמצאה."}</p>
         <a href="#/journey">חזרה למסע</a>
       </div>
     );
@@ -112,7 +112,7 @@ export function ChapterScreen({ id }: { id: string }) {
         )}
         {nextChapter ? (
           <div className="finish-next">
-            <p className="eyebrow">{newStage ? `מעגל חדש: ${next.stage.name}` : "התחנה הבאה"}</p>
+            <p className="eyebrow">{newStage ? `שלב חדש: ${next.stage.name}` : "התחנה הבאה"}</p>
             <p className="finish-next-title">{nextChapter.title}</p>
             <p className="finish-next-q">{nextChapter.opening}</p>
             <button className="btn-primary" onClick={() => go(`chapter/${next.id}`)}>
@@ -168,7 +168,7 @@ export function ChapterScreen({ id }: { id: string }) {
         <div className="reflection">
           <p className="eyebrow">לפני שממשיכים</p>
           <p className="reflection-q">{chapter.reflection}</p>
-          <label className="reflection-label" htmlFor="note">רוצה לכתוב משהו נוסף כדי להזכיר לעצמך בהמשך?</label>
+          <label className="reflection-label" htmlFor="note">רוצה לכתוב כמה מילים לעצמך? הן יישמרו במרחב שלך.</label>
           <textarea
             id="note"
             rows={3}
@@ -184,7 +184,7 @@ export function ChapterScreen({ id }: { id: string }) {
           <p className="eyebrow">הקריסטל של התחנה</p>
           <p className="crystal-text">{chapter.crystal}</p>
           {saved ? (
-            <button className="btn-ghost" onClick={() => actions.removeCrystal(id)}>נשמר במרחב שלי ✓</button>
+            <button className="btn-ghost" onClick={() => confirm("להסיר את הקריסטל מהמרחב שלך?") && actions.removeCrystal(id)}>נשמר במרחב שלי ✓</button>
           ) : (
             <button
               className="btn-ghost"

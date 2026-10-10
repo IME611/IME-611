@@ -73,10 +73,23 @@ export function ReadAloud({ chapter, minutes }: { chapter: Chapter; minutes: num
       }
       state.current.idx = i;
       setIdx(i);
-      setPlaying(true);
       highlight(i);
       if (!voice.current) voice.current = pickHebrewVoice();
-      setNoVoice(!voice.current);
+      if (!voice.current) {
+        // הקולות נטענים לפעמים באיחור: עוד ניסיון אחד, ואם אין קול עברי, לא "מנגנים" בשקט
+        setTimeout(() => {
+          if (run.current !== my) return;
+          voice.current = pickHebrewVoice();
+          if (voice.current) speakFrom(i);
+          else {
+            setNoVoice(true);
+            setPlaying(false);
+          }
+        }, 400);
+        return;
+      }
+      setNoVoice(false);
+      setPlaying(true);
       const u = new SpeechSynthesisUtterance(segments[i].text);
       u.lang = "he-IL";
       if (voice.current) u.voice = voice.current;
