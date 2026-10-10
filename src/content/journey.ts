@@ -10,7 +10,7 @@ export const journey: Stage[] = [
     id: "who",
     number: 1,
     name: "מי אני",
-    question: "מה בעצם מחזיק אותי בחיים — ברגע זה ממש?",
+    question: "מה בעצם מחזיק אותי בחיים ברגע זה ממש?",
     chapters: [
       { id: "1", title: "התבוננות" },
       { id: "1b", title: "בלי לבקש רשות" },
@@ -26,7 +26,7 @@ export const journey: Stage[] = [
     id: "where",
     number: 2,
     name: "איפה אני",
-    question: "באיזה עולם הגוף הזה חי — ומה מחזיק אותו?",
+    question: "באיזה עולם הגוף הזה חי, ומה מחזיק אותו?",
     chapters: [
       { id: "2", title: "הכלי החיצוני" },
       { id: "8", title: "תדר וצליל" },
@@ -67,7 +67,7 @@ export const journey: Stage[] = [
     id: "why",
     number: 5,
     name: "למה אני פה",
-    question: "אם יש תכנון — מה התפקיד שלי בו?",
+    question: "אם יש תכנון, מה התפקיד שלי בו?",
     chapters: [
       { id: "10", title: "שביל במוח" },
       { id: "10b", title: "דרך עוקפת" },
@@ -90,7 +90,7 @@ export const journey: Stage[] = [
     chapters: [
       { id: "17", title: "צעד אחורה" },
       { id: "17b", title: "תודה" },
-      { id: "18", title: "מי אני — תשובה" },
+      { id: "18", title: "מי אני? התשובה" },
       { id: "18b", title: "קשר ישיר" },
     ],
   },
@@ -101,7 +101,7 @@ export const gate: Stage = {
   id: "gate",
   number: 0,
   name: "לפני שמתחילים",
-  question: "מי כתב את המסע הזה — ולמה?",
+  question: "מי כתב את המסע הזה, ולמה?",
   chapters: [{ id: "prologue", title: "לפני שמתחילים" }],
 };
 

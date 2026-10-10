@@ -24,9 +24,9 @@ export function Journey() {
           <RingMap done={done} currentId={journeyOrder[currentIndex]?.id} />
           <p className="journey-map-caption">
             {doneCount === 0
-              ? "המסע נע מבפנים החוצה: מהמעגל הפנימי — אתה — ועד המעגל החיצוני, המקור."
+              ? "המסע נע מבפנים החוצה, מהמעגל הפנימי שהוא אתה ועד המעגל החיצוני, המקור."
               : doneCount === stationsOrder.length
-                ? "עברת את כל המעגלים. מכאן — הקשר הוא שלך."
+                ? "עברת את כל המעגלים. מכאן, הקשר הוא שלך."
                 : `עברת ${doneCount} מתוך ${stationsOrder.length} תחנות. כל נקודה מוזהבת היא תחנה שכבר שלך.`}
           </p>
         </div>
@@ -35,8 +35,8 @@ export function Journey() {
             <span className="eyebrow">{place && place.block > 0 && !done.has(placeEntry.id) ? "עצרת באמצע" : done.has(placeEntry.id) ? "קראת לאחרונה" : "ממשיכים מכאן"}</span>
             <span className="resume-title">{placeEntry.title}</span>
             <span className="resume-sub">
-              {placeEntry.stage.number === 0 ? "שער הכניסה" : `שלב ${STAGE_ORDINALS[placeEntry.stage.number - 1]} · ${placeEntry.stage.name}`}
-              {place && place.block > 0 && !done.has(placeEntry.id) ? " · נמשיך מאותה פסקה" : ""}
+              {placeEntry.stage.number === 0 ? "שער הכניסה" : `שלב ${STAGE_ORDINALS[placeEntry.stage.number - 1]}, ${placeEntry.stage.name}`}
+              {place && place.block > 0 && !done.has(placeEntry.id) ? ". נמשיך מאותה פסקה" : ""}
             </span>
             <span className="resume-go">להמשיך ←</span>
           </a>
@@ -53,7 +53,7 @@ export function Journey() {
         <p className="eyebrow">{name ? `${name}, ברוך הבא` : "ברוך הבא"}</p>
         <h1 className="journey-title">המסע</h1>
         <p className="journey-lead">
-          מסע אחד, צעד אחר צעד — ממה שאתה רואה כשאתה מסתכל על עצמך, ועד המקור שממנו הכל מגיע.
+          מסע אחד, צעד אחר צעד, ממה שאתה רואה כשאתה מסתכל על עצמך, ועד המקור שממנו הכל מגיע.
           כל תחנה נבנית על הקודמת. אין מבחנים. רק התבוננות.
         </p>
       </section>
@@ -85,7 +85,7 @@ export function Journey() {
                         {isDone ? "✓" : ""}
                       </span>
                       <span className="ch-title">{c.title}{place?.id === c.id && <span className="here-badge">עצרת כאן</span>}</span>
-                      <span className="ch-status">{status}{entry.ready && !isDone ? ` · ${readMinutes(chaptersById[c.id])} דק׳` : ""}</span>
+                      <span className="ch-status">{status}{entry.ready && !isDone ? `, ${readMinutes(chaptersById[c.id])} דק׳` : ""}</span>
                     </>
                   );
                   return (

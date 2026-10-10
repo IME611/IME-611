@@ -951,3 +951,23 @@ body { line-height: 1.85; }
 .skipped-note a { color: var(--emerald); }
 .here-badge { display: inline-block; margin-inline-start: 10px; padding: 1px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; color: #fbf3dc; background: linear-gradient(160deg, #00683f, var(--emerald)); vertical-align: middle; }
 .resume-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px 14px; margin: 28px auto 0; padding: 14px 18px; max-width: 460px; border-radius: 18px; background: rgba(0, 73, 47, 0.07); box-shadow: inset 0 0 0 1px rgba(0, 73, 47, 0.25); font-size: 15px; }
+
+/* ═════════ תהליך שלב אחר שלב ═════════ */
+.b-steps { margin: 64px 0; padding: 30px 22px 24px; border-radius: var(--r); background: var(--lg-sheen), var(--lg-fill); border: 1px solid rgba(255,255,255,.7); backdrop-filter: blur(22px) saturate(1.7); -webkit-backdrop-filter: blur(22px) saturate(1.7); box-shadow: var(--lg-edge), var(--lg-shadow); }
+.b-steps-title { margin: 0; text-align: center; font-weight: 800; font-size: 25px; line-height: 1.3; color: var(--emerald); }
+.b-steps-intro { margin: 6px 0 0; text-align: center; color: var(--ink-3); font-size: 16px; }
+.b-steps-list { list-style: none; margin: 24px 0 0; padding: 0; position: relative; }
+.b-steps-list::before { content: ""; position: absolute; top: 22px; bottom: 22px; right: 21px; width: 2px; background: linear-gradient(var(--gold), rgba(168,131,42,.15)); transform-origin: top; transform: scaleY(0); }
+.reveal.is-in .b-steps-list::before { animation: steps-line 2.2s .2s ease forwards; }
+.b-steps-list li { position: relative; display: grid; grid-template-columns: 44px 1fr; gap: 14px; align-items: start; padding: 0 0 20px; opacity: 0; transform: translateY(8px); }
+.reveal.is-in .b-steps-list li { animation: step-in .6s ease forwards; }
+.b-step-icon { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; font-size: 21px; background: radial-gradient(circle at 35% 30%, #fffdf6, #f4e7c3); box-shadow: 0 0 0 1.5px rgba(201,162,74,.7), 0 6px 14px -6px rgba(90,65,10,.4); position: relative; z-index: 1; }
+.b-steps-list strong { display: block; font-size: 18px; color: var(--ink); margin-top: 8px; }
+.b-steps-list span { display: block; color: var(--ink-2); font-size: 17px; line-height: 1.7; }
+.b-steps-outro { margin: 4px 0 0; text-align: center; font-weight: 700; font-size: 19px; color: var(--emerald); }
+@keyframes step-in { to { opacity: 1; transform: none; } }
+@keyframes steps-line { to { transform: scaleY(1); } }
+@media (prefers-reduced-motion: reduce) { .b-steps-list li { opacity: 1; transform: none; animation: none !important; } .b-steps-list::before { transform: none; animation: none !important; } }
+.ra-voice { height: 34px; padding: 0 10px; border: 0; border-radius: 999px; background: rgba(255,255,255,.08); color: #f6ecd2; font-size: 13px; max-width: 96px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.b-step-icon { line-height: 1; font-family: "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif; padding: 0; }
+.b-steps-list .b-step-icon { display: grid; place-items: center; font-size: 21px; color: inherit; }

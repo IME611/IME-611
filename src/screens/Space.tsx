@@ -13,7 +13,7 @@ export function Space() {
     <div className="space">
       <p className="eyebrow">המרחב האישי</p>
       <h1 className="journey-title">הקריסטלים שלי</h1>
-      <p className="journey-lead">התובנות ששמרת לאורך המסע — והמילים שכתבת לעצמך.</p>
+      <p className="journey-lead">התובנות ששמרת לאורך המסע, והמילים שכתבת לעצמך.</p>
 
       {ordered.length === 0 ? (
         <div className="empty">

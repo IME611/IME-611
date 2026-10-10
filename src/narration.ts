@@ -37,6 +37,11 @@ export function buildSegments(chapter: Chapter): Segment[] {
         segs.push({ text: [b.title, b.intro].filter(Boolean).join(". "), target });
         b.items.forEach((it) => segs.push({ text: `${it.name}. ${it.detail}`, target }));
         break;
+      case "steps":
+        segs.push({ text: [b.title, b.intro].filter(Boolean).join(". "), target });
+        b.items.forEach((it, n) => segs.push({ text: `${n + 1}. ${it.name}. ${it.detail}`, target }));
+        if (b.outro) segs.push({ text: b.outro, target });
+        break;
       case "wink":
         segs.push({ text: b.lines.join(" "), target });
         break;
@@ -55,18 +60,48 @@ export function buildSegments(chapter: Chapter): Segment[] {
   return segs.map((s) => ({ ...s, text: clean(s.text) })).filter((s) => s.text);
 }
 
-/** בחירת הקול העברי הכי טבעי שקיים במכשיר */
-export function pickHebrewVoice(): SpeechSynthesisVoice | null {
-  if (!("speechSynthesis" in window)) return null;
+const VOICE_KEY = "eil-voice";
+
+/** כל הקולות העבריים במכשיר, מהטבעי ביותר — עם העדפה לקול גברי (עידן ביקש) */
+export function hebrewVoices(): SpeechSynthesisVoice[] {
+  if (!("speechSynthesis" in window)) return [];
   const voices = window.speechSynthesis.getVoices().filter((v) => /^he|^iw/i.test(v.lang));
-  if (!voices.length) return null;
   const score = (v: SpeechSynthesisVoice) =>
-    (/natural|neural|online/i.test(v.name) ? 40 : 0) + // Edge: Microsoft Hila / Avri Online (Natural)
-    (/google/i.test(v.name) ? 25 : 0) +
-    (/hila|avri/i.test(v.name) ? 10 : 0) +
-    (/enhanced|premium/i.test(v.name) ? 15 : 0) + // iOS: Carmit (Enhanced)
+    (/natural|neural|online/i.test(v.name) ? 40 : 0) + // Edge: Microsoft Avri / Hila Online (Natural)
+    (/avri|asaf|male|גבר/i.test(v.name) && !/female/i.test(v.name) ? 30 : 0) + // קולות גבריים מוכרים
+    (/google/i.test(v.name) ? 20 : 0) +
+    (/enhanced|premium/i.test(v.name) ? 15 : 0) +
     (v.localService ? 0 : 3);
-  return voices.sort((a, b) => score(b) - score(a))[0];
+  return voices.sort((a, b) => score(b) - score(a));
+}
+
+export function pickHebrewVoice(): SpeechSynthesisVoice | null {
+  const list = hebrewVoices();
+  if (!list.length) return null;
+  try {
+    const saved = localStorage.getItem(VOICE_KEY);
+    const hit = saved && list.find((v) => v.name === saved);
+    if (hit) return hit;
+  } catch {
+    /* לא חובה */
+  }
+  return list[0];
+}
+
+export function saveVoice(name: string) {
+  try {
+    localStorage.setItem(VOICE_KEY, name);
+  } catch {
+    /* לא חובה */
+  }
+}
+
+/** שם קצר וידידותי לקול */
+export function voiceLabel(v: SpeechSynthesisVoice | null): string {
+  if (!v) return "קול";
+  const m = v.name.match(/Microsoft (\w+)/);
+  if (m) return m[1];
+  return v.name.replace(/\s*\(.*?\)\s*/g, " ").replace(/Hebrew|Israel|עברית/gi, "").trim().slice(0, 14) || "קול";
 }
 
 export const SPEEDS = [0.75, 1, 1.25, 1.5, 1.75, 2];

@@ -19,6 +19,12 @@ export type Block =
   | { type: "group"; title: string; intro?: string; items: { name: string; detail: string }[]; media?: string }
   /** ניסוי הנקודה העיוורת — עיגול משמאל, צלב מימין (לעין שמאל) */
   | { type: "blindspot"; text: string }
+  /**
+   * תהליך שלב אחר שלב — לדברים שקשה לדמיין (אור → עלה → סוכר, אור → עין → חשמל → תמונה).
+   * כל שלב: אייקון קצר (אימוג'י אחד), כותרת של 1–3 מילים, והסבר של משפט־שניים בשפה פשוטה.
+   * השלבים מופיעים אחד אחרי השני בהנפשה עדינה, עם קו מחבר ביניהם.
+   */
+  | { type: "steps"; title: string; intro?: string; items: { icon: string; name: string; detail: string }[]; outro?: string; media?: string }
   /** קריצה לקורא */
   | { type: "wink"; lines: string[] }
   /** חוט ספירלי — חזרה לרעיון מפרק קודם והעלאתו קומה. {{count}} כאן = מספר הפריטים בפרק המוזכר */

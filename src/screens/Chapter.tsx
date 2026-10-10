@@ -95,16 +95,16 @@ export function ChapterScreen({ id }: { id: string }) {
         </div>
         {nextChapter ? (
           <div className="finish-next">
-            <p className="eyebrow">{newStage ? `מעגל חדש · ${next.stage.name}` : "התחנה הבאה"}</p>
+            <p className="eyebrow">{newStage ? `מעגל חדש: ${next.stage.name}` : "התחנה הבאה"}</p>
             <p className="finish-next-title">{nextChapter.title}</p>
             <p className="finish-next-q">{nextChapter.opening}</p>
             <button className="btn-primary" onClick={() => go(`chapter/${next.id}`)}>
-              ממשיכים · כ־{readMinutes(nextChapter)} דקות
+              ממשיכים (כ־{readMinutes(nextChapter)} דקות)
             </button>
           </div>
         ) : null}
         <a className="btn-ghost finish-rest" href="#/journey">
-          {nextChapter ? "עוצרים כאן להיום — נמשיך מאותה נקודה" : "חזרה למפת המסע"}
+          {nextChapter ? "עוצרים כאן להיום, נמשיך מאותה נקודה" : "חזרה למפת המסע"}
         </a>
       </section>
     );
@@ -116,7 +116,7 @@ export function ChapterScreen({ id }: { id: string }) {
 
       <header className="chapter-head">
         <a className="back" href="#/journey">→ המסע</a>
-        <p className="eyebrow">{stage.number === 0 ? "שער הכניסה" : `שלב ${STAGE_ORDINALS[stage.number - 1]} · ${stage.name}`}</p>
+        <p className="eyebrow">{stage.number === 0 ? "שער הכניסה" : `שלב ${STAGE_ORDINALS[stage.number - 1]}, ${stage.name}`}</p>
         <h1 className="chapter-title">{chapter.title}</h1>
         <p className="chapter-sub">{chapter.subtitle}</p>
         <p className="chapter-time">כ־{readMinutes(chapter)} דקות קריאה</p>

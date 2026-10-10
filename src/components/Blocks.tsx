@@ -86,6 +86,34 @@ export function Blocks({ blocks, count }: { blocks: Block[]; count: number }) {
                 </section>
               </Reveal>
             );
+          case "steps":
+            return (
+              <Reveal key={i} idx={i}>
+                <section className="b-steps">
+                  <p className="b-steps-title">{b.title}</p>
+                  {b.intro && <p className="b-steps-intro">{b.intro}</p>}
+                  <ol className="b-steps-list">
+                    {b.items.map((it, j) => (
+                      <li key={j} style={{ animationDelay: `${0.25 + j * 0.45}s` }}>
+                        <span className="b-step-icon" aria-hidden>{it.icon}</span>
+                        <div>
+                          <strong>{it.name}</strong>
+                          <span>{lines(it.detail)}</span>
+                        </div>
+                      </li>
+                    ))}
+                  </ol>
+                  {b.outro && <p className="b-steps-outro">{lines(b.outro)}</p>}
+                  {b.media && (
+                    <div className="b-media" role="img" aria-label={b.media}>
+                      <span className="b-media-play" aria-hidden>▶</span>
+                      <span>{b.media}</span>
+                      <small>בהכנה</small>
+                    </div>
+                  )}
+                </section>
+              </Reveal>
+            );
           case "blindspot":
             return (
               <Reveal key={i} idx={i}>
@@ -114,7 +142,7 @@ export function Blocks({ blocks, count }: { blocks: Block[]; count: number }) {
                 <details className="b-tradition">
                   <summary>
                     <span>מקור יהודי</span>
-                    <small>זווית נוספת — אפשר לאמץ, אפשר לא</small>
+                    <small>זווית נוספת. אפשר לאמץ, אפשר לא</small>
                   </summary>
                   <p>{lines(b.text)}</p>
                   <cite>{b.source}</cite>

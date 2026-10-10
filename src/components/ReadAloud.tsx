@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Chapter } from "../content/types";
-import { buildSegments, pickHebrewVoice, SPEEDS } from "../narration";
+import { buildSegments, hebrewVoices, pickHebrewVoice, saveVoice, SPEEDS, voiceLabel } from "../narration";
 
 const SPEED_KEY = "eil-speed";
 const readSpeed = () => {
@@ -27,6 +27,7 @@ export function ReadAloud({ chapter, minutes }: { chapter: Chapter; minutes: num
   const [idx, setIdx] = useState(0);
   const [speed, setSpeed] = useState(readSpeed);
   const [noVoice, setNoVoice] = useState(false);
+  const [voiceName, setVoiceName] = useState("");
   const run = useRef(0); // מזהה ריצה — כדי שאירוע onend ישן לא ימשיך ריצה שבוטלה
   const voice = useRef<SpeechSynthesisVoice | null>(null);
   const state = useRef({ idx: 0, speed });
@@ -34,7 +35,10 @@ export function ReadAloud({ chapter, minutes }: { chapter: Chapter; minutes: num
 
   useEffect(() => {
     if (!supported) return;
-    const load = () => (voice.current = pickHebrewVoice());
+    const load = () => {
+      voice.current = pickHebrewVoice();
+      setVoiceName(voiceLabel(voice.current));
+    };
     load();
     window.speechSynthesis.addEventListener("voiceschanged", load);
     return () => {
@@ -114,6 +118,16 @@ export function ReadAloud({ chapter, minutes }: { chapter: Chapter; minutes: num
       highlight(n);
     }
   };
+  const cycleVoice = () => {
+    const list = hebrewVoices();
+    if (list.length < 2) return;
+    const i = list.findIndex((v) => v.name === voice.current?.name);
+    const nextV = list[(i + 1) % list.length];
+    voice.current = nextV;
+    saveVoice(nextV.name);
+    setVoiceName(voiceLabel(nextV));
+    if (playing) speakFrom(state.current.idx);
+  };
   const cycleSpeed = () => {
     const next = SPEEDS[(SPEEDS.indexOf(speed) + 1) % SPEEDS.length];
     setSpeed(next);
@@ -150,7 +164,7 @@ export function ReadAloud({ chapter, minutes }: { chapter: Chapter; minutes: num
         <button className="listen-btn" onClick={start}>
           <span className="listen-icon" aria-hidden>▶</span>
           האזנה לתחנה
-          <small>· כ־{minutes} דקות</small>
+          <small>(כ־{minutes} דקות)</small>
         </button>
       )}
       {active && (
@@ -176,6 +190,9 @@ export function ReadAloud({ chapter, minutes }: { chapter: Chapter; minutes: num
             <button className="ra-speed" dir="ltr" onClick={cycleSpeed} aria-label="מהירות הקראה">
               {speed}×
             </button>
+            {hebrewVoices().length > 1 && (
+              <button className="ra-voice" onClick={cycleVoice} aria-label="החלפת קול">{voiceName}</button>
+            )}
             <span className="ra-count">{idx + 1}/{segments.length}</span>
             <button className="ra-close" onClick={close} aria-label="סגירת ההקראה">✕</button>
           </div>

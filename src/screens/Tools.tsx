@@ -42,7 +42,7 @@ export function Tools() {
     <div className="tools">
       <h1 className="journey-title">ארגז הכלים</h1>
       <p className="journey-lead">
-        המסע הוא לקרוא ולהבין. הכלים הם לעשות. כל אחד מהם קצר, אפשר להתחיל בו היום — ולכל אחד יש הסבר למה הוא עובד.
+        המסע הוא לקרוא ולהבין. הכלים הם לעשות. כל אחד מהם קצר, אפשר להתחיל בו היום, ולכל אחד יש הסבר למה הוא עובד.
       </p>
       {toolFamilies.map((f) => (
         <section key={f.id} className="tool-family">
