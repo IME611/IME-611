@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { chaptersById, countItems, journeyOrder, readMinutes, stationsOrder } from "../content";
 import { RingMap } from "../components/RingMap";
 import { ReadAloud } from "../components/ReadAloud";
+import { toolsForStation } from "../toolsUnlock";
 import { STAGE_ORDINALS } from "../content/journey";
 import { Blocks } from "../components/Blocks";
 import { actions, useStore } from "../store";
@@ -93,6 +94,22 @@ export function ChapterScreen({ id }: { id: string }) {
           <RingMap done={done} currentId={next?.id} />
           <p className="finish-count">{doneCount} מתוך {stationsOrder.length} תחנות</p>
         </div>
+        {toolsForStation(id).length > 0 && (
+          <div className="finish-tools">
+            <p className="eyebrow">{toolsForStation(id).length === 1 ? "נפתח לך כלי חדש" : `נפתחו לך ${toolsForStation(id).length} כלים חדשים`}</p>
+            <ul>
+              {toolsForStation(id).map((t) => (
+                <li key={t.id}>
+                  <a href={`#/tools/${t.id}`}>
+                    <strong>{t.name}</strong>
+                    <span>{t.promise}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+            <p className="finish-tools-note">מוזמן לעבוד איתם. הם יחכו לך בארגז הכלים.</p>
+          </div>
+        )}
         {nextChapter ? (
           <div className="finish-next">
             <p className="eyebrow">{newStage ? `מעגל חדש: ${next.stage.name}` : "התחנה הבאה"}</p>

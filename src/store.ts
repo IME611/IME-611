@@ -9,10 +9,12 @@ type State = {
   reflections: Record<string, string>;
   /** איפה הקורא עצר: תחנה, וקטע בתוכה (0 = תחילת התחנה) */
   place: { id: string; block: number; at: string } | null;
+  /** כלים שהקורא כבר פתח (לסימון "חדש") */
+  toolsSeen: string[];
 };
 
 const KEY = "eil-v2";
-const empty: State = { name: "", completed: [], crystals: [], reflections: {}, place: null };
+const empty: State = { name: "", completed: [], crystals: [], reflections: {}, place: null, toolsSeen: [] };
 
 function load(): State {
   try {
@@ -55,5 +57,6 @@ export const actions = {
     if (p && p.id === id && p.block === block) return;
     set({ place: { id, block, at: new Date().toISOString() } });
   },
+  seeTool: (id: string) => !state.toolsSeen.includes(id) && set({ toolsSeen: [...state.toolsSeen, id] }),
   reset: () => set({ ...empty, name: state.name }),
 };
