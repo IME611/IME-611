@@ -11,10 +11,12 @@ type State = {
   place: { id: string; block: number; at: string } | null;
   /** כלים שהקורא כבר פתח (לסימון "חדש") */
   toolsSeen: string[];
+  /** כלים שהקורא בחר לפתוח לפני התחנה שלהם */
+  toolsEarly: string[];
 };
 
 const KEY = "eil-v2";
-const empty: State = { name: "", completed: [], crystals: [], reflections: {}, place: null, toolsSeen: [] };
+const empty: State = { name: "", completed: [], crystals: [], reflections: {}, place: null, toolsSeen: [], toolsEarly: [] };
 
 function load(): State {
   try {
@@ -58,5 +60,6 @@ export const actions = {
     set({ place: { id, block, at: new Date().toISOString() } });
   },
   seeTool: (id: string) => !state.toolsSeen.includes(id) && set({ toolsSeen: [...state.toolsSeen, id] }),
+  openToolEarly: (id: string) => !state.toolsEarly.includes(id) && set({ toolsEarly: [...state.toolsEarly, id] }),
   reset: () => set({ ...empty, name: state.name }),
 };

@@ -48,7 +48,7 @@ function useTrackPlace(id: string, enabled: boolean) {
 
 export function ChapterScreen({ id }: { id: string }) {
   const chapter = chaptersById[id];
-  const { completed, crystals, reflections, place } = useStore();
+  const { completed, crystals, reflections, place, toolsEarly } = useStore();
   const [resumeAt] = useState(() => (place && place.id === id && place.block > 1 ? place.block : 0));
   const [showResume, setShowResume] = useState(resumeAt > 0);
   const progress = useReadProgress();
@@ -94,11 +94,11 @@ export function ChapterScreen({ id }: { id: string }) {
           <RingMap done={done} currentId={next?.id} />
           <p className="finish-count">{doneCount} מתוך {stationsOrder.length} תחנות</p>
         </div>
-        {toolsForStation(id).length > 0 && (
+        {toolsForStation(id, toolsEarly).length > 0 && (
           <div className="finish-tools">
-            <p className="eyebrow">{toolsForStation(id).length === 1 ? "נפתח לך כלי חדש" : `נפתחו לך ${toolsForStation(id).length} כלים חדשים`}</p>
+            <p className="eyebrow">{toolsForStation(id, toolsEarly).length === 1 ? "נפתח לך כלי חדש" : `נפתחו לך ${toolsForStation(id, toolsEarly).length} כלים חדשים`}</p>
             <ul>
-              {toolsForStation(id).map((t) => (
+              {toolsForStation(id, toolsEarly).map((t) => (
                 <li key={t.id}>
                   <a href={`#/tools/${t.id}`}>
                     <strong>{t.name}</strong>

@@ -6,7 +6,7 @@ import { Space } from "./screens/Space";
 import { Tools } from "./screens/Tools";
 import { Inquiries } from "./screens/Inquiries";
 import { useStore } from "./store";
-import { toolsInJourneyOrder } from "./toolsUnlock";
+import { isFirstAid, toolsInJourneyOrder } from "./toolsUnlock";
 
 function useRoute() {
   const read = () => window.location.hash.replace(/^#\/?/, "");
@@ -23,8 +23,8 @@ function useRoute() {
 }
 
 function Header({ route }: { route: string }) {
-  const { completed, toolsSeen } = useStore();
-  const hasNewTool = toolsInJourneyOrder.some((t) => completed.includes(t.station) && !toolsSeen.includes(t.id));
+  const { completed, toolsSeen, toolsEarly } = useStore();
+  const hasNewTool = toolsInJourneyOrder.some((t) => !isFirstAid(t) && !toolsEarly.includes(t.id) && completed.includes(t.station) && !toolsSeen.includes(t.id));
   return (
     <header className="topbar">
       <a href="#/journey" className="topbar-brand" aria-label="המסע">E·I·L</a>
