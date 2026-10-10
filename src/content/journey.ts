@@ -10,7 +10,7 @@ export const journey: Stage[] = [
     id: "who",
     number: 1,
     name: "מי אני",
-    question: "מה בעצם מחזיק אותי בחיים ברגע זה ממש?",
+    question: "ממה אני בנוי, ומי מפעיל אותי?",
     chapters: [
       { id: "1", title: "התבוננות" },
       { id: "1b", title: "בלי לבקש רשות" },
@@ -75,6 +75,7 @@ export const journey: Stage[] = [
       { id: "11b", title: "עיניים שמצפות" },
       { id: "14", title: "החוקים שלא מתפוררים" },
       { id: "14b", title: "12 חוקי היקום" },
+      { id: "14c", title: "המחשבה שבונה" },
       { id: "15", title: "שני סוגים של זמן" },
       { id: "15b", title: "החלום והמכשול" },
       { id: "routine", title: "השגרה שמתקינה אותי" },
