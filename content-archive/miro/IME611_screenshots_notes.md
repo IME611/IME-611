@@ -1,0 +1,59 @@
+# Miro IME 611 — screenshots (Drive: working copy/MIRO IME 611), read 11.10.2026
+- 140308 מודע ותת מודע: "screen vs computer" metaphor; everything stored in subconscious; subliminal messages (=Miro text; inquiry subliminal exists). Claim "all info stored in full" — not supported.
+- 140338: image only (no text)
+- 140416: sonic/ultrasonic/subsonic; Nada yoga "108 points", prana; chakra↔brainwave chart (gamma 31-120, beta 13-30, alpha 8-12, theta 4-7, delta). Chakra mapping = esoteric.
+- 140434: brain anatomy diagram labels (corpus callosum, ventricles, thalamus, midbrain, cerebellum, brainstem, hypothalamus, pituitary, pons, medulla) — matches 5/5b.
+- 140439: image only
+- 140443: pineal "activation of DNA", 5-8mm, sleep-wake, "seat of the soul" — Miro text.
+- 140448: neurobics (6 senses incl. emotion), 95/5, hypnosis link, REM, EMDR mention (EMDR real therapy; eye movements).
+- 140508: colors & mood, "why write in blue pen?", chakra link, lucid dream links (hayadan), Castaneda "directed dreams", sleep cycles & melatonin.
+- 140518: Uri Yariv chakra series links.
+- 140539/140549: neurology.org.il links; "parallel between 7 chakras and 10 sefirot"; "body 60% water" (approx true for adults); endocrine incl. DMT; Lemuria link.
+- 140605: image only
+- 140634: brain topics list (hemispheres, lobes, grey/white, neurons/synapses, homeostasis, amygdala, hippocampus, pineal, brainwaves, binaural, affirmations, subliminal, hypnosis).
+- 140640: LEFT vs RIGHT brain personality types — popular myth (Nielsen et al. 2013, PLoS ONE: no "left/right-brained" people). -> INQUIRY candidate. (contralateral control is true; language left-lateralized true.)
+- 140714: four lobes (frontal/parietal/temporal/occipital) — correct.
+- 140719: brain parts: cerebrum, cerebellum (skills like cycling), diencephalon ("emotional brain"), brainstem ("survival brain") — ok.
+- 140725: grey/white matter, CSF, intracranial pressure; left dominance in nearly all right-handers and ~70% of left-handers (correct). Already in 5b.
+- 140731: neurons & synapses; "100 billion neurons" (better 86B, Azevedo 2009); "neurons are pink not grey"; neurogenesis claim (adult neurogenesis disputed); rewiring at any age (true in principle).
+- 140738: homeostasis, hypothalamus-pituitary axis (GH, FSH/LH, ACTH, prolactin, TSH) — correct; thalamus "sleep/wake" (partly); hippocampus first hit in Alzheimer's (true).
+- 140744: amygdala — fight/flight, highly connected hub (ok).
+- 140750: hippocampus = cognitive map (O'Keefe, Nobel 2014); basal ganglia dopamine/GABA/ACh (ok).
+- 140758: pineal — once thought vestigial; melatonin & serotonin; "photoreceptors like the eye" (true in lower vertebrates/parietal eye, not humans); tefillin above third-eye point (tradition note); "genius sync" claim unsupported.
+- 140808: pineal "seat of the soul", Vatican pine cone (Pigna — true statue), Eye of Horus resemblance (popular claim), "crystal" & Lemurian "golden diamond crown", "DMT from which LSD is made" (FALSE — LSD from ergot). Esoteric, not for site.
+- 140818: DMT notes (=Miro), acacia/burning bush speculation, "Moses... or just carved stone" — Idan's own musing; ayahuasca joke line. Not for site.
+- 140828: image only
+- 140835: pineal calcification ("calcite" crystals; fluoride; Baconnier et al. 2002 Bioelectromagnetics — 100-300 calcite microcrystals/mm² — REAL; Luke 2001 fluoride accumulates in pineal — REAL; "piezoelectric receiver for telepathy" — speculation; "interests calcify us" conspiracy). Inquiry candidate: pineal calcification & fluoride.
+- 140845, 140901: image only
+- 140854: brainwave bands (neurofeedback); "gamma = fight or flight" (wrong-ish); "epsilon <0.1Hz ecstatic" (fringe). 
+- 140914: brainwave entrainment, healing frequencies, chakra tones 256-480 Hz, planetary tones — esoteric. (inquiries binaural/solfeggio exist)
+- 140920: Solfeggio 9 tones "lost scale" (inquiry exists), crystal/Tibetan bowls.
+- 140926/140933: binaural beats claims (Oster 1973; immune, growth hormone claims unsupported). Already covered in 6b group.
+- 140940/140945: monaural & isochronic tones (Manns 1981 claim; Dove 1839, Oster 1973 — correct history); big unsupported benefit claims.
+- 140952/141000/141007: affirmations (=Miro): "black box", feel not just say, illusory truth effect, blue pen, 5-15 statements, 21 days; "2009 study: affirmations backfire when they feel like a lie" = Wood, Perunovic & Lee 2009, Psychological Science (low self-esteem felt worse after "I'm a lovable person") — REAL -> candidate for station 11.
+- 141014: subliminal messages (inquiry exists; Greenwald 1991 added).
+- 141031: image only
+- 141042: hypnosis article (Israeli psychologist): no control against will; 1970s stage-show girl case; law 1984 — already in inquiry "hypnosis".
+- 141102: spinal cord / CNS-PNS (ok).
+- 141118, 141227: image only
+- 141124/141133/141145/141152: nutrition (macros/micros, amino acids, "8 essential" — actually 9 incl. histidine; protein 0.8 g/kg ok). Source only.
+- 141206: "סקירת מוח, תודעה ותדרים — מסמך תמציתי" = summary of the whole Miro brain section (8 chapters) incl. Marko Rodin vortex math, 432 vs 440, number 9, golden ratio — esoteric parts not for site.
+- 141241/141324 (duplicate): "What is Hertz", resonance two guitars (already in 8b), "everything vibrates" (true for atoms, not "electric"), "law of resonance = like attracts like" (inquiry attraction covers).
+- 141251: music theory (scale degrees, relative keys, circle of fifths) — Wikipedia, correct.
+- 141257, 141339: image only
+- 141329: "aura restoration — energy field responsible for 80% of health" — unsupported.
+- 141348: aura/GDV (Kirlian) "sick vs healthy" chart — inquiry aura exists; "every disease = lowered energy" unsupported.
+- 141355: sine sweep 20Hz-20kHz (correct), "microscope shows body shaking" (false framing). = Miro 8.02.
+- 141401: aura colors (= 8.03).
+- 141409: Kirlian "Cynthia Tournage" aura; Mesopotamian "melammu" (real term — divine radiance), Daniel 10 (angel face like lightning — real verse 10:6), Enoch/Noah birth story (1 Enoch 106 — real), "glowing giants visiting Israel" (Barry Chamish — conspiracy). Tradition fragments only.
+- 141441: Hoshen stones table with letters "אברהם יצחק יעקב שבטי ישרון" (Yoma 73b) — modern gem identifications are conjectural. Supports open Q31.
+- 141509/141519/141528: Indigo children (Nancy Ann Tappe) — incl. anti-Ritalin framing (HARMFUL — not for site). Inquiry indigo exists.
+- 141605: frequency definition (Wikipedia; Israel grid 50 Hz) — correct.
+- 141610: pitch standards (435 France 1859, 440 in 1939, ISO 1955) — matches inquiry 432; Pythagoras monochord ratios (legend of the hammers is apocryphal; ratios real).
+- 141618/141629: Pythagorean tuning (3/2 fifths) — correct; Bach "wrote major/minor scales" (FALSE; he popularized well-temperament); music of the spheres (Pythagorean idea — correct attribution).
+- 141637: Xenakis, Wave on a String sim, spectrum analyzer — references.
+- 141650: "cutting stone with sound" (pseudo-archaeology), Marko Rodin vortex math (pseudoscience; claims of US gov antennas etc. unsupported).
+- 141655: acoustics frequency; dogs to ~45-60 kHz, bats to ~150-200 kHz (roughly right).
+- 141757/141809: Doron Giat "Sonic Geometry" post: 432/digit-sum 9, 7 heart muscles(?) & DNA golden ratio, "DNA communicates faster than light" (FALSE), staff of Asclepius; Sumerian base-60 (true: sexagesimal); Einstein quote. = Miro 13.04 source. Not for site except base-60 fact.
+- IMAGE-ONLY (no text; not readable via OCR): 140338, 140439, 140605, 140828, 140845, 140901, 141031, 141118, 141227, 141257, 141339, 141838, 141847 (13 files).
+TOTAL: 74 screenshots read 11.10.2026. Content ≈ the designed frames of Miro IME 611 (brain/consciousness/frequencies/nutrition/aura/indigo). Mostly matches text already extracted earlier + web copies.
