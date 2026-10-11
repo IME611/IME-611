@@ -1008,3 +1008,8 @@ body::after { z-index: -1; }
 .welcome-sub { margin: -28px 0 36px; font-size: 15px; letter-spacing: .12em; color: var(--ink-3); }
 .my-notes { margin-top: 48px; }
 .resume-card + .journey-map { margin-top: 8px; }
+
+/* ===== איורים מונפשים ===== */
+.b-figure { margin: 48px 0; padding: 18px 14px 14px; border-radius: var(--r); background: var(--lg-sheen), var(--lg-fill); border: 1px solid rgba(255,255,255,.7); backdrop-filter: blur(22px) saturate(1.6); -webkit-backdrop-filter: blur(22px) saturate(1.6); box-shadow: var(--lg-edge), var(--lg-shadow); }
+.b-figure canvas { display: block; width: 100%; }
+.b-figure figcaption { margin-top: 10px; text-align: center; font-size: 15px; line-height: 1.6; color: var(--ink-2); }

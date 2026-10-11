@@ -2,6 +2,7 @@ import { useEffect, useRef, type ReactNode } from "react";
 import type { Block } from "../content/types";
 import { chaptersById, countItems } from "../content";
 import { reviewMode } from "../review";
+import { Figure } from "./Figures";
 
 /** מופיע בעדינות כשנכנס למסך — קצב של "נפילת אסימון" */
 function Reveal({ children, className = "", idx }: { children: ReactNode; className?: string; idx?: number }) {
@@ -128,6 +129,8 @@ export function Blocks({ blocks, count }: { blocks: Block[]; count: number }) {
                 </aside>
               </Reveal>
             );
+          case "figure":
+            return <Reveal key={i} idx={i}><Figure kind={b.kind} caption={b.caption} /></Reveal>;
           case "wink":
             return (
               <Reveal key={i} idx={i}>

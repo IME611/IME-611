@@ -27,6 +27,8 @@ export type Block =
   | { type: "steps"; title: string; intro?: string; items: { icon: string; name: string; detail: string }[]; outro?: string; media?: string }
   /** קריצה לקורא */
   | { type: "wink"; lines: string[] }
+  /** איור מונפש שמצויר בקוד (ראו components/Figures.tsx) */
+  | { type: "figure"; kind: "wave" | "chladni" | "sync" | "slits" | "expand" | "path" | "dna" | "leaf"; caption: string }
   /** חוט ספירלי — חזרה לרעיון מפרק קודם והעלאתו קומה. {{count}} כאן = מספר הפריטים בפרק המוזכר */
   | { type: "echo"; chapterId: string; text: string }
   /**
