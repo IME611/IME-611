@@ -28,7 +28,7 @@ export type Block =
   /** קריצה לקורא */
   | { type: "wink"; lines: string[] }
   /** איור מונפש שמצויר בקוד (ראו components/Figures.tsx) */
-  | { type: "figure"; kind: "wave" | "chladni" | "sync" | "slits" | "expand" | "path" | "dna" | "leaf"; caption: string }
+  | { type: "figure"; kind: "wave" | "chladni" | "sync" | "slits" | "expand" | "path" | "dna" | "leaf" | "keyhole" | "eeg" | "melatonin" | "detour" | "orbit" | "mosaic"; caption: string }
   /** חוט ספירלי — חזרה לרעיון מפרק קודם והעלאתו קומה. {{count}} כאן = מספר הפריטים בפרק המוזכר */
   | { type: "echo"; chapterId: string; text: string }
   /**
