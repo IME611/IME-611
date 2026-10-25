@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>IME 611</title>
+<meta name="description" content="IME 611 — a private holding of ideas and ventures: construction, AI media, learning and community.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500&family=Hanken+Grotesk:wght@400;500;600&family=Assistant:wght@300;400;600&display=swap">
+<style>
+/* Layout: one pearl-white ground, a centred tree — holding on top, five glass ventures, construction's two units below, contact at the foot. Single light theme by the brand's own direction. Bilingual EN / HE with RTL. */
+:root{
+  --ground:#f3f4f2;
+  --ground-2:#e9ecea;
+  --ink:#2b2f2e;
+  --ink-soft:#5f6765;
+  --line:#c9d3cf;
+  --mint:#8fd3b8;
+  --mint-deep:#2f7d63;
+  --glass:rgba(255,255,255,.58);
+  --glass-edge:rgba(255,255,255,.9);
+  --display:"Jost","Futura","Century Gothic",system-ui,sans-serif;
+  --body:"Hanken Grotesk","Segoe UI",system-ui,sans-serif;
+  --track:.16em;
+  color-scheme:light;
+}
+html[lang="he"]{
+  --display:"Assistant","Jost","Arial Hebrew",system-ui,sans-serif;
+  --body:"Assistant","Arial Hebrew","Segoe UI",system-ui,sans-serif;
+  --track:0;
+}
+*{box-sizing:border-box}
+html{background:var(--ground)}
+body{
+  margin:0;background:var(--ground);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  min-height:100%;position:relative;overflow-x:hidden;
+}
+html[lang="he"] body{font-size:17px}
+body::after{
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(60vw 40vw at 92% 8%,rgba(255,255,255,.95),transparent 60%),
+    radial-gradient(50vw 36vw at 4% 92%,rgba(255,255,255,.9),transparent 60%),
+    radial-gradient(40vw 30vw at 70% 85%,rgba(143,211,184,.10),transparent 70%),
+    linear-gradient(180deg,var(--ground),var(--ground-2));
+}
+.waves{position:fixed;inset:0;z-index:-1;pointer-events:none;width:100%;height:100%}
+.wrap{max-width:1120px;margin:0 auto;padding-block:24px 48px}
+
+.topbar{display:flex;justify-content:flex-end}
+.lang{
+  font:600 13px/1 var(--body);letter-spacing:.04em;color:var(--ink);cursor:pointer;
+  padding:9px 16px;border-radius:999px;border:1px solid var(--glass-edge);background:var(--glass);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 6px 16px -10px rgba(43,47,46,.3);
+  font-family:"Assistant","Hanken Grotesk",system-ui,sans-serif;
+}
+.lang:hover{border-color:var(--mint)}
+button:focus-visible,a:focus-visible{outline:2px solid var(--mint-deep);outline-offset:3px}
+
+header{text-align:center;display:grid;gap:14px;justify-items:center;margin-top:clamp(24px,6vw,64px)}
+h1{
+  font-family:"Jost","Futura",system-ui,sans-serif;font-weight:500;margin:0;line-height:1;direction:ltr;
+  font-size:clamp(52px,11vw,112px);letter-spacing:.32em;padding-left:.32em;color:var(--ink);
+  text-shadow:0 0 28px rgba(255,255,255,.9);
+}
+.sub{font-family:var(--display);font-weight:300;letter-spacing:var(--track);text-transform:uppercase;font-size:13px;color:var(--ink-soft);margin:0}
+html[lang="he"] .sub{font-size:16px;font-weight:400}
+.lede{max-width:56ch;margin:18px auto 0;color:var(--ink-soft);font-size:17px;text-wrap:balance}
+html[lang="he"] .lede{font-size:19px}
+
+.stem{width:1px;height:48px;background:linear-gradient(var(--glass-edge),var(--line));margin:36px auto 0}
+.bus{height:1px;background:var(--line);margin:0 calc(10% - 8px)}
+
+.glass{
+  background:var(--glass);
+  backdrop-filter:blur(14px) saturate(1.2);-webkit-backdrop-filter:blur(14px) saturate(1.2);
+  border:1px solid var(--glass-edge);border-radius:22px;
+  box-shadow:0 1px 0 rgba(255,255,255,.9) inset,0 10px 30px -12px rgba(43,47,46,.18),0 14px 24px -18px var(--mint);
+}
+
+.ventures{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:16px;margin-top:20px}
+.venture{position:relative;padding:28px 20px 22px;display:grid;gap:12px;align-content:start;min-width:0}
+.venture::before{content:"";position:absolute;top:-20px;left:50%;width:1px;height:20px;background:var(--line)}
+.venture svg{width:40px;height:40px;stroke:var(--ink-soft);fill:none;stroke-width:1.3;stroke-linecap:round;stroke-linejoin:round}
+.venture h2{font-family:var(--display);font-weight:400;font-size:19px;line-height:1.25;margin:0;text-wrap:balance}
+html[lang="he"] .venture h2{font-weight:600;font-size:20px}
+.venture p{margin:0;font-size:14.5px;color:var(--ink-soft)}
+html[lang="he"] .venture p,html[lang="he"] .unit p{font-size:16px}
+.stage{
+  justify-self:start;font-size:11px;font-weight:600;letter-spacing:var(--track);text-transform:uppercase;
+  padding:4px 10px;border-radius:999px;border:1px solid var(--line);color:var(--ink-soft);background:rgba(255,255,255,.6)
+}
+html[lang="he"] .stage{font-size:13px}
+.stage.live{border-color:var(--mint);color:var(--mint-deep);background:rgba(143,211,184,.16)}
+.stage.dev{border-color:#bfcfe0;color:#43607d}
+.venture.lead{border-color:rgba(143,211,184,.7)}
+
+.branch{margin-top:56px}
+.branch-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:12px}
+.branch-head h3{font-family:var(--display);font-weight:400;font-size:24px;margin:0}
+html[lang="he"] .branch-head h3{font-weight:600}
+.branch-head span{font-size:13px;color:var(--ink-soft);letter-spacing:var(--track);text-transform:uppercase}
+.units{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:20px}
+.unit{padding:24px 22px;display:grid;gap:12px;align-content:start;min-width:0}
+.unit h4{font-family:var(--display);font-weight:500;font-size:18px;margin:0}
+html[lang="he"] .unit h4{font-weight:600;font-size:20px}
+.unit p{margin:0;font-size:14.5px;color:var(--ink-soft)}
+.go{
+  justify-self:start;display:inline-flex;align-items:center;gap:10px;margin-top:4px;
+  padding:10px 16px;border-radius:12px;background:rgba(255,255,255,.65);border:1px solid rgba(255,255,255,.95);
+  color:var(--mint-deep);font-weight:600;font-size:14.5px;text-decoration:none;direction:ltr
+}
+a.go:hover{border-color:var(--mint)}
+.go.soon{color:var(--ink-soft);font-weight:500}
+.go small{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft)}
+
+.contact{margin-top:56px;padding:28px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.contact h3{font-family:var(--display);font-weight:400;font-size:22px;margin:0}
+html[lang="he"] .contact h3{font-weight:600}
+.contact p{margin:4px 0 0;color:var(--ink-soft);font-size:14.5px}
+.mail{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.mail code{font:500 16px/1 "Hanken Grotesk",system-ui,sans-serif;user-select:all;direction:ltr;padding:10px 14px;border-radius:12px;background:rgba(255,255,255,.7);border:1px solid var(--line)}
+.copy{font:600 13px/1 var(--body);cursor:pointer;padding:11px 16px;border-radius:12px;border:1px solid var(--mint);background:rgba(143,211,184,.16);color:var(--mint-deep)}
+
+footer{margin-top:64px;text-align:center;color:var(--ink-soft);font-size:13px;letter-spacing:.08em;display:grid;gap:6px}
+footer b{font-family:"Jost",system-ui,sans-serif;font-weight:500;letter-spacing:.3em;color:var(--ink);direction:ltr}
+
+@media (max-width:980px){
+  .ventures{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .venture.lead{grid-column:1/-1}
+  .bus,.venture::before{display:none}
+  .units{grid-template-columns:1fr}
+}
+@media (max-width:520px){
+  .ventures{grid-template-columns:1fr}
+  h1{letter-spacing:.22em;padding-left:.22em}
+}
+@media (prefers-reduced-motion:no-preference){
+  .venture,.unit{transition:transform .25s ease}
+  .venture:hover,.unit:hover{transform:translateY(-3px)}
+}
+</style>
+</head>
+<body>
+
+<svg class="waves" viewBox="0 0 1440 900" preserveAspectRatio="none" aria-hidden="true">
+  <g fill="none" stroke="#ffffff" stroke-opacity=".85">
+    <path d="M820 0C1000 160 1180 140 1440 60" stroke-width="2"/>
+    <path d="M760 0C980 220 1200 200 1440 130" stroke-width="1"/>
+    <path d="M0 700C260 640 420 760 700 900" stroke-width="2"/>
+    <path d="M0 760C240 720 380 820 620 900" stroke-width="1"/>
+    <path d="M1100 900C1220 760 1330 700 1440 690" stroke-width="1.5"/>
+  </g>
+</svg>
+
+<div class="wrap">
+  <div class="topbar"><button class="lang" id="lang-toggle" type="button">עברית</button></div>
+
+  <header>
+    <h1>IME 611</h1>
+    <p class="sub" data-i18n="sub">Private Holding · Ideas &amp; Ventures</p>
+    <p class="lede" data-i18n="lede">One home for five ventures, from building villas on Koh Samui to an AI podcast, a guided journey of meaning, and a community for financial renewal. Some are working today, some are still taking shape.</p>
+  </header>
+
+  <div class="stem" aria-hidden="true"></div>
+  <div class="bus" aria-hidden="true"></div>
+
+  <section class="ventures" aria-label="Ventures">
+    <article class="venture glass lead" id="construction">
+      <svg viewBox="0 0 40 40" aria-hidden="true"><path d="M6 34h28M10 34V12h8v22M18 34V6h8v28M26 34V16h6v18M13 16v2M13 22v2M13 28v2M22 10v2M22 16v2M22 22v2M22 28v2M29 20v2M29 26v2"/></svg>
+      <span class="stage live" data-i18n="active">Active</span>
+      <h2 data-i18n="c-name">IME Construction Agency</h2>
+      <p data-i18n="c-desc">Owner's-side supervision and project management for villa developments on Koh Samui: plan and contract reviews, bills of quantities, and inspection reports on every stage.</p>
+    </article>
+
+    <article class="venture glass" id="podbible">
+      <svg viewBox="0 0 40 40" aria-hidden="true"><path d="M20 7c-4 0-6 2-7 4-3 0-5 2-5 5 0 2 1 3 2 4-1 1-2 3-1 5 1 3 3 4 6 4 1 2 3 4 5 4V7zM20 7c4 0 6 2 7 4 3 0 5 2 5 5 0 2-1 3-2 4 1 1 2 3 1 5-1 3-3 4-6 4-1 2-3 4-5 4"/><path d="M20 7v26M14 16c2 0 3 1 3 3M26 16c-2 0-3 1-3 3M14 25c2 0 3-1 3-3M26 25c-2 0-3-1-3-3"/></svg>
+      <span class="stage dev" data-i18n="dev">In development</span>
+      <h2>Pod-Bible AI</h2>
+      <p data-i18n="p-desc">A Hebrew podcast produced with AI, where biblical figures sit down in a heavenly studio. First episode: Cain and Abel.</p>
+    </article>
+
+    <article class="venture glass" id="eil">
+      <svg viewBox="0 0 40 40" aria-hidden="true"><path d="M20 5l12 6v14l-12 6-12-6V11z"/><path d="M8 11l12 6 12-6M20 17v14"/><path d="M14 8l12 6"/></svg>
+      <span class="stage dev" data-i18n="dev">In development</span>
+      <h2>E.I.L</h2>
+      <p data-i18n="e-desc">Everything I Learned. A guided journey of wonder, from where you stand today to the Source, built step by step on reason, science and research.</p>
+    </article>
+
+    <article class="venture glass" id="shefa">
+      <svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="14"/><path d="M6 20h28M20 6c4 4 6 9 6 14s-2 10-6 14M20 6c-4 4-6 9-6 14s2 10 6 14M9 12h22M9 28h22"/></svg>
+      <span class="stage" data-i18n="concept">Concept</span>
+      <h2>SHEFA GLOBAL</h2>
+      <p data-i18n="s-desc">A financial reset and a new identity for working couples. Free to join, funded by impact investors, repaid by giving back to the community.</p>
+    </article>
+
+    <article class="venture glass" id="vr">
+      <svg viewBox="0 0 40 40" aria-hidden="true"><path d="M6 15c0-2 2-4 4-4h20c2 0 4 2 4 4v8c0 2-2 4-4 4h-6l-2-3h-4l-2 3h-6c-2 0-4-2-4-4z"/><path d="M11 11c1-3 3-4 9-4s8 1 9 4M3 17v4M37 17v4"/></svg>
+      <span class="stage" data-i18n="idea">Idea</span>
+      <h2>IME VR · Victory Revision</h2>
+      <p data-i18n="v-desc">Immersive tools that turn insight into daily practice, starting with "My Perfect Day".</p>
+    </article>
+  </section>
+
+  <section class="branch" aria-labelledby="branch-title">
+    <div class="branch-head">
+      <h3 id="branch-title" data-i18n="b-title">Inside the Construction Agency</h3>
+      <span data-i18n="b-place">Koh Samui, Thailand</span>
+    </div>
+    <div class="units">
+      <article class="unit glass">
+        <span class="stage live" data-i18n="live">Live</span>
+        <h4 data-i18n="bot-name">Inspection Bot · Insite</h4>
+        <p data-i18n="bot-desc">Insite turns site photos and voice notes into a full inspection report, straight from Telegram.</p>
+        <a class="go" href="https://insite.ime611.com">insite.ime611.com →</a>
+      </article>
+      <article class="unit glass">
+        <span class="stage live" data-i18n="active">Active</span>
+        <h4 data-i18n="sup-name">Site Supervision · Koh Samui</h4>
+        <p data-i18n="sup-desc">Owner's-side supervision on villa developments: plan reviews, site visits and formal reports at every stage.</p>
+        <a class="go" href="https://supervision.ime611.com">supervision.ime611.com →</a>
+      </article>
+    </div>
+  </section>
+
+  <section class="contact glass" aria-labelledby="contact-title">
+    <div>
+      <h3 id="contact-title" data-i18n="ct-title">Contact</h3>
+      <p data-i18n="ct-desc">For projects, partnerships or any of the ventures.</p>
+    </div>
+    <div class="mail">
+      <code id="mail-address">admin@ime611.com</code>
+      <button class="copy" id="copy-mail" type="button" data-i18n="copy">Copy</button>
+    </div>
+  </section>
+
+  <footer>
+    <b>IME 611</b>
+    <span data-i18n="foot">Koh Samui · ime611.com</span>
+  </footer>
+</div>
+
+<script>
+const T = {
+  he: {
+    "sub": "חברת אחזקות פרטית · רעיונות ומיזמים",
+    "lede": "בית אחד לחמישה מיזמים: מבניית וילות בקוסמוי, דרך פודקאסט AI ומסע של משמעות, ועד קהילה להתחדשות כלכלית. חלקם פועלים כבר היום, וחלקם עדיין מתגבשים.",
+    "active": "פעיל", "dev": "בפיתוח", "concept": "קונספט", "idea": "רעיון", "live": "באוויר",
+    "c-name": "IME סוכנות בנייה",
+    "c-desc": "פיקוח מטעם היזם וניהול פרויקטים של וילות בקוסמוי: בדיקת תוכניות וחוזים, כתבי כמויות ודוחות פיקוח בכל שלב.",
+    "p-desc": "פודקאסט בעברית שמופק ב־AI, שבו דמויות מהתנ״ך מתיישבות לשיחה באולפן שמימי. פרק ראשון: קין והבל.",
+    "e-desc": "Everything I Learned. מסע מודרך של פליאה, מהמקום שבו אתה עומד היום אל המקור, צעד אחר צעד דרך היגיון, מדע ומחקר.",
+    "s-desc": "איפוס כלכלי וזהות חדשה לזוגות עובדים. ההצטרפות חינם, המימון ממשקיעי אימפקט, וההחזר הוא נתינה לקהילה.",
+    "v-desc": "כלים אימרסיביים שהופכים תובנה לתרגול יומיומי, החל מ־My Perfect Day.",
+    "b-title": "בתוך סוכנות הבנייה", "b-place": "קוסמוי, תאילנד",
+    "bot-name": "בוט פיקוח · Insite",
+    "bot-desc": "Insite הופך תמונות מהאתר והקלטות קוליות לדוח פיקוח מלא, ישר מטלגרם.",
+    "sup-name": "פיקוח בנייה · קוסמוי",
+    "sup-desc": "פיקוח מטעם היזם בפרויקטי וילות: בדיקת תוכניות, ביקורי אתר ודוחות פורמליים בכל שלב.",
+    "ct-title": "צור קשר", "ct-desc": "לפרויקטים, לשיתופי פעולה או לכל אחד מהמיזמים.",
+    "copy": "העתק", "copied": "הועתק",
+    "foot": "קוסמוי · ime611.com",
+    "toggle": "English"
+  },
+  en: { "copied": "Copied", "toggle": "עברית" }
+};
+document.querySelectorAll("[data-i18n]").forEach(el => { T.en[el.dataset.i18n] ??= el.textContent; });
+
+let lang = "en";
+function setLang(l){
+  lang = l;
+  const root = document.documentElement;
+  root.lang = l; root.dir = l === "he" ? "rtl" : "ltr";
+  document.querySelectorAll("[data-i18n]").forEach(el => { const v = T[l][el.dataset.i18n]; if (v) el.textContent = v; });
+  document.getElementById("lang-toggle").textContent = T[l].toggle;
+  try { localStorage.setItem("ime611-lang", l); } catch (e) {}
+}
+let saved = null;
+try { saved = localStorage.getItem("ime611-lang"); } catch (e) {}
+setLang(saved || ((navigator.language || "").startsWith("he") ? "he" : "en"));
+document.getElementById("lang-toggle").addEventListener("click", () => setLang(lang === "he" ? "en" : "he"));
+
+document.getElementById("copy-mail").addEventListener("click", e => {
+  const btn = e.currentTarget, addr = document.getElementById("mail-address");
+  const done = () => { btn.textContent = T[lang].copied; setTimeout(() => btn.textContent = T[lang].copy, 1600); };
+  const fallback = () => { const r = document.createRange(); r.selectNodeContents(addr); const s = getSelection(); s.removeAllRanges(); s.addRange(r); };
+  try { navigator.clipboard.writeText(addr.textContent).then(done, fallback); } catch (err) { fallback(); }
+});
+</script>
+
+</body>
+</html>
