@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>SHEFA GLOBAL · שפע גלובל</title>
+<meta name="description" content="איפוס כלכלי וזהות חדשה לזוגות עובדים. בלי דמי השתתפות. מסלול של שישה שלבים שבסופו אתם מלווים אחרים.">
+<meta property="og:title" content="SHEFA GLOBAL · שפע גלובל">
+<meta property="og:description" content="איפוס כלכלי וזהות חדשה לזוגות עובדים. בלי דמי השתתפות.">
+<meta property="og:url" content="https://shefa.ime611.com/">
+<meta name="theme-color" content="#f7f3ea">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;800&family=Jost:wght@400;500&display=swap">
+<style>
+/* Layout: warm paper ground, a strong headline, then the Crystal Path drawn as a rising line of six facets — the page's one signature. Single light theme. */
+:root{
+  --paper:#f7f3ea;
+  --paper-2:#efe8d8;
+  --ink:#22201b;
+  --ink-soft:#615b4f;
+  --line:#ddd3bf;
+  --leaf:#2f6b52;
+  --leaf-soft:rgba(47,107,82,.1);
+  --amber:#c58b2c;
+  --body:"Heebo","Arial Hebrew",system-ui,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html{background:var(--paper)}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:18px;line-height:1.65;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(60vw 40vw at 100% 0%,rgba(197,139,44,.14),transparent 60%),
+             radial-gradient(50vw 40vw at 0% 100%,rgba(47,107,82,.10),transparent 60%),
+             linear-gradient(180deg,var(--paper),var(--paper-2))}
+.wrap{max-width:1000px;margin:0 auto;padding-block:20px 56px}
+a{color:inherit}
+a:focus-visible{outline:2px solid var(--leaf);outline-offset:3px;border-radius:6px}
+
+.top{display:flex;justify-content:space-between;align-items:center}
+.mark{font-family:"Jost",system-ui,sans-serif;letter-spacing:.28em;font-size:13px;text-decoration:none;direction:ltr;color:var(--ink-soft)}
+.badge{font-size:12px;font-weight:700;letter-spacing:.06em;padding:4px 12px;border-radius:999px;border:1px solid var(--line);color:var(--ink-soft);background:rgba(255,255,255,.6)}
+
+.hero{margin-top:clamp(40px,9vw,90px);display:grid;gap:18px;max-width:760px}
+.eyebrow{font-family:"Jost",system-ui,sans-serif;letter-spacing:.26em;font-size:13px;color:var(--leaf);direction:ltr;justify-self:start}
+h1{margin:0;font-weight:800;font-size:clamp(40px,7.4vw,76px);line-height:1.05;letter-spacing:-.01em;text-wrap:balance}
+h1 em{font-style:normal;color:var(--leaf)}
+.lede{margin:0;max-width:52ch;color:var(--ink-soft);font-size:clamp(18px,2.2vw,21px)}
+
+.pillars{margin-top:clamp(40px,7vw,64px);display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px;border-top:1px solid var(--line);padding-top:28px}
+.pillars b{display:block;font-size:19px;font-weight:700;margin-bottom:4px}
+.pillars span{color:var(--ink-soft);font-size:16px}
+
+.path{margin-top:clamp(56px,9vw,96px)}
+.path h2{margin:0 0 6px;font-size:clamp(26px,3.6vw,34px);font-weight:800}
+.path > p{margin:0 0 28px;color:var(--ink-soft);max-width:56ch}
+.steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;align-items:end}
+.steps li{display:grid;gap:10px;align-content:end;min-width:0}
+.bar{border-radius:14px 14px 4px 4px;background:linear-gradient(180deg,var(--leaf),#3f8a6a);display:grid;place-items:center;color:#fff;font-weight:800;font-size:20px;font-family:"Jost",system-ui,sans-serif}
+.steps li:nth-child(1) .bar{height:64px;opacity:.55}
+.steps li:nth-child(2) .bar{height:92px;opacity:.65}
+.steps li:nth-child(3) .bar{height:120px;opacity:.75}
+.steps li:nth-child(4) .bar{height:148px;opacity:.85}
+.steps li:nth-child(5) .bar{height:176px;opacity:.93}
+.steps li:nth-child(6) .bar{height:204px;background:linear-gradient(180deg,var(--amber),#d9a24a)}
+.steps b{font-size:16px;line-height:1.3}
+.steps small{color:var(--ink-soft);font-size:14px;line-height:1.4}
+.crystal{margin-top:24px;padding:18px 20px;border-radius:16px;background:rgba(197,139,44,.1);border:1px solid rgba(197,139,44,.35);color:var(--ink)}
+
+.model{margin-top:clamp(56px,9vw,96px);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:40px;align-items:start}
+.model h2{margin:0 0 8px;font-size:clamp(24px,3.2vw,30px);font-weight:800}
+.model p{margin:0;color:var(--ink-soft)}
+
+.close{margin-top:clamp(56px,9vw,96px);padding:32px 26px;border-radius:24px;background:var(--leaf);color:#fff;display:grid;gap:12px;justify-items:start}
+.close h2{margin:0;font-size:clamp(24px,3.6vw,34px);font-weight:800;text-wrap:balance}
+.close p{margin:0;opacity:.9}
+.close code{direction:ltr;font-family:"Jost",system-ui,sans-serif;font-size:17px;padding:8px 14px;border-radius:10px;background:rgba(255,255,255,.14);user-select:all}
+
+footer{margin-top:40px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:var(--ink-soft);font-size:14px}
+footer a{text-decoration:none;border-bottom:1px solid var(--line)}
+
+@media (max-width:820px){
+  .pillars,.model{grid-template-columns:1fr}
+  .steps{grid-template-columns:1fr;gap:10px}
+  .steps li{grid-template-columns:56px 1fr;align-items:center;column-gap:14px}
+  .steps li .bar{height:56px!important;border-radius:14px}
+  .steps li b,.steps li small{grid-column:2}
+  .steps li .bar{grid-row:span 2}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <a class="mark" href="https://ime611.com/">IME 611</a>
+    <span class="badge">בבנייה</span>
+  </div>
+
+  <section class="hero">
+    <span class="eyebrow">SHEFA GLOBAL</span>
+    <h1>לצאת מהחובות. <em>לחזור לעצמכם.</em></h1>
+    <p class="lede">שפע גלובל מלווה זוגות עובדים באיפוס כלכלי ובבניית זהות חדשה. זה נבנה על ידי מי שחי את הבעיה הזו בעצמו, ומצא את הדרך החוצה.</p>
+  </section>
+
+  <section class="pillars">
+    <div><b>איפוס כלכלי</b><span>סדר בחובות, בהוצאות ובחיסכון, צעד אחר צעד.</span></div>
+    <div><b>זהות</b><span>מי אתם, מה אתם רוצים, ואיך נראים החיים כשאתם כבר שם.</span></div>
+    <div><b>קהילה</b><span>זוגות שעוברים את אותה דרך, ומי שכבר עבר אותה.</span></div>
+  </section>
+
+  <section class="path" aria-labelledby="path-title">
+    <h2 id="path-title">מסלול הקריסטל</h2>
+    <p>שישה שלבים, כל אחד נבנה על הקודם. בסוף הדרך אתם לא רק יוצאים מהבור, אתם עוזרים לאחרים לצאת ממנו.</p>
+    <ol class="steps">
+      <li><div class="bar">1</div><b>חודש נשימה</b><small>עוצרים, מתבוננים, מפסיקים לרוץ.</small></li>
+      <li><div class="bar">2</div><b>אבחון עומק</b><small>תמונה מלאה ואמיתית של המצב.</small></li>
+      <li><div class="bar">3</div><b>איפוס כלכלי</b><small>תוכנית ברורה לחובות ולהוצאות.</small></li>
+      <li><div class="bar">4</div><b>צמיחה והעצמה</b><small>הרגלים, מטרות וזהות חדשה.</small></li>
+      <li><div class="bar">5</div><b>תרומה לקהילה</b><small>מחזירים מה שקיבלתם.</small></li>
+      <li><div class="bar">6</div><b>תהודה והתרחבות</b><small>הופכים לקריסטל.</small></li>
+    </ol>
+    <p class="crystal"><b>קריסטל</b> הוא מי שסיים את המסלול והפך למנטור ולשגריר. ככה הקהילה גדלה: כל מי שיצא, מוציא אחרים.</p>
+  </section>
+
+  <section class="model">
+    <div>
+      <h2>בלי דמי השתתפות</h2>
+      <p>מי שכבר בתוך חובות לא צריך עוד הוצאה. המסלול ממומן על ידי משקיעי אימפקט ופילנתרופים.</p>
+    </div>
+    <div>
+      <h2>משלמים בנתינה</h2>
+      <p>במקום כסף, משתתפים מחזירים בהתנדבות ובליווי של זוגות אחרים בהמשך הדרך.</p>
+    </div>
+  </section>
+
+  <section class="close">
+    <h2>שפע גלובל נמצא בשלבי בנייה</h2>
+    <p>רוצים להיות בין הזוגות הראשונים, להצטרף כשותפים או לתמוך? כתבו לנו:</p>
+    <code>admin@ime611.com</code>
+  </section>
+
+  <footer>
+    <span>SHEFA GLOBAL הוא מיזם של IME 611</span>
+    <a href="https://ime611.com/">ime611.com</a>
+  </footer>
+</div>
+</body>
+</html>
