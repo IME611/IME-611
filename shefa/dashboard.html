@@ -117,6 +117,23 @@ nav {
 
 .cta-note { text-align:center; margin-top:2rem; color: var(--ink-faint); font-size:0.82rem; }
 .cta-note a { color: var(--gold); font-weight:600; }
+
+/* crystal points */
+.tier-badge {
+  display:inline-flex; align-items:center; gap:0.4rem;
+  padding:0.3rem 0.8rem; border-radius:1rem; font-size:0.76rem; font-weight:700; font-family:'Heebo',sans-serif;
+}
+.tier-silver { background: rgba(140,140,150,0.15); color:#5a5a62; }
+.tier-gold   { background: var(--gold-xs); color: var(--gold); }
+.tier-diamond{ background: rgba(90,160,220,0.15); color:#2f6fa8; }
+.crystal-hero { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem; margin-bottom:1.2rem; }
+.crystal-count { font-family:'Heebo',sans-serif; font-weight:900; font-size:2.1rem; color: var(--gold); }
+.crystal-count .u { font-size:0.95rem; font-weight:400; color: var(--ink-dim); margin-right:0.3rem; }
+.crystal-equiv { font-size:0.78rem; color: var(--ink-faint); margin-top:0.2rem; }
+.tier-track { display:flex; gap:0.4rem; margin-top:0.9rem; }
+.tier-seg { flex:1; height:8px; border-radius:4px; background: rgba(184,134,11,0.12); overflow:hidden; }
+.tier-seg .fill { height:100%; background: linear-gradient(90deg, var(--gold-lt), var(--gold)); }
+.tier-labels { display:flex; justify-content:space-between; font-size:0.68rem; color:var(--ink-faint); margin-top:0.3rem; }
 </style>
 </head>
 <body>
@@ -171,6 +188,23 @@ nav {
         </div>
       </div>
 
+      <!-- Crystal Points -->
+      <div class="card">
+        <h3>💎 הקריסטלים שלי <span class="tier-badge tier-gold">דרגת זהב</span></h3>
+        <div class="crystal-hero">
+          <div>
+            <div class="crystal-count">1,240<span class="u">קריסטלים</span></div>
+            <div class="crystal-equiv">1 קריסטל = שעת תרומה = ₪100 (פנימי) · שווה ערך ל-62% מהחוב המקורי (2,000 קריסטלים)</div>
+          </div>
+        </div>
+        <div class="tier-track">
+          <div class="tier-seg"><div class="fill" style="width:100%"></div></div>
+          <div class="tier-seg"><div class="fill" style="width:100%"></div></div>
+          <div class="tier-seg"><div class="fill" style="width:24%"></div></div>
+        </div>
+        <div class="tier-labels"><span>כסף (0–500)</span><span>זהב (500–1,500)</span><span>יהלום (1,500+)</span></div>
+      </div>
+
       <!-- Volunteering -->
       <div class="card">
         <h3>🤝 התנדבות וקהילה</h3>
@@ -179,15 +213,15 @@ nav {
           <span class="tag">ניהול ואדמיניסטרציה</span><span class="tag">חינוך והוראה</span><span class="tag">כתיבה ועריכה</span>
         </div>
         <div class="opp-item">
-          <div><div class="t">ליווי הורה יחיד בהגשת בקשה לאיחוד חובות</div><div class="o">עמותת "יד ביד" · פעם בשבוע</div></div>
+          <div><div class="t">ליווי הורה יחיד בהגשת בקשה לאיחוד חובות</div><div class="o">עמותת "יד ביד" · פעם בשבוע · 💎 4/שעה</div></div>
           <span class="opp-match">87% התאמה</span>
         </div>
         <div class="opp-item">
-          <div><div class="t">מתנדב/ת בהכנת שיעורי בית לילדים</div><div class="o">מרכז קהילתי דרום ת"א · שעתיים בשבוע</div></div>
+          <div><div class="t">מתנדב/ת בהכנת שיעורי בית לילדים</div><div class="o">מרכז קהילתי דרום ת"א · שעתיים בשבוע · 💎 2/שעה</div></div>
           <span class="opp-match">74% התאמה</span>
         </div>
         <div class="opp-item">
-          <div><div class="t">כתיבת תוכן לניוזלטר הקהילה</div><div class="o">שפע גלובל · מרחוק, גמיש</div></div>
+          <div><div class="t">כתיבת תוכן לניוזלטר הקהילה</div><div class="o">שפע גלובל · מרחוק, גמיש · 💎 3/שעה</div></div>
           <span class="opp-match">91% התאמה</span>
         </div>
       </div>
