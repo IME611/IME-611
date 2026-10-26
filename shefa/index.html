@@ -280,7 +280,7 @@ footer {
 <!-- NAV -->
 <nav>
   <div class="nav-logo">שפע גלובל <span>| Shefa Global</span></div>
-  <a href="#join" class="nav-cta">הצטרף לתנועה</a>
+  <a href="join.html" class="nav-cta">הצטרף לתנועה</a>
 </nav>
 
 <!-- HERO -->
@@ -314,7 +314,7 @@ footer {
   <h1 class="hero-title">אתה נברא<br>לחיות <span class="gold">בשפע</span></h1>
   <p class="hero-sub">תנועה גלובלית שמלווה משפחות במסע של שחרור כלכלי, שינוי תודעתי וחיבור לקהילה שתומכת בך.</p>
   <div class="hero-actions">
-    <a href="#join" class="btn-primary">אני רוצה להצטרף</a>
+    <a href="join.html" class="btn-primary">אני רוצה להצטרף</a>
     <a href="#path" class="btn-ghost">איך זה עובד</a>
   </div>
 </section>
@@ -364,6 +364,7 @@ footer {
       <div class="founder-avatar">ע</div>
       <div class="founder-info"><strong>עידן משה עינב</strong><small>מייסד שפע גלובל</small></div>
     </div>
+    <p style="margin-top:1.75rem; font-size:0.85rem; color:var(--ink-faint);">רוצים לראות איך ייראה האזור האישי שלכם בהמשך? <a href="dashboard.html" style="color:var(--gold); font-weight:600; text-decoration:none;">תצוגה מקדימה של האזור האישי ←</a></p>
   </div>
 </section>
 
@@ -373,30 +374,10 @@ footer {
     <div class="gold-divider"><span>✦</span></div>
     <p class="section-label">הצטרפות</p>
     <h2 class="section-title">מוכן להתחיל את המסע?</h2>
-    <p class="section-body">מלא את הפרטים ונחזור אליך תוך 48 שעות לשיחת היכרות ללא התחייבות.</p>
-    <div class="form-wrap">
-      <form id="joinForm">
-        <div class="form-grid">
-          <div class="form-row"><label>שם מלא</label><input type="text" placeholder="ישראל ישראלי" required></div>
-          <div class="form-row"><label>טלפון</label><input type="tel" placeholder="050-0000000" required></div>
-        </div>
-        <div class="form-row"><label>אימייל</label><input type="email" placeholder="israel@email.com" required></div>
-        <div class="form-row">
-          <label>היקף חובות צרכניים משוערים</label>
-          <select>
-            <option value="">בחר טווח</option>
-            <option>עד ₪50,000</option>
-            <option>₪50,000–₪100,000</option>
-            <option>₪100,000–₪200,000</option>
-            <option>מעל ₪200,000</option>
-            <option>לא רלוונטי — אני כאן מסיבה אחרת</option>
-          </select>
-        </div>
-        <div class="form-row"><label>מה מביא אותך אלינו? (אופציונלי)</label><textarea placeholder="ספר לנו בקצרה..."></textarea></div>
-        <button type="submit" class="submit-btn">שלח בקשת הצטרפות</button>
-        <p class="form-note">פרטיך שמורים אצלנו בסודיות מלאה. ללא ספאם.</p>
-      </form>
-      <div class="success-msg" id="successMsg">✦ קיבלנו! נחזור אליך תוך 48 שעות.</div>
+    <p class="section-body">ארבעה צעדים קצרים — פרטים אישיים, מצב כלכלי, כישורים וזמינות, וסיכום — כדי שנבנה יחד תוכנית מותאמת אישית. נחזור אליך תוך 48 שעות לשיחת היכרות ללא התחייבות.</p>
+    <div class="form-wrap" style="text-align:center; padding:2.5rem;">
+      <a href="join.html" class="submit-btn" style="display:inline-block; text-decoration:none; max-width:360px;">התחילו את תהליך ההצטרפות 💎</a>
+      <p class="form-note">פרטיך שמורים אצלנו בסודיות מלאה. ללא ספאם.</p>
     </div>
   </div>
 </section>
@@ -405,12 +386,5 @@ footer {
   <p>© 2026 שפע גלובל — Shefa Global. כל הזכויות שמורות.</p>
 </footer>
 
-<script>
-document.getElementById('joinForm').addEventListener('submit',function(e){
-  e.preventDefault();
-  this.style.display='none';
-  document.getElementById('successMsg').style.display='block';
-});
-</script>
 </body>
 </html>

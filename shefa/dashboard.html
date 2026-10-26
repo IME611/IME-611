@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>האזור האישי — שפע גלובל (תצוגה מקדימה)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;600;800;900&family=Assistant:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ivory:    #FAF6EE;
+  --pearl:    #F5EFE0;
+  --cream:    #EDE0C4;
+  --gold:     #B8860B;
+  --gold-mid: #C9961A;
+  --gold-lt:  #E8C060;
+  --gold-xs:  rgba(184,134,11,0.12);
+  --ink:      #1C140A;
+  --ink-mid:  #3D2E12;
+  --ink-dim:  rgba(28,20,10,0.60);
+  --ink-faint:rgba(28,20,10,0.35);
+  --ok: #3E7A52;
+  --ok-bg: rgba(62,122,82,0.08);
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top,0px);
+  padding-bottom: env(safe-area-inset-bottom,0px);
+}
+*, *::before, *::after { box-sizing: inherit; margin:0; padding:0; }
+body {
+  font-family:'Assistant', sans-serif; background: var(--ivory); color: var(--ink);
+  direction: rtl; line-height:1.6;
+}
+nav {
+  position: sticky; top: env(safe-area-inset-top,0); right:0; left:0; z-index:100;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:1.1rem 2rem; background: rgba(250,246,238,0.94); backdrop-filter: blur(14px);
+  border-bottom:1px solid rgba(184,134,11,0.25);
+}
+.nav-logo { font-family:'Heebo',sans-serif; font-weight:800; font-size:1.05rem; color:var(--ink); text-decoration:none; }
+.nav-logo span { color: var(--gold); }
+.nav-back { color: var(--ink-mid); text-decoration:none; font-size:0.85rem; font-weight:600; }
+
+.preview-banner {
+  background: var(--cream); border-bottom:1px solid rgba(184,134,11,0.25);
+  text-align:center; padding:0.65rem 1rem; font-size:0.82rem; color: var(--ink-mid); font-weight:600;
+}
+.preview-banner span { color: var(--gold); }
+
+.wrap { max-width: 980px; margin:0 auto; padding: 2.25rem 1.5rem 4rem; }
+
+.dash-head { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem; margin-bottom:2rem; }
+.greet-eyebrow { font-size:0.72rem; letter-spacing:0.15em; text-transform:uppercase; color: var(--gold); margin-bottom:0.3rem; }
+.greet-title { font-family:'Heebo',sans-serif; font-weight:800; font-size:1.7rem; }
+.greet-title .name { color: var(--gold); }
+.stage-badge {
+  background: var(--gold); color: var(--ivory); font-family:'Heebo',sans-serif; font-weight:700;
+  font-size:0.82rem; padding:0.5rem 1.1rem; border-radius:2rem;
+}
+
+.grid { display:grid; grid-template-columns: 2fr 1fr; gap:1.4rem; }
+@media(max-width:800px){ .grid { grid-template-columns: 1fr; } }
+
+.card {
+  background: var(--ivory); border:1px solid rgba(184,134,11,0.2); border-radius:14px;
+  padding:1.6rem; box-shadow:0 2px 16px rgba(184,134,11,0.06); margin-bottom:1.4rem;
+}
+.card h3 { font-family:'Heebo',sans-serif; font-weight:700; font-size:1rem; margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem; }
+
+/* crystal path progress */
+.path-track { display:flex; align-items:center; gap:0; margin: 1rem 0 0.4rem; }
+.path-node {
+  display:flex; flex-direction:column; align-items:center; gap:0.5rem; flex:1; position:relative;
+}
+.path-node .dot {
+  width:2.6rem; height:2.6rem; border-radius:50%; display:flex; align-items:center; justify-content:center;
+  font-size:1.1rem; border:1.5px solid rgba(184,134,11,0.3); background: var(--pearl); color: var(--ink-faint);
+  z-index:1;
+}
+.path-node.done .dot { background: var(--gold); border-color: var(--gold); color: var(--ivory); }
+.path-node.current .dot { border-color: var(--gold); background: var(--gold-xs); color: var(--gold); box-shadow: 0 0 0 4px rgba(184,134,11,0.12); }
+.path-node .lbl { font-size:0.7rem; text-align:center; color: var(--ink-faint); max-width:70px; }
+.path-node.done .lbl, .path-node.current .lbl { color: var(--ink-mid); font-weight:600; }
+.path-node:not(:last-child)::after {
+  content:''; position:absolute; top:1.3rem; right:50%; width:100%; height:2px; background: rgba(184,134,11,0.18); z-index:0;
+}
+.path-node.done:not(:last-child)::after { background: var(--gold); }
+
+.stage-current-box { background: var(--gold-xs); border-radius:10px; padding:1rem 1.2rem; margin-top:1rem; }
+.stage-current-box .t { font-family:'Heebo',sans-serif; font-weight:700; font-size:0.92rem; margin-bottom:0.3rem; }
+.stage-current-box .d { font-size:0.84rem; color: var(--ink-dim); }
+
+/* financial */
+.fin-row { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:0.5rem; }
+.fin-row .label { font-size:0.85rem; color: var(--ink-dim); }
+.fin-row .val { font-family:'Heebo',sans-serif; font-weight:700; }
+.bar-track { height:10px; border-radius:6px; background: rgba(184,134,11,0.12); overflow:hidden; margin-bottom:1.3rem; }
+.bar-fill { height:100%; border-radius:6px; background: linear-gradient(90deg, var(--gold-lt), var(--gold)); }
+.fin-stat-grid { display:grid; grid-template-columns:1fr 1fr; gap:0.8rem; margin-top:1rem; }
+.fin-stat { background: var(--pearl); border-radius:10px; padding:0.8rem 1rem; text-align:center; }
+.fin-stat .n { font-family:'Heebo',sans-serif; font-weight:800; font-size:1.3rem; color: var(--gold); display:block; }
+.fin-stat .l { font-size:0.74rem; color: var(--ink-dim); }
+
+/* skills / volunteering */
+.tag { display:inline-block; background: var(--gold-xs); color: var(--gold); border:1px solid rgba(184,134,11,0.22); border-radius:1rem; padding:0.25rem 0.75rem; font-size:0.78rem; margin:0 0.3rem 0.3rem 0; }
+.opp-item { display:flex; justify-content:space-between; align-items:center; padding:0.7rem 0; border-bottom:1px dashed rgba(184,134,11,0.15); }
+.opp-item:last-child { border-bottom:none; }
+.opp-item .t { font-size:0.88rem; font-weight:600; }
+.opp-item .o { font-size:0.76rem; color: var(--ink-faint); }
+.opp-match { background: var(--ok-bg); color: var(--ok); font-size:0.72rem; font-weight:700; padding:0.2rem 0.6rem; border-radius:1rem; }
+
+/* next steps */
+.step-list { list-style:none; }
+.step-list li { display:flex; align-items:flex-start; gap:0.7rem; padding:0.6rem 0; }
+.step-list .num { width:1.6rem; height:1.6rem; border-radius:50%; background: var(--gold-xs); color: var(--gold); font-size:0.78rem; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:0.1rem; }
+.step-list .txt { font-size:0.86rem; color: var(--ink-dim); }
+
+.cta-note { text-align:center; margin-top:2rem; color: var(--ink-faint); font-size:0.82rem; }
+.cta-note a { color: var(--gold); font-weight:600; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">שפע גלובל <span>| Shefa Global</span></a>
+  <a href="index.html" class="nav-back">→ חזרה לדף הבית</a>
+</nav>
+
+<div class="preview-banner">💎 זוהי <span>תצוגה מקדימה של החזון</span> לאזור האישי — נתונים לדוגמה בלבד, לא מחובר עדיין למערכת אמיתית</div>
+
+<div class="wrap">
+
+  <div class="dash-head">
+    <div>
+      <p class="greet-eyebrow">האזור האישי שלי</p>
+      <h1 class="greet-title">שלום, <span class="name">דנה</span> ✦</h1>
+    </div>
+    <div class="stage-badge">שלב נוכחי: איפוס פיננסי</div>
+  </div>
+
+  <div class="grid">
+    <div>
+
+      <!-- Crystal Path Progress -->
+      <div class="card">
+        <h3>💎 ההתקדמות שלך בנתיב הקריסטל</h3>
+        <div class="path-track">
+          <div class="path-node done"><div class="dot">✓</div><div class="lbl">חודש נשימה</div></div>
+          <div class="path-node done"><div class="dot">✓</div><div class="lbl">אבחון עומק</div></div>
+          <div class="path-node current"><div class="dot">3</div><div class="lbl">איפוס פיננסי</div></div>
+          <div class="path-node"><div class="dot">4</div><div class="lbl">העצמה מנטלית</div></div>
+          <div class="path-node"><div class="dot">5</div><div class="lbl">תרומה קהילתית</div></div>
+          <div class="path-node"><div class="dot">6</div><div class="lbl">הדהוד והתרחבות</div></div>
+        </div>
+        <div class="stage-current-box">
+          <div class="t">שלב 3: איפוס פיננסי</div>
+          <div class="d">סוגרים חובות רעילים ובונים תשתית תקציבית חדשה. נקודת האפס האמיתית שלך. התקדמות משוערת בשלב: 60%.</div>
+        </div>
+      </div>
+
+      <!-- Financial -->
+      <div class="card">
+        <h3>📊 מעקב פיננסי</h3>
+        <div class="fin-row"><span class="label">צמצום חוב כולל</span><span class="val">38%</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:38%"></div></div>
+        <div class="fin-stat-grid">
+          <div class="fin-stat"><span class="n">₪31,000</span><span class="l">חוב נותר</span></div>
+          <div class="fin-stat"><span class="n">₪19,000</span><span class="l">נסגר עד כה</span></div>
+          <div class="fin-stat"><span class="n">4</span><span class="l">מפגשי ליווי שהושלמו</span></div>
+          <div class="fin-stat"><span class="n">₪1,200</span><span class="l">חיסכון חודשי חדש</span></div>
+        </div>
+      </div>
+
+      <!-- Volunteering -->
+      <div class="card">
+        <h3>🤝 התנדבות וקהילה</h3>
+        <p style="font-size:0.85rem; color:var(--ink-dim); margin-bottom:0.8rem;">הכישורים שסימנת בהרשמה:</p>
+        <div style="margin-bottom:1rem;">
+          <span class="tag">ניהול ואדמיניסטרציה</span><span class="tag">חינוך והוראה</span><span class="tag">כתיבה ועריכה</span>
+        </div>
+        <div class="opp-item">
+          <div><div class="t">ליווי הורה יחיד בהגשת בקשה לאיחוד חובות</div><div class="o">עמותת "יד ביד" · פעם בשבוע</div></div>
+          <span class="opp-match">87% התאמה</span>
+        </div>
+        <div class="opp-item">
+          <div><div class="t">מתנדב/ת בהכנת שיעורי בית לילדים</div><div class="o">מרכז קהילתי דרום ת"א · שעתיים בשבוע</div></div>
+          <span class="opp-match">74% התאמה</span>
+        </div>
+        <div class="opp-item">
+          <div><div class="t">כתיבת תוכן לניוזלטר הקהילה</div><div class="o">שפע גלובל · מרחוק, גמיש</div></div>
+          <span class="opp-match">91% התאמה</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div>
+      <!-- Profile summary -->
+      <div class="card">
+        <h3>👤 הפרופיל שלי</h3>
+        <div class="opp-item" style="border:none; padding:0.3rem 0;"><span class="label" style="color:var(--ink-dim); font-size:0.85rem;">עיר</span><span style="font-weight:600; font-size:0.85rem;">תל אביב</span></div>
+        <div class="opp-item" style="border:none; padding:0.3rem 0;"><span class="label" style="color:var(--ink-dim); font-size:0.85rem;">הצטרפ/ה בתאריך</span><span style="font-weight:600; font-size:0.85rem;">14.03.2026</span></div>
+        <div class="opp-item" style="border:none; padding:0.3rem 0;"><span class="label" style="color:var(--ink-dim); font-size:0.85rem;">מלווה אישי/ת</span><span style="font-weight:600; font-size:0.85rem;">נועה כהן</span></div>
+      </div>
+
+      <!-- Next steps -->
+      <div class="card">
+        <h3>✦ מה הלאה</h3>
+        <ol class="step-list">
+          <li><span class="num">1</span><span class="txt">להשלים את טופס תזרים המזומנים החודשי עד יום חמישי</span></li>
+          <li><span class="num">2</span><span class="txt">לקבוע מפגש ליווי חמישי עם הצוות הפיננסי</span></li>
+          <li><span class="num">3</span><span class="txt">לבחור הזדמנות התנדבות ראשונה מתוך ההתאמות שלמעלה</span></li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <p class="cta-note">זה החזון לאזור האישי — ברגע שנתחיל לקלוט חברים אמיתיים, נחבר אותו לנתונים חיים. <a href="join.html">להצטרפות לנתיב הקריסטל →</a></p>
+
+</div>
+</body>
+</html>
