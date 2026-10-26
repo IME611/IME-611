@@ -1,0 +1,35 @@
+name: Cleanup old branches
+
+# One-time cleanup: deletes every branch except the ones listed in KEEP.
+# A full backup of all branches exists (IME-611-all-branches-2026-10-26.bundle).
+# Run it from the Actions tab, type DELETE to confirm. Remove this file afterwards.
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: "Type DELETE to remove all branches except main, v2-journey, ime611-web"
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.confirm == 'DELETE' }}
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      KEEP: "main v2-journey ime611-web"
+    steps:
+      - name: Delete branches
+        run: |
+          set -euo pipefail
+          deleted=0
+          for b in $(gh api --paginate "repos/${{ github.repository }}/branches" --jq '.[].name'); do
+            if [[ " $KEEP " == *" $b "* ]]; then echo "keep   $b"; continue; fi
+            enc=$(printf '%s' "$b" | jq -sRr @uri)
+            gh api -X DELETE "repos/${{ github.repository }}/git/refs/heads/$enc" && echo "delete $b" && deleted=$((deleted+1))
+          done
+          echo "Deleted $deleted branches"
+          gh api --paginate "repos/${{ github.repository }}/branches" --jq '.[].name'
