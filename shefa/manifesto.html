@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>החזון — המניפסט ועץ השפע | שפע גלובל</title>
+<meta name="description" content="נקודת המפנה, סיפור הלידה, מניפסט השפע, עץ השפע, מעגל ההגשמה ו־SHEFA OS.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Cpolygon points='48,4 88,26 88,70 48,92 8,70 8,26' fill='%23FAF6EE' stroke='%23B8860B' stroke-width='6'/%3E%3Ccircle cx='48' cy='48' r='12' fill='%23C9961A'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=Assistant:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shefa.css">
+<style>
+.turning{font-family:Heebo;font-weight:300;font-size:clamp(1.15rem,2.6vw,1.45rem);line-height:1.9;color:var(--ink-mid)}
+.turning .ask{display:block;margin:1.6rem 0;font-weight:700;font-size:clamp(1.6rem,4.5vw,2.6rem);color:var(--gold);line-height:1.3}
+.scroll{background:linear-gradient(180deg,#FFFCF5,var(--ivory));border:1px solid rgba(184,134,11,.35);border-radius:var(--r-lg);padding:clamp(1.8rem,5vw,3.6rem);box-shadow:var(--shadow-lg);position:relative}
+.scroll::before,.scroll::after{content:'✦';position:absolute;color:var(--gold);font-size:1.1rem}
+.scroll::before{top:1rem;right:1.2rem}.scroll::after{bottom:1rem;left:1.2rem}
+.scroll p{font-family:Heebo;font-weight:300;font-size:clamp(1.1rem,2.4vw,1.35rem);line-height:1.9;margin-bottom:.15rem;color:var(--ink)}
+.scroll p.gap{margin-top:1.3rem}
+.scroll p.strong{font-weight:700;color:var(--gold)}
+.scroll .sig{margin-top:2rem;font-family:Heebo;font-weight:600;color:var(--gold)}
+.principle{background:var(--ivory);border:1px solid var(--line);border-radius:var(--r);padding:1.3rem 1.4rem}
+.principle b{font-family:Heebo;font-size:1.05rem;display:block;margin-bottom:.3rem}
+.principle p{font-size:.93rem;color:var(--ink-dim)}
+.call p{font-family:Heebo;font-weight:300;font-size:clamp(1.25rem,3vw,1.75rem);line-height:1.7;color:#FBF3DF}
+.call p.g{color:var(--gold-lt);font-weight:600}
+/* tree */
+.tree-wrap{display:grid;grid-template-columns:1.1fr 1fr;gap:2.5rem;align-items:center}
+.tree svg{width:100%;height:auto}
+.tree .zone{cursor:pointer;transition:opacity .3s}
+.tree .zone:hover,.tree .zone.on{opacity:1}
+.tree .zone{opacity:.72}
+.tree-info{min-height:300px}
+.tree-info h3{font-size:1.5rem;margin-bottom:.3rem}
+.tree-info .sub{font-size:.85rem;color:var(--ink-faint);margin-bottom:1rem}
+.tree-info ul{list-style:none;display:flex;flex-wrap:wrap;gap:.5rem}
+.tree-info li{background:var(--ivory);border:1px solid var(--line);border-radius:2rem;padding:.4rem .95rem;font-size:.92rem}
+.tree-btns{display:flex;gap:.5rem;margin-bottom:1.2rem}
+/* circle */
+.cycle{display:grid;grid-template-columns:1fr 1fr;gap:2.5rem;align-items:center}
+.cycle svg{width:100%;max-width:440px;margin:auto}
+.cycle .node circle{fill:var(--ivory);stroke:var(--gold);stroke-width:1.5;transition:all .4s}
+.cycle .node text{font-family:Heebo;font-size:13px;font-weight:600;fill:var(--ink-mid)}
+.cycle .node.on circle{fill:var(--gold);r:34}
+.cycle .node.on text{fill:#fff}
+.cycle-desc{font-size:1.05rem}
+.cycle-desc h3{font-size:1.6rem;color:var(--gold);margin-bottom:.5rem}
+/* OS */
+.os{display:grid;grid-template-columns:repeat(5,1fr);gap:.8rem}
+.os .slot{border-radius:var(--r);padding:1.3rem 1.1rem;border:1px solid var(--line);background:var(--ivory)}
+.os .slot .time{font-family:Heebo;font-weight:800;color:var(--gold);font-size:.85rem;margin-bottom:.5rem}
+.os .slot h4{font-size:1.02rem;margin-bottom:.4rem}
+.os .slot p{font-size:.88rem;color:var(--ink-dim)}
+.os .slot.night{background:var(--night);border-color:transparent}
+.os .slot.night h4{color:#FBF3DF}.os .slot.night p{color:rgba(243,233,210,.7)}.os .slot.night .time{color:var(--gold-lt)}
+.law{border-top:2px solid var(--gold);padding-top:1rem}
+.law b{font-family:Heebo;font-size:1.05rem}
+.law p{font-size:.93rem;color:var(--ink-dim);margin-top:.35rem}
+.dialog .tl-item p{font-size:.93rem}
+@media(max-width:900px){.tree-wrap,.cycle{grid-template-columns:1fr}.os{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.os{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main>
+
+<header class="page-hero">
+  <p class="crumbs"><a href="index.html">שפע גלובל</a> › החזון</p>
+  <p class="eyebrow">חלק א׳ · הנשמה</p>
+  <h1 class="h-xl">מאיפה זה בא<br><span class="gold">ובמה זה מאמין</span></h1>
+  <p class="lead">לפני מודל, כסף או טכנולוגיה, שפע גלובל נולדה מתוך שינוי תודעתי אישי של המייסד. כל השאר בנוי על השורש הזה.</p>
+</header>
+
+<!-- TURNING POINT -->
+<section>
+  <div class="narrow">
+    <p class="eyebrow">1 · נקודת המפנה</p>
+    <div class="turning reveal">
+      <p>אני מאמין שהבורא ברא אותנו כצמצום שלו, של האינסוף, כדי שנתפתח, ודרכנו גם הוא יוכל לחוות את ההתפתחות. אם אני רואה את עצמי כאדם נדיב, אבל אין לידי אנשים שאוכל לתת להם, אני בעצם לא יכול להעניק מעצמי ולחלוק את המתנות שלי. בשביל זה, לדעתי, נוצרו בני האדם.</p>
+      <p class="mt-1">התודעה שלי התפתחה. במקום לדרוש כל הזמן דברים לחיי הפרטיים, החלטתי לשנות גישה ולשאול:</p>
+      <span class="ask">"מה אתה צריך ממני?"</span>
+      <p>אני מודה על כל יום שיש לי בעולם הזה. אקדיש את כל זמני, כוחי וכישוריי כדי לשרת. הייתה לי התגלות, והחלטתי לפתח אותה בכל הכוח.</p>
+    </div>
+  </div>
+</section>
+
+<!-- BIRTH STORY -->
+<section class="bg-pearl edge-top">
+  <div class="wrap split2" style="--cols:1fr 1.3fr">
+    <div>
+      <p class="eyebrow">2 · סיפור הלידה</p>
+      <h2 class="h-l">יוני–ספטמבר 2025</h2>
+      <p class="lead">רגעי היצירה עצמם, כפי שתועדו במסמך הלידה ובהודעות שהמייסד שלח לעצמו בלילה. הם מסבירים את הבחירות שנשארו בליבת המותג עד היום.</p>
+      <div class="decision"><b class="lbl">למה "קריסטל" ולא "מאמינים"</b><p>קריסטל הוא מבנה מסודר וצלול, שמתגבש בתנאים הנכונים ושובר אור לבן לצבעי הקשת. הוא לוקח אנרגיה ומפיץ אותה הלאה בצורה חדשה ויפה. המטרה היא לא עסקה פיננסית. המטרה היא להצית טרנספורמציה.</p></div>
+    </div>
+    <div class="timeline">
+      <div class="tl-item reveal"><span class="tl-date">3 ביוני 2025 · 04:08 לפנות בוקר</span><h4>ההצהרה</h4><p>"אני מחובר למקור אינסופי של שפע... אני לא אשמור אותו לעצמי בלבד. ההתפתחות הגדולה שלי תהיה לחלוק את השפע הזה. אני בקרוב מאוד אהיה — קריסטל 🔮". באותו לילה נולד גם הרעיון לתג קריסטל וירטואלי, שממנו צמחו בהמשך המערכת המבוזרת והקשר ל־IME VR.</p></div>
+      <div class="tl-item reveal"><span class="tl-date">יוני 2025</span><h4>ההשראה: שחר וניצולי השואה</h4><p>חבר שעבד עם ניצולי שואה הסביר למה בחר בעבודה הזו: "גם אני מרוויח כסף וגם תורם לקהילה, שזה מצב מעולה." מכאן נולד העיקרון שהנתינה היא חלק מהריפוי.</p></div>
+      <div class="tl-item reveal"><span class="tl-date">22 ביוני 2025 · לילה</span><h4>הדומיין</h4><p>"כולם כבר מזמן הלכו לישון. נשארתי בספה ושטתי עם הדומיין... הבנתי שאם אני רוצה שהחזון שלי ייקרה, אני צריך לתת לו את התשתית כדי להתרחב." הדומיין shefa.com היה תפוס, ונמצא Shefa.Global. "יאללה, זה שלי. 🔮"</p></div>
+      <div class="tl-item reveal"><span class="tl-date">ספטמבר 2025</span><h4>הניסוח הראשון</h4><p>"לעזור לאנשים במצוקה כלכלית לסגור את החובות, לתת להם כלים מבוססי בינה מלאכותית ולבנות להם מסלול לצבירת נכסים. בתמורה, הם יתנדבו בעמותות קהילתיות לפי הכישורים שלהם." המייסד מילא בעצמו את טופס ההצטרפות הראשון, והפך בכך לקריסטל הראשון.</p></div>
+      <div class="tl-item now reveal"><span class="tl-date">אוקטובר 2026</span><h4>ארכיטקטורה על המדף</h4><p>כל החומרים אוחדו למסמך אב אחד ולאתר הזה. המיזם עומד ב־STAND BY עד שהתנאים יבשילו.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- VISION -->
+<section>
+  <div class="wrap">
+    <div class="center narrow mb-2">
+      <p class="eyebrow">3 · החזון שלי</p>
+      <h2 class="h-l reveal">מציאות כלכלית חדשה</h2>
+      <p class="lead reveal d1">אני מסתכל על העולם ורואה מודל חברתי־כלכלי שמושתת על תחרות וחוסר, ומשאיר אחריו מיליוני משפחות שחוקות ולחוצות. הקמתי את Shefa Global מתוך אמונה פשוטה ורדיקלית: כמו האוויר שאנחנו נושמים, יש מספיק לכולם, והמפתח לחוסן כלכלי הוא שינוי תודעתי ונתינה הדדית.</p>
+    </div>
+    <div class="grid g-3">
+      <div class="card reveal"><div class="ico">◐</div><h3>הכאב שאני רואה</h3><p>"הזוג השכיר שנשחק": משפחות שעושות לכאורה הכל נכון, ונשחקות תחת יוקר המחיה. אצלן החובות יקרים, התזרים שלילי והפנסיה נשחקת. "זה בדיוק הסיפור שהייתי בו."</p></div>
+      <div class="card reveal d1"><div class="ico">◇</div><h3>הפתרון</h3><p>לא עוד חברת ייעוץ פיננסי, אלא אקוסיסטם שלם. המשתתפים נקראים "קריסטלים", כי המטרה היא ללטש אותם עד שיפיצו את האור שלהם בחזרה לעולם.</p></div>
+      <div class="card reveal d2"><div class="ico">◎</div><h3>הצעד הראשון</h3><p>פיילוט ממוקד בישראל כדי להוכיח היתכנות וליצור את סיפורי ההצלחה הראשונים. משם השאיפה היא תנועה גלובלית, שמשנה את הדרך שבה האנושות תופסת כסף, ערך וקהילה.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- MANIFESTO -->
+<section class="bg-cream edge-top" id="manifesto">
+  <div class="narrow">
+    <div class="center mb-2"><p class="eyebrow">4 · מניפסט השפע · 1.1</p><h2 class="h-l">הנוסח המלא</h2></div>
+    <div class="scroll reveal">
+      <p>אני עידן, מייסד Shefa Global, ובאתי לעולם הזה בשליחות.</p>
+      <p>לא כדי לצבור, אלא כדי להעניק. לא כדי לדרוש, אלא כדי לשאול:</p>
+      <p class="strong">"מה אתה צריך ממני?"</p>
+      <p class="gap">אני מאמין שהשפע הוא טבעי, אינסופי ונגיש לכולם — כמו האוויר שאנחנו נושמים.</p>
+      <p>העולם כפי שהוא היום — תחרותי, לחוץ, חסר — אינו גזירת גורל.</p>
+      <p>הוא תוצאה של תודעה.</p>
+      <p>ואת התודעה הזו אנחנו באים לשנות.</p>
+      <p class="gap strong">אנחנו לא באים להציל — אנחנו באים להזכיר.</p>
+      <p>להזכיר לאדם שהוא שפע. שהוא אור. שהוא חלק מהשלם.</p>
+      <p class="gap">Shefa Global היא תנועה של ריפוי כלכלי ותודעתי.</p>
+      <p>תנועה שמאמינה באדם, בבורא, ובכוח של קהילה.</p>
+      <p>אנחנו מאפסים חובות, משנים תודעות, ובונים עולם חדש — מבפנים החוצה.</p>
+      <p class="gap strong">אם אתה מרגיש את הקריאה — אתה כבר חלק מהתנועה.</p>
+      <div class="sig">עידן משה עינב</div>
+    </div>
+  </div>
+</section>
+
+<!-- PRINCIPLES -->
+<section>
+  <div class="wrap">
+    <div class="center narrow mb-2"><p class="eyebrow">1.2 · עקרונות השפע</p><h2 class="h-l reveal">תשעה עקרונות</h2></div>
+    <div class="grid g-3">
+      <div class="principle reveal"><b>🌬 שפע הוא טבעי</b><p>כמו אוויר. לא צריך להילחם עליו, רק להסכים לקבל.</p></div>
+      <div class="principle reveal d1"><b>🙏 הכרת תודה</b><p>תדר שמחבר אותנו למקור ומזרים שפע לחיינו.</p></div>
+      <div class="principle reveal d2"><b>🌊 נתינה יוצרת זרימה</b><p>כשאתה נותן, אתה פותח את הצינור לקבלה.</p></div>
+      <div class="principle reveal"><b>🔍 שקיפות יוצרת אמון</b><p>אין מה להסתיר, יש מה לשתף.</p></div>
+      <div class="principle reveal d1"><b>🤝 שייכות היא ריפוי</b><p>קהילה היא תרופה לבדידות, לפחד ולחוסר.</p></div>
+      <div class="principle reveal d2"><b>📡 הדהוד תודעתי</b><p>מה שאתה משדר הוא מה שאתה מקבל.</p></div>
+      <div class="principle reveal"><b>✨ הבורא דרכך</b><p>אתה לא לבד. אתה שליח של אור.</p></div>
+      <div class="principle reveal d1"><b>⛓ שחרור מתודעת חוב</b><p>חוב הוא לא רק מספר. הוא תדר, ואותו אנחנו משחררים.</p></div>
+      <div class="principle reveal d2"><b>💎 דוגמה אישית</b><p>אתה לא צריך לשכנע, רק להיות. התדר שלך מדבר.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- DEBT VS ABUNDANCE -->
+<section class="bg-pearl edge-top">
+  <div class="narrow">
+    <div class="center mb-2"><p class="eyebrow">1.3</p><h2 class="h-l">תודעת חוב מול תודעת שפע</h2></div>
+    <div class="tbl-wrap reveal">
+      <table>
+        <thead><tr><th>תחום</th><th>תודעת חוב</th><th style="color:var(--gold)">תודעת שפע</th></tr></thead>
+        <tbody>
+          <tr><td><b>רגש</b></td><td>פחד, אשמה, בושה</td><td class="gold">אמון, הודיה, שלווה</td></tr>
+          <tr><td><b>מחשבה</b></td><td>"אין לי מספיק"</td><td class="gold">"יש די והותר"</td></tr>
+          <tr><td><b>פעולה</b></td><td>הישרדות, חיסכון קיצוני</td><td class="gold">יצירה, שיתוף, השקעה</td></tr>
+          <tr><td><b>זהות</b></td><td>"אני חייב"</td><td class="gold">"אני ראוי"</td></tr>
+          <tr><td><b>יחס לאחר</b></td><td>תחרות, קנאה</td><td class="gold">שותפות, השראה</td></tr>
+          <tr><td><b>יחס לבורא</b></td><td>ניתוק, אשמה</td><td class="gold">חיבור, אהבה</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- PERSONAL CALL -->
+<section class="bg-night center">
+  <div class="narrow call">
+    <p class="eyebrow">1.4 · קריאה אישית לאדם</p>
+    <p class="reveal">אתה לא מקולקל. אתה לא לבד. אתה לא מספר.</p>
+    <p class="reveal d1">אתה לא רק "חייב" — <span style="color:var(--gold-lt)">אתה שליח.</span></p>
+    <p class="reveal d2">אתה לא רק "נזקק" — <span style="color:var(--gold-lt)">אתה שפע מהלך.</span></p>
+    <p class="reveal d3 mt-1">אתה מוזמן להצטרף למסע שבו אתה לא רק יוצא מהחוב —<br>אתה יוצא מהתודעה של חוב.</p>
+    <p class="g reveal d4 mt-1">אתה הופך לקריסטל. ואת האור שלך — העולם צריך.</p>
+  </div>
+</section>
+
+<!-- TREE -->
+<section id="tree">
+  <div class="wrap">
+    <div class="center narrow mb-2">
+      <p class="eyebrow">5 · עץ השפע</p>
+      <h2 class="h-l reveal">במקום עץ בעיה — עץ שפע</h2>
+      <p class="lead reveal d1">התבנית המקורית ב־Miro סימנה את השורשים "Root Causes", את הגזע "Problem" ואת הענפים "Effects". המייסד הפך אותה. לחצו על חלקי העץ.</p>
+    </div>
+    <div class="tree-wrap">
+      <div class="tree">
+        <svg viewBox="0 0 420 460" aria-label="עץ השפע">
+          <g class="zone" data-z="fruits">
+            <circle cx="210" cy="130" r="118" fill="rgba(95,138,78,.12)" stroke="rgba(95,138,78,.35)"/>
+            <circle cx="140" cy="100" r="62" fill="rgba(95,138,78,.12)"/><circle cx="285" cy="105" r="66" fill="rgba(95,138,78,.12)"/>
+            <g fill="#C9961A"><circle cx="150" cy="80" r="9"/><circle cx="215" cy="55" r="9"/><circle cx="280" cy="85" r="9"/><circle cx="120" cy="140" r="9"/><circle cx="300" cy="150" r="9"/><circle cx="185" cy="120" r="9"/><circle cx="245" cy="130" r="9"/><circle cx="210" cy="180" r="9"/><circle cx="330" cy="110" r="7"/></g>
+            <text x="210" y="30" text-anchor="middle" font-family="Heebo" font-weight="700" font-size="15" fill="#5F8A4E">הפירות</text>
+          </g>
+          <g class="zone" data-z="trunk">
+            <path d="M190 240 C188 290 182 330 170 370 L250 370 C238 330 232 290 230 240 Z" fill="#8B6B3E"/>
+            <path d="M200 240 L170 200 M220 240 L255 195 M210 240 L210 190" stroke="#8B6B3E" stroke-width="10" stroke-linecap="round"/>
+            <text x="210" y="320" text-anchor="middle" font-family="Heebo" font-weight="800" font-size="14" fill="#FAF6EE">הליבה</text>
+          </g>
+          <g class="zone" data-z="roots">
+            <path d="M175 370 C150 400 110 410 70 430 M190 372 C180 405 160 425 140 450 M210 372 L210 452 M230 372 C240 405 262 425 282 450 M245 370 C270 400 310 410 350 430" stroke="#B8860B" stroke-width="5" stroke-linecap="round" fill="none"/>
+            <text x="210" y="415" text-anchor="middle" font-family="Heebo" font-weight="700" font-size="14" fill="#B8860B"></text>
+            <rect x="60" y="372" width="300" height="1.5" fill="rgba(184,134,11,.35)"/>
+            <text x="360" y="455" text-anchor="end" font-family="Heebo" font-weight="700" font-size="15" fill="#B8860B">השורשים</text>
+          </g>
+        </svg>
+      </div>
+      <div class="tree-info">
+        <div class="tree-btns"><button class="tab" data-z="roots">🌱 השורשים</button><button class="tab" data-z="trunk">🌳 הגזע</button><button class="tab active" data-z="fruits">🍃 הפירות</button></div>
+        <div id="treeInfo"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VALUES -->
+<section class="bg-pearl edge-top">
+  <div class="wrap">
+    <div class="center narrow mb-2"><p class="eyebrow">6 · ערכי הליבה</p><h2 class="h-l reveal">ארבע אמירות</h2></div>
+    <div class="grid g-4">
+      <div class="card gate-card gate-reset reveal"><h3>שפע הוא מצב תודעתי</h3><p>לא רק כסף, אלא תחושת מלאות פנימית.</p></div>
+      <div class="card gate-card gate-diag reveal d1"><h3>חולשה היא שער להתמרה</h3><p>נקודת השבר היא ההזדמנות להתחיל מחדש.</p></div>
+      <div class="card gate-card gate-grow reveal d2"><h3>קהילה היא כוח מרפא</h3><p>ביחד אנחנו יוצרים תהודה רחבה.</p></div>
+      <div class="card gate-card gate-give reveal d3"><h3>שקיפות, כבוד, שותפות</h3><p>כל אדם הוא חלק מהמעגל.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- CYCLE -->
+<section id="cycle">
+  <div class="wrap">
+    <div class="center narrow mb-2">
+      <p class="eyebrow">7 · פרק 9 — עקרונות ההגשמה</p>
+      <h2 class="h-l reveal">מעגל ההגשמה</h2>
+      <p class="lead reveal d1">ההגשמה היא לא קסם ולא אמונה עיוורת. היא תהליך אנושי שבו מחשבות, רגשות ואמונות הופכים לפעולות ולתוצאות. הכול מתחיל בהסכמה פנימית.</p>
+    </div>
+    <div class="cycle">
+      <svg viewBox="0 0 440 440" id="cycleSvg"></svg>
+      <div class="cycle-desc" id="cycleDesc"></div>
+    </div>
+    <div class="decision mt-3"><b class="lbl">הכרעת האדריכל · שתי שפות לאותו פרק</b><p>הפרק נכתב בשתי שכבות, כדי לדבר גם אל המאמין וגם אל הספקן. שכבת הניסיון היא מה שהמייסד חווה ולמד, מנוויל גודארד ומרפי ועד המסורת היהודית. שכבת המנגנון היא מה שהמחקר הפסיכולוגי מאשש: הדמיה מנטלית משפרת ביצועים, הכרת תודה מפחיתה מתח, הרגלים קטנים בונים זהות, ותמיכה חברתית מנבאת התמדה. "תדרים" ו"70% מים" מוצגים כמטאפורות. הכוח של השיטה הוא בשינוי ההתנהגות, וזה דבר שאפשר למדוד.</p></div>
+  </div>
+</section>
+
+<!-- SHEFA OS -->
+<section class="bg-cream edge-top" id="os">
+  <div class="wrap">
+    <div class="center narrow mb-2">
+      <p class="eyebrow">8 · SHEFA OS</p>
+      <h2 class="h-l reveal">מערכת ההפעלה היומית</h2>
+      <p class="lead reveal d1">הפרוטוקול שהמייסד בנה ותרגל על עצמו כמעט שנה, ועכשיו הוא התבנית שבה כל משתתף בונה את מערכת ההפעלה שלו בשלב "צמיחה והעצמה". את סצנת הסיום כל אחד בוחר לעצמו.</p>
+    </div>
+    <div class="os">
+      <div class="slot reveal"><div class="time">06:00–08:00</div><h4>יקיצה ועליונות</h4><p>קימה ב־06:11 והצהרה: "אני מערכת הפעלה מתקדמת בכלי אנושי". אחר כך מים קרים, ברכות השחר, והוויה בחצר.</p></div>
+      <div class="slot reveal d1"><div class="time">בוקר</div><h4>הודיה חיה</h4><p>"מזמור לתודה" בכוונה, תוך הסתכלות על השפע הקיים: נשימה, משפחה, קורת גג, הים.</p></div>
+      <div class="slot reveal d2"><div class="time">במהלך היום</div><h4>סמכות נינוחה</h4><p>פעולה מתוך ביטחון, וביטול ההתנגדות לכל אתגר. ברגע של לחץ: "הבוטח בה' חסד יסובבנו".</p></div>
+      <div class="slot night reveal d3"><div class="time">22:30–23:30</div><h4>הודיה ותיקון</h4><p>Revision: מעבר על אירועי היום, ותיקון בדמיון של מה שלא היה טוב.</p></div>
+      <div class="slot night reveal d4"><div class="time">לילה</div><h4>SATS · סצנת סיום</h4><p>נכנסים לשינה מתוך הסצנה שבה הכל כבר הושלם. התחושה היא "הכל הושלם".</p></div>
+    </div>
+    <p class="center faint mt-2">שכבה אוניברסלית (הודיה, תיקון, סצנת סיום, הרגל זהות) פתוחה לכל אדם. השכבה האמונית מוצעת, לא מוכתבת.</p>
+
+    <h3 class="h-m mt-3 mb-1">ארבעת "חוקי הברזל" של המייסד</h3>
+    <div class="grid g-4">
+      <div class="law reveal"><b>Naturalness</b><p>אם זה מרגיש "גדול עליי", זה עדיין לא שלי. מורידים את החשיבות עד שזה רגיל כמו לצחצח שיניים.</p></div>
+      <div class="law reveal d1"><b>Revision</b><p>אין יום שנגמר בלי "לתקן" אותו. זה מנקה את התדר למחר.</p></div>
+      <div class="law reveal d2"><b>No Effort</b><p>כשאני מנסה, אני משדר חוסר. כשאני יודע, אני משדר שפע. המעבר הוא מ־Trying ל־Being.</p></div>
+      <div class="law reveal d3"><b>Identity</b><p>אני לא "מנהל פרויקט שמחפש שפע". אני אדם עשיר וחופשי. הזהות קודמת למציאות.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- DIALOG LOG -->
+<section>
+  <div class="wrap split2" style="--cols:1fr 1.4fr">
+    <div>
+      <p class="eyebrow">ספר השפע · V2–V5</p>
+      <h2 class="h-l">לוג שיחות העומק</h2>
+      <p class="lead">המסע האישי של המייסד בין מאי 2025 לאפריל 2026. מה שהוא תרגל על עצמו הוא מה שהתנועה תציע למשתתפיה.</p>
+      <div class="grid mt-2" style="gap:.7rem">
+        <div class="card"><h3>📖 פרק 6 · מדע ההתעשרות</h3><p>התעשרות ב"דרך מסוימת" פירושה להוסיף ערך לכל אדם שפוגשים, כך שהרווח לעולם לא בא על חשבון אחרים.</p></div>
+        <div class="card"><h3>📖 פרק 8 · גלו את המתנה שלכם</h3><p>השפע אינו היעד. הוא מלווה את מי שמממש את מתנתו. זה הבסיס לשיבוץ ההתנדבות לפי כישורים.</p></div>
+      </div>
+    </div>
+    <div class="timeline dialog">
+      <div class="tl-item reveal"><span class="tl-date">19.05.2025</span><h4>"כמה כסף אני צריך כדי לחיות בחופש?"</h4><p>זה התחיל כניתוח אקסל יבש ונהיה חזון חיים. נפילת האסימון: הכסף הוא רעש רקע, והמספר הוא רק תדר. כשהיעד הופך ל"עובדה מוגמרת", המוח מפסיק לחפש "איך" ומתחיל לפעול מתוך ה"יש".</p></div>
+      <div class="tl-item reveal"><span class="tl-date">14.09.2025</span><h4>"ההרגשה היא הסוד"</h4><p>חוק ההנחה. ההרגשה הנכונה היא לא התרגשות שיא אלא טבעיות. נקודת הזהב: "הקלה" היא הרגש הגבוה ביותר.</p></div>
+      <div class="tl-item reveal"><span class="tl-date">אוקטובר–נובמבר 2025</span><h4>ביטחון בבורא מול אתגרי היומיום</h4><p>"הבוטח בה' חסד יסובבנו". לשחרר את האחיזה בתוצאות, ולעשות את המקסימום.</p></div>
+      <div class="tl-item reveal"><span class="tl-date">15.01.2026</span><h4>"למה אני עדיין מגיב בלחץ?"</h4><p>כל חלק פנימי מנסה להגן. הדרך היא אינטגרציה תחת ה"אני העליון". הגוף זוכר את העבר טוב יותר מהשכל.</p></div>
+      <div class="tl-item reveal"><span class="tl-date">פברואר–מרץ 2026</span><h4>אמונה וחוקי התודעה</h4><p>אין התנגשות ביניהם: "סוף מעשה במחשבה תחילה". החסד אינו פרס אלא מעטפת. מכאן נבנה "היום המושלם".</p></div>
+      <div class="tl-item reveal"><span class="tl-date">מרץ–אפריל 2026</span><h4>"STOP TRYING to feel it"</h4><p>המעבר ממאמץ לידיעה שקטה. ככל שהמטרה מרגישה טבעית יותר, היא קרובה יותר להתממשות.</p></div>
+    </div>
+  </div>
+</section>
+
+<nav class="next-chapter" aria-label="פרקים">
+  <a href="index.html"><small>→ חזרה</small><b>דף הבית</b></a>
+  <a href="path.html" class="fwd"><small>הפרק הבא ←</small><b>נתיב הקריסטל</b></a>
+</nav>
+</main>
+<script src="shefa.js"></script>
+<script>
+// TREE
+const TREE = {
+  roots:{h:'🌱 השורשים',s:'היסודות שלנו · Our Foundation',items:['פילוסופיית השפע','הון ראשוני — פילנתרופים','תשתית משפטית','משקיעי אימפקט','הצוות המייסד','החזון — המייסד']},
+  trunk:{h:'🌳 הגזע',s:'הליבה · The Core',text:'משימת הליבה: להעביר אנשים מתודעת חוסר לתודעת שפע, באמצעות מערכת תמיכה הוליסטית ושיטתית של איפוס כלכלי, אימון מנטלי ונתינה קהילתית.'},
+  fruits:{h:'🍃 הפירות',s:'מה שאנחנו מצמיחים בעולם · Our Fruits',items:['משפחות נקיות מחובות','קהילה פעילה של מתנדבים','עלייה בהכנסת המשתתפים','שינוי תודעתי לשפע וחוסן','סיפורי הצלחה שנותנים השראה','חיזוק החברה והקהילה','קריסטלים שהופכים למנטורים','קירוב האנושות לבורא באמצעות אהבה','עולם טוב יותר']}
+};
+function showTree(z){
+  const t = TREE[z];
+  document.getElementById('treeInfo').innerHTML = `<h3>${t.h}</h3><p class="sub">${t.s}</p>` + (t.items ? `<ul>${t.items.map(i=>`<li>${i}</li>`).join('')}</ul>` : `<p class="lead" style="color:var(--ink-mid)">${t.text}</p>`);
+  document.querySelectorAll('.tree .zone').forEach(g=>g.classList.toggle('on', g.dataset.z===z));
+  document.querySelectorAll('.tree-btns .tab').forEach(b=>b.classList.toggle('active', b.dataset.z===z));
+}
+document.querySelectorAll('[data-z]').forEach(el=>el.addEventListener('click',()=>showTree(el.dataset.z)));
+showTree('fruits');
+
+// CYCLE
+const CY = [
+  ['כוונה','הכול מתחיל בהחלטה מה אתה באמת רוצה, ובהסכמה פנימית שהחיים יכולים להתנהל אחרת.'],
+  ['דמיון','מציירים את המציאות המבוקשת כאילו כבר קרתה. זו "סצנת הסיום" של SHEFA OS.'],
+  ['רגש','בלי מטען רגשי הדמיון לא מספיק. ההרגשה הנכונה היא טבעיות והקלה, לא התרגשות.'],
+  ['אמונה','מתמידים בהנחה שהמטרה הושגה, בלי קשר לראיות החיצוניות.'],
+  ['פעולה','פועלים מתוך ה"יש" ולא מתוך החוסר. משמעת עצמית והרגלים קטנים בונים זהות.'],
+  ['תוצאה','המציאות משתנה בפועל. בנתיב הקריסטל כל שלב כזה נמדד ב"קריסטל התקדמות".'],
+  ['חיזוק אמונה','כל תוצאה מחזקת את האמונה, והמעגל מתחיל מחדש ברמה גבוהה יותר. ⟲']
+];
+const svg = document.getElementById('cycleSvg'); const cx=220, cy=220, R=160;
+let s = `<circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="rgba(184,134,11,.3)" stroke-dasharray="4 6"/>`;
+s += `<g class="spin-slow"><circle cx="${cx}" cy="${cy-R}" r="4" fill="#C9961A"/></g>`;
+s += `<polygon points="220,170 263,195 263,245 220,270 177,245 177,195" fill="rgba(232,192,96,.15)" stroke="#B8860B"/><text x="220" y="225" text-anchor="middle" font-family="Heebo" font-weight="800" font-size="15" fill="#B8860B">הגשמה</text>`;
+CY.forEach((c,i)=>{ const a = -Math.PI/2 + i*2*Math.PI/CY.length; const x = cx + R*Math.cos(a), y = cy + R*Math.sin(a);
+  s += `<g class="node" data-i="${i}" style="cursor:pointer"><circle cx="${x}" cy="${y}" r="31"/><text x="${x}" y="${y+4}" text-anchor="middle">${c[0]}</text></g>`; });
+svg.innerHTML = s;
+let ci = 0, timer;
+function showCycle(i){ ci=i; svg.querySelectorAll('.node').forEach(n=>n.classList.toggle('on', +n.dataset.i===i));
+  document.getElementById('cycleDesc').innerHTML = `<p class="faint">שלב ${i+1} מתוך 7</p><h3>${CY[i][0]}</h3><p class="lead" style="color:var(--ink-mid)">${CY[i][1]}</p>`; }
+svg.querySelectorAll('.node').forEach(n=>n.addEventListener('click',()=>{ clearInterval(timer); showCycle(+n.dataset.i); }));
+showCycle(0); timer = setInterval(()=>showCycle((ci+1)%CY.length), 3200);
+</script>
+</body>
+</html>

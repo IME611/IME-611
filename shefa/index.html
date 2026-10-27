@@ -4,387 +4,275 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>שפע גלובל — נתיב הקריסטל</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;600;800;900&family=Assistant:wght@300;400;600&display=swap" rel="stylesheet">
+<meta name="description" content="תנועה שמלווה משפחות במסע של שחרור כלכלי, שינוי תודעתי וחיבור לקהילה. אתה נברא לחיות בשפע.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Cpolygon points='48,4 88,26 88,70 48,92 8,70 8,26' fill='%23FAF6EE' stroke='%23B8860B' stroke-width='6'/%3E%3Ccircle cx='48' cy='48' r='12' fill='%23C9961A'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=Assistant:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shefa.css">
 <style>
-:root {
-  --ivory:    #FAF6EE;
-  --pearl:    #F5EFE0;
-  --cream:    #EDE0C4;
-  --warm:     #E8D5A8;
-  --gold:     #B8860B;
-  --gold-mid: #C9961A;
-  --gold-lt:  #E8C060;
-  --gold-xs:  rgba(184,134,11,0.12);
-  --gold-xss: rgba(184,134,11,0.06);
-  --ink:      #1C140A;
-  --ink-mid:  #3D2E12;
-  --ink-dim:  rgba(28,20,10,0.60);
-  --ink-faint:rgba(28,20,10,0.35);
-  box-sizing: border-box;
-  padding-top: env(safe-area-inset-top,0px);
-  padding-bottom: env(safe-area-inset-bottom,0px);
-}
-*, *::before, *::after { box-sizing: inherit; margin:0; padding:0; }
-html { scroll-padding-top: env(safe-area-inset-top,0px); }
-
-body {
-  font-family: 'Assistant', sans-serif;
-  background: var(--ivory);
-  color: var(--ink);
-  direction: rtl;
-  line-height: 1.6;
-  overflow-x: hidden;
-}
-
-/* ── NAV ── */
-nav {
-  position: fixed; top: env(safe-area-inset-top,0); right:0; left:0; z-index:100;
-  display: flex; align-items:center; justify-content:space-between;
-  padding: 1.1rem 2rem;
-  background: rgba(250,246,238,0.94);
-  backdrop-filter: blur(14px);
-  border-bottom: 1px solid rgba(184,134,11,0.25);
-}
-.nav-logo {
-  font-family: 'Heebo', sans-serif; font-weight:800; font-size:1.05rem;
-  color: var(--ink);
-}
-.nav-logo span { color: var(--gold); }
-.nav-cta {
-  background: var(--gold); color: var(--ivory);
-  font-family:'Heebo',sans-serif; font-weight:600; font-size:0.85rem;
-  padding:0.5rem 1.4rem; border-radius:2rem; border:none; cursor:pointer;
-  text-decoration:none; transition:background 0.2s, transform 0.15s;
-}
-.nav-cta:hover { background: var(--ink-mid); transform: translateY(-1px); }
-
-/* ── HERO ── */
-.hero {
-  min-height: 100vh;
-  display: flex; flex-direction:column; align-items:center; justify-content:center;
-  text-align:center; padding: 8rem 1.5rem 5rem;
-  position:relative; overflow:hidden;
-  background:
-    linear-gradient(175deg, #FFFBF3 0%, var(--ivory) 40%, var(--pearl) 100%);
-}
-/* עיטורי זהב עדינים */
-.hero::before {
-  content:'';
-  position:absolute; inset:0; pointer-events:none;
-  background:
-    radial-gradient(ellipse 60% 40% at 50% 0%, rgba(232,192,96,0.18) 0%, transparent 60%),
-    radial-gradient(ellipse 30% 25% at 10% 90%, rgba(184,134,11,0.08) 0%, transparent 55%),
-    radial-gradient(ellipse 25% 20% at 92% 15%, rgba(184,134,11,0.07) 0%, transparent 50%);
-}
-.hero::after {
-  content:'';
-  position:absolute; bottom:0; left:0; right:0; height:1px;
-  background: linear-gradient(90deg, transparent, rgba(184,134,11,0.35), transparent);
-}
-
-/* קישוט פינה */
-.corner-ornament {
-  position:absolute; width:80px; height:80px;
-  opacity:0.18; pointer-events:none;
-}
-.corner-ornament.tl { top:90px; right:20px; transform:rotate(0deg); }
-.corner-ornament.tr { top:90px; left:20px; transform:rotate(90deg); }
-
-.crystal {
-  width:96px; height:96px; margin:0 auto 2rem; position:relative; z-index:1;
-}
-.crystal svg { width:100%; height:100%;
-  filter: drop-shadow(0 0 16px rgba(184,134,11,0.35)) drop-shadow(0 2px 6px rgba(184,134,11,0.2));
-}
-.hero-eyebrow {
-  font-size:0.75rem; font-weight:400; letter-spacing:0.2em; text-transform:uppercase;
-  color: var(--gold); margin-bottom:1.1rem; position:relative; z-index:1;
-}
-.hero-title {
-  font-family:'Heebo',sans-serif; font-weight:900;
-  font-size: clamp(2.6rem,8vw,4.8rem); line-height:1.05;
-  color: var(--ink); margin-bottom:0.5rem;
-  position:relative; z-index:1; max-width:14ch;
-}
-.hero-title .gold { color: var(--gold); }
-.hero-sub {
-  font-size:clamp(1rem,2.5vw,1.2rem); font-weight:300;
-  color: var(--ink-dim); max-width:42ch; margin:0 auto 2.5rem;
-  line-height:1.75; position:relative; z-index:1;
-}
-.hero-actions { display:flex; gap:1rem; flex-wrap:wrap; justify-content:center; z-index:1; position:relative; }
-.btn-primary {
-  background: var(--gold); color: var(--ivory);
-  font-family:'Heebo',sans-serif; font-weight:700; font-size:1rem;
-  padding:0.85rem 2.2rem; border-radius:2rem; border:none; cursor:pointer;
-  text-decoration:none; transition:background 0.2s, transform 0.15s;
-  box-shadow: 0 4px 20px rgba(184,134,11,0.25);
-}
-.btn-primary:hover { background: var(--ink-mid); transform:translateY(-2px); }
-.btn-ghost {
-  background:transparent; color: var(--ink-mid);
-  font-family:'Heebo',sans-serif; font-weight:400; font-size:0.95rem;
-  padding:0.85rem 2rem; border-radius:2rem;
-  border:1.5px solid rgba(184,134,11,0.35); cursor:pointer; text-decoration:none;
-  transition:border-color 0.2s, color 0.2s;
-}
-.btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
-
-/* ── SECTIONS ── */
-section { padding:5.5rem 1.5rem; }
-.container { max-width:860px; margin:0 auto; }
-.section-label {
-  font-size:0.73rem; font-weight:400; letter-spacing:0.18em;
-  color: var(--gold); text-transform:uppercase; margin-bottom:0.9rem;
-}
-.section-title {
-  font-family:'Heebo',sans-serif; font-size:clamp(1.7rem,4vw,2.7rem);
-  font-weight:700; line-height:1.15; margin-bottom:1.1rem; color: var(--ink);
-}
-.section-body {
-  font-size:1.05rem; font-weight:300; color: var(--ink-dim);
-  max-width:55ch; line-height:1.8;
-}
-
-/* ── PAIN ── */
-.pain { background: var(--pearl); }
-.pain-grid {
-  display:grid; grid-template-columns:1fr 1fr; gap:1.25rem; margin-top:2.5rem;
-}
-.pain-card {
-  background: var(--ivory); border:1px solid rgba(184,134,11,0.2);
-  border-radius:12px; padding:1.5rem;
-  box-shadow: 0 2px 12px rgba(184,134,11,0.06);
-}
-.pain-card p { font-size:0.92rem; color: var(--ink-dim); line-height:1.7; }
-.pain-card .num {
-  font-family:'Heebo',sans-serif; font-weight:900; font-size:2rem;
-  color: var(--gold); display:block; margin-bottom:0.35rem;
-}
-
-/* ── PATH ── */
-.path { background: var(--ivory); border-top:1px solid rgba(184,134,11,0.15); }
-.path-steps { margin-top:2.5rem; display:flex; flex-direction:column; }
-.step {
-  display:grid; grid-template-columns:3rem 1fr; gap:1.25rem; align-items:start;
-  padding:1.6rem 0; border-bottom:1px solid rgba(184,134,11,0.12);
-}
-.step:last-child { border-bottom:none; }
-.step-num {
-  width:3rem; height:3rem; border-radius:50%;
-  border:1.5px solid var(--gold); display:flex; align-items:center; justify-content:center;
-  font-family:'Heebo',sans-serif; font-weight:700; font-size:0.9rem;
-  color: var(--gold); flex-shrink:0; margin-top:0.1rem;
-}
-.step-content h3 {
-  font-family:'Heebo',sans-serif; font-weight:600; font-size:1.05rem;
-  margin-bottom:0.3rem; color: var(--ink);
-}
-.step-content p { font-size:0.9rem; color: var(--ink-dim); line-height:1.65; }
-.step-tag {
-  display:inline-block; margin-top:0.55rem; font-size:0.7rem;
-  padding:0.18rem 0.7rem; border-radius:1rem;
-  background: var(--gold-xs); color: var(--gold);
-  border:1px solid rgba(184,134,11,0.22); letter-spacing:0.05em;
-}
-
-/* ── VISION ── */
-.vision { background: var(--cream); border-top:1px solid rgba(184,134,11,0.18); }
-.vision-quote {
-  font-family:'Heebo',sans-serif; font-weight:300;
-  font-size:clamp(1.25rem,3vw,1.9rem); line-height:1.6;
-  color: var(--ink); border-right:3px solid var(--gold);
-  padding-right:1.75rem; margin:2.5rem 0; max-width:50ch;
-}
-.founder { display:flex; align-items:center; gap:1rem; margin-top:1.75rem; }
-.founder-avatar {
-  width:50px; height:50px; border-radius:50%;
-  background: linear-gradient(135deg, var(--gold-lt), var(--gold));
-  display:flex; align-items:center; justify-content:center;
-  font-family:'Heebo',sans-serif; font-weight:700; font-size:1.1rem;
-  color: var(--ivory); flex-shrink:0;
-  box-shadow:0 0 14px rgba(184,134,11,0.25);
-}
-.founder-info strong { font-family:'Heebo',sans-serif; font-size:0.95rem; font-weight:600; color:var(--ink); display:block; }
-.founder-info small { font-size:0.78rem; color: var(--ink-faint); }
-
-/* ── FORM ── */
-.join { background: var(--pearl); border-top:1px solid rgba(184,134,11,0.18); }
-.form-wrap {
-  background: var(--ivory); border:1px solid rgba(184,134,11,0.28);
-  border-radius:16px; padding:2.5rem; margin-top:2.5rem; max-width:620px;
-  box-shadow:0 4px 30px rgba(184,134,11,0.08);
-}
-.form-row { margin-bottom:1.2rem; }
-label {
-  display:block; font-size:0.85rem; font-weight:400;
-  color: var(--ink-mid); margin-bottom:0.4rem;
-}
-input, select, textarea {
-  width:100%; background: var(--pearl);
-  border:1px solid rgba(184,134,11,0.22);
-  border-radius:8px; padding:0.72rem 1rem;
-  color: var(--ink); font-family:'Assistant',sans-serif; font-size:0.95rem;
-  direction:rtl; transition:border-color 0.2s;
-}
-input::placeholder, textarea::placeholder { color: var(--ink-faint); }
-input:focus, select:focus, textarea:focus { outline:none; border-color:var(--gold); }
-select option { background:var(--ivory); color:var(--ink); }
-textarea { resize:vertical; min-height:88px; }
-.form-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
-.submit-btn {
-  width:100%; background:var(--gold); color:var(--ivory);
-  font-family:'Heebo',sans-serif; font-weight:700; font-size:1rem;
-  padding:0.95rem; border-radius:2rem; border:none; cursor:pointer;
-  margin-top:0.5rem; transition:background 0.2s, transform 0.15s;
-  box-shadow:0 4px 18px rgba(184,134,11,0.25);
-}
-.submit-btn:hover { background:var(--ink-mid); transform:translateY(-2px); }
-.form-note { font-size:0.77rem; color:var(--ink-faint); text-align:center; margin-top:0.9rem; }
-.success-msg {
-  display:none; text-align:center; padding:2rem;
-  color:var(--gold); font-family:'Heebo',sans-serif; font-size:1.2rem; font-weight:600;
-}
-
-/* ── FOOTER ── */
-footer {
-  padding:2rem 1.5rem; text-align:center;
-  background: var(--cream);
-  border-top:1px solid rgba(184,134,11,0.15);
-  color: var(--ink-faint); font-size:0.8rem;
-}
-
-/* ── DIVIDER ORNAMENT ── */
-.gold-divider {
-  display:flex; align-items:center; gap:1rem; margin:0 auto 3rem; max-width:300px;
-}
-.gold-divider::before, .gold-divider::after {
-  content:''; flex:1; height:1px; background:linear-gradient(90deg,transparent,rgba(184,134,11,0.4),transparent);
-}
-.gold-divider span { color:var(--gold); font-size:1.1rem; flex-shrink:0; }
-
-@media(max-width:640px) {
-  .pain-grid { grid-template-columns:1fr; }
-  .form-grid { grid-template-columns:1fr; }
-  nav { padding:1rem 1.25rem; }
-  .form-wrap { padding:1.75rem 1.25rem; }
-  .corner-ornament { display:none; }
-}
-@media(prefers-reduced-motion:reduce) { *{transition:none!important;} }
+.hero{min-height:calc(100vh - var(--nav-h));display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:4rem 1.25rem 5rem;overflow:hidden;
+  background:radial-gradient(ellipse 70% 50% at 50% 0%,rgba(232,192,96,.25) 0%,transparent 62%),radial-gradient(ellipse 35% 30% at 8% 92%,rgba(184,134,11,.09) 0%,transparent 55%),linear-gradient(175deg,#FFFBF3 0%,var(--ivory) 42%,var(--pearl) 100%)}
+.prism{width:min(520px,92vw);height:auto;margin-bottom:1.6rem}
+.prism .beam{stroke-dasharray:6 10;animation:beam 1.6s linear infinite}
+.prism .ray{stroke-dasharray:240;stroke-dashoffset:240;animation:ray 2.6s ease forwards}
+.prism .ray.r2{animation-delay:.25s}.prism .ray.r3{animation-delay:.5s}.prism .ray.r4{animation-delay:.75s}
+@keyframes beam{to{stroke-dashoffset:-32}}
+@keyframes ray{to{stroke-dashoffset:0}}
+.prism .core{animation:glow 3.5s ease-in-out infinite;transform-origin:260px 110px}
+@keyframes glow{0%,100%{opacity:.85}50%{opacity:1}}
+.hero h1{max-width:13ch;margin:0 auto}
+.hero .lead{margin:1.3rem auto 2.3rem}
+.hero .under{margin-top:2.2rem;font-size:.82rem;color:var(--ink-faint)}
+.portrait .card .v{font-family:Heebo;font-weight:900;font-size:1.65rem;color:var(--gold);display:block;line-height:1.1;margin-bottom:.4rem}
+.flip{display:inline-flex;background:var(--ivory);border:1px solid var(--line);border-radius:2rem;padding:4px;margin:1.8rem 0 1.4rem}
+.flip button{border:none;background:none;padding:.55rem 1.3rem;border-radius:2rem;font-family:Heebo;font-weight:600;color:var(--ink-dim);transition:.25s}
+.flip button.on{background:var(--night);color:var(--gold-lt)}
+.flip button.on.ab{background:var(--gold);color:var(--ivory)}
+.mind{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem}
+.mind div{background:var(--ivory);border:1px solid var(--line);border-radius:12px;padding:1rem 1.1rem;transition:.4s}
+.mind small{display:block;font-size:.74rem;letter-spacing:.12em;color:var(--ink-faint);font-family:Heebo}
+.mind b{font-family:Heebo;font-size:1.08rem;transition:.4s}
+.mind.debt div{background:#F1EBE1}
+.mind.debt b{color:var(--ink-mid)}
+.mind.abund b{color:var(--gold)}
+.path-row{display:grid;grid-template-columns:repeat(6,1fr);gap:.7rem;margin-top:2.5rem;position:relative}
+.path-row::before{content:'';position:absolute;top:24px;right:8%;left:8%;height:2px;background:linear-gradient(90deg,var(--g-give),var(--g-grow),var(--g-reset),var(--g-diag));opacity:.45}
+.ps{text-align:center;position:relative}
+.ps .n{width:48px;height:48px;border-radius:50%;margin:0 auto .8rem;background:var(--ivory);border:2px solid var(--c);color:var(--c);display:flex;align-items:center;justify-content:center;font-family:Heebo;font-weight:800;font-size:1.05rem;position:relative;z-index:1;box-shadow:0 0 0 6px var(--ivory)}
+.ps h4{font-size:.98rem;margin-bottom:.3rem}
+.ps p{font-size:.84rem;color:var(--ink-dim)}
+.ps .tag{margin-top:.55rem;background:var(--cb);color:var(--c);border-color:transparent}
+.cohen{display:grid;grid-template-columns:1fr auto 1fr;gap:1.4rem;align-items:center}
+.cohen .side{border-radius:var(--r-lg);padding:1.8rem;border:1px solid var(--line)}
+.cohen .before{background:#F1EBE1}
+.cohen .after{background:var(--ivory);box-shadow:var(--shadow-lg);border-color:rgba(184,134,11,.4)}
+.cohen .line{display:flex;justify-content:space-between;padding:.55rem 0;border-bottom:1px dashed rgba(184,134,11,.2);font-size:.95rem}
+.cohen .line b{font-family:Heebo;font-variant-numeric:tabular-nums}
+.cohen .arrow{font-size:2rem;color:var(--gold)}
+.chapters a.card{display:flex;flex-direction:column}
+.chapters .num{font-family:Heebo;font-size:.74rem;letter-spacing:.14em;color:var(--gold);margin-bottom:.4rem}
+.pact{display:grid;grid-template-columns:1.2fr 1fr;gap:3rem;align-items:center}
+@media(max-width:900px){.path-row{grid-template-columns:repeat(3,1fr);row-gap:2rem}.path-row::before{display:none}.cohen{grid-template-columns:1fr}.cohen .arrow{transform:rotate(-90deg);justify-self:center}.pact{grid-template-columns:1fr}.mind{grid-template-columns:1fr}}
+@media(max-width:560px){.path-row{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
 <body>
-
-<!-- NAV -->
-<nav>
-  <div class="nav-logo">שפע גלובל <span>| Shefa Global</span></div>
-  <a href="join.html" class="nav-cta">הצטרף לתנועה</a>
-</nav>
+<main>
 
 <!-- HERO -->
 <section class="hero">
-  <!-- קישוטי פינה -->
-  <svg class="corner-ornament tl" viewBox="0 0 80 80" fill="none">
-    <path d="M2 2 L78 2 L78 20" stroke="#B8860B" stroke-width="1.5" fill="none"/>
-    <path d="M2 2 L2 78" stroke="#B8860B" stroke-width="1.5" fill="none"/>
-    <circle cx="2" cy="2" r="3" fill="#B8860B"/>
+  <svg class="prism" viewBox="0 0 520 220" fill="none" aria-hidden="true">
+    <defs>
+      <linearGradient id="lb" x1="1" x2="0"><stop offset="0" stop-color="#E8C060" stop-opacity="0"/><stop offset="1" stop-color="#E8C060"/></linearGradient>
+      <radialGradient id="cg"><stop offset="0" stop-color="#E8C060" stop-opacity=".55"/><stop offset="1" stop-color="#E8C060" stop-opacity="0"/></radialGradient>
+    </defs>
+    <!-- incoming white light (from right) -->
+    <line class="beam" x1="520" y1="110" x2="320" y2="110" stroke="url(#lb)" stroke-width="3"/>
+    <!-- refracted rays (to left) : gates -->
+    <path class="ray r1" d="M200 104 L10 40" stroke="#4E8C8F" stroke-width="3" stroke-linecap="round"/>
+    <path class="ray r2" d="M200 108 L10 90" stroke="#B8860B" stroke-width="3" stroke-linecap="round"/>
+    <path class="ray r3" d="M200 112 L10 140" stroke="#5F8A4E" stroke-width="3" stroke-linecap="round"/>
+    <path class="ray r4" d="M200 116 L10 190" stroke="#7A5A8C" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="260" cy="110" r="95" fill="url(#cg)"/>
+    <g class="core">
+      <polygon points="260,30 330,70 330,150 260,190 190,150 190,70" fill="rgba(250,246,238,.85)" stroke="#B8860B" stroke-width="1.6"/>
+      <polygon points="260,48 314,79 314,141 260,172 206,141 206,79" fill="rgba(184,134,11,.05)" stroke="#C9961A" stroke-width="1" opacity=".8"/>
+      <polygon points="260,68 296,89 296,131 260,152 224,131 224,89" fill="rgba(232,192,96,.16)" stroke="#E8C060" stroke-width="1.6"/>
+      <line x1="260" y1="30" x2="260" y2="190" stroke="rgba(184,134,11,.25)"/>
+      <line x1="190" y1="70" x2="330" y2="150" stroke="rgba(184,134,11,.18)"/>
+      <line x1="330" y1="70" x2="190" y2="150" stroke="rgba(184,134,11,.18)"/>
+      <circle cx="260" cy="110" r="8" fill="#C9961A"/>
+    </g>
   </svg>
-  <svg class="corner-ornament tr" viewBox="0 0 80 80" fill="none">
-    <path d="M2 2 L78 2 L78 20" stroke="#B8860B" stroke-width="1.5" fill="none"/>
-    <path d="M2 2 L2 78" stroke="#B8860B" stroke-width="1.5" fill="none"/>
-    <circle cx="2" cy="2" r="3" fill="#B8860B"/>
-  </svg>
-
-  <div class="crystal">
-    <svg viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <polygon points="48,4 88,26 88,70 48,92 8,70 8,26" fill="rgba(184,134,11,0.06)" stroke="#B8860B" stroke-width="1"/>
-      <polygon points="48,14 78,30 78,66 48,82 18,66 18,30" fill="rgba(184,134,11,0.04)" stroke="#C9961A" stroke-width="0.8" opacity="0.7"/>
-      <polygon points="48,24 68,35 68,61 48,72 28,61 28,35" fill="rgba(232,192,96,0.10)" stroke="#E8C060" stroke-width="1.2"/>
-      <line x1="48" y1="4" x2="48" y2="92" stroke="rgba(184,134,11,0.2)" stroke-width="0.7"/>
-      <line x1="8" y1="26" x2="88" y2="70" stroke="rgba(184,134,11,0.15)" stroke-width="0.6"/>
-      <line x1="88" y1="26" x2="8" y2="70" stroke="rgba(184,134,11,0.15)" stroke-width="0.6"/>
-      <circle cx="48" cy="48" r="5" fill="#C9961A" opacity="0.9"/>
-      <circle cx="48" cy="48" r="10" fill="rgba(201,150,26,0.12)"/>
-    </svg>
+  <p class="eyebrow reveal">נתיב הקריסטל</p>
+  <h1 class="h-xl reveal d1">אתה נברא<br>לחיות <span class="gold">בשפע</span></h1>
+  <p class="lead reveal d2">תנועה גלובלית שמלווה משפחות במסע של שחרור כלכלי, שינוי תודעתי וחיבור לקהילה שתומכת בך.</p>
+  <div class="row reveal d3" style="justify-content:center">
+    <a href="join.html" class="btn btn-gold">אני רוצה להצטרף</a>
+    <a href="#path" class="btn btn-line">איך זה עובד</a>
   </div>
-
-  <p class="hero-eyebrow">נתיב הקריסטל</p>
-  <h1 class="hero-title">אתה נברא<br>לחיות <span class="gold">בשפע</span></h1>
-  <p class="hero-sub">תנועה גלובלית שמלווה משפחות במסע של שחרור כלכלי, שינוי תודעתי וחיבור לקהילה שתומכת בך.</p>
-  <div class="hero-actions">
-    <a href="join.html" class="btn-primary">אני רוצה להצטרף</a>
-    <a href="#path" class="btn-ghost">איך זה עובד</a>
-  </div>
+  <p class="under reveal d4">קריסטל שובר אור לבן לצבעי הקשת. זה מה שהתנועה עושה עם האנשים שהיא מלווה.</p>
 </section>
 
 <!-- PAIN -->
-<section class="pain">
-  <div class="container">
-    <div class="gold-divider"><span>✦</span></div>
-    <p class="section-label">המציאות שרואים</p>
-    <h2 class="section-title">עושים הכל נכון.<br>ועדיין נשחקים.</h2>
-    <p class="section-body">אלה הסיפורים של הרוב. עובדים קשה, מרוויחים יפה — ועדיין בסוף החודש אין. החובות גדלים, הפנסיה נשחקת, והחלום מרגיש רחוק.</p>
-    <div class="pain-grid">
-      <div class="pain-card"><span class="num">₪180K</span><p>חוב צרכני ממוצע של משפחה ישראלית שכירה — חוץ מהמשכנתא</p></div>
-      <div class="pain-card"><span class="num">72%</span><p>מהמשפחות מרגישות שהן לא יכולות לעמוד בהוצאות בלתי צפויות</p></div>
-      <div class="pain-card"><span class="num">אפס</span><p>חיסכון נזיל אצל רוב המשפחות — הפנסיה היא הקופה היחידה</p></div>
-      <div class="pain-card"><span class="num">₪28K</span><p>הכנסה משותפת — ועדיין תזרים שלילי בגלל ריביות ועמלות</p></div>
+<section class="bg-pearl edge-top">
+  <div class="wrap">
+    <div class="divider"><span>✦</span></div>
+    <div class="narrow center">
+      <p class="eyebrow">המציאות שרואים</p>
+      <h2 class="h-l reveal">עושים הכל נכון.<br>ועדיין נשחקים.</h2>
+      <p class="lead reveal d1">עובדים קשה, מרוויחים יפה, ועדיין בסוף החודש אין. החובות גדלים, הפנסיה נשחקת, והחלום מרגיש רחוק. מתחת לזה: בושה, בדידות, ותחושה של "אני חייב" במקום "אני ראוי".</p>
+    </div>
+    <p class="center faint mt-3 mb-1">דיוקן הקהל הראשון: <b>הזוג השכיר שנשחק במרכז</b></p>
+    <div class="grid g-4 portrait">
+      <div class="card reveal"><span class="v">30–40</span><p>שני הורים שכירים, נשואים עם שני ילדים ומעלה, שכירות בגוש דן ובשרון</p></div>
+      <div class="card reveal d1"><span class="v">₪20–28K</span><p>הכנסה משותפת נטו בחודש. מכובדת, ועדיין התזרים שלילי</p></div>
+      <div class="card reveal d2"><span class="v">₪100–250K</span><p>חובות צרכניים, לא כולל משכנתא: מינוס, אשראי מתגלגל, הלוואות יקרות</p></div>
+      <div class="card reveal d3"><span class="v">₪300–500K</span><p>חסכונות פנסיוניים רדומים, שנשחקים מול האינפלציה. משענת שאיש לא לימד אותם להפעיל</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- MIND SHIFT -->
+<section>
+  <div class="narrow center">
+    <p class="eyebrow">אתם לא שבורים</p>
+    <h2 class="h-l reveal">אתם קריסטלים<br>בתהליך ליטוש</h2>
+    <p class="lead reveal d1">חוב הוא לא רק מספר. הוא תדר, מערכת הפעלה פנימית. אנחנו לא באים להציל. אנחנו באים להזכיר.</p>
+    <div class="flip" role="tablist">
+      <button class="on" data-m="debt">תודעת חוב</button>
+      <button data-m="abund">תודעת שפע</button>
+    </div>
+  </div>
+  <div class="wrap" style="max-width:900px">
+    <div class="mind debt" id="mind"></div>
+    <p class="center faint mt-2">מתוך מניפסט השפע, טבלה 1.3. לחצו על המתג כדי לראות את המעבר.</p>
+  </div>
+</section>
+
+<!-- PILLARS -->
+<section class="bg-pearl edge-top">
+  <div class="wrap">
+    <div class="center narrow">
+      <p class="eyebrow">ארבעה עמודי תווך</p>
+      <h2 class="h-l reveal">לא חברת ייעוץ.<br>אקוסיסטם לטרנספורמציה.</h2>
+      <p class="lead reveal d1">ארבעה רכיבים שמלווים את המשפחה לאורך כל המסע. הם לא שלבים בזמן. הם מה שאנחנו נותנים.</p>
+    </div>
+    <div class="grid g-4 mt-3">
+      <div class="card gate-card gate-reset reveal"><div class="ico">⟲</div><h3>איפוס פיננסי</h3><p>סגירת חובות רעילים, הורדת עלות החוב ותשתית כלכלית יציבה, בלי לשבור את החיסכון הפנסיוני.</p></div>
+      <div class="card gate-card gate-diag reveal d1"><div class="ico">◎</div><h3>כלים חכמים</h3><p>סוויטת בוטים מבוססי AI לתקציב, לנזילות, לתדר ולנתינה. ערך מיידי מהיום הראשון.</p></div>
+      <div class="card gate-card gate-grow reveal d2"><div class="ico">⚡</div><h3>העצמה מנטלית</h3><p>אימון אישי וקבוצתי, SHEFA OS ותוכן ספר E.I.L. תודעה חדשה ותוכנית להגדלת הכנסה.</p></div>
+      <div class="card gate-card gate-give reveal d3"><div class="ico">♡</div><h3>נתינה קהילתית</h3><p>המודל מושתת על "תשלום" בנתינה. כל קריסטל תורם מזמנו ומכישוריו, והופך לחלק ממעגל השפע.</p></div>
     </div>
   </div>
 </section>
 
 <!-- PATH -->
-<section class="path" id="path">
-  <div class="container">
-    <div class="gold-divider"><span>✦</span></div>
-    <p class="section-label">הפתרון</p>
-    <h2 class="section-title">נתיב הקריסטל</h2>
-    <p class="section-body">מסלול מדורג שמלווה אותך מהנקודה שאתה בה — עד שאתה מפיץ שפע לאחרים.</p>
-    <div class="path-steps">
-      <div class="step"><div class="step-num">1</div><div class="step-content"><h3>חודש של נשימה</h3><p>חיבור ראשוני, כלים מיידיים, בניית אמון. אתה לא לבד יותר.</p><span class="step-tag">חינמי</span></div></div>
-      <div class="step"><div class="step-num">2</div><div class="step-content"><h3>אבחון עומק</h3><p>ניתוח מלא של המצב הפיננסי והתודעתי — הבנה של הסיפור האמיתי.</p><span class="step-tag">אישי</span></div></div>
-      <div class="step"><div class="step-num">3</div><div class="step-content"><h3>איפוס פיננסי</h3><p>סגירת חובות רעילים, בניית תשתית תקציבית חדשה. נקודת אפס אמיתית.</p><span class="step-tag">שינוי מהותי</span></div></div>
-      <div class="step"><div class="step-num">4</div><div class="step-content"><h3>העצמה מנטלית</h3><p>אימון אישי וקבוצתי לשינוי תודעתי. מכלי EIL — ידע שעובד.</p><span class="step-tag">תודעה</span></div></div>
-      <div class="step"><div class="step-num">5</div><div class="step-content"><h3>תרומה קהילתית</h3><p>החזרה לקהילה לפי כישוריך. הנתינה היא חלק מהריפוי — לא תוסף.</p><span class="step-tag">הדדיות</span></div></div>
-      <div class="step"><div class="step-num">6</div><div class="step-content"><h3>הדהוד והתרחבות</h3><p>אתה הופך לקריסטל — מפיץ אור ומלווה אחרים במסע.</p><span class="step-tag">קריסטל</span></div></div>
+<section id="path">
+  <div class="wrap">
+    <div class="center narrow">
+      <p class="eyebrow">הפתרון</p>
+      <h2 class="h-l reveal">נתיב הקריסטל</h2>
+      <p class="lead reveal d1">מסלול מדורג שמלווה אותך מהנקודה שבה אתה נמצא, עד שאתה מפיץ שפע לאחרים.</p>
+    </div>
+    <div class="path-row">
+      <div class="ps gate-diag reveal"><div class="n">1</div><h4>חודש של נשימה</h4><p>חיבור ראשוני, כלים מיידיים, אמון. אתה לא לבד יותר.</p><span class="tag">חינמי</span></div>
+      <div class="ps gate-diag reveal d1"><div class="n">2</div><h4>אבחון עומק</h4><p>ניתוח מלא של המצב הפיננסי והתודעתי.</p><span class="tag">אישי</span></div>
+      <div class="ps gate-reset reveal d2"><div class="n">3</div><h4>איפוס פיננסי</h4><p>סגירת חובות רעילים. נקודת אפס אמיתית.</p><span class="tag">שינוי מהותי</span></div>
+      <div class="ps gate-grow reveal d3"><div class="n">4</div><h4>העצמה מנטלית</h4><p>אימון לשינוי תודעתי, ידע שעובד.</p><span class="tag">תודעה</span></div>
+      <div class="ps gate-give reveal d4"><div class="n">5</div><h4>תרומה קהילתית</h4><p>הנתינה היא חלק מהריפוי, לא תוסף.</p><span class="tag">הדדיות</span></div>
+      <div class="ps gate-give reveal d4"><div class="n">6</div><h4>הדהוד והתרחבות</h4><p>אתה הופך לקריסטל מאיר ומלווה אחרים.</p><span class="tag">קריסטל</span></div>
+    </div>
+    <div class="center mt-3"><a href="path.html" class="btn btn-line">לכל שלב בפירוט מלא ←</a></div>
+  </div>
+</section>
+
+<!-- COHEN -->
+<section class="bg-cream edge-top">
+  <div class="wrap">
+    <div class="center narrow">
+      <p class="eyebrow">המנוע הפיננסי</p>
+      <h2 class="h-l reveal">משפחת כהן.<br>אותו חוב, חיים אחרים.</h2>
+      <p class="lead reveal d1">הם בני 35, עם שני ילדים, הכנסה של ₪24 אלף בחודש, חוב צרכני של ₪180 אלף וחסכונות של ₪350 אלף. כך נראה המודל הבטוח של שפע גלובל, בלי לגעת בפנסיה.</p>
+    </div>
+    <div class="cohen mt-3">
+      <div class="side before reveal">
+        <span class="tag red">היום</span>
+        <h3 class="h-m mt-1 mb-1">חוב צרכני ב־12%</h3>
+        <div class="line"><span>החזר חודשי</span><b>₪4,004</b></div>
+        <div class="line"><span>ריבית כוללת ל־5 שנים</span><b>₪60,200</b></div>
+        <div class="line"><span>הפנסיה</span><b>שלמה, ונשחקת</b></div>
+        <div class="line" style="border:none"><span>התחושה</span><b>"אני חייב"</b></div>
+      </div>
+      <div class="arrow">←</div>
+      <div class="side after reveal d2">
+        <span class="tag green">בנתיב הקריסטל</span>
+        <h3 class="h-m mt-1 mb-1">הלוואה כנגד השתלמות + הלוואת שפע</h3>
+        <div class="line"><span>החזר חודשי</span><b class="gold">₪3,198</b></div>
+        <div class="line"><span>ריבית כוללת ל־5 שנים</span><b class="gold">₪11,900</b></div>
+        <div class="line"><span>הפנסיה</span><b class="gold">שלמה, וממשיכה לצבור</b></div>
+        <div class="line" style="border:none"><span>חיסכון בריבית</span><b class="gold">≈ ₪48,000</b></div>
+      </div>
+    </div>
+    <p class="center faint mt-2">₪90 אלף בהלוואה כנגד קרן השתלמות ב־5%, ועוד ₪90 אלף "הלוואת שפע" ב־0% מקרן פילנתרופית. ההנחות מעוגלות ומיועדות להמחשה בלבד.</p>
+    <div class="center mt-2"><a href="reset.html" class="btn btn-gold">נסו את המחשבון על המספרים שלכם</a></div>
+  </div>
+</section>
+
+<!-- PACT -->
+<section class="bg-night">
+  <div class="wrap pact">
+    <div>
+      <p class="eyebrow">ההסכם</p>
+      <h2 class="h-l reveal">זה לא צדקה.<br><span style="color:var(--gold-lt)">זו שותפות.</span></h2>
+      <p class="lead reveal d1" style="margin-top:1.2rem">המשתתפים לא משלמים בכסף. הם מקבלים ליווי, כלים ואיפוס כלכלי, ומחזירים ערך בנתינה. הנתינה נמדדת ב"קריסטלים": שעות תרומה, ליווי משתתפים חדשים, תוכן והשראה.</p>
+      <div class="row mt-2"><a href="crystals.html" class="btn btn-gold">כלכלת הקריסטלים</a><a href="path.html#pact" class="btn btn-line" style="color:#F3E9D2">החוזה הערכי</a></div>
+    </div>
+    <div class="grid" style="gap:.9rem">
+      <div class="card-dark reveal"><h3>💎 הסיוע הבסיסי ניתן ללא תנאי</h3><p>האיפוס לא נקנה בשעות עבודה, ולא נמחק אם מישהו לא התנדב.</p></div>
+      <div class="card-dark reveal d1"><h3>🤝 חוזה ערכי, לא חוזה עבודה</h3><p>הצהרת כוונה שנחתמת בשיחת הבהירות, ונשענת על אמון ולא על סנקציה.</p></div>
+      <div class="card-dark reveal d2"><h3>✨ המתנות הגדולות נפתחות בנתינה</h3><p>מהחודש הרביעי נפתחים אימון אישי, מאגר קשרים וסדנאות למתקדמים.</p></div>
     </div>
   </div>
 </section>
 
-<!-- VISION -->
-<section class="vision">
-  <div class="container">
-    <div class="gold-divider"><span>✦</span></div>
-    <p class="section-label">החזון</p>
-    <h2 class="section-title">למה זה קיים</h2>
-    <blockquote class="vision-quote">"אני מאמין שהשפע הוא טבעי, אינסופי, ונגיש לכולם — כמו האוויר שאנחנו נושמים. העולם הלחוץ והחסר הזה הוא תוצאה של תודעה. ואת התודעה הזו אנחנו באים לשנות."</blockquote>
-    <div class="founder">
-      <div class="founder-avatar">ע</div>
-      <div class="founder-info"><strong>עידן משה עינב</strong><small>מייסד שפע גלובל</small></div>
-    </div>
-    <p style="margin-top:1.75rem; font-size:0.85rem; color:var(--ink-faint);">רוצים לראות איך ייראה האזור האישי שלכם בהמשך? <a href="dashboard.html" style="color:var(--gold); font-weight:600; text-decoration:none;">תצוגה מקדימה של האזור האישי ←</a></p>
+<!-- VISION QUOTE -->
+<section>
+  <div class="narrow">
+    <p class="eyebrow">למה זה קיים</p>
+    <blockquote class="quote reveal">"אני מאמין שהשפע הוא טבעי, אינסופי ונגיש לכולם — כמו האוויר שאנחנו נושמים. העולם הלחוץ והחסר הזה הוא תוצאה של תודעה. ואת התודעה הזו אנחנו באים לשנות."<cite>עידן משה עינב · מייסד שפע גלובל</cite></blockquote>
+    <a href="manifesto.html" class="btn btn-line mt-2">לסיפור הלידה ולמניפסט המלא</a>
   </div>
 </section>
 
-<!-- FORM -->
-<section class="join" id="join">
-  <div class="container">
-    <div class="gold-divider"><span>✦</span></div>
-    <p class="section-label">הצטרפות</p>
-    <h2 class="section-title">מוכן להתחיל את המסע?</h2>
-    <p class="section-body">ארבעה צעדים קצרים — פרטים אישיים, מצב כלכלי, כישורים וזמינות, וסיכום — כדי שנבנה יחד תוכנית מותאמת אישית. נחזור אליך תוך 48 שעות לשיחת היכרות ללא התחייבות.</p>
-    <div class="form-wrap" style="text-align:center; padding:2.5rem;">
-      <a href="join.html" class="submit-btn" style="display:inline-block; text-decoration:none; max-width:360px;">התחילו את תהליך ההצטרפות 💎</a>
-      <p class="form-note">פרטיך שמורים אצלנו בסודיות מלאה. ללא ספאם.</p>
+<!-- CHAPTERS -->
+<section class="bg-pearl edge-top">
+  <div class="wrap">
+    <div class="center narrow mb-2">
+      <p class="eyebrow">החזון כולו</p>
+      <h2 class="h-l reveal">חקרו את הארכיטקטורה</h2>
+      <p class="lead reveal d1">כל מה שנכתב, נחקר ותוכנן עבור שפע גלובל, מאוחד למודל אחד. כל עמוד הוא פרק.</p>
     </div>
+    <div class="grid g-3 chapters">
+      <a href="manifesto.html" class="card card-link reveal"><span class="num">א׳ · הנשמה</span><h3>המניפסט ועץ השפע</h3><p>נקודת המפנה, סיפור הלידה, עקרונות השפע, פרק 9 ו־SHEFA OS.</p><span class="go">לפרק ←</span></a>
+      <a href="path.html" class="card card-link reveal d1"><span class="num">ג׳ · המודל</span><h3>נתיב הקריסטל</h3><p>שישה שלבים, ולכל אחד מטרה, תדר, אתגרים ושאלת מפתח.</p><span class="go">לפרק ←</span></a>
+      <a href="reset.html" class="card card-link reveal d2"><span class="num">ד׳ · מנוע 1</span><h3>האיפוס הפיננסי</h3><p>מחשבון חי: המודל הבטוח מול פדיון פנסיה, והלוואת השפע.</p><span class="go">למחשבון ←</span></a>
+      <a href="crystals.html" class="card card-link reveal"><span class="num">ד׳ · מנוע 2</span><h3>כלכלת הקריסטלים</h3><p>חמישה סוגי קריסטלים ושלוש דרגות, וסימולטור של המסע שלכם.</p><span class="go">לסימולטור ←</span></a>
+      <a href="ecosystem.html" class="card card-link reveal d1"><span class="num">ה׳–ו׳ · הארגון והטכנולוגיה</span><h3>האקוסיסטם</h3><p>מבנה המעגלים, סוויטת הבוטים, שלושת הארנקים ו־Web3 בשלבים.</p><span class="go">לפרק ←</span></a>
+      <a href="pilot.html" class="card card-link reveal d2"><span class="num">ז׳ · ההוכחה</span><h3>הפיילוט</h3><p>12 שבועות, סינון מכבד, ותיק המשתתף של משפחת כהן.</p><span class="go">לפרק ←</span></a>
+      <a href="roadmap.html" class="card card-link reveal"><span class="num">י״ב–י״ג · הדרך</span><h3>מפת הדרכים</h3><p>שבעה שלבים מ־₪0 ועד חמש מדינות, ו־28 הכרעות אדריכליות.</p><span class="go">לפרק ←</span></a>
+      <a href="partners.html" class="card card-link reveal d1"><span class="num">י׳ · השותפות</span><h3>לשותפים ולמממנים</h3><p>הצעת הערך, תרחישי מימון וקרן הקריסטלים.</p><span class="go">לפרק ←</span></a>
+      <a href="dream.html" class="card card-link reveal d2" style="background:var(--night);border-color:transparent"><span class="num" style="color:var(--gold-lt)">✦ החזון במלואו</span><h3 style="color:#FBF3DF">החלום מתממש</h3><p style="color:rgba(243,233,210,.7)">סימולציה של התנועה לאורך השנים, מהקריסטל הראשון ועד חמש יבשות.</p><span class="go" style="color:var(--gold-lt)">למסע בזמן ←</span></a>
+    </div>
+    <div class="center mt-3"><a href="shefa-global-master.pdf" target="_blank" class="btn btn-dark">⬇ מסמך האב המלא · PDF, 103 עמודים</a></div>
   </div>
 </section>
 
-<footer>
-  <p>© 2026 שפע גלובל — Shefa Global. כל הזכויות שמורות.</p>
-</footer>
+<!-- JOIN -->
+<section class="center">
+  <div class="narrow">
+    <div class="crystal-hero" style="width:90px;height:90px"><svg viewBox="0 0 96 96" fill="none"><polygon points="48,4 88,26 88,70 48,92 8,70 8,26" fill="rgba(184,134,11,.06)" stroke="#B8860B"/><polygon points="48,24 68,35 68,61 48,72 28,61 28,35" fill="rgba(232,192,96,.14)" stroke="#E8C060" stroke-width="1.2"/><circle cx="48" cy="48" r="5" fill="#C9961A"/></svg></div>
+    <h2 class="h-l">המסע לתודעת שפע<br>מתחיל כאן</h2>
+    <p class="lead mt-1">ארבעה צעדים קצרים: פרטים אישיים, מצב כלכלי, כישורים וזמינות, וסיכום. כך נבנה יחד תוכנית מותאמת אישית.</p>
+    <div class="row mt-2" style="justify-content:center"><a href="join.html" class="btn btn-gold">אני מוכן להתחיל 💎</a><a href="dashboard.html" class="btn btn-line">הציצו באזור האישי</a></div>
+    <p class="faint mt-2">תודעת שפע היא הדרך להגשמה.</p>
+  </div>
+</section>
 
+</main>
+<script src="shefa.js"></script>
+<script>
+const MIND = {
+  debt:[['רגש','פחד, אשמה, בושה'],['מחשבה','"אין לי מספיק"'],['פעולה','הישרדות, חיסכון קיצוני'],['זהות','"אני חייב"'],['יחס לאחר','תחרות, קנאה'],['יחס לבורא','ניתוק, אשמה']],
+  abund:[['רגש','אמון, הודיה, שלווה'],['מחשבה','"יש די והותר"'],['פעולה','יצירה, שיתוף, השקעה'],['זהות','"אני ראוי"'],['יחס לאחר','שותפות, השראה'],['יחס לבורא','חיבור, אהבה']]
+};
+const mind = document.getElementById('mind');
+function renderMind(m){ mind.className='mind '+m; mind.innerHTML = MIND[m].map(([k,v])=>`<div><small>${k}</small><b>${v}</b></div>`).join(''); }
+renderMind('debt');
+document.querySelectorAll('.flip button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.flip button').forEach(x=>x.classList.remove('on','ab'));
+  b.classList.add('on'); if(b.dataset.m==='abund') b.classList.add('ab'); renderMind(b.dataset.m);
+});
+</script>
 </body>
 </html>

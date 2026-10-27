@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>מפת הדרכים — מאפס ועד גלובלי | שפע גלובל</title>
+<meta name="description" content="שבעה שלבי הוצאה לפועל, מפת גיוס, מפת סיכונים, ו־28 הכרעות אדריכליות.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Cpolygon points='48,4 88,26 88,70 48,92 8,70 8,26' fill='%23FAF6EE' stroke='%23B8860B' stroke-width='6'/%3E%3Ccircle cx='48' cy='48' r='12' fill='%23C9961A'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=Assistant:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shefa.css">
+<style>
+.sb-box{display:grid;grid-template-columns:auto 1fr;gap:2rem;align-items:center;background:var(--night);color:#F3E9D2;border-radius:var(--r-lg);padding:2.2rem;box-shadow:var(--shadow-lg)}
+.sb-box .ic{width:84px;height:84px;border-radius:50%;border:2px solid var(--gold-lt);display:flex;align-items:center;justify-content:center;font-size:2rem;color:var(--gold-lt);animation:pulse 2.4s infinite}
+.sb-box h2{color:#FBF3DF}
+.sb-box q{display:block;font-family:Heebo;font-weight:300;font-size:1.1rem;margin-top:.7rem;color:rgba(243,233,210,.85)}
+.phases{position:relative;margin-top:2rem}
+.phase{display:grid;grid-template-columns:90px 1fr 200px;gap:1.4rem;padding:1.4rem 1.6rem;border:1px solid var(--line);border-radius:var(--r);background:var(--ivory);margin-bottom:.8rem;cursor:pointer;transition:.25s;align-items:start}
+.phase:hover{box-shadow:var(--shadow)}
+.phase .pn{font-family:Heebo;font-weight:900;font-size:2.4rem;color:var(--gold);line-height:1}
+.phase .pn small{display:block;font-size:.8rem;font-weight:700;color:var(--ink-faint);margin-top:.3rem}
+.phase h3{font-size:1.25rem;margin-bottom:.3rem}
+.phase .body{display:none;margin-top:.6rem;color:var(--ink-mid);font-size:.95rem}
+.phase.open .body{display:block;animation:fadeUp .3s}
+.phase .cap{text-align:left}
+.phase .cap b{display:block;font-family:Heebo;font-size:1.15rem;color:var(--ink)}
+.phase .cap span{font-size:.78rem;color:var(--ink-faint)}
+.phase .gate{margin-top:.8rem;padding:.6rem .9rem;border-radius:10px;background:var(--gold-xss);font-size:.88rem;border-right:3px solid var(--gold)}
+.phase.now{border:2px solid var(--gold);background:linear-gradient(270deg,var(--gold-xs),var(--ivory))}
+.phase.now .here{display:inline-flex;align-items:center;gap:.4rem;font-family:Heebo;font-size:.75rem;font-weight:700;color:var(--gold);margin-bottom:.4rem}
+.phase.now .here i{width:8px;height:8px;border-radius:50%;background:var(--gold);animation:pulse 2.4s infinite}
+.risk-tbl td:last-child{white-space:nowrap}
+.sev{font-family:Heebo;font-weight:700;font-size:.78rem;padding:.15rem .6rem;border-radius:1rem}
+.sev.h{background:rgba(154,59,46,.1);color:var(--risk)}.sev.m{background:rgba(168,100,26,.1);color:var(--warn)}.sev.l{background:rgba(63,125,78,.1);color:var(--ok)}
+.qs{counter-reset:q;display:grid;grid-template-columns:1fr 1fr;gap:.7rem}
+.qs div{background:var(--ivory);border:1px solid var(--line);border-radius:12px;padding:1rem 1.1rem 1rem 1rem;display:grid;grid-template-columns:34px 1fr;gap:.6rem;font-size:.93rem}
+.qs div::before{counter-increment:q;content:counter(q);width:30px;height:30px;border-radius:50%;background:var(--gold);color:#fff;font-family:Heebo;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:.85rem}
+.qs small{display:block;color:var(--gold);font-family:Heebo;font-weight:600;margin-top:.2rem}
+.search{max-width:420px;margin:0 auto 1.2rem}
+.world{width:100%;height:auto}
+.world .pin{animation:pulse 2.6s infinite}
+@media(max-width:800px){.phase{grid-template-columns:60px 1fr}.phase .cap{grid-column:2;text-align:right}.sb-box{grid-template-columns:1fr;text-align:center}.sb-box .ic{margin:auto}.qs{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main>
+<header class="page-hero">
+  <p class="crumbs"><a href="index.html">שפע גלובל</a> › הדרך › מפת הדרכים</p>
+  <p class="eyebrow">חלקים י״א–י״ג</p>
+  <h1 class="h-xl">מאפס שקלים<br><span class="gold">עד חמש יבשות</span></h1>
+  <p class="lead">שמונת שלבי הביצוע המקוריים תיארו מה צריך לבנות. מפת הדרכים קובעת באיזה סדר. כל שלב נפתח רק אחרי שהקודם הוכיח את עצמו.</p>
+</header>
+
+<section>
+  <div class="wrap">
+    <div class="sb-box reveal">
+      <div class="ic">⏸</div>
+      <div><p class="eyebrow" style="color:var(--gold-lt)">סטטוס נוכחי · מאז 26 באוקטובר 2026</p><h2 class="h-m">STAND BY. הארכיטקטורה מוכנה על המדף.</h2>
+        <q>כל העניין כרגע הוא בניית ארכיטקטורה של החזון. האמת היא שאני רחוק כלכלית ומבחינת קשרים כדי להניע את SHEFA כרגע. אני רוצה שהכל יעמוד וישב ב־STAND BY עד שזה יוכל להתממש.</q><span style="display:block;font-size:.85rem;color:var(--gold-lt);margin-top:.3rem">— המייסד</span>
+        <p class="mt-1" style="font-size:.92rem">אין משתתפים, גיוס, צוות או ישות משפטית. יש חזון מלא, מסמך אב ואתר. ביום שהתנאים יבשילו, אפשר להתחיל לבצע מכאן.</p></div>
+    </div>
+
+    <div class="center narrow mt-3"><p class="eyebrow">י״ב · שבעת שלבי ההוצאה לפועל</p><h2 class="h-l reveal">הדרך</h2><p class="lead reveal d1">לחצו על שלב כדי לראות מה קורה בו ומה השער לשלב הבא.</p></div>
+    <div class="phases" id="phases"></div>
+  </div>
+</section>
+
+<!-- WORLD -->
+<section class="bg-night">
+  <div class="wrap split2" style="--cols:1fr 1.2fr">
+    <div>
+      <p class="eyebrow">שלב 7 · התרחבות</p>
+      <h2 class="h-l reveal">ישראל ← ארה"ב ← הודו ← ברזיל ← אפריקה</h2>
+      <p class="lead reveal d1 mt-1">כל מדינה מתחילה בפיילוט מקומי משלה, עם שגרירים, צוות ושותפים מקומיים.</p>
+      <div class="grid mt-2" style="gap:.8rem">
+        <div class="card-dark"><h3>עובר כמות שהוא</h3><p>המניפסט, ששת השלבים, כלכלת הקריסטלים, מודל הליווי, והשכבה האוניברסלית של SHEFA OS.</p></div>
+        <div class="card-dark"><h3>נבנה מחדש בכל מדינה</h3><p>מנוע האיפוס הפיננסי. כלי החוב, האשראי, הפנסיה והמס שונים לגמרי, ולכן כל מדינה צריכה שותף פיננסי ויועץ משפטי מקומיים. כאן לרקע של המייסד בפיתוח עסקי באסיה־פסיפיק ובאפריקה יש ערך ישיר.</p></div>
+      </div>
+    </div>
+    <svg class="world reveal" viewBox="0 0 600 340" aria-label="מפת ההתרחבות">
+      <g fill="rgba(232,192,96,.07)" stroke="rgba(232,192,96,.18)">
+        <path d="M60 60 Q120 30 190 55 L210 110 Q170 150 150 180 L120 160 Q80 130 60 60Z"/>
+        <path d="M175 190 Q210 180 225 215 L215 290 Q195 310 185 280 L170 230Z"/>
+        <path d="M280 50 Q330 35 360 55 L345 90 Q310 95 290 85Z"/>
+        <path d="M290 110 Q340 100 360 130 L355 210 Q330 260 310 250 L290 180Z"/>
+        <path d="M370 60 Q470 40 540 80 L530 140 Q480 160 430 150 L380 120Z"/>
+        <path d="M480 220 Q520 210 540 235 L525 260 Q495 265 480 245Z"/>
+      </g>
+      <g font-family="Heebo" font-size="13" font-weight="700" fill="#FBF3DF">
+        <path d="M352 112 Q260 40 130 100" stroke="rgba(232,192,96,.5)" fill="none" stroke-dasharray="4 5"/>
+        <path d="M352 112 Q390 100 415 120" stroke="rgba(232,192,96,.5)" fill="none" stroke-dasharray="4 5"/>
+        <path d="M352 112 Q280 170 200 235" stroke="rgba(232,192,96,.5)" fill="none" stroke-dasharray="4 5"/>
+        <path d="M352 112 Q340 150 325 185" stroke="rgba(232,192,96,.5)" fill="none" stroke-dasharray="4 5"/>
+        <circle class="pin" cx="352" cy="112" r="8" fill="#E8C060"/><text x="352" y="98" text-anchor="middle">ישראל · 1</text>
+        <circle cx="130" cy="100" r="6" fill="#C9961A"/><text x="130" y="88" text-anchor="middle">ארה"ב · 2</text>
+        <circle cx="415" cy="120" r="6" fill="#C9961A"/><text x="430" y="140" text-anchor="middle">הודו · 3</text>
+        <circle cx="200" cy="235" r="6" fill="#C9961A"/><text x="200" y="258" text-anchor="middle">ברזיל · 4</text>
+        <circle cx="325" cy="185" r="6" fill="#C9961A"/><text x="325" y="208" text-anchor="middle">אפריקה · 5</text>
+      </g>
+    </svg>
+  </div>
+</section>
+
+<!-- RECRUIT -->
+<section>
+  <div class="wrap">
+    <div class="center narrow mb-2"><p class="eyebrow">מפת הגיוס</p><h2 class="h-l reveal">מי מצטרף ומתי</h2><p class="lead reveal d1">ב־Notion נפתח דף "מפת גיוס בעלי תפקידים לכל שלב", והוא נשאר ריק. כאן הוא מלא.</p></div>
+    <div class="tbl-wrap reveal"><table>
+      <thead><tr><th>שלב</th><th>תפקיד</th><th>מעגל</th><th>היקף</th></tr></thead><tbody>
+      <tr><td><b>0</b></td><td>המייסד</td><td>ליבה</td><td>לפי זמינות</td></tr>
+      <tr><td><b>1 · יסודות</b></td><td>יועץ משפטי · יועץ פנסיוני מורשה · רואה חשבון</td><td>2</td><td>שעות / פרו בונו</td></tr>
+      <tr><td><b>2 · פיילוט v0</b></td><td>מלווה תקציבי · מאמן / מנחה קבוצה · איש מקצוע רווחה</td><td>1–2</td><td>חלקי / מתנדב</td></tr>
+      <tr><td><b>3 · זרע הון</b></td><td><b>ארכיטקט (COO), הגיוס הראשון בשכר</b> · CIO · מגייס/ת משאבים</td><td>1</td><td>מלא / חלקי</td></tr>
+      <tr><td><b>4 · פיילוט מלא</b></td><td>ראש קהילה · CTO / מפתח · מדריך קבלה, אנליסט, יועץ תקציבי, מאמן</td><td>1 / צוות</td><td>לפי מספר המשפחות</td></tr>
+      <tr><td><b>5 · השקה</b></td><td>מספר הסיפורים · רכז נתינה, רכז הדהוד, מוביל תוכן · שגרירים</td><td>1–3</td><td>מלא / חלקי / התנדבות</td></tr>
+      <tr><td><b>6–7</b></td><td>ועדת השקעות תודעתית · שותף פיננסי מורשה · שותפים מקומיים</td><td>2–4</td><td>לפי מבנה</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
+
+<!-- RISKS -->
+<section class="bg-pearl edge-top" id="risks">
+  <div class="wrap">
+    <div class="center narrow mb-2"><p class="eyebrow">י״א · חדש</p><h2 class="h-l reveal">רגולציה, סיכונים והגנות</h2><p class="lead reveal d1">הפרק הזה לא היה קיים בחומרים, והוא זה שמגן על כל השאר. תנועה שנוגעת בכסף, בחובות ובנפש של משפחות במצוקה צריכה להיות נקייה לגמרי.</p></div>
+    <div class="tbl-wrap risk-tbl reveal"><table>
+      <thead><tr><th>תחום</th><th>הסיכון</th><th>ההגנה במודל</th><th>חומרה</th></tr></thead><tbody>
+      <tr><td><b>ייעוץ פנסיוני</b></td><td>ליווי בפדיון, שעבוד או העברה של פנסיה מחייב רישיון</td><td>מודל בטוח, ויועץ מורשה חיצוני ועצמאי. הצוות מחנך ולא מייעץ</td><td><span class="sev h">גבוהה</span></td></tr>
+      <tr><td><b>גיוס והשקעות</b></td><td>גיוס, הבטחת תשואה וניהול השקעות הם תחומים מפוקחים</td><td>שלושה ארנקים, גוף מורשה, אין הבטחות תשואה</td><td><span class="sev h">גבוהה</span></td></tr>
+      <tr><td><b>מתן אשראי</b></td><td>הלוואות, גם בריבית אפסית, עשויות לחייב רישוי</td><td>בדיקה משפטית של מבנה הקרן לפני ההלוואה הראשונה</td><td><span class="sev h">גבוהה</span></td></tr>
+      <tr><td><b>יחסי עובד־מעביד</b></td><td>נתינה בשעות תמורת הטבה כלכלית עלולה להיחשב העסקה</td><td>סיוע לא מותנה בשעות, קריסטלים לא פורעים חוב, וחוזה ערכי</td><td><span class="sev m">בינונית</span></td></tr>
+      <tr><td><b>פרטיות</b></td><td>מידע פיננסי, רגשי ומשפחתי רגיש</td><td>מסמך אבטחה, הסכמה, הצפנה, ושום מידע אישי על בלוקצ'יין</td><td><span class="sev m">בינונית</span></td></tr>
+      <tr><td><b>טוקן</b></td><td>טוקן שניתן להעביר עלול להיחשב נייר ערך</td><td>Web3 בשלושה שלבים</td><td><span class="sev m">בינונית</span></td></tr>
+      <tr><td><b>פרסום מטעה</b></td><td>סטטיסטיקות לא מגובות ועדויות מומצאות</td><td>כלל "אמת בפרסום"</td><td><span class="sev m">בינונית</span></td></tr>
+      <tr><td><b>מצוקה נפשית</b></td><td>מאמן או בוט לא מחליפים טיפול</td><td>מודול "גבולות והפניה", ואיש מקצוע רווחה</td><td><span class="sev m">בינונית</span></td></tr>
+      <tr><td><b>תלות במייסד</b></td><td>החזון והידע מרוכזים באדם אחד</td><td>מסמך האב, גיוס COO ראשון, ופרוטוקול החלטות</td><td><span class="sev m">בינונית</span></td></tr>
+      <tr><td><b>טענות רוחניות</b></td><td>ייחוס כוחות ריפוי לקריסטלים</td><td>הקריסטל הוא סמל, ופרק 9 כתוב בשתי שכבות</td><td><span class="sev l">נמוכה</span></td></tr>
+      <tr><td><b>הכללה</b></td><td>שפה דתית עלולה להרחיק קהלים</td><td>שכבה אוניברסלית, ושכבה אמונית אופציונלית</td><td><span class="sev l">נמוכה</span></td></tr>
+    </tbody></table></div>
+    <h3 class="h-m center mt-3 mb-2">עשר השאלות הראשונות לאנשי המקצוע</h3>
+    <div class="qs">
+      <div><p>מה המבנה המשפטי הנכון לישות החברתית: עמותה, חל"צ או משהו אחר?<small>עו"ד</small></p></div>
+      <div><p>האם קרן הלוואות שפע מחייבת רישיון, ובאיזה מבנה אפשר לפעול בלעדיו?<small>עו"ד</small></p></div>
+      <div><p>מה מותר לצוות לומר על פנסיה בלי רישיון ייעוץ, ואיפה עובר הקו?<small>עו"ד + יועץ פנסיוני</small></p></div>
+      <div><p>איך מנסחים את החוזה הערכי בלי שייווצרו יחסי עובד־מעביד?<small>עו"ד דיני עבודה</small></p></div>
+      <div><p>מה דרישות הגנת הפרטיות לאיסוף נתונים פיננסיים ורגשיים?<small>עו"ד פרטיות</small></p></div>
+      <div><p>באיזה מבנה אפשר להקים את קרן הקריסטלים, ועם איזה גוף מורשה?<small>עו"ד ניירות ערך</small></p></div>
+      <div><p>האם תעודות קריסטל שאי אפשר להעביר הן בעייתיות? ומה לגבי טוקן?<small>עו"ד קריפטו</small></p></div>
+      <div><p>איך מקבלים הכרה לזיכוי מס לתורמים, ומה תנאי הדיווח?<small>רו"ח</small></p></div>
+      <div><p>מה המסלול לשיתוף פעולה עם ארגוני סיוע קיימים בחובות?<small>שטח</small></p></div>
+      <div><p>אילו קרנות אימפקט ופילנתרופים בישראל תומכים בחוסן כלכלי?<small>מגייס/ת משאבים</small></p></div>
+    </div>
+    <div class="decision mt-2"><b class="lbl">הכרעת האדריכל · שותפים במקום להמציא מחדש</b><p>בישראל כבר פועלים ארגונים לסיוע כלכלי למשפחות. שפע גלובל יכולה להביא את מה שחסר להם, כלומר הרובד התודעתי, הקהילה והנתינה, ולהישען עליהם בשכבה הפיננסית־מקצועית. כך הדרך לפיילוט קצרה יותר, זולה יותר ואמינה יותר.</p></div>
+  </div>
+</section>
+
+<!-- DECISIONS -->
+<section id="decisions">
+  <div class="wrap">
+    <div class="center narrow mb-2"><p class="eyebrow">י״ג · יומן ההכרעות</p><h2 class="h-l reveal">28 הכרעות אדריכליות</h2><p class="lead reveal d1">כל מקום שבו החומרים סתרו זה את זה, או שבו נדרשה הכרעה כדי שהמודל יעבוד, מרוכז כאן. ההכרעות הפיכות.</p></div>
+    <input type="text" class="search" id="dsearch" placeholder="חיפוש בהכרעות… (למשל: פנסיה, קריסטלים, Web3)">
+    <div class="tbl-wrap"><table><thead><tr><th>#</th><th>נושא</th><th>מה היה בחומרים</th><th>ההכרעה</th></tr></thead><tbody id="dtable"></tbody></table></div>
+  </div>
+</section>
+
+<nav class="next-chapter" aria-label="פרקים">
+  <a href="pilot.html"><small>→ הפרק הקודם</small><b>הפיילוט</b></a>
+  <a href="partners.html" class="fwd"><small>הפרק הבא ←</small><b>לשותפים ולמממנים</b></a>
+</nav>
+</main>
+<script src="shefa.js"></script>
+<script>
+const PH=[
+ ['0','הזרע','המייסד כקריסטל מס׳ 1: יומן תהליך בפורמט "ספר השפע", SHEFA OS, והשלמת ספר E.I.L, שהוא תוכן שלב 3. שימור הדומיין והאתר. רשימה שקטה של אנשים שעשויים להתאים לתפקידים. אפשר גם תוכן ציבורי ראשון, אם וכאשר.','החלטת המייסד לצאת מ־STAND BY','₪0','אפשרי כבר עכשיו',true],
+ ['1','יסודות','"שותף שאינו מתלהב" אחד: עו"ד או יועץ שעונה בכנות על עשר השאלות. בחירת מבנה משפטי, מסמך אבטחת מידע, יועץ פנסיוני מורשה, ומיפוי של ארגוני סיוע קיימים.','מבנה משפטי מוגדר ושני יועצים מחויבים','5–15 אלף ₪','ייעוץ ורישום'],
+ ['2','פיילוט v0','2–3 משפחות, בלי הלוואות שפע. ליווי תודעתי, תקציבי וקהילתי, ומיצוי הכלים הקיימים. 12 שבועות ואחריהם מעקב.','2–3 סיפורי הצלחה מתועדים ותיק פיילוט','עד ₪50 אלף','תרחיש "זרע"'],
+ ['3','זרע הון','פנייה ל־3–5 פילנתרופים וקרנות עם תיק הפיילוט. תקציב תפעול לפי התרחיש השמרני, וקרן הלוואות שפע ראשונה. גיוס ה־COO.','₪250 אלף לתפעול ו־₪300 אלף להלוואות','גיוס','שני ארנקים'],
+ ['4','פיילוט מלא','5–10 משפחות, הנתיב המלא כולל הלוואות שפע, MVP טכנולוגי ומערכת מעקב.','תוצאות פיילוט ושני שגרירים ראשונים','מכוסה בשלב 3',''],
+ ['5','השקה','שלבים 6–7 במלואם: אתר מלא, מיתוג, סרטון, השקה רכה ורשמית, קהילה ו־KPIs.','40–100 קריסטלים פעילים, ו־ROI חברתי מתועד','₪500 אלף – ₪1 מיליון','תרחיש ריאלי או אופטימי'],
+ ['6','צמיחה','פלטפורמה מלאה, אפליקציית קריסטלים, תעודות קריסטל (Web3 שלב ב׳), וקרן הקריסטלים דרך גוף מורשה.','2–3 מחזורים מוכחים','לפי גיוס',''],
+ ['7','התרחבות','פיילוטים מקומיים בארה"ב, בהודו, בברזיל ובאפריקה, עם שותפים מקומיים.','—','לפי גיוס','']
+];
+document.getElementById('phases').innerHTML = PH.map(([n,t,b,g,c,cs,now])=>`<div class="phase ${now?'now open':''} reveal"><div class="pn">${n}<small>שלב</small></div>
+<div>${now?'<span class="here"><i></i>אנחנו כאן · STAND BY</span>':''}<h3>${t}</h3><div class="body"><p>${b}</p><div class="gate"><b>שער מעבר:</b> ${g}</div></div></div>
+<div class="cap"><b>${c}</b><span>${cs||'הון נדרש'}</span></div></div>`).join('');
+document.querySelectorAll('.phase').forEach(p=>p.onclick=()=>p.classList.toggle('open'));
+
+const D=[
+ ['מנוע האיפוס הפיננסי','"המודל הבטוח" מול "מודל הקרן" (פדיון ₪350 אלף, השקעה ב־40% לשנה)','המודל הבטוח הוא ברירת המחדל, עם הלוואת שפע. מודל הקרן נשמר במלואו ומוקפא, עם תנאים להפשרה.'],
+ ['מבנה הנתיב','4 שלבים בחזון, 6 במתודולוגיה, 4 אחרים באתר','4 עמודי תווך (מה) · 6 שלבים קנוניים (איך) · 4 שערים ציבוריים (הסבר).'],
+ ['תנאי הנתינה','"תנאי לסיוע המלא" מול "הסכם לא־כופה"','הסיוע הבסיסי ללא תנאי, חוזה ערכי, ושחרור ערך מותנה רק להטבות המתקדמות.'],
+ ['קריסטלים וחוב','"₪200 אלף חוב = 2,000 קריסטלים"','מראת אימפקט בלבד, לא יתרת חוב בשעות. יעד הנתינה: 4 שעות בחודש ומעלה.'],
+ ['סוגי קריסטלים','מפוזרים בין 2.4–2.7','חמישה סוגים מאוחדים, ודרגות עם ספים מוצעים לכיול.'],
+ ['משמעות "קריסטל"','כל משתתף, או רק מי שסיים','"קריסטל בליטוש" ו"קריסטל מאיר".'],
+ ['סף החסכונות באוואטר','200 אלף ₪ ומעלה ← 300–500 אלף ₪','הסף נשמר. תפקידו הוא משענת ביטחון והלוואה זולה כנגד החיסכון.'],
+ ['יעד סגירת החוב','"נקודה פתוחה" מול "100% תוך 3 חודשים"','תוכנית סגירה תוך 3 חודשים, ואפס חוב רעיל תוך 12–24 חודשים.'],
+ ['שעות נתינה','"20+ בחודש" מול "4 בחודש, 20+ ב־3 חודשים"','הגרסה של 5.3.3, שהיא ריאלית למשפחה עובדת.'],
+ ['יעדי היקף','פיילוט של 5–10 מול "100 קריסטלים" ו"100 מצטרפים"','היעדים הגדולים חלים על ההשקה הציבורית. 100 מצטרפים הם 100 פניות.'],
+ ['"הקרן"','אותה מילה לתפעול, להלוואות ולהשקעה','שלושה ארנקים נפרדים.'],
+ ['"אין לה מתחרים"','הצהרת זהות כקרן הגידור הרווחית בעולם','נשמר כחזון אישי. מול משקיעים מדברים על ייחודיות של קטגוריה, לא של תשואה.'],
+ ['200 מיליון ש"ח','"יעד גיוס" מול "תדר / עוגן"','עוגן תודעתי ויעד אישי של המייסד. תקציב התנועה נגזר מהתרחישים.'],
+ ['תרחישי תקציב','שלושה, החל מ־₪250 אלף','נוסף תרחיש "זרע" של 0–50 אלף ₪, ותקציב נפרד לקרן ההלוואות.'],
+ ['Web3 וטוקן','ארנק, Shefa Token, חוזים חכמים','שלושה שלבים: רשומה פנימית ← תעודות שאי אפשר להעביר ← טוקן אחרי חוות דעת.'],
+ ['בוט הקריפטו','אחד מחמשת הבוטים המקוריים','מוקפא. חינוך כללי עובר לבוט הפיננסים.'],
+ ['כותרת האתר','שלוש כותרות','"אתה נברא לחיות בשפע" ראשית · "תודעת שפע היא הדרך להגשמה" סלוגן · "אתם לא שבורים..." כותרת משנה.'],
+ ['פלטת צבעים','טורקיז/זהב/סגול/ירוק מול שנהב־זהב','שנהב־זהב היא הפלטה הראשית, וארבעת הצבעים לשערי הנתיב.'],
+ ['נתונים באתר','סטטיסטיקות ללא מקור, ומספרים מומצאים ב־Base44','לגבות במקור או להסיר.'],
+ ['רוחניות והכללה','שפה דתית לצד "יישות עליונה"','שכבה אוניברסלית, ושכבה אמונית אופציונלית.'],
+ ['פרק 9 ו"מדע"','תדרים ו־70% מים כמדע','שתי שכבות: ניסיון ומטאפורה, ומנגנונים שנבדקו.'],
+ ['מבנה משפטי','לא הוגדר','שתי ישויות, ו־IME 611 כמותג־מטריה.'],
+ ['תפקידים חסרים','אין יועץ מורשה ואין איש מקצוע רווחה','שניהם נוספו למעגל השני.'],
+ ['משך הפיילוט','12 שבועות, עם יעדים של 6 חודשים','12 שבועות פעילים ואחריהם 6 חודשי מעקב.'],
+ ['מספור מסמכים','2.6 ← 8; 5.2/5.3/5.4 שונו','מספור אחיד, ותיק הפיילוט נשאר בשלב 5.'],
+ ['יומן התהליך','דף ריק, ו־V2–V5 כיומן בפועל','יומן אחד בפורמט "ספר השפע", שמשמש גם דגם למשתתפים.'],
+ ['SHEFA OS','פרוטוקול אישי של המייסד','תבנית למשתתפים בשלב 3, בשתי שכבות.'],
+ ['שותפים קיימים','לא נדון','שיתוף פעולה עם ארגוני סיוע קיימים.']
+];
+const tb=document.getElementById('dtable');
+function renderD(q){ tb.innerHTML = D.map((d,i)=>[i+1,...d]).filter(r=>!q||r.join(' ').includes(q)).map(r=>`<tr><td class="num"><b class="gold">${r[0]}</b></td><td><b>${r[1]}</b></td><td class="muted">${r[2]}</td><td>${r[3]}</td></tr>`).join('') || '<tr><td colspan="4" class="faint">לא נמצאו הכרעות</td></tr>'; }
+renderD(''); document.getElementById('dsearch').oninput=e=>renderD(e.target.value.trim());
+document.querySelectorAll('.phase.reveal').forEach(e=>e.classList.add('in'));
+</script>
+</body>
+</html>

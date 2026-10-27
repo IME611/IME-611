@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>כלכלת הקריסטלים — מנוע 2 | שפע גלובל</title>
+<meta name="description" content="חמישה סוגי קריסטלים, שלוש דרגות, ומראת האימפקט. נתינה שנמדדת ומוכרת, בלי לדבר על כסף.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Cpolygon points='48,4 88,26 88,70 48,92 8,70 8,26' fill='%23FAF6EE' stroke='%23B8860B' stroke-width='6'/%3E%3Ccircle cx='48' cy='48' r='12' fill='%23C9961A'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=Assistant:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shefa.css">
+<style>
+.types{display:grid;grid-template-columns:repeat(5,1fr);gap:1rem}
+.type{background:var(--ivory);border:1px solid var(--line);border-radius:var(--r);padding:1.5rem 1.2rem;text-align:center;transition:.25s}
+.type:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
+.type .em{font-size:2.3rem;display:block;margin-bottom:.6rem}
+.type h3{font-size:1.05rem;margin-bottom:.4rem}
+.type p{font-size:.88rem;color:var(--ink-dim)}
+.type .src{display:block;margin-top:.7rem;font-size:.72rem;color:var(--ink-faint)}
+.mirror{display:grid;grid-template-columns:1fr auto 1fr;gap:1.5rem;align-items:center}
+.mirror .side{text-align:center;padding:2rem;border-radius:var(--r-lg)}
+.mirror .me{background:var(--ivory);border:1px solid var(--line)}
+.mirror .world{background:var(--night);color:#F3E9D2}
+.mirror .side small{font-family:Heebo;font-size:.75rem;letter-spacing:.14em;color:var(--gold)}
+.mirror .side .v{font-family:Heebo;font-weight:900;font-size:clamp(2rem,5vw,3rem);margin:.5rem 0}
+.mirror .world .v{color:var(--gold-lt)}
+.tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem}
+.tier{border-radius:var(--r-lg);padding:2rem 1.6rem;position:relative;overflow:hidden;border:1px solid var(--line)}
+.tier.silver{background:linear-gradient(160deg,#FBFAF7,#E9E6DF)}
+.tier.goldt{background:linear-gradient(160deg,#FFF8E4,#F0D99A)}
+.tier.diamond{background:linear-gradient(160deg,#2A2015,#16100A);color:#F3E9D2}
+.tier.diamond h3{color:#FBF3DF}
+.tier .medal{font-size:2.6rem}
+.tier h3{font-size:1.5rem;margin:.4rem 0 .2rem}
+.tier .range{font-family:Heebo;font-weight:800;font-size:.95rem;color:var(--gold)}
+.tier.diamond .range{color:var(--gold-lt)}
+.tier .role{margin:.8rem 0;font-family:Heebo;font-weight:600}
+.tier ul{padding-right:1.1rem;font-size:.92rem}
+.tier.diamond li{color:rgba(243,233,210,.8)}
+.sim{display:grid;grid-template-columns:340px 1fr;gap:1.5rem;align-items:start}
+.chart{width:100%;height:auto}
+.chart text{font-family:Heebo;font-size:11px;fill:var(--ink-faint)}
+.sim-out{display:grid;grid-template-columns:repeat(4,1fr);gap:.8rem;margin-bottom:1rem}
+.sim-out .o{background:var(--ivory);border:1px solid var(--line);border-radius:12px;padding:.9rem;text-align:center}
+.sim-out .o b{display:block;font-family:Heebo;font-weight:900;font-size:1.5rem;color:var(--gold);font-variant-numeric:tabular-nums}
+.sim-out .o span{font-size:.8rem;color:var(--ink-dim)}
+.toggle{display:flex;align-items:center;justify-content:space-between;padding:.6rem 0;border-top:1px dashed var(--line);font-size:.92rem}
+.switch{position:relative;width:46px;height:26px;flex-shrink:0}
+.switch input{opacity:0;width:0;height:0}
+.switch span{position:absolute;inset:0;background:#DDD3C0;border-radius:2rem;transition:.2s;cursor:pointer}
+.switch span::before{content:'';position:absolute;width:20px;height:20px;top:3px;right:3px;background:#fff;border-radius:50%;transition:.2s}
+.switch input:checked+span{background:var(--gold)}
+.switch input:checked+span::before{transform:translateX(-20px)}
+.ladder{display:flex;align-items:center;justify-content:center;gap:.5rem;flex-wrap:wrap}
+.ladder span{padding:.7rem 1.4rem;border-radius:2rem;font-family:Heebo;font-weight:700;background:var(--ivory);border:1px solid var(--line)}
+.ladder span:nth-child(3){background:var(--gold-xs)}.ladder span:nth-child(5){background:var(--gold-lt)}.ladder span:nth-child(7){background:var(--gold);color:#fff}
+.ladder i{font-style:normal;color:var(--gold)}
+@media(max-width:1000px){.types{grid-template-columns:repeat(3,1fr)}.sim{grid-template-columns:1fr}.tiers{grid-template-columns:1fr}.mirror{grid-template-columns:1fr}.mirror .arrow{transform:rotate(-90deg);justify-self:center}}
+@media(max-width:600px){.types{grid-template-columns:1fr 1fr}.sim-out{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<main>
+<header class="page-hero">
+  <p class="crumbs"><a href="index.html">שפע גלובל</a> › המודל › כלכלת הקריסטלים</p>
+  <p class="eyebrow">חלק ד׳ · מנוע 2</p>
+  <h1 class="h-xl">כלכלת <span class="gold">הקריסטלים</span></h1>
+  <p class="lead">לכל אדם יש מערכת יחסים טעונה עם כסף. לכן הנתינה לא נמדדת בכסף, אלא בסמל חיובי וניטרלי של שפע, אור ותרומה. הקריסטלים מודדים נתינה, התקדמות והשפעה, ומאפשרים הכרה.</p>
+</header>
+
+<section>
+  <div class="wrap">
+    <div class="center narrow mb-2"><p class="eyebrow">מערכת אחת מאוחדת</p><h2 class="h-l reveal">חמישה סוגי קריסטלים</h2><p class="lead reveal d1">בחומרים הם היו מפוזרים בין ארבעה מסמכים (2.4–2.7). כאן הם מאוחדים למערכת אחת.</p></div>
+    <div class="types">
+      <div class="type reveal"><span class="em">💎</span><h3>קריסטל נתינה</h3><p>שעת תרומה קהילתית: ליווי, תוכן, קהילה, מקצועי.<br><b>1 קריסטל = שעה</b></p><span class="src">מקור: 2.4</span></div>
+      <div class="type reveal d1"><span class="em">📈</span><h3>קריסטל התקדמות</h3><p>עמידה ביעד תקציבי, חוב שנסגר, הרגל SHEFA OS שתורגל חודש שלם.</p><span class="src">מקור: 2.6</span></div>
+      <div class="type reveal d2"><span class="em">✨</span><h3>קריסטל איכות</h3><p>תרומה יוצאת דופן, או שינוי תודעתי מוכח, כמו חוויה חדשה של שפע.</p><span class="src">מקור: 2.6</span></div>
+      <div class="type reveal d3"><span class="em">👨‍👩‍👧</span><h3>קריסטל משפחתי</h3><p>כשכל בני המשפחה, כולל הילדים, משתתפים בליווי או בנתינה.</p><span class="src">מקור: 2.4, 2.6</span></div>
+      <div class="type reveal d4"><span class="em">🌊</span><h3>קריסטל הדהוד</h3><p>השפעה החוצה: תוכן שהגיע ל־1,000 צפיות, משפחה חדשה שגויסה, מעגל חדש שנפתח.</p><span class="src">מקור: 2.5</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="bg-pearl edge-top">
+  <div class="wrap">
+    <div class="center narrow mb-2"><p class="eyebrow">תמחור</p><h2 class="h-l reveal">מראת האימפקט</h2><p class="lead reveal d1">1 קריסטל נתינה = שעת תרומה = ערך פנימי של ₪100. המשתתף רואה קריסטלים. התנועה והשותפים רואים את הערך שמאחוריהם.</p></div>
+    <div class="mirror">
+      <div class="side me reveal"><small>מה המשתתף רואה</small><div class="v">50 💎</div><p class="muted">"צברת 50 קריסטלים החודש"</p></div>
+      <div class="arrow" style="font-size:2rem;color:var(--gold)">⇄</div>
+      <div class="side world reveal d1"><small>מה השותפים רואים</small><div class="v">₪5,000</div><p>"המשתתף תרם ערך של ₪5,000 לקהילה"</p></div>
+    </div>
+    <div class="decision mt-2"><b class="lbl">הכרעת האדריכל · קריסטלים מודדים, הם לא פורעים</b><p>ההמרה "₪200 אלף חוב = 2,000 קריסטלים" נשמרת כמראה בלבד, ולעולם לא תוצג כ"יתרת חוב בשעות". יש לכך שלוש סיבות. 2,000 שעות הן יותר משנת עבודה מלאה, ומשפחה עובדת תרגיש כישלון. שעות שמקזזות חוב נראות כמו העסקה. וזה סותר את "הסכם התרומה הלא־כופה". היעד המעשי הוא 4 שעות בחודש לפחות, ו־20 שעות או יותר בשלושת החודשים הראשונים.</p></div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="center narrow mb-2"><p class="eyebrow">איכות ההשפעה, לא רק כמות</p><h2 class="h-l reveal">שלוש דרגות</h2></div>
+    <div class="tiers">
+      <div class="tier silver reveal"><span class="medal">🥈</span><h3>כסף</h3><span class="range">1–149 קריסטלים</span><p class="role">תורם</p><ul><li>גישה לקבוצת הקהילה</li><li>מפגשי Zoom חודשיים</li></ul></div>
+      <div class="tier goldt reveal d1"><span class="medal">🥇</span><h3>זהב</h3><span class="range">150–499 קריסטלים</span><p class="role">מלווה, שמלווה משתתף חדש</p><ul><li>דרגת הקריסטל המתקדמת</li><li>אימון אישי</li><li>מאגר קשרים</li><li>סדנאות למתקדמים</li></ul></div>
+      <div class="tier diamond reveal d2"><span class="medal">💎</span><h3>יהלום</h3><span class="range">500+ ולפחות קריסטל הדהוד אחד</span><p class="role" style="color:var(--gold-lt)">שגריר שפע</p><ul><li>כנסים ומעמד מוביל</li><li>פרויקטים גלובליים</li><li>הגשה לקרן הקריסטלים</li></ul></div>
+    </div>
+    <p class="center faint mt-2">הספים הם הצעה ראשונית, לכיול בפיילוט. העיקר הוא שמשתתף פעיל יגיע לזהב בתוך 9–12 חודשים, ולא ירגיש שהיעד בלתי אפשרי.</p>
+  </div>
+</section>
+
+<!-- SIMULATOR -->
+<section class="bg-cream edge-top" id="sim">
+  <div class="wrap">
+    <div class="center narrow mb-2"><p class="eyebrow">סימולטור</p><h2 class="h-l reveal">המסע שלכם בקריסטלים</h2><p class="lead reveal d1">כמה אתם יכולים לתת? בחרו, ותראו מתי תגיעו לכל דרגה ואיזה ערך החזרתם לעולם.</p></div>
+    <div class="sim">
+      <div class="card">
+        <div class="range-row"><div class="top"><label class="lbl">💎 שעות נתינה בחודש</label><b id="o_h"></b></div><input type="range" id="h" min="0" max="20" step="1" value="6"></div>
+        <div class="range-row"><div class="top"><label class="lbl">📈 יעדי התקדמות בחודש</label><b id="o_p"></b></div><input type="range" id="p" min="0" max="8" step="1" value="3"></div>
+        <div class="toggle"><span>👨‍👩‍👧 כל המשפחה משתתפת (+3 בחודש)</span><label class="switch"><input type="checkbox" id="fam" checked><span></span></label></div>
+        <div class="toggle"><span>✨ קריסטל איכות פעם ברבעון (+5)</span><label class="switch"><input type="checkbox" id="q" checked><span></span></label></div>
+        <div class="toggle"><span>🌊 מתחילים להדהד מחודש 10 (+8 בחודש)</span><label class="switch"><input type="checkbox" id="res" checked><span></span></label></div>
+        <p class="faint mt-1">המספרים ממחישים את הכיול שמסמך האב מציע, ואינם כללים סופיים.</p>
+      </div>
+      <div>
+        <div class="sim-out">
+          <div class="o"><b id="r_month"></b><span>קריסטלים בחודש</span></div>
+          <div class="o"><b id="r_gold"></b><span>חודשים לזהב</span></div>
+          <div class="o"><b id="r_dia"></b><span>חודשים ליהלום</span></div>
+          <div class="o"><b id="r_val"></b><span>ערך לקהילה, שנה ראשונה</span></div>
+        </div>
+        <div class="card"><svg class="chart" id="chart" viewBox="0 0 640 300"></svg></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="center narrow mb-2"><p class="eyebrow">מסלולי תרומה</p><h2 class="h-l reveal">לא "עבודות רס"ר". המתנה שלכם.</h2></div>
+    <div class="grid g-3">
+      <div class="card gate-card gate-give reveal"><div class="ico">🫂</div><h3>ליווי</h3><p>תמיכה במשתתפים חדשים: שיחות, מענה, חניכה.</p></div>
+      <div class="card gate-card gate-give reveal d1"><div class="ico">✍</div><h3>תוכן</h3><p>יצירת תוכן שפע: פוסטים, סרטונים, כתיבה.</p></div>
+      <div class="card gate-card gate-give reveal d2"><div class="ico">🏘</div><h3>קהילה</h3><p>פעילות מקומית: מפגשים, סדנאות, שגרירות.</p></div>
+      <div class="card gate-card gate-give reveal"><div class="ico">💼</div><h3>מקצועי</h3><p>תרומה לפי מקצוע: עיצוב, משפט, פיננסים. מתכנת מלמד נוער לתכנת.</p></div>
+      <div class="card gate-card gate-give reveal d1"><div class="ico">📣</div><h3>הדהוד</h3><p>הפצה והשראה: שיתופים, הרצאות, קמפיינים.</p></div>
+      <div class="card gate-card gate-give reveal d2"><div class="ico">🏛</div><h3>עמותות</h3><p>התנדבות בגופים קהילתיים לפי כישורים. אשת שיווק עוזרת לעמותה קטנה.</p></div>
+    </div>
+    <h3 class="h-m center mt-3 mb-1">מסלול התפקידים</h3>
+    <div class="ladder reveal"><span>תורם</span><i>←</i><span>מלווה</span><i>←</i><span>שגריר</span><i>←</i><span>מוביל</span></div>
+  </div>
+</section>
+
+<section class="bg-pearl edge-top">
+  <div class="wrap">
+    <div class="grid g-2">
+      <div>
+        <p class="eyebrow">תיקי קריסטל</p><h2 class="h-m">ארבעה תיקים, שקיפות מלאה</h2>
+        <div class="grid mt-2" style="gap:.7rem">
+          <div class="card"><h3>👤 תיק אישי</h3><p>כל הקריסטלים של המשתתף, לפי סוג.</p></div>
+          <div class="card"><h3>🏠 תיק משפחתי</h3><p>בני המשפחה צוברים יחד, כולל הילדים.</p></div>
+          <div class="card"><h3>🌍 תיק קהילתי</h3><p>ההשפעה המצטברת של כל הקהילה, מוצגת בפומבי.</p></div>
+          <div class="card"><h3>🏅 לוח שגרירים</h3><p>ההתרחבות וההשפעה של השגרירים.</p></div>
+        </div>
+      </div>
+      <div>
+        <p class="eyebrow">פנימה מול החוצה</p><h2 class="h-m">תרומה (2.4) מול הדהוד (2.5)</h2>
+        <div class="tbl-wrap mt-2"><table><thead><tr><th></th><th>תרומה קהילתית</th><th>הדהוד והתרחבות</th></tr></thead><tbody>
+          <tr><td><b>כיוון</b></td><td>החזרת ערך פנימה</td><td>הפצת הערך החוצה</td></tr>
+          <tr><td><b>פעולות</b></td><td>ליווי, שירות, התנדבות</td><td>גיוס, השפעה, הובלה</td></tr>
+          <tr><td><b>מדד</b></td><td>קריסטלי נתינה (שעות)</td><td>קריסטלי הדהוד (השפעה)</td></tr>
+          <tr><td><b>תפקיד</b></td><td>תורם, מלווה</td><td>שגריר, מוביל</td></tr>
+        </tbody></table></div>
+        <div class="decision"><b class="lbl">הגנות</b><p>התחייבות רכה · גמישות בין מסלולים · הסכם תרומה לא־כופה · כל קריסטל מתועד ומוכר. <b>הקריסטלים משמשים להכרה, לעולם לא לעונש.</b></p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<nav class="next-chapter" aria-label="פרקים">
+  <a href="reset.html"><small>→ הפרק הקודם</small><b>האיפוס הפיננסי</b></a>
+  <a href="ecosystem.html" class="fwd"><small>הפרק הבא ←</small><b>האקוסיסטם</b></a>
+</nav>
+</main>
+<script src="shefa.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+['h','p','fam','q','res'].forEach(i=>$(i).addEventListener('input',sim));
+function sim(){
+  const h=+$('h').value, p=+$('p').value, fam=$('fam').checked, q=$('q').checked, res=$('res').checked;
+  $('o_h').textContent=h+' שעות'; $('o_p').textContent=p;
+  const M=36, pts=[]; let tot=0, gold=null, dia=null, resCount=0, giving12=0;
+  for(let m=1;m<=M;m++){
+    let add = h + p + (fam?3:0) + (q && m%3===0 ? 5 : 0);
+    if(res && m>=10){ add+=8; resCount++; }
+    tot+=add; if(m<=12) giving12+=h;
+    if(gold===null && tot>=150) gold=m;
+    if(dia===null && tot>=500 && resCount>0) dia=m;
+    pts.push(tot);
+  }
+  const base = h + p + (fam?3:0);
+  $('r_month').textContent = base; $('r_gold').textContent = gold ?? '—'; $('r_dia').textContent = dia ?? '—';
+  $('r_val').textContent = SG.k(giving12*100);
+  // chart
+  const W=640,H=300,L=40,R=10,T=14,B=30, mx=Math.max(600, pts[M-1]*1.08);
+  const x=i=>L+(W-L-R)*(i/(M-1)), y=v=>H-B-(H-T-B)*(v/mx);
+  let s='';
+  [[150,'זהב','#C9961A'],[500,'יהלום','#16100A']].forEach(([v,l,c])=>{ if(v<mx){ s+=`<line x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}" stroke="${c}" stroke-dasharray="5 6" opacity=".6"/><text x="${W-R}" y="${y(v)-6}" text-anchor="end" style="fill:${c};font-weight:700">${l} · ${v}</text>`; }});
+  s+=`<rect x="${L}" y="${y(Math.min(149,mx))}" width="${W-L-R}" height="${y(0)-y(Math.min(149,mx))}" fill="rgba(200,200,200,.12)"/>`;
+  for(let i=0;i<M;i+=6) s+=`<text x="${x(i)}" y="${H-10}" text-anchor="middle">חודש ${i+1}</text>`;
+  [0,250,500].forEach(v=>{ if(v<=mx) s+=`<text x="${L-6}" y="${y(v)+4}" text-anchor="end">${v}</text>`; });
+  const path = pts.map((v,i)=>`${i?'L':'M'}${x(i).toFixed(1)} ${y(v).toFixed(1)}`).join(' ');
+  s+=`<path d="${path} L${x(M-1)} ${y(0)} L${x(0)} ${y(0)} Z" fill="rgba(232,192,96,.18)"/>`;
+  s+=`<path d="${path}" fill="none" stroke="#B8860B" stroke-width="3" stroke-linejoin="round"/>`;
+  if(gold) s+=`<circle cx="${x(gold-1)}" cy="${y(pts[gold-1])}" r="7" fill="#E8C060" stroke="#B8860B" stroke-width="2"/><text x="${x(gold-1)}" y="${y(pts[gold-1])-14}" text-anchor="middle" style="fill:#B8860B;font-weight:800">🥇</text>`;
+  if(dia) s+=`<circle cx="${x(dia-1)}" cy="${y(pts[dia-1])}" r="7" fill="#16100A" stroke="#E8C060" stroke-width="2"/><text x="${x(dia-1)}" y="${y(pts[dia-1])-14}" text-anchor="middle">💎</text>`;
+  $('chart').innerHTML=s;
+}
+sim();
+</script>
+</body>
+</html>

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>הפיילוט — הוכחת היתכנות | שפע גלובל</title>
+<meta name="description" content="12 שבועות של ליווי פעיל, 6 חודשי מעקב, סינון מכבד ותיק המשתתף של משפחת כהן.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Cpolygon points='48,4 88,26 88,70 48,92 8,70 8,26' fill='%23FAF6EE' stroke='%23B8860B' stroke-width='6'/%3E%3Ccircle cx='48' cy='48' r='12' fill='%23C9961A'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=Assistant:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shefa.css">
+<style>
+.gantt{background:var(--ivory);border:1px solid var(--line);border-radius:var(--r-lg);padding:1.6rem;box-shadow:var(--shadow);overflow-x:auto}
+.gantt-grid{display:grid;grid-template-columns:150px repeat(12,minmax(34px,1fr)) minmax(120px,2.2fr);gap:4px;min-width:760px;align-items:center}
+.gantt-grid .wk{font-family:Heebo;font-size:.72rem;color:var(--ink-faint);text-align:center}
+.gantt-grid .lb{font-family:Heebo;font-weight:600;font-size:.9rem}
+.gantt-grid .lb small{display:block;font-family:Assistant;font-weight:400;color:var(--ink-faint);font-size:.75rem}
+.gbar{height:30px;border-radius:8px;background:var(--c);color:#fff;font-family:Heebo;font-size:.75rem;font-weight:600;display:flex;align-items:center;justify-content:center;opacity:.92}
+.follow{height:30px;border-radius:8px;background:repeating-linear-gradient(-45deg,var(--gold-xs),var(--gold-xs) 6px,transparent 6px,transparent 12px);border:1px dashed var(--gold);font-family:Heebo;font-size:.75rem;color:var(--gold);display:flex;align-items:center;justify-content:center}
+.acc-rej{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem}
+.acc-rej .card ul{list-style:none}
+.acc-rej li{padding:.5rem 0;border-bottom:1px dashed var(--line);font-size:.93rem}
+.acc-rej li b{font-family:Heebo;display:block;font-size:.8rem;color:var(--ink-faint)}
+.quiz{max-width:640px;margin:auto}
+.quiz .qq{margin-bottom:1.3rem}
+.quiz .qq p{font-family:Heebo;font-weight:600;margin-bottom:.5rem}
+.opts{display:flex;flex-wrap:wrap;gap:.45rem}
+.opts button{padding:.5rem 1rem;border-radius:2rem;border:1px solid var(--line);background:var(--ivory);font-size:.9rem;transition:.15s}
+.opts button.on{background:var(--gold);color:#fff;border-color:var(--gold)}
+.quiz-res{display:none;margin-top:1rem;padding:1.4rem;border-radius:var(--r);text-align:center;animation:fadeUp .4s}
+.flow{display:flex;flex-direction:column;align-items:center;gap:.5rem}
+.flow .box{background:var(--ivory);border:1px solid var(--line);border-radius:12px;padding:.8rem 1.4rem;font-family:Heebo;font-weight:600;text-align:center;min-width:260px}
+.flow .arr{color:var(--gold)}
+.flow .split{display:grid;grid-template-columns:1fr 1fr;gap:1rem;width:100%;max-width:640px}
+.flow .split .box{min-width:0}
+.file{display:grid;grid-template-columns:320px 1fr;gap:1.5rem;align-items:start}
+.profile{background:var(--night);color:#F3E9D2;border-radius:var(--r-lg);padding:1.8rem;position:sticky;top:calc(var(--nav-h) + 16px)}
+.profile h3{color:#FBF3DF;font-size:1.5rem}
+.profile .av{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--gold-lt),var(--gold));display:flex;align-items:center;justify-content:center;font-size:1.8rem;margin-bottom:1rem}
+.profile .ln{display:flex;justify-content:space-between;padding:.5rem 0;border-bottom:1px solid rgba(232,192,96,.12);font-size:.92rem}
+.profile .ln b{font-family:Heebo;color:var(--gold-lt)}
+.plan .layer{margin-bottom:1rem}
+.plan .layer h4{font-size:1.05rem;margin-bottom:.6rem;display:flex;align-items:center;gap:.5rem}
+.plan .row2{display:grid;grid-template-columns:1fr 200px;gap:1rem;padding:.6rem 0;border-bottom:1px dashed var(--line);font-size:.93rem}
+.plan .row2 b{font-family:Heebo;color:var(--gold);font-size:.88rem}
+.tracker td .bar{width:90px;display:inline-block;vertical-align:middle;margin-left:.4rem}
+.freqtag{font-size:.78rem;padding:.15rem .6rem;border-radius:1rem;font-family:Heebo;font-weight:600}
+.f1{background:rgba(154,59,46,.08);color:var(--risk)}.f3{background:var(--gold-xs);color:var(--gold)}
+@media(max-width:900px){.acc-rej,.file{grid-template-columns:1fr}.profile{position:static}.plan .row2{grid-template-columns:1fr}.flow .split{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main>
+<header class="page-hero">
+  <p class="crumbs"><a href="index.html">שפע גלובל</a> › הדרך › הפיילוט</p>
+  <p class="eyebrow">חלק ז׳ · שלב ביצוע 5</p>
+  <h1 class="h-xl">הפיילוט:<br><span class="gold">הוכחת היתכנות</span></h1>
+  <p class="lead">מלווים קבוצת משפחות נבחרת בנתיב הקריסטל המלא, מתעדים את ההשפעה ולומדים מהשטח. זו לא רק ניסוי. זו מערכת למידה, שמייצרת את סיפורי ההצלחה הראשונים.</p>
+</header>
+
+<section>
+  <div class="wrap">
+    <div class="grid g-4 mb-2">
+      <div class="stat reveal"><div class="v" data-count="10" data-pre="5–">5–10</div><div class="l">משפחות ישראליות בשלב הראשון</div></div>
+      <div class="stat reveal d1"><div class="v" data-count="12">12</div><div class="l">שבועות של ליווי פעיל</div></div>
+      <div class="stat reveal d2"><div class="v" data-count="6">6</div><div class="l">חודשי מעקב חודשי מופחת</div></div>
+      <div class="stat reveal d3"><div class="v" data-count="9" data-pre="חודש ">חודש 9</div><div class="l">נבנה תיק הפיילוט להצגה</div></div>
+    </div>
+    <div class="center narrow mb-2"><p class="eyebrow">5.2 · תהליך הפיילוט</p><h2 class="h-l reveal">12 שבועות</h2></div>
+    <div class="gantt reveal">
+      <div class="gantt-grid">
+        
+      </div>
+    </div>
+    <div class="decision"><b class="lbl">הכרעת האדריכל · 12 שבועות פעילים + 6 חודשי מעקב</b><p>12 שבועות מספיקים כדי להתחיל את כל השלבים, אבל לא כדי למדוד יעדים שהוגדרו ל־6 חודשים, כמו עלייה של 30% בהכנסה. לכן אחרי הליווי הפעיל יש מעקב חודשי מופחת, ותיק הפיילוט נבנה בסוף החודש התשיעי.</p></div>
+  </div>
+</section>
+
+<section class="bg-pearl edge-top">
+  <div class="wrap">
+    <div class="center narrow mb-2"><p class="eyebrow">5.2 · שער הכניסה</p><h2 class="h-l reveal">סינון מכבד</h2><p class="lead reveal d1">המטרה היא לוודא שמי שנכנס לפיילוט באמת מוכן לשינוי, פתוח לתהליך ויכול להשתלב בקהילה.</p></div>
+    <div class="acc-rej">
+      <div class="card reveal" style="border-top:4px solid var(--ok)"><h3 style="color:var(--ok)">✓ תנאי קבלה</h3><ul>
+        <li><b>מצב כלכלי</b>חוב צרכני משמעותי, עם פוטנציאל התאוששות</li><li><b>מצב רגשי</b>פתיחות, רצון לשינוי, מוכנות לשותפות</li><li><b>תודעה</b>נכונות לקחת אחריות ולהפוך לקריסטל</li><li><b>זמינות</b>יכולת להשתתף בתהליך ולתרום לקהילה</li></ul></div>
+      <div class="card reveal d1" style="border-top:4px solid var(--warn)"><h3 style="color:var(--warn)">↪ הפניה למסלול מתאים יותר</h3><ul>
+        <li><b>מצב כלכלי</b>חוב זניח, או חוסר נכונות לשינוי</li><li><b>תודעה</b>תפיסת קורבן, האשמת אחרים בלבד</li><li><b>הליך משפטי פעיל</b>חדלות פירעון או הוצאה לפועל מורכבת. מפנים לעורך דין, וממשיכים ללוות בהיבט התודעתי</li><li><b>מצוקה נפשית חריפה או התמכרות</b>הפניה לטיפול מקצועי קודם</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="center narrow mb-2"><p class="eyebrow">5.2.1 · שאלון מיון רך</p><h2 class="h-l reveal">נסו בעצמכם</h2><p class="lead reveal d1">שאלון ידידותי ולא מאיים, שמברר התאמה ושומר על הכבוד. התוצאה כאן להמחשה בלבד, והתשובות לא נשמרות.</p></div>
+    <div class="quiz card">
+      <div class="qq" data-q="debt"><p>1. מהו סדר הגודל של החוב הצרכני שלכם?</p><div class="opts"><button data-v="0">אין חוב</button><button data-v="1">עד ₪50,000</button><button data-v="2">50–150 אלף ₪</button><button data-v="2">מעל ₪150 אלף</button></div></div>
+      <div class="qq" data-q="open"><p>2. עד כמה אתם פתוחים לשינוי משמעותי בחיים?</p><div class="opts"><button data-v="0">1</button><button data-v="0">2</button><button data-v="1">3</button><button data-v="2">4</button><button data-v="2">5</button></div></div>
+      <div class="qq" data-q="mind"><p>3. איזו אמירה מתארת אתכם יותר?</p><div class="opts"><button data-v="0">"אני קורבן של הנסיבות"</button><button data-v="2">"אני יכול לשנות את המציאות שלי"</button></div></div>
+      <div class="qq" data-q="hours"><p>4. כמה שעות בחודש תוכלו להקדיש?</p><div class="opts"><button data-v="0">פחות מ־2</button><button data-v="1">2–4</button><button data-v="2">4–6</button><button data-v="2">מעל 6</button></div></div>
+      <div class="qq" data-q="give"><p>5. תהיו מוכנים להשתלב בנתינה קהילתית כחלק מהתהליך?</p><div class="opts"><button data-v="0">לא</button><button data-v="2">כן</button></div></div>
+      <div class="quiz-res" id="quizRes"></div>
+    </div>
+  </div>
+</section>
+
+<section class="bg-cream edge-top">
+  <div class="wrap split2" style="--cols:1fr 1fr">
+    <div>
+      <p class="eyebrow">5.2.3–5.2.4</p><h2 class="h-l reveal">גם דחייה היא בכבוד</h2>
+      <p class="lead reveal d1">שקיפות: המשתתף יודע מה נבדק. כבוד: גם מי שלא התקבל מקבל אלטרנטיבה. אנושיות: את ההחלטה מלווה שיחה.</p>
+      <details class="acc mt-2"><summary>חמשת מודולי ההכשרה לצוות הקליטה</summary><div class="acc-body">
+        <p><b>1. עקרונות הקליטה:</b> שקיפות, שותפות ולא מבחן, כבוד האדם.</p><p><b>2. מיומנויות תקשורת:</b> שפה מזמינה, הקשבה פעילה, בלי שיפוטיות.</p><p><b>3. קבלה ודחייה:</b> איך מציגים כל אחת מהן, ואיך מציעים אלטרנטיבות.</p><p><b>4. תיעוד ושקיפות:</b> אחידות בין חברי הצוות, ומשוב פנימי.</p><p><b>5. גבולות והפניה:</b> זיהוי מצוקה חריפה, הפניה לגורם מקצועי, ומה לא מבטיחים: לא תוצאה פיננסית ולא לוח זמנים.</p></div></details>
+    </div>
+    <div class="flow reveal">
+      <div class="box">שאלון מיון רך</div><span class="arr">↓</span>
+      <div class="box">טופס דיגיטלי עם ולידציה</div><span class="arr">↓</span>
+      <div class="box">בדיקת קריטריונים: כלכלי, רגשי, תודעתי, זמינות</div><span class="arr">↓</span>
+      <div class="split"><div class="box" style="border-color:var(--ok);color:var(--ok)">✓ קבלה לפיילוט<br><small style="font-weight:400;color:var(--ink-dim)">← תיק המשתתף</small></div><div class="box" style="border-color:var(--warn);color:var(--warn)">דחייה מכבדת<br><small style="font-weight:400;color:var(--ink-dim)">+ תוכן, סדנה פתוחה או הפניה</small></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CASE FILE -->
+<section id="cohen">
+  <div class="wrap">
+    <div class="center narrow mb-2"><p class="eyebrow">5.3 · תיק המשתתף הראשון</p><h2 class="h-l reveal">משפחת כהן</h2><p class="lead reveal d1">ה־Case Study שמדגים את המודל הלכה למעשה, מהקליטה ועד המעקב. המשפחה בדויה, והנתונים מייצגים את האוואטר.</p></div>
+    <div class="file">
+      <aside class="profile">
+        <div class="av">🏠</div><h3>משפחת כהן</h3><p style="font-size:.88rem">גוש דן · כניסה בשבוע 1</p>
+        <div class="mt-1">
+          <div class="ln"><span>גיל</span><b>35</b></div><div class="ln"><span>משפחה</span><b>נשואים + 2</b></div><div class="ln"><span>הכנסה</span><b>₪24,000</b></div><div class="ln"><span>חובות</span><b>₪180,000</b></div><div class="ln"><span>חסכונות</span><b>₪350,000</b></div><div class="ln"><span>מצב רגשי</span><b>שחיקה, רצון לשינוי</b></div><div class="ln" style="border:none"><span>פתיחות</span><b>גבוהה</b></div>
+        </div>
+        <p class="mt-1" style="font-size:.85rem;color:rgba(243,233,210,.6)">"אם כסף לא היה בעיה, איך הייתם רוצים לחיות?"</p>
+      </aside>
+      <div>
+        <div class="tabs" data-tabs>
+          <button class="tab active">תוכנית אישית</button><button class="tab">שיחת בהירות</button><button class="tab">שיבוץ לנתינה</button><button class="tab">מעקב</button>
+          <div style="flex-basis:100%"></div>
+          <div class="tab-panel active plan" style="flex-basis:100%">
+            <div class="layer card"><h4>💰 פיננסי</h4>
+              <div class="row2"><span>סגירת חובות רעילים: מו"מ, איחוד, הלוואה כנגד חיסכון, הלוואת שפע</span><b>תוכנית תוך 3 חודשים · אפס חוב רעיל תוך 12–24</b></div>
+              <div class="row2"><span>תקציב משפחתי: טבלת תזרים, מעקב הוצאות</span><b>עודף של ₪2,000 בחודש</b></div>
+              <div class="row2" style="border:none"><span>הפעלת חסכונות רדומים: בדיקת דמי ניהול ומסלולים</span><b>ביטחון, בלי לשבור את החיסכון</b></div></div>
+            <div class="layer card"><h4>💡 מנטלי / תודעתי</h4>
+              <div class="row2"><span>אפירמציות יומיות (SHEFA OS)</span><b>תחושת שפע וביטחון</b></div>
+              <div class="row2"><span>דמיון מודרך שבועי וסצנת סיום אישית</span><b>חזון עתידי ברור</b></div>
+              <div class="row2" style="border:none"><span>יומן רגשי בפורמט "ספר השפע"</span><b>תיעוד לחץ ומוטיבציה</b></div></div>
+            <div class="layer card"><h4>👩‍💼 מקצועי</h4>
+              <div class="row2"><span>פיתוח כישורים קיימים וחיבור להזדמנויות</span><b>+30% הכנסה תוך 6 חודשים</b></div>
+              <div class="row2" style="border:none"><span>הכוונה לקריירה ארוכת טווח</span><b>מסלול מקצועי יציב</b></div></div>
+            <div class="layer card"><h4>🤝 קהילתי</h4>
+              <div class="row2" style="border:none"><span>שיבוץ לנתינה חודשית</span><b>4+ שעות בחודש · 20+ ב־3 חודשים</b></div></div>
+          </div>
+          <div class="tab-panel card" style="flex-basis:100%">
+            <div class="timeline">
+              <div class="tl-item"><span class="tl-date">1 · פתיחה אישית</span><p>"איך אתם מרגישים כרגע עם המצב הכלכלי והמשפחתי?"</p></div>
+              <div class="tl-item"><span class="tl-date">2 · חיבור רגשי</span><p>"אתם לא לבד. הרבה משפחות נמצאות באותו מצב."</p></div>
+              <div class="tl-item"><span class="tl-date">3 · הצגת המודל</span><p>ארבעת השערים: אבחון ← איפוס ← העצמה ← נתינה. לא רק פתרון פיננסי.</p></div>
+              <div class="tl-item"><span class="tl-date">4 · שיתוף המצב</span><p>"דף שיקוף" שמראה שהקשבנו: חוזקות וחסמים.</p></div>
+              <div class="tl-item now"><span class="tl-date">5 · ההסכם וההתחייבות הרכה</span><p>"זה לא צדקה, זו שותפות", וחתימה על החוזה הערכי.</p></div>
+            </div>
+          </div>
+          <div class="tab-panel" style="flex-basis:100%">
+            <p class="faint mb-1">כישורים: מכירות ושיווק, ייעוץ נפשי · תחומי עניין: חינוך, העצמה, קהילה · זמינות: 4–6 שעות בחודש</p>
+            <div class="tbl-wrap"><table><thead><tr><th>כישור</th><th>תרומה</th><th>לקהילה</th><th>למשתתף</th></tr></thead><tbody>
+              <tr><td><b>מכירות ושיווק</b></td><td>גיוס תרומות לעמותה</td><td>יותר משאבים</td><td>שימוש בכישורים, קשרים</td></tr>
+              <tr><td><b>ייעוץ נפשי</b></td><td>ליווי מתנדבים צעירים</td><td>ערך וביטחון לאחרים</td><td>משמעות אישית</td></tr>
+              <tr><td><b>חינוך</b></td><td>שיעורי עזר לילדים</td><td>שיפור הישגים</td><td>חיבור לערכים</td></tr>
+              <tr><td><b>קהילה</b></td><td>ארגון ערבי תרבות</td><td>גיבוש</td><td>רשת חברתית</td></tr></tbody></table></div>
+          </div>
+          <div class="tab-panel card" style="flex-basis:100%">
+            <div class="grid g-2">
+              <div><b class="heebo">פיננסי</b><p class="muted">ירידה בחוב, שיפור תזרים, עלייה בהכנסה</p></div>
+              <div><b class="heebo">רגשי</b><p class="muted">רמות לחץ, תחושת שפע, מוטיבציה</p></div>
+              <div><b class="heebo">קהילתי</b><p class="muted">שעות נתינה, תחומי פעילות</p></div>
+              <div><b class="heebo">מקצועי</b><p class="muted">כישורים, הזדמנויות חדשות</p></div>
+            </div>
+            <p class="mt-1">"מתנות מתקדמות": כשהמשפחה עומדת ביעדים נפתחים שלבים חדשים, כמו סדנה מתקדמת או מפגש השראה. יש משוב דו־צדדי, וסיכום רבעוני עם המלווה.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRACKER -->
+<section class="bg-pearl edge-top">
+  <div class="wrap">
+    <div class="center narrow mb-2"><p class="eyebrow">5.4 · מערכת המעקב</p><h2 class="h-l reveal">ניהול מבוסס נתונים</h2><p class="lead reveal d1">כך תיראה טבלת המעקב של הצוות. השורות להמחשה בלבד.</p></div>
+    <div class="tbl-wrap tracker reveal"><table>
+      <thead><tr><th>משתתף</th><th class="num">חוב פתיחה</th><th>חוב נוכחי</th><th class="num">הכנסה</th><th class="num">שעות נתינה</th><th class="num">💎</th><th>תדר תודעתי</th><th>סטטוס</th></tr></thead>
+      <tbody>
+        <tr><td>משתתף 1</td><td class="num">₪200,000</td><td class="num">₪120,000 <span class="bar"><i style="width:40%"></i></span></td><td class="num">₪13,000</td><td class="num">18</td><td class="num">42</td><td><span class="freqtag f3">שפע בינוני</span></td><td><span class="status tag green">בתהליך</span></td></tr>
+        <tr><td>משתתף 2</td><td class="num">₪150,000</td><td class="num">₪150,000 <span class="bar"><i style="width:2%"></i></span></td><td class="num">₪9,000</td><td class="num">0</td><td class="num">3</td><td><span class="freqtag f1">תודעת חוסר</span></td><td><span class="tag">ממתין</span></td></tr>
+      </tbody></table></div>
+    <p class="center faint mt-1">תדר תודעתי: חוסר ← מעבר ← שפע בינוני ← שפע מלא, לפי דיווח עצמי חודשי. מאחוריו עומד מדד מספרי מתוקף.</p>
+    <div class="grid g-3 mt-3">
+      <div class="card reveal"><h3>🎯 מדדי הצלחה</h3><p>סגירת חובות רעילים · שיפור תזרים · עלייה בהכנסה · רווחה נפשית · מעורבות קהילתית · סיפור הצלחה מכל משפחה.</p></div>
+      <div class="card reveal d1"><h3>📁 תיק לשותפים</h3><p>פרופיל, תהליך, תוצאות וציטוט אישי, כמו "היום אני מרגיש שיש לי תקווה". רק בהסכמה מדעת, עם זכות לחזור בה.</p></div>
+      <div class="card reveal d2"><h3>🔒 פרטיות קודם</h3><p>הודעת פרטיות, הסכמה מפורשת, אחסון מוצפן והרשאות מוגבלות, לפני שמשתתף ראשון ממלא טופס.</p></div>
+    </div>
+  </div>
+</section>
+
+<nav class="next-chapter" aria-label="פרקים">
+  <a href="ecosystem.html"><small>→ הפרק הקודם</small><b>האקוסיסטם</b></a>
+  <a href="roadmap.html" class="fwd"><small>הפרק הבא ←</small><b>מפת הדרכים</b></a>
+</nav>
+</main>
+<script src="shefa.js"></script>
+<script>
+// gantt
+const G=[['כניסה','מדריך קבלה','diag',1,1,'התחייבות'],['אבחון','אנליסט + מאמן','diag',2,3,'דוח אבחון'],['איפוס','יועץ תקציבי','reset',4,6,'תוכנית פעולה'],['העצמה','מאמן מנטלי','grow',7,10,'תוכנית הכנסה'],['נתינה','רכז קהילה','give',11,12,'שעות תרומה']];
+const gg=document.querySelector('.gantt-grid');
+let h='<span></span>'; for(let w=1;w<=12;w++) h+=`<span class="wk">ש׳ ${w}</span>`; h+='<span class="wk">חודשים 4–9</span>';
+G.forEach(([n,who,g,a,b,out],i)=>{ h+=`<span class="lb">${n}<small>${who}</small></span>`;
+  if(a>1) h+=`<span style="grid-column:span ${a-1}"></span>`;
+  h+=`<span class="gbar gate-${g}" style="grid-column:span ${b-a+1}">${out}</span>`;
+  if(b<12) h+=`<span style="grid-column:span ${12-b}"></span>`;
+  h+= i===0?`<span class="follow" style="grid-row:span 5;height:100%">מעקב חודשי מופחת</span>`:''; });
+gg.innerHTML=h;
+// quiz
+const ans={};
+document.querySelectorAll('.qq').forEach(q=>q.querySelectorAll('button').forEach(b=>b.onclick=()=>{
+  q.querySelectorAll('button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); ans[q.dataset.q]=+b.dataset.v;
+  if(Object.keys(ans).length===5){ const s=Object.values(ans).reduce((a,c)=>a+c,0); const r=document.getElementById('quizRes'); r.style.display='block';
+    if(ans.debt===0){ r.style.background='var(--pearl)'; r.innerHTML='<h3 class="h-m">יש לכם בסיס טוב 🌿</h3><p class="muted mt-1">בלי חוב משמעותי, נתיב הקריסטל המלא פחות מתאים, אבל תוכן השפע, הקהילה ומסלולי הנתינה פתוחים לכם.</p>'; }
+    else if(s>=8){ r.style.background='var(--night)'; r.style.color='#F3E9D2'; r.innerHTML='<h3 class="h-m" style="color:var(--gold-lt)">נראה שאתם מוכנים למסע 💎</h3><p class="mt-1">בפועל, השלב הבא היה טופס דיגיטלי ושיחת בהירות.</p><a href="join.html" class="btn btn-gold mt-1">לאשף ההצטרפות</a>'; }
+    else { r.style.background='var(--gold-xss)'; r.style.color=''; r.innerHTML='<h3 class="h-m">אולי זה עוד לא הרגע, וזה בסדר</h3><p class="muted mt-1">במקום דחייה, אנחנו מציעים תוכן דיגיטלי, סדנה פתוחה או הפניה מקצועית. הדלת נשארת פתוחה.</p>'; }
+  }
+}));
+</script>
+</body>
+</html>

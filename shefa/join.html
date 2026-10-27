@@ -3,384 +3,196 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>הצטרפות לנתיב הקריסטל — שפע גלובל</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;600;800;900&family=Assistant:wght@300;400;600&display=swap" rel="stylesheet">
+<title>הצטרפות — המסע מתחיל כאן | שפע גלובל</title>
+<meta name="description" content="אשף הצטרפות בארבעה שלבים: פרטים אישיים, מצב כלכלי, כישורים וזכויות, וסיכום עם תוכנית ראשונית.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Cpolygon points='48,4 88,26 88,70 48,92 8,70 8,26' fill='%23FAF6EE' stroke='%23B8860B' stroke-width='6'/%3E%3Ccircle cx='48' cy='48' r='12' fill='%23C9961A'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=Assistant:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shefa.css">
 <style>
-:root {
-  --ivory:    #FAF6EE;
-  --pearl:    #F5EFE0;
-  --cream:    #EDE0C4;
-  --warm:     #E8D5A8;
-  --gold:     #B8860B;
-  --gold-mid: #C9961A;
-  --gold-lt:  #E8C060;
-  --gold-xs:  rgba(184,134,11,0.12);
-  --gold-xss: rgba(184,134,11,0.06);
-  --ink:      #1C140A;
-  --ink-mid:  #3D2E12;
-  --ink-dim:  rgba(28,20,10,0.60);
-  --ink-faint:rgba(28,20,10,0.35);
-  --ok: #3E7A52;
-  --ok-bg: rgba(62,122,82,0.08);
-  box-sizing: border-box;
-  padding-top: env(safe-area-inset-top,0px);
-  padding-bottom: env(safe-area-inset-bottom,0px);
-}
-*, *::before, *::after { box-sizing: inherit; margin:0; padding:0; }
-html { scroll-padding-top: env(safe-area-inset-top,0px); }
-body {
-  font-family: 'Assistant', sans-serif;
-  background: var(--ivory);
-  color: var(--ink);
-  direction: rtl;
-  line-height: 1.6;
-  min-height: 100vh;
-}
-nav {
-  position: sticky; top: env(safe-area-inset-top,0); right:0; left:0; z-index:100;
-  display: flex; align-items:center; justify-content:space-between;
-  padding: 1.1rem 2rem;
-  background: rgba(250,246,238,0.94);
-  backdrop-filter: blur(14px);
-  border-bottom: 1px solid rgba(184,134,11,0.25);
-}
-.nav-logo { font-family:'Heebo',sans-serif; font-weight:800; font-size:1.05rem; color:var(--ink); text-decoration:none; }
-.nav-logo span { color: var(--gold); }
-.nav-back {
-  color: var(--ink-mid); text-decoration:none; font-size:0.85rem; font-weight:600;
-  display:flex; align-items:center; gap:0.3rem;
-}
-
-.wrap { max-width: 680px; margin: 0 auto; padding: 2.5rem 1.5rem 5rem; }
-
-.page-head { text-align:center; margin-bottom: 2.25rem; }
-.page-eyebrow {
-  font-size:0.75rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--gold);
-  margin-bottom:0.6rem;
-}
-.page-title {
-  font-family:'Heebo',sans-serif; font-weight:800; font-size: clamp(1.6rem, 5vw, 2.3rem);
-  margin-bottom:0.6rem;
-}
-.page-sub { color: var(--ink-dim); font-weight:300; max-width:48ch; margin:0 auto; }
-
-/* progress */
-.progress-wrap { margin: 2rem 0 2.5rem; }
-.progress-steps { display:flex; justify-content:space-between; margin-bottom:0.8rem; }
-.p-step { display:flex; flex-direction:column; align-items:center; gap:0.5rem; flex:1; position:relative; }
-.p-step .dot {
-  width:2.4rem; height:2.4rem; border-radius:50%;
-  border:1.5px solid rgba(184,134,11,0.35); background:var(--ivory);
-  display:flex; align-items:center; justify-content:center;
-  font-family:'Heebo',sans-serif; font-weight:700; font-size:0.9rem; color:var(--ink-faint);
-  transition: all 0.25s;
-}
-.p-step.active .dot { border-color:var(--gold); color:var(--gold); background:var(--gold-xs); }
-.p-step.done .dot { border-color:var(--gold); background:var(--gold); color:var(--ivory); }
-.p-step .label { font-size:0.72rem; color:var(--ink-faint); text-align:center; }
-.p-step.active .label, .p-step.done .label { color:var(--ink-mid); font-weight:600; }
-.progress-bar { height:3px; background:rgba(184,134,11,0.18); border-radius:2px; overflow:hidden; }
-.progress-bar-fill { height:100%; background: linear-gradient(90deg, var(--gold-lt), var(--gold)); transition: width 0.3s; }
-
-/* card */
-.card {
-  background: var(--ivory);
-  border: 1px solid rgba(184,134,11,0.22);
-  border-radius: 16px;
-  padding: 2rem;
-  box-shadow: 0 4px 30px rgba(184,134,11,0.08);
-}
-.step-title {
-  font-family:'Heebo',sans-serif; font-weight:700; font-size:1.15rem; margin-bottom:0.4rem;
-}
-.step-hint { color: var(--ink-dim); font-size:0.88rem; margin-bottom:1.6rem; font-weight:300; }
-
-.form-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
-.form-row { margin-bottom:1.2rem; }
-label {
-  display:block; font-size:0.85rem; font-weight:600; color:var(--ink-mid); margin-bottom:0.4rem;
-}
-label .opt { font-weight:300; color:var(--ink-faint); }
-input, select, textarea {
-  width:100%; background: var(--pearl);
-  border:1px solid rgba(184,134,11,0.22); border-radius:8px;
-  padding:0.72rem 1rem; color:var(--ink); font-family:'Assistant',sans-serif; font-size:0.95rem;
-  direction:rtl; transition: border-color 0.2s;
-}
-input::placeholder, textarea::placeholder { color: var(--ink-faint); }
-input:focus, select:focus, textarea:focus { outline:none; border-color:var(--gold); }
-select option { background:var(--ivory); color:var(--ink); }
-textarea { resize:vertical; min-height:88px; }
-.hint-text { font-size:0.76rem; color:var(--ink-faint); margin-top:0.35rem; }
-
-/* skills chips */
-.chip-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(130px,1fr)); gap:0.6rem; margin-top:0.3rem; }
-.chip {
-  display:flex; align-items:center; gap:0.5rem;
-  padding:0.6rem 0.8rem; border:1px solid rgba(184,134,11,0.22); border-radius:10px;
-  background: var(--pearl); cursor:pointer; font-size:0.85rem; transition: all 0.15s; user-select:none;
-}
-.chip input { width:auto; accent-color: var(--gold); margin:0; }
-.chip.checked { background: var(--gold-xs); border-color: var(--gold); color: var(--ink-mid); font-weight:600; }
-.chip-count { font-size:0.78rem; color: var(--gold); margin-top:0.6rem; font-weight:600; }
-
-/* summary */
-.summary-card { background: var(--pearl); border:1px solid rgba(184,134,11,0.2); border-radius:12px; padding:1.4rem; margin-bottom:1.2rem; }
-.summary-card h3 { font-family:'Heebo',sans-serif; font-size:0.95rem; font-weight:700; margin-bottom:0.9rem; color: var(--gold); }
-.summary-row { display:flex; justify-content:space-between; gap:1rem; padding:0.4rem 0; font-size:0.9rem; border-bottom:1px dashed rgba(184,134,11,0.15); }
-.summary-row:last-child { border-bottom:none; }
-.summary-row .k { color: var(--ink-dim); }
-.summary-row .v { font-weight:600; color: var(--ink); text-align:left; }
-.tag-row { display:flex; flex-wrap:wrap; gap:0.4rem; margin-top:0.4rem; }
-.tag { background: var(--gold-xs); color: var(--gold); border:1px solid rgba(184,134,11,0.22); border-radius:1rem; padding:0.2rem 0.7rem; font-size:0.76rem; }
-
-.next-box {
-  background: var(--cream); border-radius:12px; padding:1.2rem 1.4rem; margin-bottom:1.6rem;
-}
-.next-box h4 { font-family:'Heebo',sans-serif; font-size:0.9rem; font-weight:700; margin-bottom:0.6rem; color: var(--ink-mid); }
-.next-box ol { padding-inline-start: 1.3rem; }
-.next-box li { font-size:0.86rem; color: var(--ink-dim); margin-bottom:0.3rem; }
-
-/* buttons */
-.step-actions { display:flex; justify-content:space-between; gap:1rem; margin-top:1.8rem; }
-.btn { font-family:'Heebo',sans-serif; font-weight:700; font-size:0.92rem; padding:0.75rem 1.8rem; border-radius:2rem; border:none; cursor:pointer; transition: all 0.15s; }
-.btn-primary { background: var(--gold); color: var(--ivory); box-shadow:0 4px 18px rgba(184,134,11,0.25); }
-.btn-primary:hover { background: var(--ink-mid); transform: translateY(-2px); }
-.btn-ghost { background: transparent; color: var(--ink-mid); border:1.5px solid rgba(184,134,11,0.3); }
-.btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
-.btn:disabled { opacity:0.4; cursor:not-allowed; }
-
-.success-wrap { text-align:center; padding: 2rem 0; }
-.success-icon {
-  width:72px; height:72px; margin:0 auto 1.4rem; border-radius:50%;
-  background: var(--ok-bg); color: var(--ok); display:flex; align-items:center; justify-content:center;
-  font-size:2rem;
-}
-.success-title { font-family:'Heebo',sans-serif; font-weight:800; font-size:1.4rem; margin-bottom:0.6rem; }
-.success-text { color: var(--ink-dim); font-weight:300; max-width:36ch; margin:0 auto 1.6rem; }
-
-.step { display:none; }
-.step.active { display:block; animation: fadein 0.25s ease; }
-@keyframes fadein { from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
-
-@media(max-width:560px) {
-  .form-grid { grid-template-columns:1fr; }
-  .chip-grid { grid-template-columns:repeat(auto-fill, minmax(110px,1fr)); }
-  .p-step .label { display:none; }
-  .card { padding:1.4rem; }
-}
+.jw{max-width:760px;margin:0 auto;padding:3rem 16px 5rem}
+.progress{display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;margin:2rem 0 1.5rem}
+.progress div{text-align:center;font-family:Heebo;font-size:.82rem;font-weight:600;color:var(--ink-faint)}
+.progress div i{display:flex;width:36px;height:36px;margin:0 auto .4rem;border-radius:50%;border:1.5px solid var(--line);align-items:center;justify-content:center;font-style:normal;background:var(--ivory);transition:.3s}
+.progress div.on{color:var(--gold)}.progress div.on i{border-color:var(--gold);background:var(--gold);color:#fff}
+.progress div.done i{border-color:var(--gold);color:var(--gold)}
+.pbar{height:4px;background:var(--gold-xs);border-radius:4px;margin-bottom:1.5rem;overflow:hidden}.pbar i{display:block;height:100%;background:var(--gold);transition:width .4s}
+.step{display:none;animation:fadeUp .35s}.step.on{display:block}
+.step h2{font-size:1.5rem;margin-bottom:.3rem}
+.step .hint{color:var(--ink-dim);margin-bottom:1.5rem;font-size:.95rem}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
+.fr{margin-bottom:1rem}
+.fr .err{color:var(--risk);font-size:.8rem;margin-top:.25rem;display:none}
+.fr.bad input,.fr.bad select,.fr.bad textarea{border-color:var(--risk)}
+.fr.bad .err{display:block}
+.opt{font-weight:400;color:var(--ink-faint);font-size:.8rem}
+.scale{display:grid;grid-template-columns:repeat(10,1fr);gap:4px}
+.scale button{padding:.55rem 0;border:1px solid var(--line);background:var(--ivory);border-radius:8px;font-family:Heebo;font-weight:700;color:var(--ink-mid)}
+.scale button.on{background:var(--gold);color:#fff;border-color:var(--gold)}
+.scale-legend{display:flex;justify-content:space-between;font-size:.75rem;color:var(--ink-faint);margin-top:.3rem}
+.chips{display:flex;flex-wrap:wrap;gap:.45rem}
+.chip{padding:.45rem .95rem;border-radius:2rem;border:1px solid var(--line);background:var(--ivory);font-size:.9rem;cursor:pointer;user-select:none;transition:.15s}
+.chip.on{background:var(--gold-xs);border-color:var(--gold);color:var(--gold);font-weight:600}
+.acts{display:flex;justify-content:space-between;margin-top:2rem;gap:1rem}
+.sum{background:var(--pearl);border-radius:var(--r);padding:1.2rem 1.4rem;margin-bottom:1rem}
+.sum h4{font-size:1rem;margin-bottom:.6rem}
+.sum .ln{display:flex;justify-content:space-between;padding:.35rem 0;border-bottom:1px dashed var(--line);font-size:.92rem}
+.sum .ln:last-child{border:none}
+.plan{background:var(--night);color:#F3E9D2;border-radius:var(--r-lg);padding:1.6rem;margin-bottom:1rem}
+.plan h4{color:var(--gold-lt);font-size:1.15rem;margin-bottom:.8rem}
+.plan ol{padding-right:1.2rem}.plan li{margin-bottom:.5rem}
+.plan b{color:var(--gold-lt)}
+.consent{display:flex;gap:.7rem;align-items:flex-start;padding:1rem;border:1px solid var(--line);border-radius:12px;background:var(--ivory);font-size:.9rem;cursor:pointer}
+.consent input{width:20px;height:20px;accent-color:var(--gold);margin-top:.15rem;flex-shrink:0}
+.consent.bad{border-color:var(--risk)}
+.success{text-align:center;padding:2rem 0}
+.success .big{font-size:4rem;animation:float 4s ease-in-out infinite}
+@media(max-width:600px){.fg{grid-template-columns:1fr}.scale{grid-template-columns:repeat(5,1fr)}.progress div{font-size:.7rem}}
 </style>
 </head>
 <body>
-
-<nav>
-  <a href="index.html" class="nav-logo">שפע גלובל <span>| Shefa Global</span></a>
-  <a href="index.html" class="nav-back">→ חזרה לדף הבית</a>
-</nav>
-
-<div class="wrap">
-  <div class="page-head">
-    <p class="page-eyebrow">נתיב הקריסטל</p>
-    <h1 class="page-title">המסע מתחיל כאן</h1>
-    <p class="page-sub">ארבעה צעדים קצרים, כדי שנבנה יחד תוכנית מותאמת אישית — לא טופס גנרי.</p>
+<main>
+<div class="jw">
+  <div class="center">
+    <p class="eyebrow">הצטרפות · נתיב הקריסטל</p>
+    <h1 class="h-l">המסע לתודעת שפע<br><span class="gold">מתחיל כאן</span></h1>
+    <p class="lead" style="margin:1rem auto 0">ספרו לנו קצת על עצמכם, ונבנה יחד תוכנית מותאמת אישית. זה מסע אישי, לא בדיקה פיננסית.</p>
   </div>
+  <div class="progress" id="prog"><div class="on"><i>1</i>פרטים אישיים</div><div><i>2</i>מצב כלכלי</div><div><i>3</i>כישורים וזכויות</div><div><i>4</i>סיכום ואישור</div></div>
+  <div class="pbar"><i id="pfill" style="width:25%"></i></div>
 
-  <div class="progress-wrap">
-    <div class="progress-steps" id="progressSteps">
-      <div class="p-step active" data-step="1"><div class="dot">1</div><div class="label">פרטים אישיים</div></div>
-      <div class="p-step" data-step="2"><div class="dot">2</div><div class="label">מצב כלכלי</div></div>
-      <div class="p-step" data-step="3"><div class="dot">3</div><div class="label">כישורים וזמינות</div></div>
-      <div class="p-step" data-step="4"><div class="dot">4</div><div class="label">סיכום ואישור</div></div>
-    </div>
-    <div class="progress-bar"><div class="progress-bar-fill" id="progressFill" style="width:25%"></div></div>
-  </div>
-
-  <div class="card">
-
-    <!-- STEP 1 -->
-    <div class="step active" data-step="1">
-      <h2 class="step-title">שלב 1: פרטים אישיים</h2>
-      <p class="step-hint">כדי שנדע איך לפנות אליך.</p>
-      <div class="form-grid">
-        <div class="form-row"><label>שם מלא</label><input type="text" id="f_name" placeholder="ישראל ישראלי"></div>
-        <div class="form-row"><label>טלפון</label><input type="tel" id="f_phone" placeholder="050-0000000"></div>
+  <div class="card" style="padding:clamp(1.3rem,4vw,2.4rem)">
+    <!-- 1 -->
+    <div class="step on" data-s="1">
+      <h2>שלב 1 · פרטים אישיים</h2><p class="hint">כדי שנדע איך לפנות אליכם.</p>
+      <div class="fg">
+        <div class="fr" data-req="text"><label class="lbl">שם מלא *</label><input type="text" id="name" placeholder="נועה כהן"><p class="err">נא למלא שם</p></div>
+        <div class="fr" data-req="age"><label class="lbl">גיל *</label><input type="number" id="age" placeholder="35" inputmode="numeric"><p class="err">גיל במספרים בלבד</p></div>
       </div>
-      <div class="form-grid">
-        <div class="form-row"><label>אימייל</label><input type="email" id="f_email" placeholder="israel@email.com"></div>
-        <div class="form-row"><label>גיל</label><input type="number" id="f_age" placeholder="35"></div>
+      <div class="fg">
+        <div class="fr" data-req="phone"><label class="lbl">טלפון *</label><input type="tel" id="phone" placeholder="0501234567" inputmode="tel"><p class="err">ספרות בלבד, לפחות 9</p></div>
+        <div class="fr" data-req="email"><label class="lbl">אימייל *</label><input type="email" id="email" placeholder="noa@email.com"><p class="err">אימייל בפורמט תקין</p></div>
       </div>
-      <div class="form-grid">
-        <div class="form-row"><label>עיר מגורים</label><input type="text" id="f_city" placeholder="תל אביב"></div>
-        <div class="form-row">
-          <label>מצב משפחתי</label>
-          <select id="f_family">
-            <option value="">בחרו מצב משפחתי</option>
-            <option>רווק/ה</option>
-            <option>נשוי/אה</option>
-            <option>גרוש/ה</option>
-            <option>הורה יחיד/ה</option>
-          </select>
-        </div>
-      </div>
-      <div class="step-actions">
-        <span></span>
-        <button class="btn btn-primary" onclick="goStep(2)">הבא →</button>
+      <div class="fg">
+        <div class="fr"><label class="lbl">עיר מגורים</label><input type="text" id="city" placeholder="חולון"></div>
+        <div class="fr" data-req="select"><label class="lbl">מצב משפחתי *</label><select id="family"><option value="">בחרו</option><option>רווק/ה</option><option>נשוי/אה</option><option>נשוי/אה + ילדים</option><option>גרוש/ה</option><option>הורה יחיד/ה</option><option>אחר</option></select><p class="err">נא לבחור</p></div>
       </div>
     </div>
 
-    <!-- STEP 2 -->
-    <div class="step" data-step="2">
-      <h2 class="step-title">שלב 2: מצב כלכלי</h2>
-      <p class="step-hint">המידע הזה עוזר לנו להתאים את התוכנית בצורה הטובה ביותר עבורכם. כל המידע נשמר בסודיות מלאה.</p>
-      <div class="form-grid">
-        <div class="form-row"><label>הכנסה חודשית נטו (משפחתית)</label><input type="number" id="f_income" placeholder="8000"><p class="hint-text">בשקלים, לאחר ניכויי מיסים</p></div>
-        <div class="form-row"><label>סך כל החובות</label><input type="number" id="f_debt" placeholder="50000"><p class="hint-text">כולל כל החובות — בנקים, אשראי, ספקים וכו׳</p></div>
+    <!-- 2 -->
+    <div class="step" data-s="2">
+      <h2>שלב 2 · מצב כלכלי</h2><p class="hint">זה עוזר לנו לבנות תמונה מלאה לפני שיחת הבהירות. אין כאן שיפוט.</p>
+      <div class="fg">
+        <div class="fr" data-req="num"><label class="lbl">הכנסה חודשית נטו, משפחתית *</label><input type="number" id="income" placeholder="24000" inputmode="numeric"><p class="err">סכום במספרים</p></div>
+        <div class="fr" data-req="num"><label class="lbl">סך החובות הצרכניים *</label><input type="number" id="debt" placeholder="180000" inputmode="numeric"><p class="err">סכום במספרים (0 אם אין)</p></div>
       </div>
-      <div class="form-row">
-        <label>מה הדבר שהכי מכביד עליכם כרגע? <span class="opt">(לא חובה)</span></label>
-        <textarea id="f_burden" placeholder="כמה מילים על המצב — זה עוזר לנו להבין את התמונה המלאה לפני השיחה הראשונה"></textarea>
+      <div class="fg">
+        <div class="fr"><label class="lbl">הוצאות עיקריות בחודש <span class="opt">(לא חובה)</span></label><input type="number" id="expenses" placeholder="22000" inputmode="numeric"></div>
+        <div class="fr"><label class="lbl">קרן השתלמות, בערך <span class="opt">(לא חובה)</span></label><input type="number" id="hish" placeholder="120000" inputmode="numeric"></div>
       </div>
-      <div class="step-actions">
-        <button class="btn btn-ghost" onclick="goStep(1)">→ חזרה</button>
-        <button class="btn btn-primary" onclick="goStep(3)">הבא →</button>
-      </div>
+      <div class="fr"><label class="lbl">עד כמה אתם מרגישים שליטה במצב הכלכלי? *</label>
+        <div class="scale" id="control"></div><div class="scale-legend"><span>1 · אין לי שליטה</span><span>10 · שליטה מלאה</span></div><p class="err" id="controlErr">נא לבחור</p></div>
+      <div class="fr"><label class="lbl">מתחילים תהליך התאוששות? *</label><div class="chips" id="ready"><span class="chip" data-v="כן">כן, אני מוכן/ה</span><span class="chip" data-v="לא בטוח">עוד לא בטוח/ה</span></div></div>
+      <div class="fr"><label class="lbl">מה הכי מכביד עליכם כרגע? <span class="opt">(לא חובה)</span></label><textarea id="burden" rows="3" placeholder="כמה מילים, בשפה שלכם"></textarea></div>
     </div>
 
-    <!-- STEP 3 -->
-    <div class="step" data-step="3">
-      <h2 class="step-title">שלב 3: כישורים וזמינות</h2>
-      <p class="step-hint">חלק מנתיב הקריסטל הוא נתינה חזרה לקהילה — בחרו תחומים שבהם תרצו לתרום בהמשך הדרך.</p>
-      <label>כישורים ותחומי עניין</label>
-      <div class="chip-grid" id="skillsGrid">
-        <!-- filled by JS -->
+    <!-- 3 -->
+    <div class="step" data-s="3">
+      <h2>שלב 3 · כישורים, זכויות ונתינה</h2><p class="hint">חלק מנתיב הקריסטל הוא נתינה לפי המתנה שלכם, ולא "עבודות רס"ר".</p>
+      <label class="lbl">כישורים ותחומי עניין</label><div class="chips mb-1" id="skills"></div>
+      <label class="lbl mt-1">תחומי נתינה מועדפים</label><div class="chips mb-1" id="areas"></div>
+      <label class="lbl mt-1">זכויות והטבות קיימות <span class="opt">(אם יש)</span></label><div class="chips mb-1" id="rights"></div>
+      <div class="fg mt-1">
+        <div class="fr" data-req="select"><label class="lbl">שעות בחודש לתהליך ולנתינה *</label><select id="hours"><option value="">בחרו</option><option>פחות מ־2</option><option>2–4</option><option>4–6</option><option>מעל 6</option></select><p class="err">נא לבחור</p></div>
+        <div class="fr" data-req="select"><label class="lbl">איזו אמירה מתארת אתכם? *</label><select id="mind"><option value="">בחרו</option><option>"אני יכול לשנות את המציאות שלי"</option><option>"אני קורבן של הנסיבות"</option></select><p class="err">נא לבחור</p></div>
       </div>
-      <p class="chip-count" id="skillsCount">נבחרו: 0 כישורים</p>
-
-      <div class="form-row" style="margin-top:1.6rem;">
-        <label>זמינות משוערת לפעילות קהילתית</label>
-        <select id="f_availability">
-          <option value="">בחרו טווח שבועי</option>
-          <option>עד שעה בשבוע</option>
-          <option>1–3 שעות בשבוע</option>
-          <option>3–5 שעות בשבוע</option>
-          <option>יותר מ-5 שעות בשבוע</option>
-          <option>עדיין לא יודע/ת — נדבר על זה בשיחה</option>
-        </select>
-      </div>
-
-      <div class="step-actions">
-        <button class="btn btn-ghost" onclick="goStep(2)">→ חזרה</button>
-        <button class="btn btn-primary" onclick="goStep(4)">הבא →</button>
-      </div>
+      <div class="fr" data-req="text"><label class="lbl">איך אתם רואים את האחריות שלכם לשינוי המצב? *</label><textarea id="resp" rows="2" placeholder="אין תשובה נכונה"></textarea><p class="err">כמה מילים, בבקשה</p></div>
     </div>
 
-    <!-- STEP 4 -->
-    <div class="step" data-step="4">
-      <h2 class="step-title">שלב 4: סיכום ואישור</h2>
-      <p class="step-hint">בדקו שהכל נכון — ואנחנו ניצור קשר תוך 48 שעות.</p>
-
-      <div class="summary-card">
-        <h3>💎 סיכום הבקשה</h3>
-        <div class="summary-row"><span class="k">שם</span><span class="v" id="s_name">—</span></div>
-        <div class="summary-row"><span class="k">טלפון</span><span class="v" id="s_phone">—</span></div>
-        <div class="summary-row"><span class="k">אימייל</span><span class="v" id="s_email">—</span></div>
-        <div class="summary-row"><span class="k">עיר</span><span class="v" id="s_city">—</span></div>
-      </div>
-      <div class="summary-card">
-        <h3>מצב כלכלי</h3>
-        <div class="summary-row"><span class="k">הכנסה חודשית</span><span class="v" id="s_income">—</span></div>
-        <div class="summary-row"><span class="k">סך חובות</span><span class="v" id="s_debt">—</span></div>
-      </div>
-      <div class="summary-card">
-        <h3>כישורים וזמינות</h3>
-        <div class="tag-row" id="s_skills"></div>
-        <div class="summary-row" style="margin-top:0.6rem;"><span class="k">זמינות</span><span class="v" id="s_avail">—</span></div>
-      </div>
-
-      <div class="next-box">
-        <h4>מה קורה בהמשך?</h4>
-        <ol>
-          <li>נבדוק את הבקשה תוך 48 שעות ונחזור אליכם לשיחת היכרות קצרה, ללא התחייבות.</li>
-          <li>נבנה יחד תוכנית אישית לנתיב הקריסטל — קצב שמתאים לכם.</li>
-          <li>תתחילו בשלב 1: חודש נשימה — חינמי, ללא לחץ.</li>
-        </ol>
-      </div>
-
-      <div class="step-actions">
-        <button class="btn btn-ghost" onclick="goStep(3)">→ חזרה</button>
-        <button class="btn btn-primary" onclick="submitForm()">שלח בקשת הצטרפות 💎</button>
-      </div>
+    <!-- 4 -->
+    <div class="step" data-s="4">
+      <h2>שלב 4 · סיכום ואישור</h2><p class="hint">זו התוכנית הראשונית שנבנתה מהתשובות שלכם. בשיחת הבהירות נדייק אותה יחד.</p>
+      <div class="plan" id="plan"></div>
+      <div class="sum" id="sum"></div>
+      <label class="consent" id="consentBox"><input type="checkbox" id="consent"><span>קראתי ואני מסכים/ה ש<b>המידע שמסרתי ישמש רק לליווי שלי</b>, יישמר מוצפן עם גישה מוגבלת לצוות, ולא יועבר לאיש. אני יודע/ת שזה לא ייעוץ פיננסי, וש<b>הסיוע הבסיסי אינו מותנה בשעות נתינה</b>. אפשר לבקש מחיקה בכל עת.</span></label>
+      <p class="faint mt-1">⏸ STAND BY: האתר עדיין לא אוסף נתונים. בתצוגה הזו שום דבר לא נשלח לשרת, והפרטים נשמרים רק בדפדפן שלכם, כדי שהאזור האישי יוכל לפנות אליכם בשם.</p>
     </div>
 
-    <!-- SUCCESS -->
-    <div class="step" data-step="5">
-      <div class="success-wrap">
-        <div class="success-icon">✓</div>
-        <h2 class="success-title">הבקשה נשלחה בהצלחה!</h2>
-        <p class="success-text">נחזור אליכם תוך 48 שעות. בינתיים — ברוכים הבאים למעגל השפע.</p>
-        <a href="index.html" class="btn btn-primary" style="text-decoration:none; display:inline-block;">חזרה לדף הבית</a>
-      </div>
+    <!-- done -->
+    <div class="step" data-s="5">
+      <div class="success"><div class="big">💎</div><h2 class="h-l mt-1">ברוכים הבאים<br><span class="gold">למעגל השפע</span></h2>
+        <p class="lead" style="margin:1rem auto" id="doneMsg"></p>
+        <div class="row" style="justify-content:center"><a href="dashboard.html" class="btn btn-gold">לאזור האישי שלי</a><a href="index.html" class="btn btn-line">דף הבית</a></div></div>
     </div>
 
+    <div class="acts" id="acts"><button class="btn btn-line" id="back" style="visibility:hidden">→ חזרה</button><button class="btn btn-gold" id="fwd">הבא ←</button></div>
   </div>
 </div>
-
+</main>
+<script src="shefa.js"></script>
 <script>
-const SKILLS = ["חינוך והוראה","רפואה וסיוע","טכנולוגיה","אומנות ויצירה","שירות לקוחות","מכירות ושיווק","בישול","ניהול ואדמיניסטרציה","חשבונאות","כתיבה ועריכה","תרגום","ייעוץ נפשי","עיצוב","צילום","נגרות ומלאכה","משפטים","נהיגה","גינון","אחר"];
-const skillsGrid = document.getElementById('skillsGrid');
-SKILLS.forEach((s,i)=>{
-  const id = 'skill_'+i;
-  const label = document.createElement('label');
-  label.className = 'chip';
-  label.htmlFor = id;
-  label.innerHTML = `<input type="checkbox" id="${id}" value="${s}" onchange="onSkillChange(this)"><span>${s}</span>`;
-  skillsGrid.appendChild(label);
-});
-function onSkillChange(el){
-  el.closest('.chip').classList.toggle('checked', el.checked);
-  const n = document.querySelectorAll('#skillsGrid input:checked').length;
-  document.getElementById('skillsCount').textContent = 'נבחרו: ' + n + ' כישורים';
-}
+const $=id=>document.getElementById(id);
+const SK=["חינוך והוראה","רפואה וסיוע","טכנולוגיה","אומנות ויצירה","שירות לקוחות","מכירות ושיווק","בישול","ניהול ואדמיניסטרציה","חשבונאות","כתיבה ועריכה","תרגום","ייעוץ נפשי","עיצוב","צילום","נגרות ומלאכה","משפטים","נהיגה","גינון","אחר"];
+const AR=["חינוך והעצמת ילדים ונוער","סביבה וקיימות","עזרה לזולת ומשפחות במצוקה","טכנולוגיה לטובת הקהילה","ליווי משתתפים חדשים","יצירת תוכן"];
+const RG=["קצבת ילדים","הנחה בארנונה","דמי אבטלה","נקודות זיכוי נוספות","סיוע בשכר דירה","מענק עבודה","לא בדקתי — אשמח לעזרה"];
+function chips(id,arr){ $(id).innerHTML=arr.map(s=>`<span class="chip" data-v="${s}">${s}</span>`).join(''); $(id).querySelectorAll('.chip').forEach(c=>c.onclick=()=>c.classList.toggle('on')); }
+chips('skills',SK); chips('areas',AR); chips('rights',RG);
+$('ready').querySelectorAll('.chip').forEach(c=>c.onclick=()=>{ $('ready').querySelectorAll('.chip').forEach(x=>x.classList.remove('on')); c.classList.add('on'); });
+$('control').innerHTML=[...Array(10)].map((_,k)=>`<button type="button" data-v="${k+1}">${k+1}</button>`).join('');
+let control=null; $('control').querySelectorAll('button').forEach(b=>b.onclick=()=>{ $('control').querySelectorAll('button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); control=+b.dataset.v; $('controlErr').style.display='none'; });
+const picked=id=>[...$(id).querySelectorAll('.chip.on')].map(c=>c.dataset.v);
 
-let currentStep = 1;
-function goStep(n){
-  if (n > currentStep && !validateStep(currentStep)) return;
-  document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
-  document.querySelector('.step[data-step="'+n+'"]').classList.add('active');
-  document.querySelectorAll('.p-step').forEach(p=>{
-    const ps = parseInt(p.dataset.step);
-    p.classList.toggle('active', ps===n);
-    p.classList.toggle('done', ps<n);
-  });
-  document.getElementById('progressFill').style.width = Math.min(n,4)*25 + '%';
-  currentStep = n;
-  window.scrollTo({top:0, behavior:'smooth'});
-  if (n===4) fillSummary();
+let s=1;
+function valid(n){
+  let ok=true;
+  document.querySelectorAll(`.step[data-s="${n}"] .fr[data-req]`).forEach(fr=>{
+    const el=fr.querySelector('input,select,textarea'), v=el.value.trim(), t=fr.dataset.req; let good=true;
+    if(t==='text') good=v.length>=2;
+    if(t==='select') good=!!v;
+    if(t==='num') good=v!=='' && /^\d+$/.test(v);
+    if(t==='age') good=/^\d+$/.test(v) && +v>=16 && +v<=99;
+    if(t==='phone') good=/^\d{9,}$/.test(v.replace(/[-\s]/g,''));
+    if(t==='email') good=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+    fr.classList.toggle('bad',!good); if(!good) ok=false; });
+  if(n===2){ if(!control){ $('controlErr').style.display='block'; ok=false; } if(!picked('ready').length){ ok=false; $('ready').style.outline='1px solid var(--risk)'; } else $('ready').style.outline=''; }
+  if(!ok){ const f=document.querySelector(`.step[data-s="${n}"] .bad`); if(f) f.scrollIntoView({behavior:'smooth',block:'center'}); }
+  return ok;
 }
-function validateStep(n){
-  if (n===1){
-    if(!val('f_name') || !val('f_phone')){ alert('נא למלא שם וטלפון לפני שממשיכים'); return false; }
-  }
-  return true;
+function show(n){
+  s=n; document.querySelectorAll('.step').forEach(x=>x.classList.toggle('on',+x.dataset.s===n));
+  [...$('prog').children].forEach((d,k)=>{ d.classList.toggle('on',k+1===n); d.classList.toggle('done',k+1<n); d.querySelector('i').textContent = k+1<n?'✓':k+1; });
+  $('pfill').style.width=Math.min(4,n)*25+'%';
+  $('back').style.visibility = n>1&&n<5?'visible':'hidden';
+  $('acts').style.display = n===5?'none':'flex';
+  $('fwd').textContent = n===4?'שליחת בקשת הצטרפות 💎':'הבא ←';
+  if(n===4) summary();
+  window.scrollTo({top:0,behavior:'smooth'});
 }
-function val(id){ return document.getElementById(id).value.trim(); }
+$('fwd').onclick=()=>{
+  if(s<4){ if(valid(s)) show(s+1); return; }
+  if(!$('consent').checked){ $('consentBox').classList.add('bad'); return; }
+  const data={name:$('name').value.trim(), first:$('name').value.trim().split(' ')[0], debt:+$('debt').value, income:+$('income').value, hish:+($('hish').value||0), control, skills:picked('skills'), areas:picked('areas'), hours:$('hours').value, joined:new Date().toISOString()};
+  try{ localStorage.setItem('shefa_member', JSON.stringify(data)); }catch(e){}
+  $('doneMsg').textContent = `${data.first}, הבקשה התקבלה. בעולם שבו שפע גלובל פעילה, מדריך קבלה היה חוזר אליכם תוך 48 שעות לשיחת בהירות, ומתחיל איתכם את "חודש של נשימה", בחינם ובלי לחץ.`;
+  show(5);
+};
+$('back').onclick=()=>show(s-1);
+$('consent').onchange=()=>$('consentBox').classList.remove('bad');
 
-function fillSummary(){
-  document.getElementById('s_name').textContent = val('f_name') || '—';
-  document.getElementById('s_phone').textContent = val('f_phone') || '—';
-  document.getElementById('s_email').textContent = val('f_email') || '—';
-  document.getElementById('s_city').textContent = val('f_city') || '—';
-  document.getElementById('s_income').textContent = val('f_income') ? (val('f_income')+' ₪') : '—';
-  document.getElementById('s_debt').textContent = val('f_debt') ? (val('f_debt')+' ₪') : '—';
-  document.getElementById('s_avail').textContent = val('f_availability') || '—';
-  const chosen = Array.from(document.querySelectorAll('#skillsGrid input:checked')).map(i=>i.value);
-  const tagWrap = document.getElementById('s_skills');
-  tagWrap.innerHTML = chosen.length ? chosen.map(s=>`<span class="tag">${s}</span>`).join('') : '<span class="hint-text">לא נבחרו כישורים</span>';
-}
-function submitForm(){
-  goStep(5);
+function summary(){
+  const debt=+$('debt').value, inc=+$('income').value, hish=+($('hish').value||0), exp=+($('expenses').value||0);
+  const p1=SG.pmt(debt,.12,60), a=Math.min(hish*.7,debt/2), p2=(a?SG.pmt(a,.05,60):0)+(debt-a)/60;
+  const ratio = inc? debt/(inc*12) : 0;
+  let gate = debt<20000 ? 'בלי חוב משמעותי, הדגש יהיה על העצמה ונתינה' : ratio>1 ? 'החוב גבוה ביחס להכנסה, ולכן נתחיל באיפוס פיננסי מעמיק' : 'החוב משמעותי אבל ניתן לטיפול, וזו נקודת פתיחה טובה לנתיב המלא';
+  $('plan').innerHTML = `<h4>✦ התוכנית הראשונית שלכם</h4><ol>
+    <li><b>חודש של נשימה (חינמי):</b> גישה לבוטים, שיחת בהירות, ופתיחת תיק קריסטל.</li>
+    <li><b>אבחון עומק:</b> ${gate}.</li>
+    ${debt>=20000?`<li><b>איפוס פיננסי:</b> בחוב צרכני ממוצע של 12%, ההחזר על ${SG.ils(debt)} הוא כ־${SG.ils(p1)} בחודש. ${hish?`עם הלוואה כנגד השתלמות והלוואת שפע הוא עשוי לרדת לכ־<b>${SG.ils(p2)}</b>, בלי לגעת בפנסיה.`:'במודל הבטוח, עם הלוואת שפע ב־0%, ההחזר יכול לרדת משמעותית, בלי לגעת בפנסיה.'}</li>`:''}
+    <li><b>העצמה:</b> SHEFA OS אישי, ויעד של +30% הכנסה תוך 6 חודשים.</li>
+    <li><b>נתינה:</b> ${picked('areas')[0]||'תחום שתבחרו'}, לפחות 4 שעות בחודש${picked('skills').length?`, דרך ה${picked('skills').slice(0,2).join(' וה')} שלכם`:''}.</li></ol>
+    <p style="font-size:.8rem;color:rgba(243,233,210,.55);margin-top:.6rem">חישוב להמחשה בלבד, לא ייעוץ פיננסי. ההחלטות מתקבלות בשיחה ובייעוץ מורשה.</p>`;
+  const L=(k,v)=>`<div class="ln"><span>${k}</span><b>${v||'—'}</b></div>`;
+  $('sum').innerHTML = `<h4>הפרטים שמסרתם</h4>${L('שם',$('name').value)}${L('טלפון',$('phone').value)}${L('אימייל',$('email').value)}${L('עיר',$('city').value)}${L('הכנסה',SG.ils(inc))}${L('חובות',SG.ils(debt))}${exp?L('הוצאות',SG.ils(exp)):''}${L('תחושת שליטה',control+'/10')}${L('כישורים',picked('skills').join(', '))}${L('זכויות',picked('rights').join(', '))}${L('זמינות',$('hours').value+' שעות בחודש')}`;
 }
 </script>
 </body>
