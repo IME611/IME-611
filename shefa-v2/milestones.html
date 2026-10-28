@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>אבני הדרך | שפע גלובל</title>
+<meta name="description" content="תשע אבני דרך, מהיסוד המשפטי ועד סגירת החוב הראשונה.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Cpolygon points='48,4 88,26 88,70 48,92 8,70 8,26' fill='%23FAF6EE' stroke='%23B8860B' stroke-width='6'/%3E%3Ccircle cx='48' cy='48' r='12' fill='%23C9961A'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=Assistant:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shefa.css">
+<style>
+.series-nav{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:1.2rem}
+.series-nav a{font-family:Heebo;font-size:.82rem;font-weight:600;padding:.5rem 1rem;border-radius:2rem;border:1px solid var(--line);color:var(--ink-mid)}
+.series-nav a.on{background:var(--gold);color:#fff;border-color:var(--gold)}
+.overall{display:flex;align-items:center;gap:1rem;background:var(--ivory);border:1px solid var(--line);border-radius:var(--r-lg);padding:1.2rem 1.4rem;margin-top:1.2rem}
+.overall .big{font-family:Heebo;font-weight:800;font-size:1.5rem}
+.overall .lbl{font-size:.85rem;color:var(--ink-dim)}
+.bar-track{height:7px;border-radius:5px;background:var(--gold-xss);margin-top:.5rem;overflow:hidden}
+.bar-fill{height:100%;background:var(--gold);border-radius:5px;transition:width .3s ease;width:0%}
+.reset-btn{font-family:Assistant;font-size:.78rem;color:var(--ink-faint);background:none;border:1px solid var(--line);border-radius:8px;padding:.4rem .8rem;cursor:pointer;white-space:nowrap}
+.phase{margin-top:1rem;background:var(--ivory);border:1px solid var(--line);border-radius:var(--r-lg);overflow:hidden}
+.phase-head{display:flex;align-items:center;gap:.9rem;padding:1.1rem 1.3rem;cursor:pointer;user-select:none}
+.phase-num{flex-shrink:0;width:34px;height:34px;border-radius:50%;background:var(--gold-xss);color:var(--gold);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.9rem;font-family:Heebo}
+.phase-title{flex:1;min-width:0}
+.phase-title h2{margin:0;font-size:1.05rem;font-weight:700}
+.phase-title p{margin:.15rem 0 0;font-size:.82rem;color:var(--ink-dim)}
+.phase-count{font-family:Heebo;font-size:.82rem;font-weight:700;color:var(--gold);white-space:nowrap}
+.chev{flex-shrink:0;width:16px;height:16px;color:var(--ink-faint);transition:transform .2s ease}
+.phase.open .chev{transform:rotate(180deg)}
+.phase-bar{height:3px;background:var(--line)}
+.phase-bar-fill{height:100%;background:var(--green,#3F7A4E);width:0%;transition:width .3s ease}
+.phase-body{display:none;border-top:1px solid var(--line)}
+.phase.open .phase-body{display:block}
+.item{display:flex;gap:.7rem;align-items:flex-start;padding:.75rem 1.3rem;border-bottom:1px solid var(--line)}
+.item:last-child{border-bottom:none}
+.item input[type=checkbox]{flex-shrink:0;width:19px;height:19px;margin-top:1px;accent-color:#3F7A4E;cursor:pointer}
+.item label{flex:1;min-width:0;font-size:.92rem;line-height:1.45;cursor:pointer}
+.item .note{display:block;font-family:Assistant;font-size:.8rem;color:var(--ink-dim);margin-top:.15rem}
+.item.done label{color:var(--ink-faint);text-decoration:line-through}
+.item .pill{flex-shrink:0;font-family:Assistant;font-size:.72rem;font-weight:600;color:var(--gold);background:var(--gold-xss);padding:.1rem .5rem;border-radius:10px;white-space:nowrap;margin-top:1px}
+</style>
+</head>
+<body data-area="founder">
+<main>
+
+<header class="page-hero">
+  <p class="crumbs"><a href="founder.html">לוח המייסד</a> › מודל להשקעה › אבני הדרך</p>
+  <p class="eyebrow">3 · מפת הביצוע המלאה</p>
+  <h1 class="h-xl">תשע אבני דרך.<br><span class="gold">מה אפשר לסמן, ומה עוד פתוח.</span></h1>
+  <p class="lead">מהיסוד המשפטי ועד הרחבה. כולל אתר, שיווק, CRM וגיוס אנשים. כל שורה אפשר לסמן כשהיא נסגרת — הסימונים נשמרים בדפדפן הזה בלבד.</p>
+  <div class="series-nav"><a href="market.html">1 · סקירת השוק</a><a href="journey.html">2 · מסע הלקוח</a><a href="milestones.html" class="on">3 · אבני הדרך</a></div>
+</header>
+
+<section>
+  <div class="wrap">
+    <div class="overall">
+      <div style="flex:1;min-width:0">
+        <div class="big" id="overallPct">0%</div>
+        <div class="lbl" id="overallLabel">0 מתוך 0 הושלמו</div>
+        <div class="bar-track"><div class="bar-fill" id="overallBar"></div></div>
+      </div>
+      <button class="reset-btn" id="resetBtn">איפוס הסימונים</button>
+    </div>
+    <div id="phases"></div>
+  </div>
+</section>
+
+<nav class="next-chapter" aria-label="פרקים">
+  <a href="journey.html"><small>→ הפרק הקודם</small><b>מסע הלקוח</b></a>
+  <a href="founder.html" class="fwd"><small>חזרה ←</small><b>לוח המייסד</b></a>
+</nav>
+</main>
+<script src="shefa.js"></script>
+<script>
+const PHASES = [
+{title:"יסוד משפטי וחשבונאי", sub:"לפני שמדברים עם אף אחד בחוץ", items:[
+  {t:"עורך דין ורו״ח מקבלים את התיק שהוכן ומתחילים לעבור על השאלות", note:"התיק כבר קיים ומוכן להעברה"},
+  {t:"החלטה: מבנה עצמאי (עמותה/חל״צ) מול אימוץ תחת עמותה קיימת", note:"תלוי בתשובת עוגן/פעמונים בשלב 2", pill:"החלטה מפתח"},
+  {t:"בדיקת רישוי קרן הלוואות מול חוק הגמ״חים וחוק השירותים הפיננסיים", pill:"חוסם פיילוט"},
+  {t:"בירור מעמד הבטוחה על קרן השתלמות/גמל מול סעיף 25", pill:"חוסם פיילוט"},
+  {t:"בדיקת הסיכון התעסוקתי בשעות-נתינה-לפי-חוב מול דיני עבודה", pill:"חוסם פיילוט"},
+  {t:"ניסוח סופי: הסכם ערכים, תנאי הלוואה, מכתב התחייבות לנתינה, הודעת פרטיות"},
+]},
+{title:"שיתופי פעולה שמחליפים הקמה מאפס", sub:"במקום לבנות קרן הלוואות ורישוי בעצמך", items:[
+  {t:"פנייה לעוגן: הצעת שפע גלובל כשכבת נתינה שמתלווה למודל ההלוואות שלהם"},
+  {t:"פנייה לפעמונים: בדיקת שת״פ על צד הליווי הכלכלי וההכוונה"},
+  {t:"בדיקת עמותה מארחת לאימוץ שפע גלובל כתוכנית בתוך מסגרת משפטית קיימת"},
+  {t:"30 דקות עם תומר דיארי (Aleph): ביקורת כנה על המודל, לא גיוס כסף", note:"רק כשתרגיש מוכן"},
+  {t:"מיפוי 3–5 עמותות קולטות נתינה וסגירת הסכמי שיתוף ראשוניים"},
+]},
+{title:"האתר הדיגיטלי", sub:"shefa.ime611.com", items:[
+  {t:"עמוד נחיתה ציבורי חי: הצעת הערך, בדיקת התאמה, רישום", note:"גרסה 2 כבר באוויר"},
+  {t:"תהליך רישום מלא: שאלון, מחשבון נתינה, בחירת מועד לשיחה"},
+  {t:"אזור מייסד/מנהל נפרד מהציבור, עם תיעוד החלטות ועדכון שוטף", note:"כבר קיים — האזור הזה"},
+  {t:"עדכון האתר בכל שינוי מהותי במודל"},
+]},
+{title:"CRM ותהליך עבודה", sub:"בלי זה, כל משפחה שלישית נופלת בין הכיסאות", items:[
+  {t:"בחירת מערכת CRM (HubSpot / Airtable / Monday) להרשמות, שיחות ומעקב החזרים"},
+  {t:"הגדרת צנרת לפי שלבי המסע: פנייה → מיון → בדיקת כשירות → חתימה → ליווי → סגירה"},
+  {t:"חיבור טופס האתר ל-CRM אוטומטית, בלי העתקה ידנית"},
+  {t:"לוח מעקב נתינה: שעות מתוכננות מול שעות שבוצעו, לכל משפחה"},
+  {t:"תזכורות אוטומטיות לשיחות מעקב רבעוניות"},
+]},
+{title:"שיווק וגיוס משפחות", sub:"מי שומע על שפע גלובל, ואיך הוא מגיע", items:[
+  {t:"ניסוח מסרים ציבוריים: אחדות, שפע, ערבות הדדית — בלי אזכור של \"בורא\""},
+  {t:"ערוץ הפצה ראשון: עמותות שותפות, רשתות חברתיות קהילתיות, הפניות אישיות"},
+  {t:"חומר הסברה לעמותות קולטות הנתינה"},
+  {t:"עמוד/חוברת למשפחות על מה לצפות בשיחת ההיכרות"},
+]},
+{title:"גיוס אנשים", sub:"מי שעושה את זה איתך, לא לבד", items:[
+  {t:"מתנדב/ת או שכיר/ה ראשון/ה לליווי כלכלי (או שת״פ עם פעמונים לתפקיד הזה)"},
+  {t:"איש קשר קבוע מול כל עמותה קולטת נתינה"},
+  {t:"מי שמריץ את ה-CRM והמעקב השוטף אחרי משפחות"},
+  {t:"עורך דין ורו״ח בליווי שוטף, לא רק לבדיקה הראשונית"},
+]},
+{title:"הפיילוט — מהפנייה ועד סגירת החוב", sub:"המשפחה הראשונה. 2–3 משפחות, עד 50 אלף ש״ח", items:[
+  {t:"פנייה והתעניינות דרך האתר"},
+  {t:"שיחת היכרות ובדיקת כשירות (עו״ד/רו״ח)"},
+  {t:"חתימה על הסכם הערכים ותנאי ההלוואה/ליווי"},
+  {t:"12 שבועות ליווי צמוד + מעקב חודשי"},
+  {t:"שעות נתינה ראשונות מתבצעות בעמותה קולטת"},
+  {t:"מעקב רבעוני: עמידה בהחזרים ובנתינה"},
+  {t:"סגירת החוב המלאה של המשפחה הראשונה", pill:"רגע האמת"},
+  {t:"תיעוד הסיפור האמיתי לשימוש בגיוס הבא"},
+]},
+{title:"מעבר לקנה מידה", sub:"רק אחרי שהפיילוט הוכיח את עצמו", items:[
+  {t:"זרע הון: גיוס 250 אלף ש״ח תפעול + 300 אלף ש״ח לקרן ההלוואות"},
+  {t:"5–10 משפחות נוספות, עם תהליך CRM ושיווק שכבר רצים"},
+  {t:"הרחבת רשימת העמותות הקולטות נתינה"},
+  {t:"גיבוש מדיניות קבועה למדרגות הנתינה לפי ביצועים"},
+]},
+{title:"הרחבה והמשך", sub:"אחרי שהמודל רץ יציב בישראל", items:[
+  {t:"40–100 משפחות, עם צוות קבוע ותהליכים כתובים"},
+  {t:"בחינת שכפול המודל במדינה נוספת, רק עם שותף מקומי מוכר שטח"},
+  {t:"עדכון שנתי של התיק המשפטי/חשבונאי מול שינויי חקיקה"},
+]},
+];
+const STORAGE_KEY = "shefa_milestones_v1";
+let state = {};
+try { state = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}"); } catch(e) { state = {}; }
+function save(){ try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {} }
+const phasesEl = document.getElementById('phases');
+PHASES.forEach((phase, pi) => {
+  const phaseEl = document.createElement('div');
+  phaseEl.className = 'phase'; if (pi === 0) phaseEl.classList.add('open');
+  const head = document.createElement('div'); head.className = 'phase-head';
+  head.innerHTML = `<div class="phase-num">${pi+1}</div><div class="phase-title"><h2>${phase.title}</h2><p>${phase.sub}</p></div><div class="phase-count" data-count></div><svg class="chev" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  head.addEventListener('click', () => phaseEl.classList.toggle('open'));
+  const bar = document.createElement('div'); bar.className = 'phase-bar';
+  const barFill = document.createElement('div'); barFill.className = 'phase-bar-fill'; bar.appendChild(barFill);
+  const body = document.createElement('div'); body.className = 'phase-body';
+  phase.items.forEach((item, ii) => {
+    const id = `p${pi}_i${ii}`;
+    const row = document.createElement('div'); row.className = 'item';
+    row.innerHTML = `<input type="checkbox" id="${id}"><label for="${id}">${item.t}${item.note ? `<span class="note">${item.note}</span>` : ''}</label>${item.pill ? `<span class="pill">${item.pill}</span>` : ''}`;
+    const cb = row.querySelector('input');
+    cb.checked = !!state[id];
+    if (cb.checked) row.classList.add('done');
+    cb.addEventListener('change', () => { state[id] = cb.checked; row.classList.toggle('done', cb.checked); save(); updateCounts(); });
+    body.appendChild(row);
+  });
+  phaseEl.appendChild(head); phaseEl.appendChild(bar); phaseEl.appendChild(body);
+  phasesEl.appendChild(phaseEl);
+});
+function updateCounts(){
+  let grandTotal = 0, grandDone = 0;
+  document.querySelectorAll('.phase').forEach(phaseEl => {
+    const boxes = phaseEl.querySelectorAll('input[type=checkbox]');
+    const checked = phaseEl.querySelectorAll('input[type=checkbox]:checked');
+    phaseEl.querySelector('[data-count]').textContent = `${checked.length}/${boxes.length}`;
+    phaseEl.querySelector('.phase-bar-fill').style.width = boxes.length ? (checked.length/boxes.length*100)+'%' : '0%';
+    grandTotal += boxes.length; grandDone += checked.length;
+  });
+  const pct = grandTotal ? Math.round(grandDone/grandTotal*100) : 0;
+  document.getElementById('overallPct').textContent = pct + '%';
+  document.getElementById('overallLabel').textContent = `${grandDone} מתוך ${grandTotal} הושלמו`;
+  document.getElementById('overallBar').style.width = pct + '%';
+}
+updateCounts();
+document.getElementById('resetBtn').addEventListener('click', () => {
+  state = {}; save();
+  document.querySelectorAll('input[type=checkbox]').forEach(cb => { cb.checked = false; cb.closest('.item').classList.remove('done'); });
+  updateCounts();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>מסע המשפחה | שפע גלובל</title>
+<meta name="description" content="שבעה שלבים, מהפנייה הראשונה ועד סגירת החוב.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Cpolygon points='48,4 88,26 88,70 48,92 8,70 8,26' fill='%23FAF6EE' stroke='%23B8860B' stroke-width='6'/%3E%3Ccircle cx='48' cy='48' r='12' fill='%23C9961A'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=Assistant:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shefa.css">
+<style>
+.series-nav{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:1.2rem}
+.series-nav a{font-family:Heebo;font-size:.82rem;font-weight:600;padding:.5rem 1rem;border-radius:2rem;border:1px solid var(--line);color:var(--ink-mid)}
+.series-nav a.on{background:var(--gold);color:#fff;border-color:var(--gold)}
+.jflow{display:flex;flex-direction:row-reverse;gap:0;align-items:stretch;margin-top:1rem}
+.jstep{flex:1;min-width:0;background:var(--ivory);border:1px solid var(--line);border-radius:var(--r);padding:1.4rem 1.1rem;display:flex;flex-direction:column;gap:.5rem;position:relative}
+.jstep .num{width:32px;height:32px;border-radius:50%;background:var(--gold-xss);color:var(--gold);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.9rem;font-family:Heebo}
+.jstep h3{margin:0;font-size:1rem;font-weight:700}
+.jstep p{margin:0;font-size:.85rem;color:var(--ink-mid);line-height:1.5}
+.jstep .tag{font-size:.74rem;color:var(--gold);font-weight:700;font-family:Heebo;letter-spacing:.04em}
+.jconn{flex:0 0 28px;display:flex;align-items:center;justify-content:center;color:var(--line)}
+.jconn svg{width:20px;height:20px;transform:scaleX(-1)}
+.closer{margin-top:1.6rem;text-align:center;background:var(--gold-xss);border-radius:var(--r-lg);padding:1.6rem}
+.closer p{margin:0;font-size:.95rem;color:var(--ink)}
+@media(max-width:900px){.jflow{flex-direction:column;gap:1rem}.jconn{flex-direction:row;transform:rotate(90deg);height:0;margin:-.3rem 0}}
+</style>
+</head>
+<body data-area="founder">
+<main>
+
+<header class="page-hero">
+  <p class="crumbs"><a href="founder.html">לוח המייסד</a> › מודל להשקעה › מסע הלקוח</p>
+  <p class="eyebrow">2 · מהרגע שהוא מגיע עד שהוא סוגר את החוב</p>
+  <h1 class="h-xl">שבעה שלבים.<br><span class="gold">אין קפיצה בלי אימות.</span></h1>
+  <p class="lead">זה המסע שכל משפחה עוברת. הליווי הכלכלי והנתינה לקהילה הם אותו הסכם, לא שני מסלולים נפרדים — מי שעוצר באחד, עוצר בשניהם.</p>
+  <div class="series-nav"><a href="market.html">1 · סקירת השוק</a><a href="journey.html" class="on">2 · מסע הלקוח</a><a href="milestones.html">3 · אבני הדרך</a></div>
+</header>
+
+<section>
+  <div class="wrap">
+    <div class="jflow" id="flow"></div>
+    <div class="closer"><p><b>לאורך כל הדרך:</b> הליווי הכלכלי והנתינה לקהילה נחתמים יחד בשיחה הראשונה, לפני שמתחילים. אם קורה משבר אמיתי — מקפיאים את שניהם יחד.</p></div>
+  </div>
+</section>
+
+<nav class="next-chapter" aria-label="פרקים">
+  <a href="market.html"><small>→ הפרק הקודם</small><b>סקירת השוק</b></a>
+  <a href="milestones.html" class="fwd"><small>הפרק הבא ←</small><b>אבני הדרך</b></a>
+</nav>
+</main>
+<script src="shefa.js"></script>
+<script>
+const steps = [
+  {n:1, tag:'כניסה', t:'פנייה והתעניינות', d:'מגיע דרך האתר או הפניה. ממלא טופס קצר: מצב חוב, גודל משפחה, והבנה שנתינה היא חלק מהעסקה.'},
+  {n:2, tag:'מיון', t:'שיחת היכרות', d:'שיחה עם נציג. כאן, לא קודם, עולים הפרטים הכלכליים המלאים ודרישת הביטחונות.'},
+  {n:3, tag:'התאמה', t:'בדיקת כשירות', d:'בדיקת עו"ד ורו"ח פנימית: נכס בסיס, יציבות תעסוקתית, מוכנות אמיתית. מי שלא מתאים — לרשימת המתנה.'},
+  {n:4, tag:'חתימה', t:'הסכם ערכים והלוואה', d:'חתימה כפולה: תנאי ההלוואה ב-0% ריבית, ומכתב התחייבות לנתינה. שניהם באותו מעמד.'},
+  {n:5, tag:'ליווי', t:'12 שבועות + מעקב חודשי', d:'ליווי כלכלי צמוד, ובמקביל שעות נתינה קהילתית לפי מחשבון הנתינה.'},
+  {n:6, tag:'התקדמות', t:'עמידה ביעדים', d:'מעקב רבעוני. עמידה בהחזרים ובנתינה פותחת מדרגת נתינה גבוהה ומקצרת את משך המחויבות.'},
+  {n:7, tag:'סגירה', t:'סגירת החוב', d:'ההלוואה נפרעה במלואה, חוזרת לקרן למען המשפחה הבאה. המשפחה הופכת לשגרירה בקהילה.'},
+];
+const flow = document.getElementById('flow');
+steps.forEach((s,i)=>{
+  if(i>0){
+    const c=document.createElement('div'); c.className='jconn';
+    c.innerHTML='<svg viewBox="0 0 24 24" fill="none"><path d="M4 12h16m0 0-5-5m5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    flow.appendChild(c);
+  }
+  const el=document.createElement('div'); el.className='jstep';
+  el.innerHTML=`<div class="num">${s.n}</div><div class="tag">${s.tag}</div><h3>${s.t}</h3><p>${s.d}</p>`;
+  flow.appendChild(el);
+});
+</script>
+</body>
+</html>
