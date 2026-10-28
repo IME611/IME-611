@@ -3,11 +3,12 @@
   const MARK = '<svg class="brand-mark" viewBox="0 0 96 96" fill="none" aria-hidden="true"><polygon points="48,4 88,26 88,70 48,92 8,70 8,26" fill="rgba(184,134,11,.08)" stroke="#B8860B" stroke-width="3"/><polygon points="48,24 68,35 68,61 48,72 28,61 28,35" fill="rgba(232,192,96,.18)" stroke="#C9961A" stroke-width="3"/><circle cx="48" cy="48" r="7" fill="#C9961A"/></svg>';
   const FOUNDER = document.body && document.body.dataset.area === 'founder';
   const here = (location.pathname.split('/').pop() || 'index.html').replace(/^$/,'index.html');
+  const hereNoExt = here.replace(/\.html$/,''); // Cloudflare Pages clean URLs drop .html — normalize before comparing in the gate check
 
   // ── founder gate (cosmetic, client-side only) ──
   const KEY='shefa_founder_ok';
   function unlocked(){ try{ return localStorage.getItem(KEY)==='1' || sessionStorage.getItem(KEY)==='1'; }catch(e){ return true; } }
-  if(FOUNDER && here!=='founder.html' && !unlocked()){ location.replace('founder.html'); return; }
+  if(FOUNDER && hereNoExt!=='founder' && !unlocked()){ location.replace('founder.html'); return; }
   window.SG_unlock = function(){ try{ localStorage.setItem(KEY,'1'); }catch(e){ try{ sessionStorage.setItem(KEY,'1'); }catch(e2){} } };
   window.SG_lock = function(){ try{ localStorage.removeItem(KEY); sessionStorage.removeItem(KEY); }catch(e){} };
   window.SG_isUnlocked = unlocked;
@@ -40,8 +41,8 @@
 
   function navHTML(){
     const li = NAV.map(n=>{
-      if(n.href) return `<li><a href="${n.href}" class="${here===n.href?'active':''}">${n.t}</a></li>`;
-      const act = n.items.some(i=>i.href===here);
+      if(n.href) return `<li><a href="${n.href}" class="${hereNoExt===n.href.replace(/\.html$/,'')?'active':''}">${n.t}</a></li>`;
+      const act = n.items.some(i=>i.href.replace(/\.html$/,'')===hereNoExt);
       return `<li><button class="dd ${act?'active':''}" aria-haspopup="true">${n.t} ▾</button><div class="menu">${n.items.map(i=>`<a href="${i.href}">${i.t}<span>${i.d}</span></a>`).join('')}</div></li>`;
     }).join('');
     const brandHref = FOUNDER ? 'founder.html' : 'index.html';
