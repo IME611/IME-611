@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>תוכנית ההפעלה | שפע גלובל</title>
+<meta name="description" content="שני מסלולים מקבילים להפעלה, תקדים אמיתי, ולו״ז שלבים מהיום ועד ההשקה.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Cpolygon points='48,4 88,26 88,70 48,92 8,70 8,26' fill='%23FAF6EE' stroke='%23B8860B' stroke-width='6'/%3E%3Ccircle cx='48' cy='48' r='12' fill='%23C9961A'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=Assistant:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shefa.css?v=2">
+<style>
+.series-nav{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:1.2rem}
+.series-nav a{font-family:Heebo;font-size:.82rem;font-weight:600;padding:.5rem 1rem;border-radius:2rem;border:1px solid var(--line);color:var(--ink-mid)}
+.series-nav a.on{background:var(--gold);color:#fff;border-color:var(--gold)}
+
+/* two tracks */
+.tracks{display:grid;grid-template-columns:1fr 1fr;gap:1.4rem;align-items:start}
+.track{border-radius:var(--r-lg);padding:1.6rem;border:1px solid var(--line)}
+.track.trust{background:var(--night);color:#F3E9D2;border-color:transparent}
+.track.proof{background:var(--ivory)}
+.track .tag{font-family:Heebo;font-size:.74rem;letter-spacing:.1em;font-weight:700}
+.track.trust .tag{color:var(--gold-lt)}
+.track.proof .tag{color:var(--gold)}
+.track h3{font-size:1.25rem;margin:.3rem 0 .5rem}
+.track.trust h3{color:#FBF3DF}
+.track p.d{font-size:.9rem;line-height:1.6;margin:0 0 1rem}
+.track.trust p.d{color:rgba(243,233,210,.8)}
+.track.proof p.d{color:var(--ink-mid)}
+.tstep{display:flex;gap:.7rem;padding:.6rem 0;border-top:1px solid rgba(255,255,255,.08);font-size:.87rem}
+.track.proof .tstep{border-top:1px solid var(--line)}
+.tstep:first-of-type{border-top:none}
+.tstep .tn{flex-shrink:0;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:Heebo;font-weight:800;font-size:.78rem}
+.track.trust .tn{background:rgba(232,192,96,.18);color:var(--gold-lt)}
+.track.proof .tn{background:var(--gold-xss);color:var(--gold)}
+.tstep b{display:block;margin-bottom:.1rem}
+.track.trust .tstep b{color:#FBF3DF}
+.track.proof .tstep b{color:var(--ink)}
+.tstep span.sub{color:inherit;opacity:.75}
+.converge{margin-top:1.2rem;text-align:center;background:var(--gold-xss);border-radius:var(--r-lg);padding:1.3rem 1.6rem}
+.converge p{margin:0;font-size:.92rem;color:var(--ink)}
+@media(max-width:860px){.tracks{grid-template-columns:1fr}}
+
+/* precedent */
+.proof-cards{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem}
+.proof-card{background:var(--ivory);border:1px solid var(--line);border-radius:var(--r-lg);padding:1.5rem}
+.proof-card .geo{font-family:Heebo;font-size:.74rem;letter-spacing:.1em;color:var(--gold);font-weight:700}
+.proof-card h3{margin:.3rem 0 .6rem;font-size:1.15rem}
+.proof-card ul{margin:.6rem 0 0;padding-right:1.1rem;font-size:.88rem;color:var(--ink-mid);line-height:1.6}
+.proof-card a.src{display:inline-block;margin-top:.8rem;font-size:.8rem;color:var(--gold)}
+@media(max-width:800px){.proof-cards{grid-template-columns:1fr}}
+
+/* roadmap */
+.tbl-wrap{overflow-x:auto}
+.compare{width:100%;border-collapse:collapse;font-size:.88rem}
+.compare th,.compare td{padding:.7rem .8rem;border-bottom:1px solid var(--line);text-align:right;vertical-align:top}
+.compare th{font-family:Heebo;font-weight:700;color:var(--gold);background:var(--pearl);white-space:nowrap}
+.compare td.hl{font-weight:700;color:var(--ink)}
+.compare tr:last-child td{border-bottom:none}
+.fit{display:inline-block;font-family:Heebo;font-size:.72rem;font-weight:700;padding:.15rem .6rem;border-radius:1rem;white-space:nowrap}
+.fit.done{background:#e3f0e4;color:#2f6b3a}
+.fit.wip{background:var(--gold-xss);color:var(--gold)}
+.fit.todo{background:#fde8e0;color:#a4432a}
+
+.rec-box{background:var(--night);border-radius:var(--r-lg);padding:2rem;color:#F3E9D2}
+.rec-box h3{color:#FBF3DF;font-size:1.3rem;margin:0 0 .8rem}
+.rec-box ol{margin:0;padding-right:1.3rem;color:rgba(243,233,210,.85);line-height:1.8}
+.rec-box li b{color:var(--gold-lt)}
+
+.bottleneck{background:var(--gold-xss);border-radius:var(--r);padding:1.3rem 1.5rem;border-right:3px solid var(--gold)}
+.bottleneck b{color:var(--gold)}
+
+@media(max-width:800px){.compare{display:block;overflow-x:auto}}
+</style>
+</head>
+<body data-area="founder">
+<main>
+
+<header class="page-hero">
+  <p class="crumbs"><a href="founder.html">לוח המייסד</a> › מודל להשקעה › תוכנית ההפעלה</p>
+  <p class="eyebrow">5 · מהחזון להשקה — שני מסלולים, לא אחד</p>
+  <h1 class="h-xl">לא בוחרים בין אמון להוכחה.<br><span class="gold">מריצים את שניהם במקביל.</span></h1>
+  <p class="lead">ניתוח מלא של כל מה שנבנה באזור המייסד עד כה, מתורגם לתוכנית פעולה אחת: מסלול האמון (פנייה לגורם מאמין על בסיס החזון המלא) ומסלול ההוכחה (אתה כפיילוט #1) — רצים זה לצד זה, לא אחד לפני השני.</p>
+  <div class="series-nav"><a href="market.html">1 · סקירת השוק</a><a href="journey.html">2 · מסע הלקוח</a><a href="milestones.html">3 · אבני הדרך</a><a href="funding-model.html">4 · מודל המימון</a><a href="launch-plan.html" class="on">5 · תוכנית ההפעלה</a></div>
+</header>
+
+<section>
+  <div class="wrap">
+    <div class="center narrow mb-2"><p class="eyebrow">העיקרון</p><h2 class="h-l">שני מסלולים, לא שתי אפשרויות סותרות</h2>
+      <p class="lead">מסלול ההוכחה בודק את המודל על הקרקע. מסלול האמון מגייס את הכסף שמייתר את הצורך לחכות לתוצאה כדי להתחיל. הם לא מתחרים על אותו משאב — אפשר (וצריך) להריץ את שניהם מהיום הראשון.</p></div>
+
+    <div class="tracks">
+      <div class="track trust">
+        <p class="tag">מסלול A · אמון</p>
+        <h3>פנייה לגורם מאמין, על בסיס החזון המלא</h3>
+        <p class="d">לא "תן לי כסף ואראה לך תוצאות". אלא: הצגה מלאה של המערכת כולה — חזון, תוכנית פעולה, בוטים, תהליך A-עד-Z, עו"ד, רו"ח, מודל רווח, תפעול, עמותות קולטות שכבר מחוברות — למישהו שמאמין בראייה, לא רק במספרים. זה מודל הגיוס שכנפיים של קרמבו ולתת כבר הוכיחו שעובד בישראל (ראו תקדים בהמשך).</p>
+        <div class="tstep"><div class="tn">1</div><div><b>בניית חומר ה-pitch המלא</b><br><span class="sub">מצגת אחת שמחברת את כל מה שבנוי: שוק (פרק 1), מסע לקוח (פרק 2), אבני דרך (פרק 3), מודל מימון (פרק 4) — לכלל סיפור אחד, קוהרנטי, הניתן להצגה תוך 20 דקות</span></div></div>
+        <div class="tstep"><div class="tn">2</div><div><b>רשימת מועמדים ממוקדת</b><br><span class="sub">לא "כל עשיר" — אדם אחד שמכיר אותך ושיש לו זיקה לנושא (למשל תומר דיארי), ובמקביל רשימה קטנה של 5–10 תורמים פוטנציאליים נוספים לגיוס מבוזר</span></div></div>
+        <div class="tstep"><div class="tn">3</div><div><b>הצגה אחת-על-אחת (לא "שארק טנק" פומבי בשלב זה)</b><br><span class="sub">פגישה אישית, המצגת המלאה, בקשה מפורשת: 100–200 אלף ש״ח כמענק (לא הלוואה) שמקים את קרן ההלוואות התפעולית</span></div></div>
+        <div class="tstep"><div class="tn">4</div><div><b>אם מצליח: הקרן קמה ישר</b><br><span class="sub">אין צורך להמתין לתוצאה של פיילוט #1 — אפשר להתחיל לקבל משפחות אמיתיות ברגע שיש הסכם עם עוגן + כסף</span></div></div>
+      </div>
+
+      <div class="track proof">
+        <p class="tag">מסלול B · הוכחה</p>
+        <h3>אתה, כפיילוט #1, דרך מסלול "זריחה" של עוגן</h3>
+        <p class="d">גרסה אמיתית ולא מודגמת של המערכת: עובר את התהליך על עצמך, 0% ריבית, עד 30,000 ש״ח, מתעד כל שלב. גם אם מסלול A מצליח מהר, מסלול B נותן את הסיפור האמיתי הראשון להציג למשקיעים הבאים ולמשפחות הבאות.</p>
+        <div class="tstep"><div class="tn">1</div><div><b>בדיקת זכאות ומציאת ערב</b><br><span class="sub">הכנסה נטו בטווח 3,000–22,000 ש״ח, ואדם אחד שמוכן לערוב — זה הצוואר-בקבוק האמיתי היחיד במסלול הזה</span></div></div>
+        <div class="tstep"><div class="tn">2</div><div><b>הגשה וחתימה בעוגן</b><br><span class="sub">מילוי בפועל, הגשה, חתימה — הצעד שרק אתה יכול לבצע</span></div></div>
+        <div class="tstep"><div class="tn">3</div><div><b>לוח בקרה אמיתי (לא דמו)</b><br><span class="sub">גרסה של dashboard.html עם המספרים האמיתיים שלך — חוב, החזרים, שעות נתינה — לא נתוני הדגמה</span></div></div>
+        <div class="tstep"><div class="tn">4</div><div><b>תיעוד פומבי של המסע</b><br><span class="sub">עמוד באזור המייסד שמתעד חודש-אחר-חודש — זה החומר שמסלול A ישתמש בו בפנייה השנייה והשלישית</span></div></div>
+      </div>
+    </div>
+
+    <div class="converge"><p><b>הנקודה שבה שני המסלולים נפגשים:</b> גם אם מסלול A מצליח תוך שבועות, פיילוט #1 (מסלול B) הוא מה שהופך את ההצגה הבאה מ"חזון שיתבצע" ל"מודל שכבר עבד". כל תורם שני ואילך — כולל תורמים מבוזרים בסגנון קמפיין קרמבו/לתת — ירצה לראות תוצאה, לא רק שקפים.</p></div>
+  </div>
+</section>
+
+<section class="bg-pearl edge-top">
+  <div class="wrap">
+    <div class="center narrow mb-2"><p class="eyebrow">זה כבר קרה בישראל</p><h2 class="h-l">תקדים אמיתי לגיוס תרומות בסדר גודל הזה</h2>
+      <p class="lead">בדקתי את שתי העמותות שהזכרת. המספרים האמיתיים — לא הטענה שלך בלבד.</p></div>
+    <div class="proof-cards">
+      <div class="proof-card">
+        <p class="geo">ישראל · עמותה לילדים ובני נוער עם מוגבלויות</p>
+        <h3>כנפיים של קרמבו</h3>
+        <ul>
+          <li>קמפיין תרומות יחיד שגייס <b>מעל 6 מיליון ש״ח</b></li>
+          <li>שותפות עם בנק הפועלים כגוף מוביל בקמפיין</li>
+          <li>שידור/חשיפה בערוץ 12, ערוץ תרומה דרך אפליקציית bit</li>
+          <li>מודל: גוף מסחרי גדול אחד + חשיפה תקשורתית + ערוץ תרומה דיגיטלי המוני</li>
+        </ul>
+        <a class="src" href="https://www.hon.co.il/?p=221813" target="_blank">המקור ↗</a>
+      </div>
+      <div class="proof-card">
+        <p class="geo">ישראל · עמותה לביטחון תזונתי</p>
+        <h3>לתת</h3>
+        <ul>
+          <li>אחת מעמותות החילוץ/הסיוע הגדולות בישראל, פועלת כ-25 שנה</li>
+          <li>תקציב שנתי נמדד בעשרות מיליוני ש״ח, ממומן משילוב תרומות פרטיות, גופים מסחריים, וקרנות</li>
+          <li>בנתה את עצמה בהדרגה ממודל תרומות קהילתי למודל תאגידי-פילנתרופי מלא</li>
+          <li class="gap" style="color:var(--ink-faint);font-size:.82rem">* לא נמצא פירוק מדויק של תרומה ממוצעת/תורם בודד במקורות שנבדקו — הנתון הזה דורש אימות ישיר מול העמותה אם רלוונטי לפיץ'</li>
+        </ul>
+      </div>
+    </div>
+    <p style="margin-top:1.2rem;font-size:.85rem;color:var(--ink-faint)">המסקנה: גיוס תרומות בסדר גודל של מאות אלפי ש״ח — ואף מיליונים — מגורם אחד או קבוצה קטנה של תורמים, הוא מודל מוכר ומוכח בשוק הנתינה הישראלי. ההבדל בין שפע גלובל לשתי העמותות האלה הוא <b>שלב</b>: הן מגייסות על בסיס שנים של פעילות מוכחת; שפע גלובל עדיין בשלב ה-pitch הראשון. זה בדיוק למה מסלול A (אמון) ומסלול B (הוכחה) חייבים לרוץ במקביל.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="center narrow mb-2"><p class="eyebrow">המצב האמיתי, שלב אחרי שלב</p><h2 class="h-l">מה כבר מוכן למצגת, ומה עדיין חסר</h2></div>
+    <div class="tbl-wrap">
+    <table class="compare">
+      <tr><th>רכיב</th><th>מה יש היום</th><th>סטטוס</th></tr>
+      <tr><td class="hl">סקירת שוק + תקדימים</td><td>6 גופים מקבילים נבדקו ותועדו, עם מקורות (פרק 1)</td><td><span class="fit done">מוכן</span></td></tr>
+      <tr><td class="hl">מסע לקוח מלא</td><td>7 שלבים מפורטים, מהפנייה הראשונה עד סגירת החוב (פרק 2)</td><td><span class="fit done">מוכן</span></td></tr>
+      <tr><td class="hl">אבני דרך / מפת בנייה</td><td>6 שלבי משפך עם סטטוס בנייה אמיתי (פרק 3)</td><td><span class="fit done">מוכן</span></td></tr>
+      <tr><td class="hl">מפת מימון + המלצה</td><td>7 אפשרויות מימון שנבדקו, עם המלצה ברורה (פרק 4)</td><td><span class="fit done">מוכן</span></td></tr>
+      <tr><td class="hl">מצגת pitch מאוחדת (מסלול A)</td><td>כל התוכן קיים בפרקים הנפרדים — חסר איחוד לכלל נראטיב אחד להצגה</td><td><span class="fit wip">בעבודה</span></td></tr>
+      <tr><td class="hl">מסמכי עו"ד/רו"ח</td><td>הבריף המשפטי-חשבונאי הוכן בשלב קודם (Claude Docs)</td><td><span class="fit done">מוכן</span></td></tr>
+      <tr><td class="hl">הסכם עקרוני עם עוגן</td><td>לא נפתח קשר רשמי עדיין — נדרשת שיחת טלפון ראשונה</td><td><span class="fit todo">חסר</span></td></tr>
+      <tr><td class="hl">ערב אישי למסלול זריחה</td><td>לא נמצא עדיין — הצוואר-בקבוק של פיילוט #1</td><td><span class="fit todo">חסר</span></td></tr>
+      <tr><td class="hl">לוח בקרה פעיל (לא דמו)</td><td>dashboard.html קיים כהדגמה בלבד, נתונים לדוגמה</td><td><span class="fit todo">חסר</span></td></tr>
+      <tr><td class="hl">בוטים / אוטומציה בפועל</td><td>לא קיימים — שלב עתידי בחזון, אחרי שיש קרן פעילה</td><td><span class="fit todo">חסר</span></td></tr>
+      <tr><td class="hl">עמותות קולטות לנתינה</td><td>נדרש אימות: האם יש הסכמים חתומים או רק קשרים ראשוניים</td><td><span class="fit wip">לא מאומת</span></td></tr>
+      <tr><td class="hl">רשימת תורמים ממוקדת</td><td>שם אחד עלה בשיחה (תומר דיארי) — אין רשימה מלאה עדיין</td><td><span class="fit todo">חסר</span></td></tr>
+    </table>
+    </div>
+  </div>
+</section>
+
+<section class="bg-pearl edge-top">
+  <div class="wrap">
+    <div class="center narrow mb-2"><p class="eyebrow">מה אני יכול לבנות, מה רק אתה יכול לעשות</p><h2 class="h-l">תוכנית פעולה, 4 שבועות</h2></div>
+    <div class="rec-box">
+      <h3>שבוע 1 — חומר</h3>
+      <ol>
+        <li><b>אני:</b> בונה את מצגת ה-pitch המאוחדת (מסלול A) — עמוד אחד רציף שמאחד פרקים 1–4 לנראטיב הצגה של 15–20 דקות, עם גרפיקה ברורה</li>
+        <li><b>אני:</b> כותב טיוטת הודעת פנייה ראשונית לתומר דיארי (ולכל שם נוסף שתיתן)</li>
+        <li><b>אתה:</b> מתקשר לעוגן, בודק בפועל אם מסלול "זריחה" פעיל ומה דורש כערב — זה קובע את כל לוח הזמנים של מסלול B</li>
+      </ol>
+      <h3 style="margin-top:1.4rem">שבוע 2 — פנייה + הגשה</h3>
+      <ol>
+        <li><b>אני:</b> מכין את כל חומר ההגשה לעוגן (מסלול B) — טפסים, ניסוח, חישוב זכאות</li>
+        <li><b>אתה:</b> שולח/מקיים את הפנייה הראשונה למסלול A; מגיש בפועל לעוגן (מסלול B) אם נמצא ערב</li>
+      </ol>
+      <h3 style="margin-top:1.4rem">שבוע 3–4 — מעקב + לוח אמיתי</h3>
+      <ol>
+        <li><b>אני:</b> בונה גרסה אמיתית (לא דמו) של לוח הבקרה, מוכנה להזנת נתונים אמיתיים ברגע שיש תשובה מעוגן</li>
+        <li><b>אני:</b> מתעד כל התקדמות משני המסלולים כעמוד חיים באזור המייסד</li>
+        <li><b>אתה:</b> מקבל תשובות משני המסלולים, מחליט על הצעד הבא בכל אחד</li>
+      </ol>
+    </div>
+    <div class="bottleneck" style="margin-top:1.4rem"><p>שני צווארי-בקבוק אמיתיים, לא יותר: <b>מציאת ערב</b> למסלול B, ו<b>קביעת פגישה בפועל</b> עם גורם מאמין למסלול A. כל שאר העבודה — חומר, כתיבה, מערכות — ניתן להכין במקביל בלי להמתין לאף אחד מהשניים.</p></div>
+  </div>
+</section>
+
+<nav class="next-chapter" aria-label="פרקים">
+  <a href="funding-model.html"><small>→ הפרק הקודם</small><b>מודל המימון</b></a>
+  <a href="founder.html" class="fwd"><small>חזרה ←</small><b>לוח המייסד</b></a>
+</nav>
+</main>
+<script src="shefa.js?v=2"></script>
+</body>
+</html>
