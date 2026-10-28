@@ -146,7 +146,7 @@ PHASES.forEach((phase, pi) => {
   const phaseEl = document.createElement('div');
   phaseEl.className = 'phase'; if (pi === 0) phaseEl.classList.add('open');
   const head = document.createElement('div'); head.className = 'phase-head';
-  head.innerHTML = `<div class="phase-num">${pi+1}</div><div class="phase-title"><h2>${phase.title}</h2><p>${phase.sub}</p></div><div class="phase-count" data-count></div><svg class="chev" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  head.innerHTML = `<div class="phase-num">${pi+1}</div><div class="phase-title"><h2>${phase.title}</h2><p>${phase.sub}</p></div><div class="phase-count" data-phcount></div><svg class="chev" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
   head.addEventListener('click', () => phaseEl.classList.toggle('open'));
   const bar = document.createElement('div'); bar.className = 'phase-bar';
   const barFill = document.createElement('div'); barFill.className = 'phase-bar-fill'; bar.appendChild(barFill);
@@ -169,7 +169,7 @@ function updateCounts(){
   document.querySelectorAll('.phase').forEach(phaseEl => {
     const boxes = phaseEl.querySelectorAll('input[type=checkbox]');
     const checked = phaseEl.querySelectorAll('input[type=checkbox]:checked');
-    phaseEl.querySelector('[data-count]').textContent = `${checked.length}/${boxes.length}`;
+    phaseEl.querySelector('[data-phcount]').textContent = `${checked.length}/${boxes.length}`;
     phaseEl.querySelector('.phase-bar-fill').style.width = boxes.length ? (checked.length/boxes.length*100)+'%' : '0%';
     grandTotal += boxes.length; grandDone += checked.length;
   });
