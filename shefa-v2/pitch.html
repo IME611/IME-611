@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>המצגת המלאה | שפע גלובל</title>
+<meta name="description" content="חומר הצגה אחד, רציף — לפגישה אמיתית עם תורם.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Cpolygon points='48,4 88,26 88,70 48,92 8,70 8,26' fill='%23FAF6EE' stroke='%23B8860B' stroke-width='6'/%3E%3Ccircle cx='48' cy='48' r='12' fill='%23C9961A'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=Assistant:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shefa.css?v=2">
+<style>
+@media print{.noprint{display:none!important}.slide{break-inside:avoid;page-break-after:always}body{background:#fff}}
+.deckbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.8rem 1.2rem;background:var(--night);color:#F3E9D2}
+.deckbar b{font-family:Heebo;font-weight:700}
+.deckbar .btns{display:flex;gap:.6rem}
+.deckbar button,.deckbar a{font-family:Heebo;font-size:.8rem;font-weight:600;padding:.45rem .9rem;border-radius:2rem;border:1px solid rgba(232,192,96,.3);color:var(--gold-lt);background:transparent;cursor:pointer}
+.deckbar button:hover,.deckbar a:hover{background:rgba(232,192,96,.12)}
+
+.slide{min-height:92vh;display:flex;flex-direction:column;justify-content:center;padding:4.5rem 1.5rem;position:relative}
+.slide .wrap{max-width:900px}
+.slide .k{font-family:Heebo;font-size:.78rem;letter-spacing:.14em;font-weight:700;color:var(--gold);margin-bottom:.8rem}
+.slide h2{font-size:clamp(1.8rem,4vw,3.1rem);margin:0 0 1.1rem;font-weight:800;line-height:1.18}
+.slide p.big{font-size:1.18rem;line-height:1.65;color:var(--ink-mid);max-width:760px}
+.slide.dark{background:var(--night);color:#F3E9D2}
+.slide.dark .k{color:var(--gold-lt)}
+.slide.dark h2{color:#FBF3DF}
+.slide.dark p.big{color:rgba(243,233,210,.82)}
+.slide.pearl{background:var(--pearl)}
+
+.num{position:absolute;bottom:2rem;left:2rem;font-family:Heebo;font-size:.78rem;color:var(--ink-faint)}
+.slide.dark .num{color:rgba(243,233,210,.4)}
+
+.stat-row{display:flex;gap:2.2rem;flex-wrap:wrap;margin-top:2rem}
+.stat{min-width:140px}
+.stat b{display:block;font-family:Heebo;font-size:2.2rem;font-weight:800;color:var(--gold)}
+.slide.dark .stat b{color:var(--gold-lt)}
+.stat span{font-size:.86rem;color:var(--ink-dim)}
+.slide.dark .stat span{color:rgba(243,233,210,.65)}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1.4rem;margin-top:1.6rem}
+.gcard{background:var(--ivory);border:1px solid var(--line);border-radius:var(--r-lg);padding:1.4rem}
+.slide.dark .gcard{background:rgba(255,255,255,.04);border-color:rgba(232,192,96,.18)}
+.gcard h3{margin:0 0 .5rem;font-size:1.05rem}
+.gcard p{margin:0;font-size:.9rem;color:var(--ink-dim);line-height:1.55}
+.slide.dark .gcard p{color:rgba(243,233,210,.7)}
+
+.jlist{counter-reset:j;margin-top:1.6rem;display:flex;flex-direction:column;gap:0}
+.jitem{display:flex;gap:1rem;padding:1rem 0;border-top:1px solid var(--line)}
+.slide.dark .jitem{border-color:rgba(232,192,96,.15)}
+.jitem:first-child{border-top:none}
+.jitem .jn{counter-increment:j;flex-shrink:0;width:34px;height:34px;border-radius:50%;background:var(--gold-xss);color:var(--gold);display:flex;align-items:center;justify-content:center;font-weight:800;font-family:Heebo}
+.jitem .jn::before{content:counter(j)}
+.slide.dark .jitem .jn{background:rgba(232,192,96,.14);color:var(--gold-lt)}
+.jitem b{display:block;font-size:.98rem}
+.jitem span{font-size:.86rem;color:var(--ink-dim)}
+.slide.dark .jitem span{color:rgba(243,233,210,.65)}
+
+.asklist{margin-top:1.8rem;display:flex;flex-direction:column;gap:.9rem}
+.askrow{display:flex;align-items:baseline;gap:1rem;padding:.9rem 1.2rem;background:rgba(255,255,255,.05);border-radius:var(--r);border:1px solid rgba(232,192,96,.18)}
+.askrow b{font-family:Heebo;color:var(--gold-lt);min-width:120px}
+.askrow span{color:rgba(243,233,210,.82);font-size:.92rem}
+
+.source-note{margin-top:2.4rem;font-size:.82rem;color:var(--ink-faint)}
+.slide.dark .source-note{color:rgba(243,233,210,.4)}
+
+.cover{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;background:radial-gradient(ellipse 70% 60% at 30% 20%,#2E2213,var(--night) 75%);color:#F3E9D2;padding:4.5rem 1.8rem}
+.cover .mark{width:52px;height:52px;margin-bottom:1.8rem}
+.cover .eyebrow2{font-family:Heebo;font-size:.85rem;letter-spacing:.16em;color:var(--gold-lt);font-weight:600}
+.cover h1{font-size:clamp(2.4rem,6vw,4.2rem);font-weight:800;margin:.7rem 0 1rem;max-width:820px;color:#FBF3DF;line-height:1.12}
+.cover p{font-size:1.15rem;color:rgba(243,233,210,.75);max-width:600px}
+
+@media(max-width:800px){.grid2{grid-template-columns:1fr}.stat-row{gap:1.4rem}}
+</style>
+</head>
+<body data-area="founder">
+
+<div class="deckbar noprint">
+  <b>שפע גלובל · המצגת המלאה</b>
+  <div class="btns">
+    <a href="launch-plan.html">← תוכנית ההפעלה</a>
+    <button onclick="window.print()">הדפסה / PDF</button>
+  </div>
+</div>
+
+<main>
+
+<section class="cover">
+  <svg class="mark" viewBox="0 0 96 96"><polygon points="48,4 88,26 88,70 48,92 8,70 8,26" fill="none" stroke="#E8C060" stroke-width="4"/><circle cx="48" cy="48" r="12" fill="#C9961A"/></svg>
+  <p class="eyebrow2">שפע גלובל · 2026</p>
+  <h1>מוציאים משפחות מחוב.<br>הן מחזירות לקהילה.</h1>
+  <p>מודל ליווי כלכלי שמחבר יציאה מחוב, בניית ביטחון, ונתינה קהילתית — להסכם אחד. המצגת הזו היא כל מה שנבנה עד כה: החזון, השוק, המודל, והבקשה.</p>
+</section>
+
+<section class="slide">
+  <div class="wrap">
+    <p class="k">01 · הבעיה</p>
+    <h2>משפחות שעושות הכל נכון — ועדיין נשחקות</h2>
+    <p class="big">שני הורים עובדים, הכנסה מכובדת, ובסוף החודש אין. המינוס מתגלגל, האשראי נמשך, החובות גדלים. זו לא כשל אישי — זו בעיה מבנית: אין להם דרך החוצה שלא דורשת תנאים שאין להם (ביטחונות, היסטוריית אשראי נקייה, זמן ללמוד לנהל תקציב מאפס).</p>
+    <div class="stat-row">
+      <div class="stat"><b>0%</b><span>ריבית — לא עוד הלוואה שמחמירה את החוב</span></div>
+      <div class="stat"><b>12</b><span>שבועות ליווי צמוד בממוצע</span></div>
+      <div class="stat"><b>1</b><span>הסכם אחד — ליווי כלכלי + נתינה קהילתית</span></div>
+    </div>
+  </div>
+  <p class="num">1 / 9</p>
+</section>
+
+<section class="slide pearl">
+  <div class="wrap">
+    <p class="k">02 · הפער בשוק</p>
+    <h2>שישה גופים פותרים חצי מהבעיה. אף אחד לא את כולה</h2>
+    <p class="big">עוגן נותן הלוואות. פעמונים נותנים ליווי. Akhuwat בפקיסטן בנה אמון קהילתי במקום ביטחונות. Habitat for Humanity בארה"ב כבר הוכיחו משפטית ש"שעות עבודה בתמורה למימון" הוא מודל מוכר. שפע גלובל הוא ההרכבה של כולם — לא המצאה מאפס, חיבור של מה שכבר הוכח.</p>
+    <div class="grid2">
+      <div class="gcard"><h3>עוגן</h3><p>"הבנק ללא ריבית" הישראלי — ~180 מיליון ש״ח בהלוואות, שיעור חוב אבוד נמוך מאוד.</p></div>
+      <div class="gcard"><h3>Akhuwat (פקיסטן)</h3><p>מיקרופייננס ללא ריבית הגדול בעולם — מיליוני הלוואות, ערבות הדדית קהילתית במקום בטוחות.</p></div>
+      <div class="gcard"><h3>Habitat for Humanity</h3><p>"Sweat Equity" — שעות עבודה בתמורה למשכנתא ללא ריבית, פעיל ב-70+ מדינות.</p></div>
+      <div class="gcard"><h3>שפע גלובל</h3><p>היחיד שמחבר הלוואת 0%, ליווי אישי, ונתינה קהילתית מדורגת — לכדי הסכם אחד.</p></div>
+    </div>
+  </div>
+  <p class="num">2 / 9</p>
+</section>
+
+<section class="slide dark">
+  <div class="wrap">
+    <p class="k">03 · המודל</p>
+    <h2>מסע אחד, שבעה שלבים — מהפנייה הראשונה עד שהמשפחה עצמה מלווה אחרים</h2>
+    <div class="jlist">
+      <div class="jitem"><div class="jn"></div><div><b>פנייה והתעניינות</b><span>בדיקת התאמה קצרה — מצב חוב, גודל משפחה, הבנה שנתינה היא חלק מהעסקה</span></div></div>
+      <div class="jitem"><div class="jn"></div><div><b>שיחת היכרות + בדיקת כשירות</b><span>פרטים כלכליים מלאים, בדיקת עו"ד ורו"ח, התאמה אמיתית לפני המשך</span></div></div>
+      <div class="jitem"><div class="jn"></div><div><b>חתימה כפולה</b><span>הסכם הלוואת 0% וכתב התחייבות לנתינה — באותו מעמד, אותו משקל</span></div></div>
+      <div class="jitem"><div class="jn"></div><div><b>12 שבועות ליווי + נתינה</b><span>ליווי כלכלי צמוד במקביל לשעות נתינה קהילתית, לפי מחשבון הנתינה</span></div></div>
+      <div class="jitem"><div class="jn"></div><div><b>סגירת החוב</b><span>ההלוואה חוזרת לקרן למען המשפחה הבאה. המשפחה הופכת לשגרירה בקהילה</span></div></div>
+    </div>
+  </div>
+  <p class="num">3 / 9</p>
+</section>
+
+<section class="slide">
+  <div class="wrap">
+    <p class="k">04 · למה נתינה היא חובה, לא בונוס</p>
+    <h2>הריפוי לא נגמר בסגירת המינוס</h2>
+    <p class="big">מי שנותן מפסיק להרגיש "אני חייב" ומתחיל להרגיש "אני ראוי". הנתינה של משפחה אחת היא מה שמאפשר למשפחה הבאה לקבל את אותו ליווי — זו לא צדקה, זו שותפות ומעגל שמתחדש. היקף הנתינה נגזר מגובה החוב, לרוב כמה שעות בשבוע, לפי הכישרון של כל אחד: בישול, מוזיקה, משחק, סיפור, מקצוע. אם קורה משבר אמיתי — מקפיאים את שתי ההתחייבויות יחד. אף אחד לא נענש.</p>
+  </div>
+  <p class="num">4 / 9</p>
+</section>
+
+<section class="slide pearl">
+  <div class="wrap">
+    <p class="k">05 · מוכנות</p>
+    <h2>מה כבר קיים, לא רק חזון על נייר</h2>
+    <div class="grid2">
+      <div class="gcard"><h3>בריף משפטי-חשבונאי</h3><p>תיק מוכן ומוגדר לעורך דין ורואה חשבון — שאלות מפתח, החלטות שצריך לקבל, מוכן להעברה.</p></div>
+      <div class="gcard"><h3>אזור מייסד מלא</h3><p>5 פרקים: סקירת שוק, מסע לקוח, אבני דרך, מודל מימון, תוכנית הפעלה — כל ההחלטות מתועדות ושקופות.</p></div>
+      <div class="gcard"><h3>מודל נתינה מחושב</h3><p>מחשבון שגוזר את היקף הנתינה מגובה החוב, עם מדרגות שכר עולות — לא שרירותי.</p></div>
+      <div class="gcard"><h3>מסלול ממומש לעוגן</h3><p>מסלול "זריחה" (0% ריבית, עד 30K ש"ח) זוהה כנקודת הכניסה המדויקת לשותפות ערבות.</p></div>
+    </div>
+    <p class="source-note">בכנות: הבוטים, האוטומציה, והליווי בשטח עדיין לא קיימים בפועל. זה מה שהמימון הראשון בונה.</p>
+  </div>
+  <p class="num">5 / 9</p>
+</section>
+
+<section class="slide dark">
+  <div class="wrap">
+    <p class="k">06 · תקדים אמיתי</p>
+    <h2>גיוס בסדר גודל הזה כבר קרה בישראל</h2>
+    <div class="grid2">
+      <div class="gcard"><h3>כנפיים של קרמבו</h3><p>קמפיין תרומות יחיד שגייס מעל 6 מיליון ש"ח, בשותפות בנק הפועלים, עם חשיפה בערוץ 12 וערוץ תרומה דרך bit.</p></div>
+      <div class="gcard"><h3>לתת</h3><p>עמותת סיוע מהגדולות בישראל, פעילה כ-25 שנה, תקציב שנתי של עשרות מיליוני ש"ח — בנתה את עצמה בהדרגה ממודל קהילתי.</p></div>
+    </div>
+    <p class="source-note">המקור: hon.co.il — הנתון המדויק לתרומה בודדת בלתת טרם אומת ישירות מול העמותה.</p>
+  </div>
+  <p class="num">6 / 9</p>
+</section>
+
+<section class="slide">
+  <div class="wrap">
+    <p class="k">07 · מה לא בונים</p>
+    <h2>לא מכפילים כסף. מסובבים אותו</h2>
+    <p class="big">המודל הוא קרן מתגלגלת, בדיוק כמו עוגן, Akhuwat ו-Habitat: כסף נכנס פעם אחת כמענק, יוצא כהלוואת 0%, חוזר, ויוצא שוב למשפחה הבאה. אין מסחר, אין מינוף, אין "השקעה" של כסף התורמים כדי להכפיל אותו. אם ה-0% מגיע מהימורים ממונפים — הוא אשליה. זה עיקרון יסוד של המודל, לא רק החלטה טקטית.</p>
+  </div>
+  <p class="num">7 / 9</p>
+</section>
+
+<section class="slide dark">
+  <div class="wrap">
+    <p class="k">08 · הבקשה</p>
+    <h2>מענק seed, לא הלוואה — שמקים את הקרן ומסתובב מאותה נקודה</h2>
+    <div class="asklist">
+      <div class="askrow"><b>100,000–200,000 ₪</b><span>מענק חד-פעמי שמקים את קרן ההלוואות התפעולית, או קרן ערבות קטנה מול עוגן</span></div>
+      <div class="askrow"><b>לא תשואה</b><span>הכסף סובב משפחות החוצה מחוב — לא נסחר, לא ממונף</span></div>
+      <div class="askrow"><b>שקיפות מלאה</b><span>כל הכרעה, כל שלב, כל הוצאה — מתועדים באזור המייסד הפומבי</span></div>
+      <div class="askrow"><b>פיילוט מוכח ראשון</b><span>תיעוד חי של המשפחה הראשונה שעוברת את התהליך — לא רק חזון על נייר</span></div>
+    </div>
+  </div>
+  <p class="num">8 / 9</p>
+</section>
+
+<section class="slide">
+  <div class="wrap">
+    <p class="k">09 · למה עכשיו</p>
+    <h2>שני מסלולים רצים במקביל — זה לא הימור על חזון בלבד</h2>
+    <p class="big">בזמן שמחפשים תורם ראשון, הפיילוט הראשון כבר רץ: מסלול "זריחה" מול עוגן, מתועד בשקיפות מלאה. כל תורם שני ואילך רואה תוצאה אמיתית, לא רק שקפים. ההזדמנות היא להיכנס בשלב המדויק הזה — אחרי שהחשיבה הושלמה ולפני שהמודל כבר "מוכח מדי" להיות צריך אותך.</p>
+  </div>
+  <p class="num">9 / 9</p>
+</section>
+
+</main>
+<script src="shefa.js?v=2"></script>
+</body>
+</html>
