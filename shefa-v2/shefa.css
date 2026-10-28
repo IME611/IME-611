@@ -274,3 +274,4 @@ input[type=password]{width:100%;background:var(--pearl);border:1px solid var(--l
 .seg button{direction:ltr}
 .site-footer .cols.cols3{grid-template-columns:1.5fr 1fr 1fr}
 @media(max-width:640px){.site-footer .cols.cols3{grid-template-columns:1fr 1fr}.site-footer .cols.cols3>div:first-child{grid-column:1/-1}}
+/* mime-fix-permanent */

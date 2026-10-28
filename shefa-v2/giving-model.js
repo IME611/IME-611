@@ -40,3 +40,4 @@
   }
   window.GIVING = {TIERS, PROMO, BONUS, MIN_H, MAX_H, plan, tierAt};
 })();
+/* mime-fix-permanent */
