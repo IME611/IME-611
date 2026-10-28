@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>לוח המייסד | שפע גלובל</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Cpolygon points='48,4 88,26 88,70 48,92 8,70 8,26' fill='%23FAF6EE' stroke='%23B8860B' stroke-width='6'/%3E%3Ccircle cx='48' cy='48' r='12' fill='%23C9961A'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=Assistant:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shefa.css">
+<style>
+.gate{min-height:calc(100vh - var(--nav-h));display:flex;align-items:center;justify-content:center;padding:2rem 16px;background:radial-gradient(ellipse 60% 50% at 50% 30%,#2E2213,var(--night) 70%)}
+.gate .box{width:min(380px,100%);text-align:center;color:#F3E9D2}
+.gate h1{color:#FBF3DF;font-size:1.8rem;margin:1rem 0 .4rem}
+.gate input{text-align:center;letter-spacing:.3em;font-size:1.2rem;margin:1.3rem 0 .6rem}
+.gate .err{color:#E8A090;font-size:.85rem;min-height:1.2em}
+.gate .hint{font-size:.78rem;color:rgba(243,233,210,.45);margin-top:1.4rem}
+.hub-head{display:grid;grid-template-columns:1.3fr 1fr;gap:2rem;align-items:end}
+.status-card{background:var(--night);color:#F3E9D2;border-radius:var(--r-lg);padding:1.6rem}
+.status-card .ln{display:flex;justify-content:space-between;padding:.45rem 0;border-bottom:1px solid rgba(232,192,96,.12);font-size:.92rem}
+.status-card .ln:last-child{border:none}
+.status-card b{font-family:Heebo;color:var(--gold-lt)}
+.chap{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.chap a{display:block;background:var(--ivory);border:1px solid var(--line);border-radius:var(--r);padding:1.3rem;transition:.2s}
+.chap a:hover{border-color:var(--gold);box-shadow:var(--shadow)}
+.chap .n{font-family:Heebo;font-size:.74rem;letter-spacing:.12em;color:var(--gold);font-weight:700}
+.chap h3{font-size:1.08rem;margin:.3rem 0}
+.chap p{font-size:.88rem;color:var(--ink-dim)}
+.notes{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem}
+.note{background:var(--ivory);border:1px solid var(--line);border-radius:var(--r);padding:1.3rem 1.4rem}
+.note .d{font-family:Heebo;font-size:.78rem;font-weight:700;color:var(--gold)}
+.note h4{font-size:1.05rem;margin:.25rem 0 .4rem}
+.note p{font-size:.92rem;color:var(--ink-mid)}
+.todo{list-style:none;display:grid;gap:.5rem}
+.todo li{display:grid;grid-template-columns:26px 1fr auto;gap:.6rem;align-items:center;background:var(--ivory);border:1px solid var(--line);border-radius:12px;padding:.75rem 1rem;font-size:.95rem;cursor:pointer;user-select:none}
+.todo li .bx{width:22px;height:22px;border-radius:7px;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;color:#fff;font-size:.75rem}
+.todo li.done .bx{background:var(--gold);border-color:var(--gold)}
+.todo li.done span.t{color:var(--ink-faint);text-decoration:line-through}
+.todo small{color:var(--ink-faint);font-size:.78rem;white-space:nowrap}
+.public-map{display:grid;grid-template-columns:repeat(4,1fr);gap:.6rem}
+.public-map a{display:block;text-align:center;background:var(--pearl);border-radius:12px;padding:1rem .6rem;font-family:Heebo;font-weight:600;color:var(--ink)}
+.public-map a small{display:block;font-family:Assistant;font-weight:400;font-size:.78rem;color:var(--ink-faint);margin-top:.2rem}
+@media(max-width:900px){.hub-head,.notes{grid-template-columns:1fr}.chap{grid-template-columns:1fr 1fr}.public-map{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.chap{grid-template-columns:1fr}}
+</style>
+</head>
+<body data-area="founder" data-nostandby="1">
+<main>
+
+<div class="gate" id="gate">
+  <form class="box" id="gateForm">
+    <div class="crystal-hero" style="width:80px;height:80px;margin-bottom:0"><svg viewBox="0 0 96 96" fill="none"><polygon points="48,4 88,26 88,70 48,92 8,70 8,26" fill="rgba(232,192,96,.08)" stroke="#E8C060"/><polygon points="48,24 68,35 68,61 48,72 28,61 28,35" fill="rgba(232,192,96,.16)" stroke="#E8C060" stroke-width="1.2"/><circle cx="48" cy="48" r="5" fill="#E8C060"/></svg></div>
+    <h1>אזור המייסד</h1>
+    <p style="font-size:.95rem">החזון המלא, ההכרעות והתזכורות. לא חלק מהאתר הציבורי.</p>
+    <label class="lbl" for="code" style="color:rgba(243,233,210,.6);margin-top:1rem">קוד כניסה</label>
+    <input type="password" id="code" autocomplete="off" inputmode="numeric" placeholder="• • •">
+    <p class="err" id="gateErr"></p>
+    <button type="submit" class="btn btn-gold" style="width:100%">כניסה</button>
+    <p class="hint">הקוד בגרסת ההדגמה: 611. זו נעילה קוסמטית שמסתירה את האזור מגולשים, לא אבטחה אמיתית.</p>
+  </form>
+</div>
+
+<div id="hub" hidden>
+<header class="page-hero" style="text-align:right;padding-bottom:3rem">
+  <div class="wrap hub-head">
+    <div>
+      <p class="eyebrow">לוח המייסד</p>
+      <h1 class="h-l">כל החזון, <span class="gold">במקום אחד</span></h1>
+      <p class="lead" style="margin:1rem 0 0">מה שהגולש לא רואה מההתחלה: הסיפור, ההכרעות, המודל המלא ומפת הדרכים. מכאן מתחילים כשיוצאים מ־STAND BY.</p>
+    </div>
+    <div class="status-card">
+      <div class="ln"><span>סטטוס</span><b>⏸ STAND BY</b></div>
+      <div class="ln"><span>מאז</span><b>26.10.2026</b></div>
+      <div class="ln"><span>שלב במפת הדרכים</span><b>0 · הזרע</b></div>
+      <div class="ln"><span>מסמך האב</span><b><a href="shefa-global-master.pdf" target="_blank" style="color:var(--gold-lt)">PDF · 103 עמ׳ ↗</a></b></div>
+    </div>
+  </div>
+</header>
+
+<section style="padding-top:2.5rem">
+  <div class="wrap">
+    <h2 class="h-m mb-1">הכרעות ותזכורות אחרונות</h2>
+    <div class="notes">
+      <div class="note" style="border-right:3px solid var(--gold)"><span class="d">28.10.2026 · הכרעת מייסד</span><h4>הנתינה היא חובה, חלק בלתי נפרד מהעסקה</h4><p>מי שמצטרף מתחייב ל־4 שעות נתינה בחודש לפחות, בעמותות ובגופים קהילתיים. זה מחליף את ההכרעה הקודמת ("סיוע בסיסי ללא תנאי"). עודכן בנתיב הקריסטל, ביומן ההכרעות ובמפת הסיכונים.</p></div>
+      <div class="note" style="border-right:3px solid var(--risk)"><span class="d">דחוף לשלב היסודות</span><h4>שאלה 4 לעורך הדין</h4><p>כשהנתינה היא תנאי לסיוע כלכלי, הסיכון ליחסי עובד־מעביד עולה. החוזה הערכי צריך ניסוח משפטי: נתינה לגופים צד שלישי, בלי קיזוז חוב בשעות, והקפאה במשבר במקום סנקציה.</p></div>
+      <div class="note"><span class="d">28.10.2026 · מבנה האתר</span><h4>גילוי הדרגתי</h4><p>האתר הציבורי מציג רק את העסקה, את התהליך בקצרה ואת ההרשמה. הסיפור האישי, ההכרעות והמודל המלא נמצאים כאן. את הסיפור האישי אפשר לספר בהמשך, כחלק מהליווי.</p></div>
+      <div class="note"><span class="d">27.10.2026</span><h4>הדרייב מסודר</h4><p>"שפע גלובל — לשמירה" עם חמש תת־תיקיות, ו"עברתי על הקבצים וניתנים למחיקה" שמחכה למחיקה.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="bg-pearl edge-top">
+  <div class="wrap">
+    <h2 class="h-m mb-1">פרקי החזון</h2>
+    <div class="chap">
+      <a href="manifesto.html"><span class="n">א׳ · הנשמה</span><h3>המניפסט והסיפור האישי</h3><p>נקודת המפנה, הלילה של 3 ביוני, השיחה עם שחר, הדומיין, עץ השפע, SHEFA OS.</p></a>
+      <a href="path.html"><span class="n">ג׳ · המודל</span><h3>נתיב הקריסטל</h3><p>ששת השלבים ברזולוציה מלאה, תדרים, שאלות מפתח, וההסכם.</p></a>
+      <a href="reset.html"><span class="n">ד׳ · מנוע 1</span><h3>האיפוס הפיננסי</h3><p>המודל הבטוח מול מודל הקרן המוקפא, ומחשבון מלא.</p></a>
+      <a href="crystals.html"><span class="n">ד׳ · מנוע 2</span><h3>כלכלת הקריסטלים</h3><p>חמישה סוגים, דרגות, מראת האימפקט, סימולטור.</p></a>
+      <a href="ecosystem.html"><span class="n">ה׳–ו׳</span><h3>האקוסיסטם</h3><p>מעגלים, תפקידים, קוד אתי, בוטים, שלושה ארנקים, Web3.</p></a>
+      <a href="pilot.html"><span class="n">ז׳ · ההוכחה</span><h3>הפיילוט</h3><p>12 שבועות, סינון מכבד, תיק משפחת כהן, מערכת מעקב.</p></a>
+      <a href="roadmap.html"><span class="n">י״א–י״ג</span><h3>מפת הדרכים</h3><p>שבעה שלבים, מפת גיוס, סיכונים, עשר שאלות, 28 הכרעות.</p></a>
+      <a href="partners.html"><span class="n">י׳ · הכסף</span><h3>לשותפים ולמממנים</h3><p>תרחישים, KPIs, הצעת ערך, קרן הקריסטלים.</p></a>
+      <a href="dream.html" style="background:var(--night);border-color:transparent"><span class="n" style="color:var(--gold-lt)">✦ החזון</span><h3 style="color:#FBF3DF">החלום מתממש</h3><p style="color:rgba(243,233,210,.7)">המסע מקריסטל אחד ועד חמש יבשות.</p></a>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap split2" style="--cols:1fr 1fr;align-items:start">
+    <div>
+      <h2 class="h-m mb-1">שלב 0 · מה אפשר לעשות כבר עכשיו</h2>
+      <ul class="todo" id="todo"></ul>
+      <p class="faint mt-1">הסימונים נשמרים רק בדפדפן הזה.</p>
+    </div>
+    <div>
+      <h2 class="h-m mb-1">מה הגולש רואה</h2>
+      <div class="public-map">
+        <a href="index.html">דף הנחיתה<small>העסקה + בדיקת התאמה</small></a>
+        <a href="process.html">איך זה עובד<small>קלף אחרי קלף</small></a>
+        <a href="join.html">הרשמה<small>4 שלבים + התחייבות</small></a>
+        <a href="dashboard.html">האזור האישי<small>אחרי ההצטרפות</small></a>
+      </div>
+      <div class="decision mt-2"><b class="lbl">מה עוד צריך לדייק באתר</b><p>מקור לכל נתון שמוצג לפני פרסום רחב · כתובת דוא"ל על דומיין בבעלות · חיבור ההרשמה לשמירה אמיתית (Make) · הודעת פרטיות מלאה · נוסח ההסכם אחרי עורך הדין.</p></div>
+    </div>
+  </div>
+</section>
+</div>
+</main>
+<script src="shefa.js"></script>
+<script>
+function openHub(){ document.getElementById('gate').hidden=true; document.getElementById('hub').hidden=false; document.querySelector('.site-nav').style.display=''; }
+document.addEventListener('DOMContentLoaded',()=>{
+  if(window.SG_isUnlocked()) openHub(); else { const n=document.querySelector('.site-nav'); if(n) n.style.display='none'; }
+});
+document.getElementById('gateForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  if(document.getElementById('code').value.trim()==='611'){ window.SG_unlock(); openHub(); window.scrollTo(0,0); }
+  else document.getElementById('gateErr').textContent='הקוד לא נכון. נסו שוב.';
+});
+const T=[['יומן תהליך בפורמט "ספר השפע"','אישי'],['תרגול SHEFA OS יומי','אישי'],['השלמת ספר E.I.L, תוכן שלב 3','E.I.L'],['חידוש הדומיין shefa.global','נכסים'],['רשימה שקטה של מועמדים לתפקידים','גיוס'],['מחיקת תיקיית "ניתנים למחיקה" בדרייב','דרייב'],['מחיקת אב־הטיפוס ב־Base44','נכסים']];
+let done={}; try{ done=JSON.parse(localStorage.getItem('shefa_todo')||'{}'); }catch(e){}
+function render(){ const ul=document.getElementById('todo'); ul.innerHTML=T.map(([t,c],i)=>`<li class="${done[i]?'done':''}" data-i="${i}"><span class="bx">${done[i]?'✓':''}</span><span class="t">${t}</span><small>${c}</small></li>`).join('');
+  ul.querySelectorAll('li').forEach(li=>li.onclick=()=>{ done[li.dataset.i]=!done[li.dataset.i]; try{ localStorage.setItem('shefa_todo',JSON.stringify(done)); }catch(e){} render(); }); }
+render();
+</script>
+</body>
+</html>

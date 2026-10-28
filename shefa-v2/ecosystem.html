@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>האקוסיסטם — ארגון וטכנולוגיה | שפע גלובל</title>
+<meta name="description" content="מבנה המעגלים, הקוד האתי, סוויטת הבוטים, שלושת הארנקים, ו־Web3 בשלושה צעדים.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Cpolygon points='48,4 88,26 88,70 48,92 8,70 8,26' fill='%23FAF6EE' stroke='%23B8860B' stroke-width='6'/%3E%3Ccircle cx='48' cy='48' r='12' fill='%23C9961A'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=Assistant:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shefa.css">
+<style>
+.circles{display:grid;grid-template-columns:1fr 1fr;gap:2.5rem;align-items:center}
+.circles svg{width:100%;max-width:500px;margin:auto}
+.circles .ring{cursor:pointer;transition:all .3s}
+.circles .ring:hover circle,.circles .ring.on circle{stroke-width:3;stroke:#B8860B}
+.circles .ring.on circle{fill-opacity:1}
+.ring-info h3{font-size:1.5rem;margin-bottom:.4rem}
+.ring-info .who{display:flex;flex-wrap:wrap;gap:.4rem;margin:1rem 0}
+.ring-info .who span{background:var(--ivory);border:1px solid var(--line);border-radius:2rem;padding:.35rem .9rem;font-size:.9rem}
+.status{font-size:.75rem;font-weight:700;font-family:Heebo;padding:.15rem .6rem;border-radius:1rem;white-space:nowrap}
+.status.open{background:rgba(168,100,26,.1);color:var(--warn)}
+.status.prog{background:rgba(63,125,78,.1);color:var(--ok)}
+.status.cand{background:var(--gold-xs);color:var(--gold)}
+.chat{display:grid;grid-template-columns:240px 1fr;border:1px solid var(--line);border-radius:var(--r-lg);overflow:hidden;background:var(--ivory);box-shadow:var(--shadow-lg);min-height:470px}
+.chat .side{background:var(--pearl);border-left:1px solid var(--line);padding:.8rem}
+.chat .side button{display:flex;gap:.6rem;align-items:center;width:100%;text-align:right;background:none;border:none;padding:.7rem;border-radius:12px;margin-bottom:.2rem;font-family:Heebo;font-weight:500;color:var(--ink-mid)}
+.chat .side button .av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--ivory);font-size:1.1rem;border:1px solid var(--line);flex-shrink:0}
+.chat .side button small{display:block;font-family:Assistant;font-weight:400;font-size:.75rem;color:var(--ink-faint)}
+.chat .side button.on{background:var(--ivory);box-shadow:var(--shadow)}
+.chat .main{display:flex;flex-direction:column}
+.chat .head{padding:.9rem 1.2rem;border-bottom:1px solid var(--line);font-family:Heebo;font-weight:700;display:flex;justify-content:space-between;align-items:center}
+.chat .head small{font-weight:400;color:var(--ok);font-size:.78rem}
+.chat .msgs{flex:1;padding:1.2rem;display:flex;flex-direction:column;gap:.6rem;overflow-y:auto;max-height:420px;background:radial-gradient(ellipse at 50% 0%,rgba(232,192,96,.08),transparent 70%)}
+.msg{max-width:78%;padding:.7rem 1rem;border-radius:16px;font-size:.95rem;line-height:1.55;animation:fadeUp .35s ease}
+.msg.bot{background:var(--pearl);border:1px solid var(--line);align-self:flex-start;border-bottom-right-radius:4px}
+.msg.me{background:var(--gold);color:#fff;align-self:flex-end;border-bottom-left-radius:4px}
+.msg .cr{display:inline-block;margin-top:.4rem;font-family:Heebo;font-weight:700;font-size:.8rem;color:var(--gold);background:var(--ivory);border-radius:1rem;padding:.1rem .6rem;border:1px solid var(--line)}
+.typing{align-self:flex-start;color:var(--ink-faint);font-size:.85rem}
+.chat .replay{padding:.8rem 1.2rem;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-size:.82rem;color:var(--ink-faint)}
+.wallets{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem}
+.wallet{border-radius:var(--r-lg);padding:1.8rem;background:var(--ivory);border:1px solid var(--line);position:relative}
+.wallet .n{position:absolute;top:1rem;left:1.2rem;font-family:Heebo;font-weight:900;font-size:3rem;color:var(--gold-xs);line-height:1}
+.wallet h3{font-size:1.25rem;margin-bottom:.8rem}
+.wallet .ln{display:flex;justify-content:space-between;gap:1rem;font-size:.9rem;padding:.45rem 0;border-top:1px dashed var(--line)}
+.wallet .ln b{font-family:Heebo;text-align:left}
+.web3{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-radius:var(--r-lg);overflow:hidden;border:1px solid rgba(232,192,96,.25)}
+.web3>div{padding:1.8rem;border-left:1px solid rgba(232,192,96,.15)}
+.web3>div:last-child{border-left:none}
+.web3 .ph{font-family:Heebo;font-weight:800;color:var(--gold-lt);font-size:.8rem;letter-spacing:.12em}
+.web3 h3{color:#FBF3DF;font-size:1.2rem;margin:.4rem 0 .6rem}
+.web3 .when{display:inline-block;margin-top:1rem;font-size:.78rem;padding:.25rem .7rem;border-radius:1rem;background:rgba(232,192,96,.12);color:var(--gold-lt)}
+.web3 .now{background:rgba(232,192,96,.06)}
+@media(max-width:900px){.circles{grid-template-columns:1fr}.chat{grid-template-columns:1fr}.chat .side{display:flex;overflow-x:auto;gap:.3rem;border-left:none;border-bottom:1px solid var(--line)}.chat .side button{width:auto;flex-shrink:0}.chat .side button small{display:none}.wallets,.web3{grid-template-columns:1fr}.web3>div{border-left:none;border-bottom:1px solid rgba(232,192,96,.15)}}
+</style>
+</head>
+<body data-area="founder">
+<main>
+<header class="page-hero">
+  <p class="crumbs"><a href="index.html">שפע גלובל</a> › המודל › האקוסיסטם</p>
+  <p class="eyebrow">חלקים ה׳–ו׳ · הארגון והטכנולוגיה</p>
+  <h1 class="h-xl">אין היררכיה.<br><span class="gold">יש מעגלים.</span></h1>
+  <p class="lead">מבנה שמחבר חזון, תפעול, טכנולוגיה, קהילה וייעוץ, ושומר על שקיפות ועל שותפות עמוקה. סביבו יש מערך טכנולוגי נגיש וחכם, שבנוי על ערכים.</p>
+</header>
+
+<section>
+  <div class="wrap">
+    <div class="center narrow mb-2"><p class="eyebrow">5.1 · מודל קונצנטרי</p><h2 class="h-l reveal">חמישה מעגלים</h2><p class="lead reveal d1">לחצו על מעגל.</p></div>
+    <div class="circles">
+      <svg viewBox="0 0 500 500" id="ringsSvg" aria-label="מבנה המעגלים"></svg>
+      <div class="ring-info" id="ringInfo"></div>
+    </div>
+    <p class="center faint mt-2">בתרשים ה־Miro, IME 611, המטריה של כל מיזמי המייסד, מופיעה מעל ההנהלה. היא מותג־מטריה, בלי בעלות משפטית על הישות החברתית.</p>
+  </div>
+</section>
+
+<section class="bg-pearl edge-top">
+  <div class="wrap">
+    <div class="center narrow mb-2"><p class="eyebrow">הגדרת אחריות</p><h2 class="h-l reveal">התפקידים</h2></div>
+    <div class="tbl-wrap reveal"><table>
+      <thead><tr><th>תפקיד</th><th>אחריות</th><th>מעגל</th><th>סטטוס</th></tr></thead>
+      <tbody>
+        <tr><td><b>ארכיטקט (COO)</b></td><td>תפעול, תהליכים וביצוע, וניהול הפיילוט ביום־יום. הגיוס הראשון בשכר.</td><td>1</td><td><span class="status open">פתוח</span></td></tr>
+        <tr><td><b>אסטרטג פיננסי (CIO)</b></td><td>המנוע הכלכלי, מודלים, שותפים פיננסיים, וניהול קרן הלוואות השפע.</td><td>1</td><td><span class="status open">פתוח</span></td></tr>
+        <tr><td><b>מוביל טכנולוגי (CTO)</b></td><td>הפלטפורמה, הבוטים וה־AI, ואבטחת המידע.</td><td>1</td><td><span class="status open">פתוח</span></td></tr>
+        <tr><td><b>ראש קהילה</b></td><td>"מסע הקריסטל": אימון, התנדבות וחיבור קהילתי.</td><td>1</td><td><span class="status open">פתוח</span></td></tr>
+        <tr><td><b>מספר הסיפורים</b></td><td>המותג, התוכן, הפצת המסר והמדיה.</td><td>1</td><td><span class="status open">פתוח</span></td></tr>
+        <tr><td><b>יועץ משפטי</b></td><td>המבנה החוקי, חוזים ורגולציה.</td><td>2</td><td><span class="status cand">מועמד פוטנציאלי</span></td></tr>
+        <tr><td><b>רואה חשבון</b></td><td>ניהול פיננסי, מיסוי ודיווחים.</td><td>2</td><td><span class="status open">פתוח</span></td></tr>
+        <tr><td><b>יועץ פנסיוני מורשה</b> <span class="tag">נוסף</span></td><td>מייעץ לכל משפחה באופן עצמאי. זה לא תפקיד ה־CIO, שאחראי על הכסף של התנועה ולא על הכסף של המשפחה.</td><td>2</td><td><span class="status open">פתוח</span></td></tr>
+        <tr><td><b>איש מקצוע רווחה</b> <span class="tag">נוסף</span></td><td>כתובת להפניה ולהדרכה במצבי מצוקה.</td><td>2</td><td><span class="status open">פתוח</span></td></tr>
+        <tr><td><b>שגרירים ודמויות מפתח</b></td><td>אמינות, חשיפה והשראה.</td><td>3</td><td><span class="status prog">בתהליך</span></td></tr>
+        <tr><td><b>פטרונים ומשקיעי אימפקט</b></td><td>ההון הראשוני והתמיכה האסטרטגית.</td><td>4</td><td><span class="status prog">בתהליך</span></td></tr>
+      </tbody></table></div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="center narrow mb-2"><p class="eyebrow">הקוד האתי הפנימי</p><h2 class="h-l reveal">חמישה עקרונות, ושלושה סעיפי חובה</h2></div>
+    <div class="grid g-5">
+      <div class="card reveal"><h3>שקיפות מלאה</h3><p>כל החלטה ניתנת להסבר.</p></div>
+      <div class="card reveal d1"><h3>שירות לפני אגו</h3><p>כל תפקיד הוא שליחות.</p></div>
+      <div class="card reveal d2"><h3>קדושת הזמן</h3><p>כל שעה מוקדשת לשפע.</p></div>
+      <div class="card reveal d3"><h3>שותפות עמוקה</h3><p>אין היררכיה, יש מעגלים.</p></div>
+      <div class="card reveal d4"><h3>הדהוד פנימי</h3><p>כל פעולה נבחנת מול הלב.</p></div>
+    </div>
+    <div class="grid g-3 mt-2">
+      <div class="decision" style="margin:0"><b class="lbl">אין ניגוד עניינים</b><p>מי שמממן לא מקבל החזר מכספי המשפחה. מי שמלווה משפחה לא מרוויח מהמוצרים הפיננסיים שהיא בוחרת.</p></div>
+      <div class="decision" style="margin:0"><b class="lbl">הגנה על מידע</b><p>מידע פיננסי ורגשי הוא רגיש. הגישה אליו מוגבלת, והוא משמש לליווי בלבד.</p></div>
+      <div class="decision" style="margin:0"><b class="lbl">אמת בפרסום</b><p>לא מציגים מספרים, עדויות או הבטחות שאינם אמת. כל המחשה מסומנת ככזו.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- BOTS -->
+<section class="bg-cream edge-top" id="bots">
+  <div class="wrap">
+    <div class="center narrow mb-2"><p class="eyebrow">6.2 · סוויטת הבוטים</p><h2 class="h-l reveal">מלווה אישי בכיס</h2><p class="lead reveal d1">כל בוט הוא מלווה אישי שעוזר למשתתף להפוך לקריסטל פעיל, ומתעד קריסטלים לפי תרגול ותוצאות. ככה זה ירגיש. ההדגמה מוקלטת מראש ולא מחוברת לבינה מלאכותית.</p></div>
+    <div class="chat reveal">
+      <div class="side" id="botList"></div>
+      <div class="main">
+        <div class="head"><span id="botName"></span><small>● מצב הדגמה</small></div>
+        <div class="msgs" id="msgs"></div>
+        <div class="replay"><span id="botMeta"></span><button class="btn btn-line btn-sm" id="replay">↻ נגן שוב</button></div>
+      </div>
+    </div>
+    <div class="tbl-wrap mt-3 reveal"><table>
+      <thead><tr><th>בוט</th><th>תפקיד</th><th>שלב</th><th>עדיפות</th></tr></thead>
+      <tbody>
+        <tr><td><b>חיבור / קבלה</b></td><td>מענה ראשון, חיבור רגשי, שאלון פתיחה, ניצחונות מהירים</td><td>0</td><td><span class="tag green">MVP</span></td></tr>
+        <tr><td><b>אבחון</b></td><td>ניתוח דוחות בנק, שאלון תודעתי, דירוג מוכנות</td><td>1</td><td><span class="tag">שלב 2</span></td></tr>
+        <tr><td><b>פיננסים / תקציב / נזילות</b></td><td>תקציב, מעקב חובות, ניטור תזרים, סימולציות</td><td>2–5</td><td><span class="tag green">MVP</span></td></tr>
+        <tr><td><b>תדר / לייף סטייל</b></td><td>אפירמציות, דמיון מודרך, SHEFA OS, סצנת סיום</td><td>3</td><td><span class="tag green">MVP</span></td></tr>
+        <tr><td><b>רגשי</b></td><td>ניטור מצב רגשי, תרגילים, והפניה לאדם כשצריך</td><td>0–5</td><td><span class="tag">שלב 2</span></td></tr>
+        <tr><td><b>אמונה</b></td><td>חיזוק פנימי וחיבור, כשכבה אמונית אופציונלית</td><td>3</td><td><span class="tag">שלב 2</span></td></tr>
+        <tr><td><b>קהילתיות / תרומה</b></td><td>הזדמנויות התנדבות, רישום שעות וקריסטלים</td><td>4–5</td><td><span class="tag green">MVP</span></td></tr>
+        <tr><td><b>קריפטו</b></td><td>לבוט שמציע "הזדמנויות" בקריפטו למשפחות בחובות אין מקום במודל. חינוך כללי עובר לבוט הפיננסים.</td><td>—</td><td><span class="tag red">מוקפא</span></td></tr>
+      </tbody></table></div>
+    <div class="decision"><b class="lbl">אפיון ה־MVP · 4.1</b><p>המינימום להרצת פיילוט של 5–10 משפחות: טופס ההצטרפות מחובר לשמירה מאובטחת · תיק משתתף ב־Notion או ב־Airtable · גיליון תקציב אחיד · <b>בוט טלגרם אחד עם שלושה מצבים: תקציב, תדר, רישום התנדבות</b> · טבלת מעקב · דוח חודשי אוטומטי. המייסד כבר בנה בוטים בטלגרם (Insite, IME VR) ואוטומציות ב־Make, ואפשר לבנות על אותה תשתית.</p></div>
+  </div>
+</section>
+
+<!-- WALLETS -->
+<section>
+  <div class="wrap">
+    <div class="center narrow mb-2"><p class="eyebrow">הכרעת האדריכל</p><h2 class="h-l reveal">שלושה כספים, שלושה ארנקים</h2><p class="lead reveal d1">בחומרים המילה "הקרן" שימשה לשלושה דברים שונים. כדי שהמודל יהיה אמין, חוקי ושקוף, הם מופרדים. אף שקל לא עובר בין הארנקים בלי החלטה מתועדת.</p></div>
+    <div class="wallets">
+      <div class="wallet reveal"><span class="n">1</span><h3>⚙ תקציב התפעול</h3><div class="ln"><span>מממן</span><b>צוות, טכנולוגיה, ליווי</b></div><div class="ln"><span>מקור</span><b>תרומות, מענקים, שותפויות</b></div><div class="ln"><span>מתי</span><b>מהפיילוט</b></div></div>
+      <div class="wallet reveal d1" style="border-color:rgba(184,134,11,.5)"><span class="n">2</span><h3>↺ קרן הלוואות השפע</h3><div class="ln"><span>מממן</span><b>הלוואות גישור ב־0%</b></div><div class="ln"><span>מקור</span><b>פילנתרופים ייעודיים, מתמחזרת</b></div><div class="ln"><span>מתי</span><b>מהפיילוט</b></div></div>
+      <div class="wallet reveal d2"><span class="n">3</span><h3>💎 קרן הקריסטלים</h3><div class="ln"><span>מממן</span><b>מיזמים של בוגרים</b></div><div class="ln"><span>מקור</span><b>משקיעים כשירים, דרך גוף מורשה</b></div><div class="ln"><span>מתי</span><b>אחרי 2–3 מחזורים</b></div></div>
+    </div>
+    <div class="grid g-2 mt-3">
+      <div class="card"><h3>🏛 הישות החברתית</h3><p>עמותה או חל"צ. היא כוללת את התנועה, הקהילה, הליווי וקרן הלוואות השפע. היא מקבלת תרומות ומענקים, ואחרי הכרה מאפשרת זיכוי מס לתורמים לפי סעיף 46.</p></div>
+      <div class="card"><h3>📊 הישות הפיננסית · בשלב מאוחר</h3><p>קרן הקריסטלים, כשותפות עם גוף מורשה או במבנה שעורך דין מתמחה אישר. אין הבטחות תשואה.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- WEB3 -->
+<section class="bg-night">
+  <div class="wrap">
+    <div class="center narrow mb-2"><p class="eyebrow">6.5 · המערכת המבוזרת</p><h2 class="h-l reveal">Web3 בשלושה צעדים,<br>לא בבת אחת</h2>
+      <p class="lead reveal d1">החזון הוא אמון מובנה, Shefa Token, חוזים חכמים ודשבורד מבוזר, החל מ"תג הקריסטל הווירטואלי" מיוני 2025. אבל כניסה עם ארנק קריפטו היא חסם עצום עבור הזוג השכיר שנשחק.</p></div>
+    <div class="web3 reveal">
+      <div class="now"><span class="ph">שלב א׳</span><h3>רשומה פנימית</h3><p>הקריסטלים נשמרים במסד נתונים רגיל. הם לא ניתנים להעברה ולא להמרה לכסף.</p><span class="when">פיילוט וצמיחה ראשונה</span></div>
+      <div><span class="ph">שלב ב׳</span><h3>תעודות קריסטל · Soulbound</h3><p>תעודות על בלוקצ'יין שאי אפשר להעביר, כמו אות הוקרה. יש בהן שקיפות, בלי ערך כספי.</p><span class="when">אחרי 100 קריסטלים פעילים</span></div>
+      <div><span class="ph">שלב ג׳</span><h3>Shefa Token</h3><p>טוקן שניתן להעביר. רק אחרי חוות דעת משפטית, כי טוקן כזה עלול להיחשב נייר ערך.</p><span class="when">התרחבות גלובלית</span></div>
+    </div>
+    <p class="center mt-2" style="font-size:.9rem">מידע פיננסי ורגשי של משפחות לא יירשם לעולם על בלוקצ'יין ציבורי. רק הוכחות להישגים.</p>
+  </div>
+</section>
+
+<nav class="next-chapter" aria-label="פרקים">
+  <a href="crystals.html"><small>→ הפרק הקודם</small><b>כלכלת הקריסטלים</b></a>
+  <a href="pilot.html" class="fwd"><small>הפרק הבא ←</small><b>הפיילוט</b></a>
+</nav>
+</main>
+<script src="shefa.js"></script>
+<script>
+// RINGS
+const RINGS = [
+  {r:230,f:'#F5EFE0',t:'מעגל חיצוני · מנוע הצמיחה',who:['פילנתרופים','משקיעי אימפקט','קרנות פילנתרופיות'],d:'ההון הראשוני והתמיכה האסטרטגית. פטרון הוא לא רק מממן, הוא "יוצר קריסטלים".'},
+  {r:182,f:'#EFE5CF',t:'מעגל שלישי · שגרירים ויועצים',who:['אנשי רוח','דמויות מפתח','מומחים','בוגרים בדרגת יהלום'],d:'השראה, ייעוץ אסטרטגי וחיבור לקהלים.'},
+  {r:134,f:'#E8D9B5',t:'מעגל שני · היסודות המקצועיים',who:['ייעוץ משפטי','ראיית חשבון','יועץ פנסיוני מורשה','איש מקצוע רווחה'],d:'רגולציה, חוזים, מיסוי, דוחות, וכתובת למצבי מצוקה. שני התפקידים האחרונים נוספו בהכרעת האדריכל.'},
+  {r:88,f:'#E8C060',t:'מעגל ראשון · ההנהלה המובילה',who:['ארכיטקט (COO)','אסטרטג פיננסי (CIO)','מוביל טכנולוגי (CTO)','ראש קהילה','מספר הסיפורים'],d:'תפעול, פיננסים, טכנולוגיה, קהילה ותקשורת.'},
+  {r:42,f:'#B8860B',t:'הליבה',who:['המייסד · מוביל החזון'],d:'שמירה על התודעה, והובלת הכיוון הרוחני והאסטרטגי.'}
+];
+const sv=document.getElementById('ringsSvg');
+sv.innerHTML = RINGS.map((g,i)=>`<g class="ring" data-i="${i}"><circle cx="250" cy="250" r="${g.r}" fill="${g.f}" fill-opacity=".85" stroke="rgba(184,134,11,.35)" stroke-width="1.5"/></g>`).join('')
+ + RINGS.map((g,i)=>`<text x="250" y="${i===4?256:250-g.r+26}" text-anchor="middle" font-family="Heebo" font-weight="700" font-size="${i===4?15:13}" fill="${i>=3?'#16100A':'#3D2E12'}" pointer-events="none">${['פטרונים','שגרירים','יסודות מקצועיים','הנהלה','ליבה'][i]}</text>`).join('');
+function ring(i){ const g=RINGS[i]; sv.querySelectorAll('.ring').forEach(x=>x.classList.toggle('on',+x.dataset.i===i));
+  document.getElementById('ringInfo').innerHTML=`<p class="eyebrow">מעגל ${5-i} מתוך 5</p><h3>${g.t}</h3><div class="who">${g.who.map(w=>`<span>${w}</span>`).join('')}</div><p class="lead" style="color:var(--ink-mid)">${g.d}</p>`; }
+sv.querySelectorAll('.ring').forEach(x=>x.addEventListener('click',()=>ring(+x.dataset.i)));
+ring(4);
+
+// BOTS
+const BOTS = {
+  budget:{av:'💰',n:'בוט התקציב',s:'פיננסים · נזילות',meta:'שלב 2–5 · MVP',c:[
+    ['me','סיימתי לעדכן את ההוצאות של אוקטובר'],
+    ['bot','מעולה, נועה 🙏 סגרתם את החודש עם עודף של ₪2,140, מעל היעד של ₪2,000. זו הפעם השלישית ברצף.'],
+    ['bot','עוד דבר: כרטיס האשראי המתגלגל נסגר החודש. יתרת החוב הרעיל ירדה ל־₪0.','📈 +2 קריסטלי התקדמות'],
+    ['me','וואו. לא האמנתי שזה יקרה'],
+    ['bot','זה קרה, כי עשיתם את זה. רוצים שאראה לכם כמה זמן נשאר להלוואה כנגד ההשתלמות, אם מוסיפים את העודף להחזר?']]},
+  freq:{av:'✨',n:'בוט התדר',s:'SHEFA OS · תודעה',meta:'שלב 3 · MVP',c:[
+    ['bot','ערב טוב 🌙 הגיע זמן ה־Revision. איזה רגע מהיום היית רוצה לתקן?'],
+    ['me','הלחץ שהיה לי מול הבנק בבוקר'],
+    ['bot','עצום עיניים. תראה את אותה שיחה כפי שהיית רוצה שתתנהל: אתה רגוע, הפקיד מחייך, ואתה יוצא עם תשובה טובה. תישאר שם שלוש נשימות.'],
+    ['me','עשיתי. זה מרגיש אחרת'],
+    ['bot','זה בדיוק השינוי. עכשיו לסצנת הסיום שבחרת: "הודעת סגירת החוב האחרון". לילה טוב, קריסטל.','📈 הרגל ערב · 21 ימים ברצף']]},
+  give:{av:'🤝',n:'בוט הנתינה',s:'קהילה · התנדבות',meta:'שלב 4–5 · MVP',c:[
+    ['bot','יש שתי הזדמנויות שמתאימות לכישורים שלך במכירות ושיווק:'],
+    ['bot','① עמותת "יד לנוער", גיוס תרומות לקמפיין חנוכה, 3 שעות, בזום\n② מרכז קהילתי בחולון, ארגון ערב תרבות, 4 שעות'],
+    ['me','אני לוקח את הראשונה'],
+    ['bot','נרשמת ✅ אחרי הפעילות אעדכן את התיק שלך. החודש כבר נתת 5 שעות, מעל היעד של 4.','💎 +3 קריסטלי נתינה']]},
+  emo:{av:'🫶',n:'הבוט הרגשי',s:'ליווי · ניטור',meta:'שלב 0–5 · שלב 2',c:[
+    ['bot','איך אתה מרגיש היום, בסולם של 1 עד 10?'],
+    ['me','3. קשה לי השבוע'],
+    ['bot','תודה שאתה משתף. זה אמיץ. רוצה תרגיל נשימה קצר של שתי דקות, או שאחבר אותך לשיחה עם יעל, המלווה שלך?'],
+    ['me','שיחה עם יעל'],
+    ['bot','שלחתי לה הודעה. היא תחזור אליך היום. אתה לא לבד בזה 💛\n(בוט לא מחליף אדם ברגעי משבר. במצוקה חריפה מפנים לגורם מקצועי.)']]}
+};
+const list=document.getElementById('botList'); let cur='budget', tmo=[];
+list.innerHTML = Object.entries(BOTS).map(([k,b])=>`<button data-k="${k}"><span class="av">${b.av}</span><span>${b.n}<small>${b.s}</small></span></button>`).join('');
+function play(k){ cur=k; tmo.forEach(clearTimeout); tmo=[];
+  list.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.k===k));
+  const b=BOTS[k], box=document.getElementById('msgs'); box.innerHTML='';
+  document.getElementById('botName').textContent=b.av+' '+b.n; document.getElementById('botMeta').textContent=b.meta;
+  let t=300;
+  b.c.forEach(([w,txt,cr])=>{
+    if(w==='bot'){ tmo.push(setTimeout(()=>{ const ty=document.createElement('div'); ty.className='typing'; ty.textContent='מקליד…'; box.appendChild(ty); box.scrollTop=box.scrollHeight; },t)); t+=900; }
+    tmo.push(setTimeout(()=>{ box.querySelectorAll('.typing').forEach(x=>x.remove()); const m=document.createElement('div'); m.className='msg '+w; m.innerHTML=txt.replace(/\n/g,'<br>')+(cr?`<br><span class="cr">${cr}</span>`:''); box.appendChild(m); box.scrollTop=box.scrollHeight; },t)); t+= w==='me'?700:1100; });
+}
+list.querySelectorAll('button').forEach(b=>b.onclick=()=>play(b.dataset.k));
+document.getElementById('replay').onclick=()=>play(cur);
+const chatObs = new IntersectionObserver(es=>{ if(es[0].isIntersecting){ play('budget'); chatObs.disconnect(); } },{threshold:.3});
+chatObs.observe(document.querySelector('.chat'));
+</script>
+</body>
+</html>

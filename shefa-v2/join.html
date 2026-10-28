@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>הצטרפות — המסע מתחיל כאן | שפע גלובל</title>
+<meta name="description" content="אשף הצטרפות בארבעה שלבים: פרטים אישיים, מצב כלכלי, כישורים וזכויות, וסיכום עם תוכנית ראשונית.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Cpolygon points='48,4 88,26 88,70 48,92 8,70 8,26' fill='%23FAF6EE' stroke='%23B8860B' stroke-width='6'/%3E%3Ccircle cx='48' cy='48' r='12' fill='%23C9961A'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=Assistant:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shefa.css">
+<style>
+.jw{max-width:760px;margin:0 auto;padding:3rem 16px 5rem}
+.progress{display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;margin:2rem 0 1.5rem}
+.progress div{text-align:center;font-family:Heebo;font-size:.82rem;font-weight:600;color:var(--ink-faint)}
+.progress div i{display:flex;width:36px;height:36px;margin:0 auto .4rem;border-radius:50%;border:1.5px solid var(--line);align-items:center;justify-content:center;font-style:normal;background:var(--ivory);transition:.3s}
+.progress div.on{color:var(--gold)}.progress div.on i{border-color:var(--gold);background:var(--gold);color:#fff}
+.progress div.done i{border-color:var(--gold);color:var(--gold)}
+.pbar{height:4px;background:var(--gold-xs);border-radius:4px;margin-bottom:1.5rem;overflow:hidden}.pbar i{display:block;height:100%;background:var(--gold);transition:width .4s}
+.step{display:none;animation:fadeUp .35s}.step.on{display:block}
+.step h2{font-size:1.5rem;margin-bottom:.3rem}
+.step .hint{color:var(--ink-dim);margin-bottom:1.5rem;font-size:.95rem}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
+.fr{margin-bottom:1rem}
+.fr .err{color:var(--risk);font-size:.8rem;margin-top:.25rem;display:none}
+.fr.bad input,.fr.bad select,.fr.bad textarea{border-color:var(--risk)}
+.fr.bad .err{display:block}
+.opt{font-weight:400;color:var(--ink-faint);font-size:.8rem}
+.scale{display:grid;grid-template-columns:repeat(10,1fr);gap:4px}
+.scale button{padding:.55rem 0;border:1px solid var(--line);background:var(--ivory);border-radius:8px;font-family:Heebo;font-weight:700;color:var(--ink-mid)}
+.scale button.on{background:var(--gold);color:#fff;border-color:var(--gold)}
+.scale-legend{display:flex;justify-content:space-between;font-size:.75rem;color:var(--ink-faint);margin-top:.3rem}
+.chips{display:flex;flex-wrap:wrap;gap:.45rem}
+.chip{padding:.45rem .95rem;border-radius:2rem;border:1px solid var(--line);background:var(--ivory);font-size:.9rem;cursor:pointer;user-select:none;transition:.15s}
+.chip.on{background:var(--gold-xs);border-color:var(--gold);color:var(--gold);font-weight:600}
+.acts{display:flex;justify-content:space-between;margin-top:2rem;gap:1rem}
+.sum{background:var(--pearl);border-radius:var(--r);padding:1.2rem 1.4rem;margin-bottom:1rem}
+.sum h4{font-size:1rem;margin-bottom:.6rem}
+.sum .ln{display:flex;justify-content:space-between;padding:.35rem 0;border-bottom:1px dashed var(--line);font-size:.92rem}
+.sum .ln:last-child{border:none}
+.plan{background:var(--night);color:#F3E9D2;border-radius:var(--r-lg);padding:1.6rem;margin-bottom:1rem}
+.plan h4{color:var(--gold-lt);font-size:1.15rem;margin-bottom:.8rem}
+.plan ol{padding-right:1.2rem}.plan li{margin-bottom:.5rem}
+.plan b{color:var(--gold-lt)}
+.consent{display:flex;gap:.7rem;align-items:flex-start;padding:1rem;border:1px solid var(--line);border-radius:12px;background:var(--ivory);font-size:.9rem;cursor:pointer}
+.consent input{width:20px;height:20px;accent-color:var(--gold);margin-top:.15rem;flex-shrink:0}
+.consent.bad{border-color:var(--risk)}
+.success{text-align:center;padding:2rem 0}
+.success .big{font-size:4rem;animation:float 4s ease-in-out infinite}
+@media(max-width:600px){.fg{grid-template-columns:1fr}.scale{grid-template-columns:repeat(5,1fr)}.progress div{font-size:.7rem}}
+</style>
+</head>
+<body>
+<main>
+<div class="jw">
+  <div class="center">
+    <p class="eyebrow">הצטרפות · נתיב הקריסטל</p>
+    <h1 class="h-l">המסע לתודעת שפע<br><span class="gold">מתחיל כאן</span></h1>
+    <p class="lead" style="margin:1rem auto 0">ספרו לנו קצת על עצמכם, ונבנה יחד תוכנית מותאמת אישית: אנחנו מלווים אתכם מהחוב החוצה, ואתם מתחייבים לתת לקהילה.</p>
+  </div>
+  <div class="progress" id="prog"><div class="on"><i>1</i>פרטים אישיים</div><div><i>2</i>מצב כלכלי</div><div><i>3</i>כישורים וזכויות</div><div><i>4</i>סיכום ואישור</div></div>
+  <div class="pbar"><i id="pfill" style="width:25%"></i></div>
+
+  <div class="card" style="padding:clamp(1.3rem,4vw,2.4rem)">
+    <!-- 1 -->
+    <div class="step on" data-s="1">
+      <h2>שלב 1 · פרטים אישיים</h2><p class="hint">כדי שנדע איך לפנות אליכם.</p>
+      <div class="fg">
+        <div class="fr" data-req="text"><label class="lbl">שם מלא *</label><input type="text" id="name" placeholder="נועה כהן"><p class="err">נא למלא שם</p></div>
+        <div class="fr" data-req="age"><label class="lbl">גיל *</label><input type="number" id="age" placeholder="35" inputmode="numeric"><p class="err">גיל במספרים בלבד</p></div>
+      </div>
+      <div class="fg">
+        <div class="fr" data-req="phone"><label class="lbl">טלפון *</label><input type="tel" id="phone" placeholder="0501234567" inputmode="tel"><p class="err">ספרות בלבד, לפחות 9</p></div>
+        <div class="fr" data-req="email"><label class="lbl">אימייל *</label><input type="email" id="email" placeholder="noa@email.com"><p class="err">אימייל בפורמט תקין</p></div>
+      </div>
+      <div class="fg">
+        <div class="fr"><label class="lbl">עיר מגורים</label><input type="text" id="city" placeholder="חולון"></div>
+        <div class="fr" data-req="select"><label class="lbl">מצב משפחתי *</label><select id="family"><option value="">בחרו</option><option>רווק/ה</option><option>נשוי/אה</option><option>נשוי/אה + ילדים</option><option>גרוש/ה</option><option>הורה יחיד/ה</option><option>אחר</option></select><p class="err">נא לבחור</p></div>
+      </div>
+    </div>
+
+    <!-- 2 -->
+    <div class="step" data-s="2">
+      <h2>שלב 2 · מצב כלכלי</h2><p class="hint">זה עוזר לנו לבנות תמונה מלאה לפני שיחת הבהירות. אין כאן שיפוט.</p>
+      <div class="fg">
+        <div class="fr" data-req="num"><label class="lbl">הכנסה חודשית נטו, משפחתית *</label><input type="number" id="income" placeholder="24000" inputmode="numeric"><p class="err">סכום במספרים</p></div>
+        <div class="fr" data-req="num"><label class="lbl">סך החובות הצרכניים *</label><input type="number" id="debt" placeholder="180000" inputmode="numeric"><p class="err">סכום במספרים (0 אם אין)</p></div>
+      </div>
+      <div class="fg">
+        <div class="fr"><label class="lbl">הוצאות עיקריות בחודש <span class="opt">(לא חובה)</span></label><input type="number" id="expenses" placeholder="22000" inputmode="numeric"></div>
+        <div class="fr"><label class="lbl">קרן השתלמות, בערך <span class="opt">(לא חובה)</span></label><input type="number" id="hish" placeholder="120000" inputmode="numeric"></div>
+      </div>
+      <div class="fr"><label class="lbl">עד כמה אתם מרגישים שליטה במצב הכלכלי? *</label>
+        <div class="scale" id="control"></div><div class="scale-legend"><span>1 · אין לי שליטה</span><span>10 · שליטה מלאה</span></div><p class="err" id="controlErr">נא לבחור</p></div>
+      <div class="fr"><label class="lbl">מתחילים תהליך התאוששות? *</label><div class="chips" id="ready"><span class="chip" data-v="כן">כן, אני מוכן/ה</span><span class="chip" data-v="לא בטוח">עוד לא בטוח/ה</span></div></div>
+      <div class="fr"><label class="lbl">מה הכי מכביד עליכם כרגע? <span class="opt">(לא חובה)</span></label><textarea id="burden" rows="3" placeholder="כמה מילים, בשפה שלכם"></textarea></div>
+    </div>
+
+    <!-- 3 -->
+    <div class="step" data-s="3">
+      <h2>שלב 3 · כישורים, זכויות ונתינה</h2><p class="hint">הנתינה היא חלק מהעסקה: לפחות 4 שעות בחודש, לפי הכישורים שלכם. כאן בוחרים איפה.</p>
+      <label class="lbl">כישורים ותחומי עניין</label><div class="chips mb-1" id="skills"></div>
+      <label class="lbl mt-1">תחומי נתינה מועדפים</label><div class="chips mb-1" id="areas"></div>
+      <label class="lbl mt-1">זכויות והטבות קיימות <span class="opt">(אם יש)</span></label><div class="chips mb-1" id="rights"></div>
+      <div class="fg mt-1">
+        <div class="fr" data-req="select"><label class="lbl">כמה שעות נתינה בחודש תוכלו להתחייב? *</label><select id="hours"><option value="">בחרו</option><option>4 (המינימום)</option><option>4–6</option><option>6–10</option><option>מעל 10</option></select><p class="err">נא לבחור</p></div>
+        <div class="fr" data-req="select"><label class="lbl">איזו אמירה מתארת אתכם? *</label><select id="mind"><option value="">בחרו</option><option>"אני יכול לשנות את המציאות שלי"</option><option>"אני קורבן של הנסיבות"</option></select><p class="err">נא לבחור</p></div>
+      </div>
+      <div class="fr" data-req="text"><label class="lbl">איך אתם רואים את האחריות שלכם לשינוי המצב? *</label><textarea id="resp" rows="2" placeholder="אין תשובה נכונה"></textarea><p class="err">כמה מילים, בבקשה</p></div>
+    </div>
+
+    <!-- 4 -->
+    <div class="step" data-s="4">
+      <h2>שלב 4 · סיכום ואישור</h2><p class="hint">זו התוכנית הראשונית שנבנתה מהתשובות שלכם. בשיחת הבהירות נדייק אותה יחד.</p>
+      <div class="plan" id="plan"></div>
+      <div class="sum" id="sum"></div>
+      <label class="consent" id="consentBox"><input type="checkbox" id="consent"><span><b>אני מתחייב/ת לנתינה קהילתית של 4 שעות בחודש לפחות</b> לאורך תקופת הליווי, כחלק בלתי נפרד מהעסקה. ההתחייבות תיחתם בשיחת ההיכרות. אני מסכים/ה שהמידע שמסרתי ישמש רק לליווי שלי, יישמר מוצפן ולא יועבר לאיש, ויודע/ת שזה לא ייעוץ פיננסי.</span></label>
+      <p class="faint mt-1">גרסת הדגמה: שום דבר לא נשלח לשרת. הפרטים נשמרים רק בדפדפן שלכם, כדי שהאזור האישי יוכל לפנות אליכם בשם.</p>
+    </div>
+
+    <!-- done -->
+    <div class="step" data-s="5">
+      <div class="success"><div class="big">💎</div><h2 class="h-l mt-1">ברוכים הבאים<br><span class="gold">למעגל השפע</span></h2>
+        <p class="lead" style="margin:1rem auto" id="doneMsg"></p>
+        <div class="row" style="justify-content:center"><a href="dashboard.html" class="btn btn-gold">לאזור האישי שלי</a><a href="index.html" class="btn btn-line">דף הבית</a></div></div>
+    </div>
+
+    <div class="acts" id="acts"><button class="btn btn-line" id="back" style="visibility:hidden">→ חזרה</button><button class="btn btn-gold" id="fwd">הבא ←</button></div>
+  </div>
+</div>
+</main>
+<script src="shefa.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+const SK=["חינוך והוראה","רפואה וסיוע","טכנולוגיה","אומנות ויצירה","שירות לקוחות","מכירות ושיווק","בישול","ניהול ואדמיניסטרציה","חשבונאות","כתיבה ועריכה","תרגום","ייעוץ נפשי","עיצוב","צילום","נגרות ומלאכה","משפטים","נהיגה","גינון","אחר"];
+const AR=["חינוך והעצמת ילדים ונוער","סביבה וקיימות","עזרה לזולת ומשפחות במצוקה","טכנולוגיה לטובת הקהילה","ליווי משתתפים חדשים","יצירת תוכן"];
+const RG=["קצבת ילדים","הנחה בארנונה","דמי אבטלה","נקודות זיכוי נוספות","סיוע בשכר דירה","מענק עבודה","לא בדקתי — אשמח לעזרה"];
+function chips(id,arr){ $(id).innerHTML=arr.map(s=>`<span class="chip" data-v="${s}">${s}</span>`).join(''); $(id).querySelectorAll('.chip').forEach(c=>c.onclick=()=>c.classList.toggle('on')); }
+chips('skills',SK); chips('areas',AR); chips('rights',RG);
+$('ready').querySelectorAll('.chip').forEach(c=>c.onclick=()=>{ $('ready').querySelectorAll('.chip').forEach(x=>x.classList.remove('on')); c.classList.add('on'); });
+$('control').innerHTML=[...Array(10)].map((_,k)=>`<button type="button" data-v="${k+1}">${k+1}</button>`).join('');
+let control=null; $('control').querySelectorAll('button').forEach(b=>b.onclick=()=>{ $('control').querySelectorAll('button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); control=+b.dataset.v; $('controlErr').style.display='none'; });
+const picked=id=>[...$(id).querySelectorAll('.chip.on')].map(c=>c.dataset.v);
+
+let s=1;
+try{ const L=JSON.parse(localStorage.getItem('shefa_lead')||'null'); if(L){ $('name').value=L.name||''; $('phone').value=L.phone||''; } }catch(e){}
+function valid(n){
+  let ok=true;
+  document.querySelectorAll(`.step[data-s="${n}"] .fr[data-req]`).forEach(fr=>{
+    const el=fr.querySelector('input,select,textarea'), v=el.value.trim(), t=fr.dataset.req; let good=true;
+    if(t==='text') good=v.length>=2;
+    if(t==='select') good=!!v;
+    if(t==='num') good=v!=='' && /^\d+$/.test(v);
+    if(t==='age') good=/^\d+$/.test(v) && +v>=16 && +v<=99;
+    if(t==='phone') good=/^\d{9,}$/.test(v.replace(/[-\s]/g,''));
+    if(t==='email') good=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+    fr.classList.toggle('bad',!good); if(!good) ok=false; });
+  if(n===2){ if(!control){ $('controlErr').style.display='block'; ok=false; } if(!picked('ready').length){ ok=false; $('ready').style.outline='1px solid var(--risk)'; } else $('ready').style.outline=''; }
+  if(!ok){ const f=document.querySelector(`.step[data-s="${n}"] .bad`); if(f) f.scrollIntoView({behavior:'smooth',block:'center'}); }
+  return ok;
+}
+function show(n){
+  s=n; document.querySelectorAll('.step').forEach(x=>x.classList.toggle('on',+x.dataset.s===n));
+  [...$('prog').children].forEach((d,k)=>{ d.classList.toggle('on',k+1===n); d.classList.toggle('done',k+1<n); d.querySelector('i').textContent = k+1<n?'✓':k+1; });
+  $('pfill').style.width=Math.min(4,n)*25+'%';
+  $('back').style.visibility = n>1&&n<5?'visible':'hidden';
+  $('acts').style.display = n===5?'none':'flex';
+  $('fwd').textContent = n===4?'שליחת בקשת הצטרפות 💎':'הבא ←';
+  if(n===4) summary();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+$('fwd').onclick=()=>{
+  if(s<4){ if(valid(s)) show(s+1); return; }
+  if(!$('consent').checked){ $('consentBox').classList.add('bad'); return; }
+  const data={name:$('name').value.trim(), first:$('name').value.trim().split(' ')[0], debt:+$('debt').value, income:+$('income').value, hish:+($('hish').value||0), control, skills:picked('skills'), areas:picked('areas'), hours:$('hours').value, joined:new Date().toISOString()};
+  try{ localStorage.setItem('shefa_member', JSON.stringify(data)); }catch(e){}
+  $('doneMsg').textContent = `${data.first}, הבקשה התקבלה. מלווה חוזר אליכם תוך 48 שעות לשיחת היכרות. שם חותמים יחד על ההסכם ומתחילים את החודש הראשון.`;
+  show(5);
+};
+$('back').onclick=()=>show(s-1);
+$('consent').onchange=()=>$('consentBox').classList.remove('bad');
+
+function summary(){
+  const debt=+$('debt').value, inc=+$('income').value, hish=+($('hish').value||0), exp=+($('expenses').value||0);
+  const p1=SG.pmt(debt,.12,60), a=Math.min(hish*.7,debt/2), p2=(a?SG.pmt(a,.05,60):0)+(debt-a)/60;
+  const ratio = inc? debt/(inc*12) : 0;
+  let gate = debt<20000 ? 'בלי חוב משמעותי, הדגש יהיה על העצמה ונתינה' : ratio>1 ? 'החוב גבוה ביחס להכנסה, ולכן נתחיל באיפוס פיננסי מעמיק' : 'החוב משמעותי אבל ניתן לטיפול, וזו נקודת פתיחה טובה לנתיב המלא';
+  $('plan').innerHTML = `<h4>✦ התוכנית הראשונית שלכם</h4><ol>
+    <li><b>חודש של נשימה (חינמי):</b> גישה לבוטים, שיחת בהירות, ופתיחת תיק קריסטל.</li>
+    <li><b>אבחון עומק:</b> ${gate}.</li>
+    ${debt>=20000?`<li><b>איפוס פיננסי:</b> בחוב צרכני ממוצע של 12%, ההחזר על ${SG.ils(debt)} הוא כ־${SG.ils(p1)} בחודש. ${hish?`עם הלוואה כנגד השתלמות והלוואת שפע הוא עשוי לרדת לכ־<b>${SG.ils(p2)}</b>, בלי לגעת בפנסיה.`:'במודל הבטוח, עם הלוואת שפע ב־0%, ההחזר יכול לרדת משמעותית, בלי לגעת בפנסיה.'}</li>`:''}
+    <li><b>העצמה:</b> SHEFA OS אישי, ויעד של +30% הכנסה תוך 6 חודשים.</li>
+    <li><b>נתינה (חלק מההסכם):</b> ${picked('areas')[0]||'תחום שתבחרו'}, ${$('hours').value||'4'} שעות בחודש${picked('skills').length?`, דרך ה${picked('skills').slice(0,2).join(' וה')} שלכם`:''}.</li></ol>
+    <p style="font-size:.8rem;color:rgba(243,233,210,.55);margin-top:.6rem">חישוב להמחשה בלבד, לא ייעוץ פיננסי. ההחלטות מתקבלות בשיחה ובייעוץ מורשה.</p>`;
+  const L=(k,v)=>`<div class="ln"><span>${k}</span><b>${v||'—'}</b></div>`;
+  $('sum').innerHTML = `<h4>הפרטים שמסרתם</h4>${L('שם',$('name').value)}${L('טלפון',$('phone').value)}${L('אימייל',$('email').value)}${L('עיר',$('city').value)}${L('הכנסה',SG.ils(inc))}${L('חובות',SG.ils(debt))}${exp?L('הוצאות',SG.ils(exp)):''}${L('תחושת שליטה',control+'/10')}${L('כישורים',picked('skills').join(', '))}${L('זכויות',picked('rights').join(', '))}${L('זמינות',$('hours').value+' שעות בחודש')}`;
+}
+</script>
+</body>
+</html>

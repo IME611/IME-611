@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>שפע גלובל</title>
+<meta name="description" content="מלווים אותך לצאת מהחוב, ואתה מחזיר לקהילה. ליווי חינמי לסגירת חובות, בתמורה להתחייבות לנתינה.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Cpolygon points='48,4 88,26 88,70 48,92 8,70 8,26' fill='%23FAF6EE' stroke='%23B8860B' stroke-width='6'/%3E%3Ccircle cx='48' cy='48' r='12' fill='%23C9961A'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=Assistant:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shefa.css">
+<style>
+.hero{padding:4rem max(16px,env(safe-area-inset-right,0px)) 4.5rem max(16px,env(safe-area-inset-left,0px));
+  background:radial-gradient(ellipse 70% 55% at 30% 0%,rgba(232,192,96,.24) 0%,transparent 62%),linear-gradient(175deg,#FFFBF3 0%,var(--ivory) 45%,var(--pearl) 100%)}
+.hero-grid{max-width:1120px;margin:0 auto;display:grid;grid-template-columns:1.15fr .85fr;gap:3rem;align-items:center}
+.hero h1{font-size:clamp(2.4rem,6vw,4.3rem);font-weight:900;line-height:1.06;text-wrap:balance}
+.hero .lead{margin:1.2rem 0 1.6rem}
+.deal-strip{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.8rem}
+.deal-strip span{display:inline-flex;align-items:center;gap:.4rem;font-family:Heebo;font-weight:600;font-size:.9rem;padding:.45rem .9rem;border-radius:2rem;background:var(--ivory);border:1px solid var(--line)}
+.deal-strip span b{color:var(--gold)}
+.quick{background:var(--ivory);border:1px solid rgba(184,134,11,.35);border-radius:var(--r-lg);padding:1.8rem;box-shadow:var(--shadow-lg)}
+.quick h2{font-size:1.35rem;margin-bottom:.25rem}
+.quick .sub{font-size:.9rem;color:var(--ink-dim);margin-bottom:1.1rem}
+.quick .fr{margin-bottom:.85rem}
+.quick .err{display:none;color:var(--risk);font-size:.8rem;margin-top:.2rem}
+.quick .bad input,.quick .bad select{border-color:var(--risk)}.quick .bad .err{display:block}
+.quick .btn{width:100%;margin-top:.4rem}
+.quick .note{font-size:.78rem;color:var(--ink-faint);margin-top:.8rem;text-align:center}
+.seg{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+.seg button{padding:.6rem .2rem;border:1px solid var(--line);background:var(--pearl);border-radius:8px;font-family:Heebo;font-size:.82rem;font-weight:600;color:var(--ink-mid)}
+.seg button.on{background:var(--gold);color:#fff;border-color:var(--gold)}
+.ok-box{display:none;text-align:center;padding:1rem 0}
+.ok-box .big{font-size:2.6rem}
+/* deal */
+.deal{display:grid;grid-template-columns:1fr auto 1fr;gap:1.4rem;align-items:stretch;margin-top:2.5rem}
+.side{border-radius:var(--r-lg);padding:2rem;border:1px solid var(--line);background:var(--ivory)}
+.side .who{font-family:Heebo;font-size:.78rem;font-weight:700;letter-spacing:.14em;color:var(--gold)}
+.side h3{font-size:1.5rem;margin:.3rem 0 1rem}
+.side ul{list-style:none;display:grid;gap:.65rem}
+.side li{display:grid;grid-template-columns:22px 1fr;gap:.5rem;font-size:.98rem;color:var(--ink-mid)}
+.side li::before{content:'✦';color:var(--gold)}
+.side.you{background:var(--night);border-color:transparent}
+.side.you h3,.side.you li{color:#FBF3DF}.side.you .who{color:var(--gold-lt)}.side.you li::before{color:var(--gold-lt)}
+.plus{align-self:center;font-family:Heebo;font-size:2.4rem;font-weight:300;color:var(--gold)}
+.must{margin-top:1.4rem;display:flex;gap:1rem;align-items:flex-start;padding:1.3rem 1.5rem;border-radius:var(--r);background:var(--gold-xss);border-right:3px solid var(--gold)}
+.must b{font-family:Heebo}
+/* steps */
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-top:2.5rem;counter-reset:st}
+.st{background:var(--ivory);border:1px solid var(--line);border-top:3px solid var(--c);border-radius:var(--r);padding:1.5rem 1.3rem}
+.st .n{font-family:Heebo;font-weight:900;font-size:2.2rem;color:var(--c);line-height:1}
+.st h3{font-size:1.12rem;margin:.5rem 0 .4rem}
+.st p{font-size:.92rem;color:var(--ink-dim)}
+.st .when{display:inline-block;margin-top:.8rem;font-family:Heebo;font-size:.74rem;font-weight:700;color:var(--c);background:var(--cb);padding:.2rem .65rem;border-radius:1rem}
+/* fit */
+.fit{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem}
+.fit .card ul{list-style:none;display:grid;gap:.55rem;margin-top:.8rem}
+.fit .card li{font-size:.95rem;color:var(--ink-mid);padding-right:1.4rem;position:relative}
+.fit .yes li::before{content:'✓';position:absolute;right:0;color:var(--ok);font-weight:700}
+.fit .no li::before{content:'↪';position:absolute;right:0;color:var(--warn)}
+/* give */
+.give-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:2rem}
+.give-grid .card{display:grid;grid-template-columns:46px 1fr;gap:.9rem;align-items:start}
+.give-grid .ico{margin:0}
+@media(max-width:960px){.hero-grid,.fit{grid-template-columns:1fr}.deal{grid-template-columns:1fr}.plus{justify-self:center}.steps{grid-template-columns:1fr 1fr}.give-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.steps,.give-grid{grid-template-columns:1fr}.seg{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<main>
+
+<section class="hero">
+  <div class="hero-grid">
+    <div>
+      <p class="eyebrow">ליווי לסגירת חובות · בתמורה לנתינה</p>
+      <h1>אנחנו מוציאים אותך מהחוב.<br><span class="gold">אתה מחזיר לקהילה.</span></h1>
+      <p class="lead">שפע גלובל מלווה משפחות שעובדות קשה ועדיין נשחקות: סוגרים את החובות היקרים, בונים תקציב שעובד, ומחזקים את הביטחון. הליווי לא עולה כסף. המחיר הוא נתינה: כל מי שמצטרף מתחייב לתרום מזמנו ומכישוריו לקהילה.</p>
+      <div class="deal-strip"><span><b>₪0</b> עלות הליווי</span><span><b>4+</b> שעות נתינה בחודש</span><span><b>0</b> נגיעה בפנסיה</span></div>
+      <div class="row"><a href="#pact" class="btn btn-line">מה בדיוק העסקה?</a><a href="process.html" class="btn btn-line">איך התהליך עובד</a></div>
+    </div>
+
+    <form class="quick" id="quick" novalidate>
+      <div id="qForm">
+        <h2>בדיקת התאמה, 60 שניות</h2>
+        <p class="sub">משאירים פרטים, ומלווה חוזר אליכם לשיחת היכרות ללא התחייבות.</p>
+        <div class="fr" data-req="text"><label class="lbl" for="qName">שם מלא</label><input type="text" id="qName" autocomplete="name" placeholder="נועה כהן"><p class="err">נא למלא שם</p></div>
+        <div class="fr" data-req="phone"><label class="lbl" for="qPhone">טלפון</label><input type="tel" id="qPhone" autocomplete="tel" inputmode="tel" placeholder="050-1234567"><p class="err">מספר טלפון תקין, 9 ספרות לפחות</p></div>
+        <div class="fr" id="qDebtRow"><label class="lbl">סך החובות הצרכניים, בערך</label>
+          <div class="seg" id="qDebt"><button type="button" data-v="עד 50 אלף">עד 50K</button><button type="button" data-v="50–150 אלף">50–150K</button><button type="button" data-v="150–250 אלף">150–250K</button><button type="button" data-v="מעל 250 אלף">250K+</button></div><p class="err">נא לבחור טווח</p></div>
+        <label class="consent" style="display:flex;gap:.6rem;align-items:flex-start;font-size:.86rem;margin-top:.4rem;cursor:pointer"><input type="checkbox" id="qGive" style="width:18px;height:18px;accent-color:var(--gold);margin-top:.2rem;flex-shrink:0"><span>אני מבין/ה שהליווי כולל <b>התחייבות לנתינה קהילתית</b>, לפחות 4 שעות בחודש.</span></label>
+        <p class="err" id="qGiveErr" style="color:var(--risk);font-size:.8rem;display:none">זה חלק מהעסקה. בלי ההתחייבות הזו אי אפשר להצטרף.</p>
+        <button type="submit" class="btn btn-gold">בדקו את ההתאמה שלי</button>
+        <p class="note">הפרטים משמשים רק לחזרה אליכם. בלי ספאם.</p>
+      </div>
+      <div class="ok-box" id="qOk"><div class="big">💎</div><h2 id="qOkT"></h2><p class="sub mt-1">השלב הבא הוא שאלון קצר של 4 צעדים, כדי שנגיע לשיחה מוכנים.</p><a href="join.html" class="btn btn-gold">להמשך ההרשמה</a></div>
+    </form>
+  </div>
+</section>
+
+<!-- PAIN, short -->
+<section class="bg-pearl edge-top">
+  <div class="narrow center">
+    <p class="eyebrow">למי זה מיועד</p>
+    <h2 class="h-l">עושים הכל נכון.<br>ועדיין נשחקים.</h2>
+    <p class="lead">שני הורים שעובדים, הכנסה מכובדת, ועדיין בסוף החודש אין. המינוס מתגלגל, האשראי נמשך, והחובות רק גדלים. אתם לא לבד, ואתם לא שבורים. צריך דרך אחרת לצאת מזה.</p>
+  </div>
+</section>
+
+<!-- THE DEAL -->
+<section id="pact">
+  <div class="wrap">
+    <div class="center narrow">
+      <p class="eyebrow">העסקה</p>
+      <h2 class="h-l">זה לא צדקה. <span class="gold">זו שותפות.</span></h2>
+      <p class="lead">יש כאן שני צדדים, ושניהם חובה. אנחנו נותנים לכם את הדרך החוצה, ואתם נותנים לקהילה בחזרה.</p>
+    </div>
+    <div class="deal">
+      <div class="side"><p class="who">מה אנחנו נותנים</p><h3>ליווי אל מחוץ לחוב</h3><ul>
+        <li>מיפוי של כל החובות, וזיהוי היקרים והמסוכנים שבהם</li>
+        <li>משא ומתן מול בנקים ונושים, איחוד ומחזור הלוואות</li>
+        <li>"הלוואת שפע": גישור בריבית אפסית, כשצריך</li>
+        <li>תקציב משפחתי חדש, וכלים דיגיטליים שמחזיקים אותו</li>
+        <li>אימון אישי וקבוצתי לחיזוק הביטחון ולהגדלת ההכנסה</li>
+        <li>הכול בלי עלות, ובלי לגעת בכספי הפנסיה</li></ul></div>
+      <div class="plus">+</div>
+      <div class="side you"><p class="who">מה אתם נותנים</p><h3>נתינה לקהילה</h3><ul>
+        <li>לפחות 4 שעות בחודש, לאורך כל תקופת הליווי</li>
+        <li>לפי הכישורים שלכם: הוראה, שיווק, מקצוע, ליווי</li>
+        <li>בעמותות ובגופים קהילתיים שאנחנו מתאימים לכם</li>
+        <li>בהמשך: ללוות משפחה חדשה שנמצאת איפה שהייתם</li>
+        <li>התחייבות שנחתמת בשיחה הראשונה, לפני שמתחילים</li></ul></div>
+    </div>
+    <div class="must"><span style="font-size:1.4rem">⚖</span><p><b>למה הנתינה היא חובה ולא בונוס?</b> כי הריפוי לא נגמר בסגירת המינוס. מי שנותן מפסיק להרגיש "אני חייב" ומתחיל להרגיש "אני ראוי". והנתינה שלכם היא מה שמאפשר למשפחה הבאה לקבל את אותו ליווי. אם קורה משבר אמיתי, מקפיאים יחד את ההתחייבות. אף אחד לא נענש.</p></div>
+  </div>
+</section>
+
+<!-- STEPS -->
+<section class="bg-pearl edge-top">
+  <div class="wrap">
+    <div class="center narrow"><p class="eyebrow">התהליך בקצרה</p><h2 class="h-l">ארבעה שלבים</h2><p class="lead">כאן רק הקווים הכלליים. כל שלב נפתח לפניכם בפירוט כשמגיעים אליו.</p></div>
+    <div class="steps">
+      <div class="st gate-diag"><div class="n">1</div><h3>שיחת היכרות</h3><p>מבינים את התמונה המלאה: החובות, ההכנסות, וגם מה אתם רוצים לחיים. חותמים יחד על ההסכם.</p><span class="when">שבוע 1 · חינם</span></div>
+      <div class="st gate-reset"><div class="n">2</div><h3>יציאה מהחוב</h3><p>תוכנית סגירה לכל חוב, מו"מ מול הבנקים, ותקציב חדש שמשאיר עודף בסוף החודש.</p><span class="when">חודשים 1–3</span></div>
+      <div class="st gate-grow"><div class="n">3</div><h3>בנייה מחדש</h3><p>אימון, כלים והרגלים יומיים. העבודה על הגדלת ההכנסה ועל הביטחון שזה יחזיק.</p><span class="when">חודשים 3–6</span></div>
+      <div class="st gate-give"><div class="n">4</div><h3>נתינה</h3><p>מתחילה כבר מהחודש הראשון, וגדלה לאורך הדרך. בסוף אתם אלה שמלווים אחרים.</p><span class="when">לאורך כל הדרך</span></div>
+    </div>
+    <div class="center mt-2"><a href="process.html" class="btn btn-line">לתהליך המלא ←</a></div>
+  </div>
+</section>
+
+<!-- GIVE -->
+<section>
+  <div class="wrap">
+    <div class="center narrow"><p class="eyebrow">איך נראית הנתינה</p><h2 class="h-l">לפי מה שאתם טובים בו</h2><p class="lead">לא עבודות סתמיות. אנחנו מתאימים את הנתינה לכישורים, לתחומי העניין ולזמן שלכם.</p></div>
+    <div class="give-grid">
+      <div class="card gate-give"><div class="ico">📚</div><div><h3>חינוך</h3><p>שיעורי עזר, חונכות לנוער, סדנאות.</p></div></div>
+      <div class="card gate-give"><div class="ico">📣</div><div><h3>שיווק וגיוס</h3><p>עזרה לעמותה קטנה בקמפיין או בגיוס תרומות.</p></div></div>
+      <div class="card gate-give"><div class="ico">💼</div><div><h3>מקצועי</h3><p>תרומה מהמקצוע שלכם: עיצוב, משפט, הנהלת חשבונות, טכנולוגיה.</p></div></div>
+      <div class="card gate-give"><div class="ico">🏘</div><div><h3>קהילה</h3><p>ארגון אירועים ומפגשים, עזרה למשפחות בשכונה.</p></div></div>
+      <div class="card gate-give"><div class="ico">🫂</div><div><h3>ליווי</h3><p>בהמשך הדרך: ללוות משפחה חדשה בחודש הראשון שלה.</p></div></div>
+      <div class="card gate-give"><div class="ico">👨‍👩‍👧</div><div><h3>כל המשפחה</h3><p>אפשר לתת יחד עם הילדים. זה נספר לכולם.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FIT -->
+<section class="bg-cream edge-top">
+  <div class="wrap">
+    <div class="center narrow mb-2"><p class="eyebrow">האם זה בשבילכם</p><h2 class="h-l">כנות מההתחלה</h2></div>
+    <div class="fit">
+      <div class="card yes"><h3>זה מתאים לכם אם</h3><ul>
+        <li>יש לכם חובות צרכניים משמעותיים, ולפחות הכנסה אחת קבועה</li>
+        <li>אתם רוצים שינוי עמוק, לא רק "לכבות שריפה"</li>
+        <li>אתם מוכנים לקחת אחריות ולעבוד על זה</li>
+        <li>אתם מוכנים להתחייב ל־4 שעות נתינה בחודש לפחות</li></ul></div>
+      <div class="card no"><h3>נפנה אתכם למקום מתאים יותר אם</h3><ul>
+        <li>אתם בהליך משפטי פעיל, כמו חדלות פירעון: קודם עורך דין, ואנחנו נלווה במקביל</li>
+        <li>יש מצוקה נפשית חריפה או התמכרות: קודם טיפול מקצועי</li>
+        <li>אין כרגע אפשרות להתחייב לנתינה: נשמח לראות אתכם כשיתאפשר</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="narrow">
+    <div class="center mb-2"><p class="eyebrow">שאלות נפוצות</p><h2 class="h-l">מה שכולם שואלים</h2></div>
+    <details class="acc"><summary>כמה זה עולה?</summary><div class="acc-body">הליווי לא עולה כסף. הוא ממומן על ידי תורמים וקרנות שמאמינים במודל. המחיר שלכם הוא הנתינה לקהילה.</div></details>
+    <details class="acc"><summary>אתם נותנים הלוואה?</summary><div class="acc-body">לרוב אנחנו לא מתחילים בהלוואה. קודם ממפים את החובות, מנהלים מו"מ, ומאחדים ומחזרים הלוואות. כשצריך, יש "הלוואת שפע" בריבית אפסית לגישור, והיא מוחזרת מהתזרים המשופר בפריסה נוחה.</div></details>
+    <details class="acc"><summary>תגעו לי בפנסיה?</summary><div class="acc-body">לא. אנחנו לא ממליצים למשוך כספי פנסיה. משיכה מוקדמת עולה 35% מס לפחות, ופוגעת בעתיד שלכם. כל החלטה על חיסכון נעשית אצל יועץ פנסיוני מורשה ועצמאי.</div></details>
+    <details class="acc"><summary>הנתינה היא באמת חובה?</summary><div class="acc-body">כן. היא חלק מהעסקה ונחתמת בהסכם בשיחה הראשונה. לפחות 4 שעות בחודש, בעמותות ובגופים קהילתיים, לפי הכישורים שלכם. הנתינה היא לא עבודה בשבילנו, והיא לא "מחזירה" את החוב בשעות. אם קורה משבר, מקפיאים יחד.</div></details>
+    <details class="acc"><summary>כמה זמן זה לוקח?</summary><div class="acc-body">שלושת החודשים הראשונים הם ליווי צמוד. היעד הוא תוכנית סגירה חתומה תוך 3 חודשים, ויציאה מכל החובות היקרים תוך שנה עד שנתיים. אחר כך ממשיכים בליווי חודשי.</div></details>
+    <details class="acc"><summary>מה קורה למידע שאני מוסר?</summary><div class="acc-body">הוא משמש רק לליווי שלכם, נשמר מוצפן, הגישה אליו מוגבלת לצוות, והוא לא מועבר לאף אחד. אפשר לבקש מחיקה בכל עת.</div></details>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="bg-night center">
+  <div class="narrow">
+    <h2 class="h-l">החודש הבא יכול להיגמר אחרת.</h2>
+    <p class="lead mt-1" style="margin-inline:auto">ארבעה צעדים קצרים, ושיחה אחת. משם מתחילים.</p>
+    <div class="row mt-2" style="justify-content:center"><a href="join.html" class="btn btn-gold">אני רוצה להתחיל</a><a href="#quick" class="btn btn-line" style="color:#F3E9D2">בדיקת התאמה מהירה</a></div>
+  </div>
+</section>
+
+</main>
+<script src="shefa.js"></script>
+<script>
+let debt=null;
+document.querySelectorAll('#qDebt button').forEach(b=>b.onclick=()=>{ document.querySelectorAll('#qDebt button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); debt=b.dataset.v; document.getElementById('qDebtRow').classList.remove('bad'); });
+document.getElementById('quick').addEventListener('submit',e=>{
+  e.preventDefault(); let ok=true;
+  const name=document.getElementById('qName').value.trim(), phone=document.getElementById('qPhone').value.replace(/[-\s]/g,'');
+  const set=(el,good)=>{ el.closest('.fr').classList.toggle('bad',!good); if(!good) ok=false; };
+  set(document.getElementById('qName'), name.length>=2); set(document.getElementById('qPhone'), /^\d{9,}$/.test(phone));
+  document.getElementById('qDebtRow').classList.toggle('bad',!debt); if(!debt) ok=false;
+  const g=document.getElementById('qGive').checked; document.getElementById('qGiveErr').style.display=g?'none':'block'; if(!g) ok=false;
+  if(!ok) return;
+  try{ localStorage.setItem('shefa_lead', JSON.stringify({name,phone,debt})); }catch(err){}
+  document.getElementById('qForm').hidden=true; document.getElementById('qOk').style.display='block';
+  document.getElementById('qOkT').textContent = name.split(' ')[0]+', נראה שזה יכול להתאים לכם';
+});
+</script>
+</body>
+</html>

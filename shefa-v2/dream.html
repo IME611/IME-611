@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>החלום מתממש — מסע בזמן | שפע גלובל</title>
+<meta name="description" content="סימולציית חזון: מהקריסטל הראשון ועד תנועה בחמש יבשות, לאורך שבעת שלבי מפת הדרכים.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Cpolygon points='48,4 88,26 88,70 48,92 8,70 8,26' fill='%23FAF6EE' stroke='%23B8860B' stroke-width='6'/%3E%3Ccircle cx='48' cy='48' r='12' fill='%23C9961A'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=Assistant:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shefa.css">
+<style>
+body{background:var(--night)}
+.stage{position:relative;min-height:calc(100vh - var(--nav-h));display:grid;grid-template-columns:1.25fr 1fr;color:#F3E9D2;overflow:hidden;
+  background:radial-gradient(ellipse 70% 60% at 60% 45%,#2E2213 0%,#16100A 70%)}
+#sky{position:absolute;inset:0;width:100%;height:100%}
+.panel{position:relative;z-index:2;padding:3rem 2.5rem 7rem;display:flex;flex-direction:column;justify-content:center;background:linear-gradient(270deg,rgba(22,16,10,.0) 0%,rgba(22,16,10,.55) 35%,rgba(22,16,10,.85) 100%);grid-column:2}
+.sim-label{display:inline-flex;align-items:center;gap:.5rem;font-family:Heebo;font-size:.72rem;font-weight:700;letter-spacing:.12em;color:var(--gold-lt);border:1px solid rgba(232,192,96,.35);border-radius:2rem;padding:.3rem .8rem;align-self:flex-start;margin-bottom:1.2rem}
+.when{font-family:Heebo;font-weight:800;color:var(--gold-lt);letter-spacing:.08em;font-size:.85rem}
+.panel h1{color:#FBF3DF;font-size:clamp(2rem,4.4vw,3.3rem);font-weight:900;margin:.3rem 0 .9rem;line-height:1.1}
+.panel .story{font-size:1.08rem;line-height:1.8;color:rgba(243,233,210,.85);min-height:7.5em}
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:.7rem;margin-top:1.6rem}
+.metric{background:rgba(255,248,230,.05);border:1px solid rgba(232,192,96,.18);border-radius:12px;padding:.85rem .8rem}
+.metric b{display:block;font-family:Heebo;font-weight:900;font-size:1.45rem;color:var(--gold-lt);font-variant-numeric:tabular-nums;line-height:1.1}
+.metric span{font-size:.76rem;color:rgba(243,233,210,.6)}
+.countries{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:1rem}
+.countries span{font-family:Heebo;font-size:.78rem;font-weight:600;padding:.25rem .7rem;border-radius:1rem;border:1px solid rgba(232,192,96,.2);color:rgba(243,233,210,.35);transition:.5s}
+.countries span.lit{background:rgba(232,192,96,.15);color:var(--gold-lt);border-color:rgba(232,192,96,.5)}
+.controls{position:absolute;bottom:0;right:0;left:0;z-index:3;padding:1rem 2rem 1.4rem;background:linear-gradient(0deg,rgba(22,16,10,.95),rgba(22,16,10,0))}
+.track{display:grid;grid-template-columns:repeat(8,1fr);gap:4px;margin-bottom:.8rem}
+.track button{background:none;border:none;color:rgba(243,233,210,.45);font-family:Heebo;font-size:.74rem;font-weight:600;padding-top:.6rem;border-top:3px solid rgba(232,192,96,.15);text-align:center;transition:.3s}
+.track button.past{border-top-color:rgba(232,192,96,.55);color:rgba(243,233,210,.7)}
+.track button.on{border-top-color:var(--gold-lt);color:var(--gold-lt)}
+.ctrl-row{display:flex;justify-content:center;gap:.6rem}
+.ctrl-row button{width:46px;height:46px;border-radius:50%;border:1px solid rgba(232,192,96,.4);background:rgba(22,16,10,.6);color:var(--gold-lt);font-size:1.05rem}
+.ctrl-row button.play{width:auto;padding:0 1.4rem;border-radius:2rem;background:var(--gold);color:var(--night);font-family:Heebo;font-weight:800;border-color:var(--gold)}
+.future{background:var(--ivory);color:var(--ink)}
+.paper{max-width:860px;margin:auto;background:#FFFDF7;border:1px solid var(--line);box-shadow:var(--shadow-lg);padding:clamp(1.5rem,4vw,3rem);border-radius:4px;position:relative}
+.paper .mast{display:flex;justify-content:space-between;align-items:baseline;border-bottom:3px double var(--ink);padding-bottom:.6rem;margin-bottom:1.4rem;font-family:Heebo}
+.paper .mast b{font-size:1.6rem;font-weight:900}
+.paper .mast span{font-size:.8rem;color:var(--ink-faint)}
+.paper h2{font-size:clamp(1.6rem,4vw,2.5rem);font-weight:900;line-height:1.15}
+.paper .cols{columns:2;column-gap:2rem;margin-top:1.2rem;font-size:.98rem;color:var(--ink-mid)}
+.paper .cols p{margin-bottom:.8rem;break-inside:avoid}
+.paper .stamp{position:absolute;top:1rem;left:1rem;transform:rotate(-8deg);border:2px solid var(--gold);color:var(--gold);font-family:Heebo;font-weight:800;font-size:.75rem;padding:.3rem .7rem;border-radius:4px}
+.letter{max-width:720px;margin:auto;font-family:Heebo;font-weight:300;font-size:clamp(1.1rem,2.4vw,1.35rem);line-height:1.9;color:#F3E9D2}
+.letter .sig{color:var(--gold-lt);font-weight:600;margin-top:1.5rem}
+@media(max-width:960px){.stage{grid-template-columns:1fr;grid-template-rows:46vh auto}.panel{grid-column:1;grid-row:2;padding:1.5rem 16px 9rem;background:linear-gradient(180deg,rgba(22,16,10,.4),rgba(22,16,10,.95) 15%)}#sky{height:50vh}.metrics{grid-template-columns:repeat(2,1fr)}.track button{font-size:0;padding-top:.5rem}.track button.on{font-size:.7rem}.paper .cols{columns:1}.controls{padding:1rem 16px 1.2rem}}
+</style>
+</head>
+<body data-area="founder" data-nostandby="1">
+<main>
+<section class="stage" style="padding:0">
+  <canvas id="sky" aria-hidden="true"></canvas>
+  <div class="panel">
+    <span class="sim-label">✦ סימולציית חזון · לא נתונים ולא תחזית</span>
+    <span class="when" id="when"></span>
+    <h1 id="title"></h1>
+    <p class="story" id="story"></p>
+    <div class="metrics" id="metrics"></div>
+    <div class="countries" id="countries"></div>
+  </div>
+  <div class="controls">
+    <div class="track" id="track"></div>
+    <div class="ctrl-row"><button id="next" aria-label="הבא">→</button><button class="play" id="play">▶ נגן את המסע</button><button id="prev" aria-label="הקודם">←</button></div>
+  </div>
+</section>
+
+<!-- HEADLINE FROM THE FUTURE -->
+<section class="future">
+  <div class="center narrow mb-2"><p class="eyebrow">כתבה מהעתיד</p><h2 class="h-l">כך זה ייראה כשזה יקרה</h2><p class="lead">דמיון מודרך, בדיוק כמו "סצנת הסיום" של SHEFA OS: פעולה אחת שמתרחשת אחרי שהכל כבר הסתדר.</p></div>
+  <article class="paper reveal">
+    <span class="stamp">סצנת סיום</span>
+    <div class="mast"><b>מעגל השפע</b><span>גיליון ההשקה הגלובלית · שנה 10 מהיציאה מ־STAND BY</span></div>
+    <h2>"עשינו הכל נכון, ועדיין נשחקנו. היום אנחנו אלה שמלווים."</h2>
+    <p class="faint mt-1">משפחת כהן, מהקריסטלים הראשונים של הפיילוט, פתחה השבוע את המעגל המקומי ה־12 של שפע גלובל.</p>
+    <div class="cols">
+      <p>לפני עשור הם היו "הזוג השכיר שנשחק במרכז": בני 35, שני ילדים, ₪180 אלף חוב צרכני, ותחושה קבועה של "אני חייב". היום שניהם בדרגת יהלום. היא מלווה שלוש משפחות חדשות בכל מחזור, והוא מנחה סדנת תקציב חודשית במרכז הקהילתי בחולון.</p>
+      <p>"החוב נסגר בעזרת הלוואה כנגד ההשתלמות והלוואת שפע בלי ריבית. לא נגענו בפנסיה," היא מספרת. "אבל מה שהשתנה באמת זה הבוקר. הודיה, נשימה, ובערב תיקון. הילדים יודעים לומר מה הם מודים עליו."</p>
+      <p>בעיר אחרת נסגרה השבוע הלוואת השפע ה־1,000. היא הוחזרה במלואה מהתזרים המשופר של המשפחה, והכסף כבר יצא לדרך עם המשפחה הבאה. את אותה הלוואה ראשונה, לפני שנים, מימן פילנתרופ אחד.</p>
+      <p>ובמשרד קטן נפגשה הוועדה התודעתית של קרן הקריסטלים, כדי לבחון מיזם של בוגרת הנתיב: אפליקציה שמלמדת בני נוער לנהל תקציב. "אנחנו לא משקיעים במספרים," אומר אחד החברים. "אנחנו משקיעים באנשים שעברו את המסע."</p>
+      <p>המייסד, שבלילה אחד ביוני 2025 כתב לעצמו "אני בקרוב מאוד אהיה — קריסטל", מסכם בפשטות: "לא באנו להציל. באנו להזכיר."</p>
+    </div>
+  </article>
+  <p class="center faint mt-2">הכתבה דמיונית. היא מתארת את התרחיש שבמפת הדרכים, ומבוססת על משפחת כהן הבדויה ממסמך האב.</p>
+</section>
+
+<!-- LETTER -->
+<section class="bg-night">
+  <div class="center narrow mb-2"><p class="eyebrow">מכתב לקריסטל הבא</p></div>
+  <div class="letter reveal">
+    <p>אם אתה קורא את זה בלילה, אחרי עוד חודש שנגמר במינוס, אני רוצה שתדע משהו:</p>
+    <p class="mt-1">אתה לא מקולקל. אתה לא לבד. אתה לא מספר.</p>
+    <p class="mt-1">גם אנחנו היינו שם. גם אצלנו הבושה ישבה ליד שולחן המטבח. ואז מישהו האמין בנו לפני שהוכחנו משהו, והחוב הפסיק להיות מי שאנחנו.</p>
+    <p class="mt-1">אנחנו לא באים להציל אותך. באנו להזכיר לך מי אתה.</p>
+    <p class="mt-1" style="color:var(--gold-lt)">ואת האור שלך העולם צריך.</p>
+    <p class="sig">— קריסטל מאיר, דרגת יהלום</p>
+  </div>
+  <div class="center mt-3"><a href="join.html" class="btn btn-gold">להתחיל את המסע</a> <a href="roadmap.html" class="btn btn-line" style="color:#F3E9D2">מפת הדרכים האמיתית</a></div>
+</section>
+
+<details class="acc" style="max-width:860px;margin:2rem auto;border-radius:var(--r)">
+  <summary>הנחות הסימולציה</summary>
+  <div class="acc-body">
+    <p>השלבים לקוחים ממפת הדרכים במסמך האב, ומספרי המשפחות מהיעדים שבו: 2–3 בפיילוט v0, 5–10 בפיילוט המלא, ו־40–100 קריסטלים פעילים בהשקה. בשלבים 6–7 נלקח סדר גודל שמרני של פי עשרה בכל שלב, כי במסמך אין יעד מספרי לשלבים האלה. חוב רעיל שנסגר: ממוצע של ₪150 אלף למשפחה, באמצע טווח האוואטר. שעות נתינה: 4 בחודש למשפחה, היעד המינימלי. הלוואות שפע: כ־₪75 אלף בממוצע, ממוחזרות לאורך 5 שנים. ציר הזמן נמדד ב"שנים מהיציאה מ־STAND BY", כי מועד היציאה תלוי בהחלטת המייסד. כל זה דמיון מכוון, לא תחזית ולא הבטחה.</p>
+  </div>
+</details>
+</main>
+<script src="shefa.js"></script>
+<script>
+const F=[
+ {w:'היום · אוקטובר 2026',t:'הקריסטל הראשון',s:'המיזם ב־STAND BY. יש מסמך אב של 103 עמודים, אתר, ואדם אחד שמתרגל כל בוקר הודיה ובכל ערב תיקון. "כל העניין כרגע הוא בניית ארכיטקטורה של החזון." הזרע כבר באדמה.',fam:1,amb:0,partners:0,loans:0,c:['ישראל'],cl:0},
+ {w:'שלב 1 · יסודות',t:'השותף שאינו מתלהב',s:'עורך דין אחד עונה בכנות על עשר השאלות, ונבחר מבנה משפטי. יועץ פנסיוני מורשה מצטרף בשעות פנויות, ונכתב מסמך אבטחת מידע. מתברר שאפשר להישען על ארגוני סיוע קיימים, ולא צריך להמציא הכל.',fam:1,amb:0,partners:2,loans:0,c:['ישראל'],cl:0},
+ {w:'שלב 2 · פיילוט v0',t:'שלוש משפחות, שלושה סיפורים',s:'שלוש משפחות נכנסות לשיחת בהירות, בלי הלוואות שפע, רק ליווי, כלים ומיצוי של מה שקיים. בשבוע השישי אישה אחת אומרת: "פעם ראשונה שאני פותחת את דף החשבון בלי לרעוד." ונבנה תיק הפיילוט הראשון.',fam:4,amb:0,partners:4,loans:0,c:['ישראל'],cl:1},
+ {w:'שלב 3 · זרע הון',t:'פילנתרופ אחד מאמין',s:'תיק הפיילוט מוצג לחמישה פילנתרופים, ושניים אומרים כן. נפתחים שני ארנקים: תפעול, וקרן הלוואות השפע הראשונה. ה־COO הוא הגיוס הראשון בשכר. מעכשיו המייסד כבר לא לבד.',fam:4,amb:0,partners:7,loans:300000,c:['ישראל'],cl:1},
+ {w:'שלב 4 · פיילוט מלא',t:'הנתיב המלא, עשר משפחות',s:'עשר משפחות עוברות את כל ששת השלבים, והלוואות השפע הראשונות יוצאות לדרך. בוט טלגרם אחד עם שלושה מצבים מלווה אותן כל ערב. שתי משפחות מגיעות לדרגת זהב ומתחילות ללוות אחרות. נולדו השגרירים הראשונים.',fam:14,amb:2,partners:10,loans:750000,c:['ישראל'],cl:2},
+ {w:'שלב 5 · השקה',t:'מאה קריסטלים פעילים',s:'סרטון הפתיחה, השקה רכה ואז רשמית, ומפגש Zoom חודשי שבו 70% מהקהילה נוכחים. מאה משפחות בליווי פעיל, ועוד חמש מאות אנשים שנגעו בהם. הקהילה מתחילה להחזיק את עצמה.',fam:114,amb:20,partners:24,loans:4500000,c:['ישראל'],cl:6},
+ {w:'שלב 6 · צמיחה',t:'המעגל מתמחזר',s:'אפליקציית הקריסטלים חיה, ותעודות הקריסטל הראשונות נחתמות על בלוקצ׳יין, בלי ערך כספי ועם הרבה גאווה. הלוואות שחזרו מממנות משפחות חדשות. קרן הקריסטלים קמה דרך גוף מורשה, ובוגר ראשון מגיש לה מיזם.',fam:1114,amb:180,partners:60,loans:22000000,c:['ישראל'],cl:30},
+ {w:'שלב 7 · התרחבות',t:'חמש יבשות, תנועה אחת',s:'פיילוטים מקומיים בארה"ב, בהודו, בברזיל ובאפריקה. המניפסט עובר כמו שהוא, ומנוע האיפוס נבנה מחדש בכל מדינה עם שותפים מקומיים. במקום שבו היה חוב יש עכשיו מעגלים. "יש מספיק לכולם, כמו אוויר."',fam:11114,amb:1500,partners:200,loans:90000000,c:['ישראל','ארה"ב','הודו','ברזיל','אפריקה'],cl:120}
+];
+const ALLC=['ישראל','ארה"ב','הודו','ברזיל','אפריקה'];
+let i=0, playing=false, timer, shown={fam:1,debt:0,hours:0,amb:0,partners:0,loans:0};
+const $=id=>document.getElementById(id);
+$('track').innerHTML=F.map((f,k)=>`<button data-k="${k}">${f.w.split('·')[0].trim()}</button>`).join('');
+$('track').querySelectorAll('button').forEach(b=>b.onclick=()=>{stop();go(+b.dataset.k)});
+function metricsOf(f){ const fam=f.fam; return {fam, debt:Math.max(0,fam-1)*150000, hours:Math.max(0,fam-1)*4*12*Math.max(1,f.cl/ (f.cl||1)), amb:f.amb, partners:f.partners, loans:f.loans}; }
+function fmtILS(n){ if(n>=1e9) return '₪'+(n/1e9).toFixed(1)+' מיליארד'; if(n>=1e6) return '₪'+(n/1e6).toFixed(n>=1e7?0:1)+' מיליון'; if(n>=1e3) return '₪'+Math.round(n/1e3)+' אלף'; return '₪'+n; }
+function fmtN(n){ return Math.round(n).toLocaleString('he-IL'); }
+function go(k){ i=k; const f=F[k];
+  $('when').textContent=f.w; $('title').textContent=f.t; $('story').textContent=f.s;
+  $('track').querySelectorAll('button').forEach((b,j)=>{ b.classList.toggle('on',j===k); b.classList.toggle('past',j<k); });
+  $('countries').innerHTML=ALLC.map(c=>`<span class="${f.c.includes(c)?'lit':''}">${c}</span>`).join('');
+  const to={fam:f.fam, debt:Math.max(0,f.fam-1)*150000, hours:Math.max(0,f.fam-1)*48*(k>=6?3:1), amb:f.amb, partners:f.partners, loans:f.loans};
+  const from={...shown}, t0=performance.now();
+  (function tick(t){ const p=Math.min(1,(t-t0)/1300), e=1-Math.pow(1-p,3); const v={}; for(const key in to) v[key]=from[key]+(to[key]-from[key])*e;
+    $('metrics').innerHTML=`<div class="metric"><b>${fmtN(v.fam)}</b><span>קריסטלים · משפחות</span></div>
+      <div class="metric"><b>${fmtILS(v.debt)}</b><span>חוב רעיל שנסגר</span></div>
+      <div class="metric"><b>${fmtN(v.hours)}</b><span>שעות נתינה לקהילה</span></div>
+      <div class="metric"><b>${fmtN(v.amb)}</b><span>שגרירים · יהלום</span></div>
+      <div class="metric"><b>${fmtN(v.partners)}</b><span>שותפים ויועצים</span></div>
+      <div class="metric"><b>${fmtILS(v.loans)}</b><span>בקרן הלוואות השפע</span></div>`;
+    if(p<1) requestAnimationFrame(tick); else shown=to; })(t0);
+  target = f.fam; targetLinks = f.amb;
+}
+function stop(){ playing=false; clearInterval(timer); $('play').textContent='▶ נגן את המסע'; }
+$('play').onclick=()=>{ if(playing){stop();return;} playing=true; $('play').textContent='❚❚ עצור'; if(i===F.length-1) go(0); timer=setInterval(()=>{ if(i<F.length-1) go(i+1); else stop(); },5200); };
+$('next').onclick=()=>{stop(); if(i<F.length-1) go(i+1)};
+$('prev').onclick=()=>{stop(); if(i>0) go(i-1)};
+
+/* ── SKY: crystals as stars ── */
+const cv=$('sky'), ctx=cv.getContext('2d'); let W,H,DPR=Math.min(2,window.devicePixelRatio||1);
+const COLORS=['#4E8C8F','#E8C060','#7FA86A','#9C7BB0','#E8C060','#F3E9D2'];
+const MAXN=900; const nodes=[]; let target=1, targetLinks=0;
+function rs(){ const r=cv.getBoundingClientRect(); W=r.width; H=r.height; cv.width=W*DPR; cv.height=H*DPR; ctx.setTransform(DPR,0,0,DPR,0,0); }
+window.addEventListener('resize',rs); rs();
+for(let n=0;n<MAXN;n++){ const a=n*2.39996, rr=Math.sqrt(n+1)*1; nodes.push({a, rr, c:COLORS[n%COLORS.length], tw:Math.random()*6.28, sz:.9+Math.random()*1.6, on:0}); }
+function visibleCount(){ return target<=1?1: Math.min(MAXN, Math.round(1 + Math.log10(target)*Math.log10(target)*58 + (target<20?target*6:0))); }
+let tt=0;
+function draw(){ tt+=0.016; ctx.clearRect(0,0,W,H);
+  const cx = W>960? W*0.66 : W/2, cy=H*0.5, scale=Math.min(W,H)/ (W>960?62:52);
+  const vis=visibleCount();
+  // links from center to ambassadors
+  for(let n=1;n<vis;n++){ const nd=nodes[n]; nd.on=Math.min(1,nd.on+0.03);
+    const r=nd.rr*scale, x=cx+Math.cos(nd.a+tt*0.02)*r, y=cy+Math.sin(nd.a+tt*0.02)*r*0.82; nd.x=x; nd.y=y; }
+  for(let n=vis;n<MAXN;n++){ nodes[n].on=Math.max(0,nodes[n].on-0.05); }
+  const linkN=Math.min(vis-1, Math.round(Math.sqrt(targetLinks)*6)+(vis>3?3:0));
+  ctx.lineWidth=.6;
+  for(let n=1;n<=linkN;n++){ const nd=nodes[n]; if(!nd.x) continue; ctx.strokeStyle=`rgba(232,192,96,${0.18*nd.on})`; ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(nd.x,nd.y); ctx.stroke();
+    const m=nodes[n+linkN]; if(m&&m.x&&m.on>0){ ctx.strokeStyle=`rgba(232,192,96,${0.08*m.on})`; ctx.beginPath(); ctx.moveTo(nd.x,nd.y); ctx.lineTo(m.x,m.y); ctx.stroke(); } }
+  for(let n=1;n<MAXN;n++){ const nd=nodes[n]; if(nd.on<=0||!nd.x) continue; const tw=.6+.4*Math.sin(tt*2+nd.tw);
+    ctx.globalAlpha=nd.on*tw; ctx.fillStyle=nd.c; ctx.beginPath(); ctx.arc(nd.x,nd.y,nd.sz,0,6.283); ctx.fill();
+    if(n<=linkN){ ctx.globalAlpha=nd.on*.25*tw; ctx.beginPath(); ctx.arc(nd.x,nd.y,nd.sz*3.2,0,6.283); ctx.fill(); } }
+  ctx.globalAlpha=1;
+  // central crystal
+  const R=22+Math.sin(tt*1.5)*1.5; const g=ctx.createRadialGradient(cx,cy,0,cx,cy,R*4); g.addColorStop(0,'rgba(232,192,96,.45)'); g.addColorStop(1,'rgba(232,192,96,0)');
+  ctx.fillStyle=g; ctx.beginPath(); ctx.arc(cx,cy,R*4,0,6.283); ctx.fill();
+  ctx.strokeStyle='#E8C060'; ctx.lineWidth=1.5; ctx.fillStyle='rgba(250,246,238,.08)';
+  [R, R*.62].forEach(rad=>{ ctx.beginPath(); for(let k=0;k<6;k++){ const a=Math.PI/6+k*Math.PI/3+tt*.1; const x=cx+Math.cos(a)*rad, y=cy+Math.sin(a)*rad; k?ctx.lineTo(x,y):ctx.moveTo(x,y);} ctx.closePath(); ctx.fill(); ctx.stroke(); });
+  ctx.fillStyle='#E8C060'; ctx.beginPath(); ctx.arc(cx,cy,4,0,6.283); ctx.fill();
+  requestAnimationFrame(draw); }
+go(0); draw();
+</script>
+</body>
+</html>

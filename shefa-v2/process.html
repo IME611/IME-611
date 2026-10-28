@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>איך זה עובד | שפע גלובל</title>
+<meta name="description" content="המסע בשפע גלובל, שלב אחר שלב: מהשיחה הראשונה, דרך היציאה מהחוב והנתינה, ועד שאתם מלווים אחרים.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Cpolygon points='48,4 88,26 88,70 48,92 8,70 8,26' fill='%23FAF6EE' stroke='%23B8860B' stroke-width='6'/%3E%3Ccircle cx='48' cy='48' r='12' fill='%23C9961A'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=Assistant:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shefa.css">
+<style>
+.deck{max-width:880px;margin:0 auto;display:grid;gap:1.2rem}
+.layer{background:var(--ivory);border:1px solid var(--line);border-radius:var(--r-lg);padding:clamp(1.3rem,4vw,2.2rem);box-shadow:var(--shadow)}
+.layer[hidden]{display:none}
+.layer.new{animation:fadeUp .5s ease}
+.layer .lh{display:flex;align-items:center;gap:.8rem;margin-bottom:1.2rem}
+.layer .lh .k{width:40px;height:40px;border-radius:12px;background:var(--gold);color:#fff;font-family:Heebo;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.layer .lh h2{font-size:1.45rem}
+.layer .lh small{display:block;font-family:Assistant;color:var(--ink-faint);font-size:.85rem;font-weight:400}
+.journey{display:grid;gap:.6rem}
+.jr{display:grid;grid-template-columns:120px 1fr;gap:1rem;padding:.9rem 0;border-bottom:1px dashed var(--line)}
+.jr:last-child{border:none}
+.jr .w{font-family:Heebo;font-weight:700;font-size:.85rem;color:var(--c)}
+.jr .w i{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--c);margin-left:.4rem}
+.jr h3{font-size:1.05rem;margin-bottom:.2rem}
+.jr p{font-size:.93rem;color:var(--ink-dim)}
+.next{display:flex;justify-content:center}
+.next button{display:inline-flex;align-items:center;gap:.6rem}
+.next .cards-ico{display:inline-flex}
+.next .cards-ico i{width:16px;height:22px;border-radius:3px;border:1.5px solid currentColor;margin-left:-8px;background:var(--gold)}
+.mini{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;align-items:start}
+.res{background:var(--pearl);border-radius:var(--r);padding:1.2rem}
+.res .ln{display:flex;justify-content:space-between;padding:.45rem 0;border-bottom:1px dashed var(--line);font-size:.93rem}
+.res .ln:last-child{border:none}
+.res b{font-family:Heebo;font-variant-numeric:tabular-nums}
+.tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;margin-top:1rem}
+.tiers div{border-radius:12px;padding:1rem;border:1px solid var(--line);background:var(--pearl)}
+.tiers b{font-family:Heebo;display:block}
+.tiers span{font-size:.85rem;color:var(--ink-dim)}
+.unlock{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.unlock>div{border-radius:var(--r);padding:1.3rem}
+.unlock .a{background:var(--pearl)}.unlock .b{background:var(--night);color:#F3E9D2}
+.unlock .b h4{color:var(--gold-lt)}
+.unlock h4{font-size:1rem;margin-bottom:.6rem}
+.unlock ul{padding-right:1.1rem;font-size:.93rem}
+.end{text-align:center}
+@media(max-width:700px){.jr{grid-template-columns:1fr;gap:.2rem}.mini,.unlock,.tiers{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main>
+<header class="page-hero" style="padding-bottom:3rem">
+  <p class="eyebrow">איך זה עובד</p>
+  <h1 class="h-l">המסע, <span class="gold">קלף אחרי קלף</span></h1>
+  <p class="lead">לא צריך להבין הכול מההתחלה. הנה התמונה הכללית. כשתרצו לדעת יותר, חשפו את הקלף הבא.</p>
+</header>
+
+<section style="padding-top:2rem">
+  <div class="deck" id="deck">
+
+    <article class="layer" data-l="1">
+      <div class="lh"><span class="k">1</span><h2>הדרך מהחוב לשפע<small>שישה שלבים, בקצב שלכם</small></h2></div>
+      <div class="journey">
+        <div class="jr gate-diag"><span class="w"><i></i>חודש ראשון</span><div><h3>חודש של נשימה</h3><p>שיחת היכרות, חתימה על ההסכם, גישה לכלים הדיגיטליים, וכמה ניצחונות מהירים כדי שתרגישו שמשהו זז.</p></div></div>
+        <div class="jr gate-diag"><span class="w"><i></i>שבועות 2–3</span><div><h3>אבחון</h3><p>תמונה מלאה של החובות, ההכנסות וההוצאות, וגם של ההרגלים והתחושות סביב כסף.</p></div></div>
+        <div class="jr gate-reset"><span class="w"><i></i>חודשים 1–3</span><div><h3>יציאה מהחוב</h3><p>סוגרים את החובות היקרים: מו"מ, איחוד, הלוואה זולה, וכשצריך גם הלוואת שפע ב־0%. ובונים תקציב שמשאיר עודף.</p></div></div>
+        <div class="jr gate-grow"><span class="w"><i></i>חודשים 3–6</span><div><h3>צמיחה</h3><p>אימון אישי וקבוצתי, הרגלים יומיים, ותוכנית להגדלת ההכנסה.</p></div></div>
+        <div class="jr gate-give"><span class="w"><i></i>מהחודש הראשון</span><div><h3>נתינה</h3><p>לפחות 4 שעות בחודש בעמותה או בגוף קהילתי, לפי הכישורים שלכם. זה חלק מההסכם, לא תוסף.</p></div></div>
+        <div class="jr gate-give"><span class="w"><i></i>בהמשך</span><div><h3>להיות מלווים</h3><p>מי שעבר את הדרך מלווה משפחה חדשה. זה הרגע שבו אתם הופכים ל"קריסטל מאיר".</p></div></div>
+      </div>
+    </article>
+
+    <article class="layer" data-l="2" hidden>
+      <div class="lh"><span class="k">2</span><h2>מה קורה בכסף<small>מחשבון קטן, על המספרים שלכם</small></h2></div>
+      <div class="mini">
+        <div>
+          <div class="range-row"><div class="top"><label class="lbl" for="d">חוב צרכני</label><b id="od"></b></div><input type="range" id="d" min="20000" max="400000" step="5000" value="180000"></div>
+          <div class="range-row"><div class="top"><label class="lbl" for="h">קרן השתלמות, אם יש</label><b id="oh"></b></div><input type="range" id="h" min="0" max="400000" step="5000" value="350000"></div>
+          <p class="faint">ההנחות: ריבית של 12% על החוב היום, 5% על הלוואה כנגד קרן השתלמות, 0% בהלוואת שפע, 5 שנים. להמחשה בלבד, לא ייעוץ פיננסי.</p>
+        </div>
+        <div class="res">
+          <div class="ln"><span>החזר חודשי היום</span><b id="r1"></b></div>
+          <div class="ln"><span>החזר חודשי בתוכנית</span><b class="gold" id="r2"></b></div>
+          <div class="ln"><span>חיסכון בריבית</span><b class="gold" id="r3"></b></div>
+          <div class="ln"><span>הפנסיה</span><b class="gold">לא נוגעים</b></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="layer" data-l="3" hidden>
+      <div class="lh"><span class="k">3</span><h2>איך הנתינה נמדדת<small>קריסטלים: הכרה, לא חשבון</small></h2></div>
+      <p class="muted">כל שעת נתינה, כל יעד שעמדתם בו וכל משפחה שליוויתם שווים "קריסטלים". הם לא מחזירים חוב ולא משמשים לעונש. הם משקפים לכם, ולקהילה, כמה ערך יצרתם, ופותחים דלתות.</p>
+      <div class="tiers">
+        <div><b>🥈 כסף · 1–149</b><span>תורמים. מפגשי קהילה חודשיים.</span></div>
+        <div><b>🥇 זהב · 150–499</b><span>מלווים. אימון אישי, מאגר קשרים, סדנאות.</span></div>
+        <div><b>💎 יהלום · 500+</b><span>שגרירים. מובילים מעגלים חדשים.</span></div>
+      </div>
+    </article>
+
+    <article class="layer" data-l="4" hidden>
+      <div class="lh"><span class="k">4</span><h2>מה נפתח בהמשך<small>המתנות הגדולות נפתחות בנתינה</small></h2></div>
+      <div class="unlock">
+        <div class="a"><h4>חודשים 1–3</h4><ul><li>ליווי ליציאה מהחוב</li><li>הכלים הדיגיטליים</li><li>אימון קבוצתי</li></ul></div>
+        <div class="b"><h4>מחודש 4, למי שנותן</h4><ul><li>אימון אישי להגדלת הכנסה</li><li>מאגר קשרים עסקיים</li><li>סדנאות למתקדמים</li><li>בהמשך: אפשרות להגיש מיזם לקרן שתומכת בבוגרים</li></ul></div>
+      </div>
+    </article>
+
+    <article class="layer end" data-l="5" hidden>
+      <h2 class="h-m">זה כל מה שצריך לדעת כדי להתחיל.</h2>
+      <p class="muted mt-1">את השאר תגלו בדרך, עם המלווה שלכם.</p>
+      <div class="row mt-2" style="justify-content:center"><a href="join.html" class="btn btn-gold">להרשמה</a><a href="index.html#faq" class="btn btn-line">שאלות נפוצות</a></div>
+    </article>
+
+    <div class="next"><button class="btn btn-gold" id="more"><span class="cards-ico"><i></i><i></i></span><span id="moreT">חשפו את הקלף הבא: מה קורה בכסף</span></button></div>
+  </div>
+</section>
+</main>
+<script src="shefa.js"></script>
+<script>
+const NEXT=['מה קורה בכסף','איך הנתינה נמדדת','מה נפתח בהמשך','מתחילים'];
+let shown=1;
+document.getElementById('more').onclick=()=>{
+  shown++; const l=document.querySelector(`.layer[data-l="${shown}"]`); l.hidden=false; l.classList.add('new');
+  if(shown>=5) document.querySelector('.next').hidden=true; else document.getElementById('moreT').textContent='חשפו את הקלף הבא: '+NEXT[shown-1];
+  l.scrollIntoView({behavior:'smooth',block:'start'});
+};
+const $=id=>document.getElementById(id);
+function calc(){ const d=+$('d').value, h=+$('h').value; $('od').textContent=SG.ils(d); $('oh').textContent=SG.ils(h);
+  const p1=SG.pmt(d,.12,60), a=Math.min(h*.7,d/2), p2=(a?SG.pmt(a,.05,60):0)+(d-a)/60;
+  $('r1').textContent=SG.ils(p1); $('r2').textContent=SG.ils(p2); $('r3').textContent=SG.k((p1-p2)*60); }
+['d','h'].forEach(i=>$(i).addEventListener('input',calc)); calc();
+</script>
+</body>
+</html>

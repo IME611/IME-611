@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>האיפוס הפיננסי — מנוע 1 | שפע גלובל</title>
+<meta name="description" content="המודל הבטוח: סגירת חובות רעילים בלי לשבור את הפנסיה. מחשבון חי והלוואת השפע.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Cpolygon points='48,4 88,26 88,70 48,92 8,70 8,26' fill='%23FAF6EE' stroke='%23B8860B' stroke-width='6'/%3E%3Ccircle cx='48' cy='48' r='12' fill='%23C9961A'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=Assistant:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shefa.css">
+<style>
+.calc{display:grid;grid-template-columns:360px 1fr;gap:1.5rem;align-items:start}
+.calc .inputs{position:sticky;top:calc(var(--nav-h) + 16px)}
+.presets{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1.2rem}
+.scen{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.sc{border-radius:var(--r);padding:1.4rem;border:1px solid var(--line);background:var(--ivory);position:relative}
+.sc.best{border:2px solid var(--gold);box-shadow:var(--shadow-lg)}
+.sc.best::before{content:'המודל של שפע גלובל';position:absolute;top:-12px;right:1rem;background:var(--gold);color:#fff;font-family:Heebo;font-size:.72rem;font-weight:700;padding:.2rem .7rem;border-radius:1rem}
+.sc.frozen{background:#F2EDE5}
+.sc h4{font-size:1rem;margin-bottom:.2rem}
+.sc .sub{font-size:.8rem;color:var(--ink-faint);margin-bottom:1rem;min-height:2.4em}
+.sc .big{font-family:Heebo;font-weight:900;font-size:2rem;font-variant-numeric:tabular-nums;line-height:1}
+.sc .big small{font-size:.85rem;font-weight:500;color:var(--ink-faint)}
+.sc .ln{display:flex;justify-content:space-between;font-size:.9rem;padding:.45rem 0;border-top:1px dashed var(--line);margin-top:.45rem}
+.sc .ln b{font-family:Heebo;font-variant-numeric:tabular-nums}
+.bars{margin-top:1.6rem}
+.bars .b{display:grid;grid-template-columns:150px 1fr 110px;gap:.8rem;align-items:center;margin-bottom:.7rem;font-size:.9rem}
+.bars .track{height:22px;background:var(--gold-xss);border-radius:6px;overflow:hidden}
+.bars .fill{height:100%;border-radius:6px;transition:width .6s cubic-bezier(.2,.8,.2,1)}
+.bars .val{font-family:Heebo;font-weight:700;font-variant-numeric:tabular-nums;text-align:left}
+.verdict{margin-top:1.4rem;padding:1.3rem 1.5rem;border-radius:var(--r);background:var(--night);color:#F3E9D2;font-size:1.02rem}
+.verdict b{color:var(--gold-lt);font-family:Heebo}
+.loop{width:100%;max-width:420px;margin:auto}
+.loop .orb{animation:orbit 8s linear infinite;transform-origin:210px 210px}
+@keyframes orbit{to{transform:rotate(-360deg)}}
+.model-vs{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem}
+.model-vs .card h3{font-size:1.2rem}
+.tool-row td:first-child{font-family:Heebo;font-weight:600;white-space:nowrap}
+@media(max-width:1000px){.calc{grid-template-columns:1fr}.calc .inputs{position:static}.scen{grid-template-columns:1fr}.model-vs{grid-template-columns:1fr}}
+@media(max-width:560px){.bars .b{grid-template-columns:1fr 90px}.bars .b .lbl2{grid-column:1/-1}}
+</style>
+</head>
+<body data-area="founder">
+<main>
+<header class="page-hero">
+  <p class="crumbs"><a href="index.html">שפע גלובל</a> › המודל › האיפוס הפיננסי</p>
+  <p class="eyebrow">חלק ד׳ · מנוע 1</p>
+  <h1 class="h-xl">האיפוס <span class="gold">הפיננסי</span></h1>
+  <p class="lead">סוגרים את החובות הרעילים, מורידים את עלות החוב ומחזירים תזרים חיובי, בלי לשבור את החיסכון הפנסיוני. כאן נמצאת גם ההכרעה החשובה ביותר במסמך האב.</p>
+</header>
+
+<!-- DECISION -->
+<section>
+  <div class="wrap">
+    <div class="center narrow mb-2"><p class="eyebrow">שתי גרסאות למנוע</p><h2 class="h-l reveal">המודל הבטוח מול מודל הקרן</h2></div>
+    <div class="model-vs">
+      <div class="card reveal" style="border-top:4px solid var(--ok)"><span class="tag green">ברירת המחדל</span><h3 class="mt-1">"המודל הבטוח" · Whitepaper, ספטמבר 2025</h3><p class="mt-1">"העצמה במקום ניהול. לא מושכים את כספי הפנסיה. חינוך פיננסי וסיוע במעבר למסלולי השקעה רווחיים יותר בתוך הקרן."</p>
+        <div class="ln mt-1"><span>הפנסיה</span><b>נשארת שלמה וממשיכה לצבור</b></div><div class="ln"><span>סיכון ההשקעה</span><b>אין השקעה של כסף המשפחה</b></div></div>
+      <div class="card reveal d1" style="border-top:4px solid var(--risk);background:#F6F1E9"><span class="tag red">מוקפא</span><h3 class="mt-1">"מודל הקרן" · מסמך 2.3, נובמבר 2025</h3><p class="mt-1">"הקרן סוגרת את החוב, המשפחה פורעת קופות בסכום מינימום של ₪350,000, והכסף מושקע ליצירת תשואה."</p>
+        <div class="ln mt-1"><span>הפנסיה</span><b>נפדית, בקנס מס של 35%</b></div><div class="ln"><span>סיכון ההשקעה</span><b>על כספי המשפחה</b></div></div>
+    </div>
+    <div class="decision mt-2"><b class="lbl">ההכרעה המרכזית של מסמך האב</b><p>המודל הבטוח הוא ברירת המחדל. מודל הקרן נשמר במלואו, אבל מוקפא. ההכרעה הזו נובעת מהחזון עצמו: "המשפחה היא שותפה, לא נזקקת". במודל שבו המשפחה החלשה ביותר בשרשרת משלמת את קנס המס, נושאת בסיכון ההשקעה ומממנת את התשואה של המשקיע, היחסים מתהפכים. המחשבון למטה מראה את זה במספרים.</p></div>
+  </div>
+</section>
+
+<!-- CALCULATOR -->
+<section class="bg-pearl edge-top" id="calc">
+  <div class="wrap">
+    <div class="center narrow mb-2">
+      <p class="eyebrow">מחשבון חי</p>
+      <h2 class="h-l reveal">שלוש דרכים לסגור את אותו חוב</h2>
+      <p class="lead reveal d1">הזיזו את המחוונים, או התחילו ממשפחת כהן. כל החישובים רצים אצלכם בדפדפן, ושום נתון לא נשמר.</p>
+    </div>
+    <div class="calc">
+      <div class="card inputs">
+        <div class="presets"><button class="tab active" data-p="cohen">משפחת כהן</button><button class="tab" data-p="young">זוג צעיר</button><button class="tab" data-p="heavy">חוב כבד</button></div>
+        <div class="range-row"><div class="top"><label class="lbl">חוב צרכני</label><b id="o_debt"></b></div><input type="range" id="debt" min="20000" max="400000" step="5000"></div>
+        <div class="range-row"><div class="top"><label class="lbl">ריבית החוב היום</label><b id="o_rate"></b></div><input type="range" id="rate" min="4" max="20" step="0.5"></div>
+        <div class="range-row"><div class="top"><label class="lbl">תקופת החזר</label><b id="o_years"></b></div><input type="range" id="years" min="2" max="8" step="1"></div>
+        <div class="range-row"><div class="top"><label class="lbl">קרן השתלמות נזילה</label><b id="o_hish"></b></div><input type="range" id="hish" min="0" max="400000" step="5000"></div>
+        <div class="range-row"><div class="top"><label class="lbl">ריבית הלוואה כנגד השתלמות</label><b id="o_hrate"></b></div><input type="range" id="hrate" min="4" max="7" step="0.25"></div>
+        <div class="range-row"><div class="top"><label class="lbl">גיל</label><b id="o_age"></b></div><input type="range" id="age" min="25" max="60" step="1"></div>
+        <p class="faint">ההלוואה כנגד השתלמות מוגבלת ל־70% מהיתרה ולחצי מהחוב. את השאר מכסה הלוואת שפע ב־0%.</p>
+      </div>
+      <div>
+        <div class="scen">
+          <div class="sc frozen"><h4>① להמשיך כרגיל</h4><p class="sub">החוב הצרכני בריבית הנוכחית</p><div class="big" id="s1pm"></div><small class="faint">החזר חודשי</small>
+            <div class="ln"><span>ריבית כוללת</span><b id="s1int"></b></div><div class="ln"><span>הפנסיה</span><b>שלמה</b></div></div>
+          <div class="sc best"><h4>② נתיב הקריסטל · מסלול א׳+ב׳</h4><p class="sub" id="s2sub"></p><div class="big gold" id="s2pm"></div><small class="faint">החזר חודשי</small>
+            <div class="ln"><span>ריבית כוללת</span><b class="gold" id="s2int"></b></div><div class="ln"><span>הפנסיה</span><b class="gold">שלמה וצוברת</b></div></div>
+          <div class="sc frozen" style="border-color:rgba(154,59,46,.3)"><h4>③ פדיון פנסיה · מוקפא</h4><p class="sub">מודל הקרן המקורי, מס של 35% לפחות</p><div class="big" style="color:var(--risk)" id="s3gross"></div><small class="faint">נפדה מהחיסכון</small>
+            <div class="ln"><span>מס ששולם</span><b id="s3tax" style="color:var(--risk)"></b></div><div class="ln"><span>שווי אבוד בגיל 67</span><b id="s3fv" style="color:var(--risk)"></b></div></div>
+        </div>
+        <div class="card bars">
+          <h4 class="mb-1">העלות האמיתית של כל דרך</h4>
+          <div class="b"><span class="lbl2">① ריבית, להמשיך כרגיל</span><div class="track"><div class="fill" id="b1" style="background:#B9A994"></div></div><span class="val" id="v1"></span></div>
+          <div class="b"><span class="lbl2">② ריבית, נתיב הקריסטל</span><div class="track"><div class="fill" id="b2" style="background:linear-gradient(90deg,var(--gold-lt),var(--gold))"></div></div><span class="val gold" id="v2"></span></div>
+          <div class="b"><span class="lbl2">③ מס + צמיחה אבודה</span><div class="track"><div class="fill" id="b3" style="background:var(--risk)"></div></div><span class="val" style="color:var(--risk)" id="v3"></span></div>
+        </div>
+        <div class="verdict" id="verdict"></div>
+      </div>
+    </div>
+    <p class="faint center mt-2">ההמחשה מבוססת על הנחות מעוגלות ולצורכי השוואה בלבד: מס של 35% על משיכה מוקדמת, ותשואה ריאלית של 4% עד גיל 67. הריבית בפועל תלויה בגוף המלווה ובמצב המשפחה. החלטה על הלוואה כנגד חיסכון היא של המשפחה, בייעוץ מורשה. זה לא ייעוץ פיננסי.</p>
+  </div>
+</section>
+
+<!-- TOOLBOX -->
+<section>
+  <div class="wrap">
+    <div class="center narrow mb-2"><p class="eyebrow">מסלול א׳ · ארגז הכלים</p><h2 class="h-l reveal">שבעה כלים, אף אחד לא שובר את החיסכון</h2></div>
+    <div class="tbl-wrap reveal">
+      <table>
+        <thead><tr><th>כלי</th><th>מה הוא עושה</th><th>מי מבצע</th></tr></thead>
+        <tbody class="tool-row">
+          <tr><td>מיפוי חובות</td><td>רשימה של כל החובות לפי ריבית, יתרה ותנאים, וזיהוי החובות הרעילים: מינוס, אשראי מתגלגל, הלוואות חוץ־בנקאיות.</td><td>יועץ תקציבי + בוט פיננסי</td></tr>
+          <tr><td>משא ומתן והסדרים</td><td>מו"מ מול בנקים ונושים על הפחתת ריבית, פריסה והסדר חוב. הצעה מתחרה משפרת לפעמים את תנאי הבנק.</td><td>יועץ תקציבי / גורם מוסמך</td></tr>
+          <tr><td>איחוד ומחזור</td><td>החלפה של חובות יקרים בהלוואה אחת זולה יותר.</td><td>המשפחה, בליווי</td></tr>
+          <tr><td>הלוואה כנגד חיסכון</td><td>שעבוד של קרן השתלמות, כשהחיסכון נשאר מושקע. בדרך כלל עד 70–80% מהיתרה, בריבית של כ־4.75%–5.25%, לעומת כ־8.5% בהלוואה בנקאית ממוצעת.</td><td>המשפחה, בייעוץ מורשה</td></tr>
+          <tr><td>"הלוואת שפע"</td><td>הלוואת גישור בריבית אפסית ממקורות פילנתרופיים, למטה.</td><td>שפע גלובל</td></tr>
+          <tr><td>אופטימיזציה פנסיונית</td><td>חינוך פיננסי, ובדיקה של מסלול ההשקעה ודמי הניהול בתוך הקרן הקיימת.</td><td>יועץ פנסיוני מורשה</td></tr>
+          <tr><td>תשתית תקציבית חדשה</td><td>תזרים חודשי, יעד עודף של ₪2,000 בחודש, מעקב הוצאות.</td><td>יועץ תקציבי + בוט תקציב</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- SHEFA LOAN -->
+<section class="bg-night">
+  <div class="wrap split2" style="--cols:1fr 1fr">
+    <div>
+      <p class="eyebrow">מסלול ב׳</p>
+      <h2 class="h-l reveal">הלוואת השפע</h2>
+      <p class="lead reveal d1">הלוואת גישור בריבית אפסית, שמכסה את החלק בחוב שהכלים של מסלול א׳ לא סגרו. היא ממומנת על ידי פילנתרופים ומענקים, כמו מודל הגמ"ח, עם ליווי ותיעוד אימפקט.</p>
+      <div class="grid mt-2" style="gap:.8rem">
+        <div class="card-dark"><h3>↺ מעגל השפע הכלכלי</h3><p>היא מוחזרת מהתזרים המשופר לאורך עד 5 שנים. כל שקל שחוזר לקרן מממן את המשפחה הבאה.</p></div>
+        <div class="card-dark"><h3>🛡 החזר מותאם הכנסה</h3><p>אם המצב מתדרדר, הפריסה מתארכת, בלי ריבית פיגורים.</p></div>
+        <div class="card-dark"><h3>✕ מה היא לא</h3><p>היא לא מוחזרת בשעות התנדבות, ולא מתקזזת בקריסטלים.</p></div>
+      </div>
+    </div>
+    <svg class="loop reveal" viewBox="0 0 420 420" aria-label="מעגל הלוואת השפע">
+      <circle cx="210" cy="210" r="150" fill="none" stroke="rgba(232,192,96,.25)" stroke-width="2" stroke-dasharray="6 8"/>
+      <g class="orb"><circle cx="210" cy="60" r="10" fill="#E8C060"/><circle cx="360" cy="210" r="7" fill="#C9961A"/><circle cx="60" cy="210" r="7" fill="#C9961A"/></g>
+      <polygon points="210,160 253,185 253,235 210,260 167,235 167,185" fill="rgba(232,192,96,.12)" stroke="#E8C060"/>
+      <text x="210" y="206" text-anchor="middle" font-family="Heebo" font-weight="800" font-size="15" fill="#FBF3DF">קרן</text><text x="210" y="226" text-anchor="middle" font-family="Heebo" font-weight="800" font-size="15" fill="#FBF3DF">הלוואות השפע</text>
+      <g font-family="Heebo" font-size="14" font-weight="600" fill="#E8C060" text-anchor="middle">
+        <text x="210" y="35">פילנתרופ מפקיד</text><text x="385" y="175">משפחה א׳</text><text x="385" y="193" font-weight="400" fill="rgba(243,233,210,.6)">מקבלת 0%</text>
+        <text x="210" y="395">החזר מהתזרים</text><text x="38" y="175">משפחה ב׳</text><text x="38" y="193" font-weight="400" fill="rgba(243,233,210,.6)">הבאה בתור</text>
+      </g>
+    </svg>
+  </div>
+  <div class="wrap"><div class="note-risk mt-2" style="background:rgba(154,59,46,.12);color:#F3E9D2"><b>דורש בדיקה · </b>מתן אשראי, גם בלי ריבית, עשוי לחייב רישוי או פטור, תלוי במבנה המשפטי (עמותה, חל"צ, גמ"ח רשום). זו אחת השאלות הראשונות לעורך הדין.</div></div>
+</section>
+
+<!-- WHY NOT -->
+<section>
+  <div class="narrow">
+    <div class="center mb-2"><p class="eyebrow">ארבע סיבות מעשיות</p><h2 class="h-l reveal">למה מודל הקרן מוקפא</h2></div>
+    <div class="grid g-2">
+      <div class="card reveal"><h3>💰 המחיר המיידי</h3><p>על משיכה מוקדמת משלמים מס של 35% לפחות. כדי לקבל ₪180 אלף נטו, משפחת כהן צריכה למשוך כ־₪277 אלף ולשלם כ־₪97 אלף מס.</p></div>
+      <div class="card reveal d1"><h3>⏳ המחיר הנסתר</h3><p>בתשואה ריאלית של 4%, כל ₪100 אלף שנמשכים בגיל 35 שווים כ־₪351 אלף בגיל 67. ומשיכה של ₪277 אלף שווה כמעט מיליון שקל מהפנסיה של הזוג.</p></div>
+      <div class="card reveal d2"><h3>📉 הנחת התשואה</h3><p>הסימולציה מניחה 40% בשנה לאורך 5 שנים, ממסחר יומי, סווינגים וקריפטו. אף גוף מוסדי לא מתחייב לתשואה כזו.</p></div>
+      <div class="card reveal d3"><h3>⚖ הרגולציה</h3><p>ליווי בפדיון פנסיה, גיוס כספים וניהול השקעות עבור אחרים הם תחומים מפוקחים, שכל אחד מהם דורש רישיון.</p></div>
+    </div>
+    <details class="acc mt-2">
+      <summary>המודל המקורי במלואו (מסמך 2.3), כחלק מהחזון ומההיסטוריה של התכנון</summary>
+      <div class="acc-body">
+        <p><b>שלבי הפעולה (מקור):</b> הקרן סוגרת חוב של ₪200,000 ← המשפחה פורעת קופות במינימום ₪350,000, ואחרי קנס של 35% נשארים ₪227,500 ← ₪200,000 מושקעים, ₪20,000 הם תשואה מיידית של 10% למשקיע, ו־₪7,500 הולכים לתחזוקה ← השקעה בריבית דריבית.</p>
+        <div class="tbl-wrap mt-1"><table><thead><tr><th>שנה</th><th class="num">פתיחה</th><th class="num">תשואה 40%</th><th class="num">סוף שנה</th></tr></thead><tbody>
+          <tr><td>1</td><td class="num">₪200,000</td><td class="num">₪80,000</td><td class="num">₪280,000</td></tr>
+          <tr><td>2</td><td class="num">₪280,000</td><td class="num">₪112,000</td><td class="num">₪392,000</td></tr>
+          <tr><td>3</td><td class="num">₪392,000</td><td class="num">₪156,800</td><td class="num">₪548,800</td></tr>
+          <tr><td>4</td><td class="num">₪548,800</td><td class="num">₪219,520</td><td class="num">₪768,320</td></tr>
+          <tr><td>5</td><td class="num">₪768,320</td><td class="num">₪307,328</td><td class="num">₪1,075,648</td></tr></tbody></table></div>
+        <p class="mt-1"><b>מה ממשיך לחיות במודל הבטוח:</b> "הקרן מאמינה באדם מראש", כי הלוואת השפע ניתנת לפני שהמשפחה הוכיחה משהו. בנוסף, אחוז קבוע מכל מימון מופנה לקהילה, ו"תמחור ערך אנושי" עובר לכלכלת הקריסטלים.</p>
+        <p class="mt-1"><b>תנאים להפשרה בעתיד ("POOL משותף"):</b> בית השקעות מורשה; ייעוץ פנסיוני עצמאי ובכתב לכל משפחה; אף שקל מכספי המשפחה לא משמש לתשואה של משקיע אחר; מדיניות השקעה מפוקחת, בלי מסחר יומי וקריפטו; ותחזיות שמוצגות כתרחישים, לא כהבטחה.</p>
+      </div>
+    </details>
+  </div>
+</section>
+
+<nav class="next-chapter" aria-label="פרקים">
+  <a href="path.html"><small>→ הפרק הקודם</small><b>נתיב הקריסטל</b></a>
+  <a href="crystals.html" class="fwd"><small>הפרק הבא ←</small><b>כלכלת הקריסטלים</b></a>
+</nav>
+</main>
+<script src="shefa.js"></script>
+<script>
+const P = { cohen:{debt:180000,rate:12,years:5,hish:350000,hrate:5,age:35}, young:{debt:70000,rate:14,years:4,hish:60000,hrate:5,age:29}, heavy:{debt:260000,rate:13,years:6,hish:420000,hrate:5.25,age:41} };
+const ids = ['debt','rate','years','hish','hrate','age'];
+const $ = id=>document.getElementById(id);
+function setP(k){ ids.forEach(i=>$(i).value=P[k][i]); calc(); document.querySelectorAll('.presets .tab').forEach(t=>t.classList.toggle('active',t.dataset.p===k)); }
+document.querySelectorAll('.presets .tab').forEach(t=>t.onclick=()=>setP(t.dataset.p));
+ids.forEach(i=>$(i).addEventListener('input',()=>{document.querySelectorAll('.presets .tab').forEach(t=>t.classList.remove('active')); calc();}));
+function calc(){
+  const debt=+$('debt').value, rate=+$('rate').value/100, yrs=+$('years').value, hish=+$('hish').value, hrate=+$('hrate').value/100, age=+$('age').value, n=yrs*12;
+  $('o_debt').textContent=SG.ils(debt); $('o_rate').textContent=(rate*100).toFixed(1).replace('.0','')+'%'; $('o_years').textContent=yrs+' שנים';
+  $('o_hish').textContent=SG.ils(hish); $('o_hrate').textContent=(hrate*100).toFixed(2).replace(/0$/,'')+'%'; $('o_age').textContent=age;
+  // 1
+  const p1=SG.pmt(debt,rate,n), i1=p1*n-debt;
+  // 2
+  const a=Math.min(hish*0.7, debt/2), b=debt-a;
+  const pa=a>0?SG.pmt(a,hrate,n):0, p2=pa+b/n, i2=pa*n-a;
+  // 3
+  const gross=debt/0.65, tax=gross-debt, fv=gross*Math.pow(1.04, Math.max(0,67-age));
+  $('s1pm').textContent=SG.ils(p1); $('s1int').textContent=SG.ils(i1);
+  $('s2pm').innerHTML=SG.ils(p2); $('s2int').textContent=SG.ils(i2);
+  $('s2sub').textContent = `${SG.k(a)} כנגד השתלמות + ${SG.k(b)} הלוואת שפע ב־0%`;
+  $('s3gross').textContent=SG.ils(gross); $('s3tax').textContent=SG.ils(tax); $('s3fv').textContent=SG.k(fv);
+  const cost3 = tax + (fv-gross); const mx=Math.max(i1,i2,cost3,1);
+  $('b1').style.width=(i1/mx*100)+'%'; $('b2').style.width=Math.max(.5,i2/mx*100)+'%'; $('b3').style.width=(cost3/mx*100)+'%';
+  $('v1').textContent=SG.k(i1); $('v2').textContent=SG.k(i2); $('v3').textContent=SG.k(cost3);
+  // faster payoff with 2000 surplus on path 2
+  let bal=debt, m=0; const extra=2000; const r=(a/debt)*hrate/12;
+  while(bal>1 && m<600){ bal = bal*(1+r) - (p2+extra); m++; }
+  $('verdict').innerHTML = `בנתיב הקריסטל ההחזר החודשי יורד ב־<b>${SG.ils(p1-p2)}</b>, הריבית הכוללת יורדת ב־<b>${SG.k(i1-i2)}</b>, <b>והפנסיה נשארת שלמה</b>. יחד עם יעד העודף התקציבי של ₪2,000 בחודש, החוב נסגר בתוך כ־<b>${m} חודשים</b> במקום ${n}. בפדיון פנסיה, לעומת זאת, משולם מס של ${SG.k(tax)}, ובגיל 67 חסרים כ־${SG.k(fv)} בכוח הקנייה של היום.`;
+}
+setP('cohen');
+</script>
+</body>
+</html>
