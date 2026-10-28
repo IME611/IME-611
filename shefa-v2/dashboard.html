@@ -150,7 +150,7 @@ body{background:var(--pearl)}
     <section class="view" data-v="give" style="padding:0">
       <div class="hello"><h1>נתינה 🤝</h1><p>הנתינה היא חלק מהריפוי, לא תוסף. השעות האלה הן לפי המתנה שלכם.</p></div>
       <div class="cards">
-        <div class="box c4"><h3>החודש</h3><p class="heebo" style="font-size:2.6rem;font-weight:900"><span id="hrs">5</span><span class="faint" style="font-size:1rem"> / 4 שעות</span></p><div class="bar mt-1"><i id="hrsBar" style="width:100%"></i></div><p class="faint mt-1">ההתחייבות שלכם: 4 שעות בחודש לפחות. במשבר אמיתי מקפיאים יחד, בלי סנקציה.</p></div>
+        <div class="box c4"><h3>החודש</h3><p class="heebo" style="font-size:2.6rem;font-weight:900"><span id="hrs">17</span><span class="faint" style="font-size:1rem"> / 22 שעות למשפחה</span></p><div class="bar mt-1"><i id="hrsBar" style="width:77%"></i></div><p class="faint mt-1">דרגה נוכחית: 🥈 תורם/ת · ₪50 לשעה. עוד חודשיים של עמידה ביעד, ועולים לדרגת מלווה, ₪75 לשעה. במשבר אמיתי מקפיאים יחד.</p></div>
         <div class="box c8"><h3>הזדמנויות שמתאימות לכם <small>לפי הכישורים שבחרתם</small></h3><div id="opps"></div></div>
       </div>
     </section>
@@ -248,7 +248,7 @@ $('budget').innerHTML=`<div style="display:flex;height:34px;border-radius:10px;o
 let hrs=5;
 const OPP=[['📣','גיוס תרומות לקמפיין חנוכה','עמותת "יד לנוער" · Zoom · 3 שעות',3],['📚','שיעורי עזר במתמטיקה','מרכז קהילתי חולון · 2 שעות',2],['🎭','ארגון ערב תרבות משפחתי','קהילת שפע מרכז · 4 שעות · אפשר עם הילדים',4],['🫂','ליווי משפחה חדשה בחודש הנשימה','כמלווה בדרגת זהב · 2 שעות',2]];
 $('opps').innerHTML=OPP.map(([i,t,d,hh],k)=>`<div class="opp"><span class="ic">${i}</span><div><b>${t}</b><p>${d}</p><span class="cr">+${hh} 💎 נתינה</span></div><button class="btn btn-line btn-sm" data-k="${k}">אני בפנים</button></div>`).join('');
-$('opps').querySelectorAll('button').forEach(b=>b.onclick=e=>{ if(b.disabled) return; const hh=OPP[b.dataset.k][3]; hrs+=hh; total+=hh; $('hrs').textContent=hrs; tier(); b.textContent='נרשמת ✓'; b.disabled=true; b.classList.replace('btn-line','btn-gold'); pop(e,`+${hh} 💎`); });
+$('opps').querySelectorAll('button').forEach(b=>b.onclick=e=>{ if(b.disabled) return; const hh=OPP[b.dataset.k][3]; hrs+=hh; total+=hh; $('hrs').textContent=hrs; $('hrsBar').style.width=Math.min(100,hrs/22*100)+'%'; tier(); b.textContent='נרשמת ✓'; b.disabled=true; b.classList.replace('btn-line','btn-gold'); pop(e,`+${hh} 💎`); });
 
 // journey
 const J=[['done','0 · חודש של נשימה','נפתח תיק קריסטל. "מה הייתם רוצים שיתאפשר לכם בחיים?"'],['done','1 · אבחון עומק','דוח אבחון ומפת תזרים. דירוג מוכנות: גבוה.'],['done','2 · איפוס פיננסי','חובות רעילים נסגרו בחודש 3: הלוואה כנגד השתלמות + הלוואת שפע ב־0%.'],['now','3 · צמיחה והעצמה','SHEFA OS אישי, ספר E.I.L, ותוכנית הכנסה. כרגע +18%, והיעד +30%.'],['','4 · תרומה קהילתית','כבר נותנים 4–6 שעות בחודש. המעבר הרשמי יהיה בבחירה שלכם.'],['','5 · הדהוד והתרחבות','קריסטל מאיר: ללוות, ליצור, להדהד.']];

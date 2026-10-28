@@ -98,12 +98,12 @@
 
     <!-- 3 -->
     <div class="step" data-s="3">
-      <h2>שלב 3 · כישורים, זכויות ונתינה</h2><p class="hint">הנתינה היא חלק מהעסקה: לפחות 4 שעות בחודש, לפי הכישורים שלכם. כאן בוחרים איפה.</p>
+      <h2>שלב 3 · כישורים, זכויות ונתינה</h2><p class="hint">הנתינה היא חלק מהעסקה, בהיקף שנגזר מגובה החוב. כאן בוחרים איפה ובמה.</p>
       <label class="lbl">כישורים ותחומי עניין</label><div class="chips mb-1" id="skills"></div>
       <label class="lbl mt-1">תחומי נתינה מועדפים</label><div class="chips mb-1" id="areas"></div>
       <label class="lbl mt-1">זכויות והטבות קיימות <span class="opt">(אם יש)</span></label><div class="chips mb-1" id="rights"></div>
       <div class="fg mt-1">
-        <div class="fr" data-req="select"><label class="lbl">כמה שעות נתינה בחודש תוכלו להתחייב? *</label><select id="hours"><option value="">בחרו</option><option>4 (המינימום)</option><option>4–6</option><option>6–10</option><option>מעל 10</option></select><p class="err">נא לבחור</p></div>
+        <div class="fr" data-req="select"><label class="lbl">כמה שעות בשבוע כל אחד מכם יכול לתת? *</label><select id="hours"><option value="">בחרו</option><option>1–2</option><option>2–3</option><option>3–5</option><option>מעל 5</option></select><p class="err">נא לבחור</p></div>
         <div class="fr" data-req="select"><label class="lbl">איזו אמירה מתארת אתכם? *</label><select id="mind"><option value="">בחרו</option><option>"אני יכול לשנות את המציאות שלי"</option><option>"אני קורבן של הנסיבות"</option></select><p class="err">נא לבחור</p></div>
       </div>
       <div class="fr" data-req="long"><label class="lbl">למה עכשיו? ומה אתם מוכנים לעשות כדי שזה יקרה? *</label><p class="faint" style="margin:-.2rem 0 .4rem">כמה משפטים בשפה שלכם. זו התשובה שאנחנו קוראים הכי לאט.</p><textarea id="why" rows="3" placeholder="ספרו לנו בכנות"></textarea><p class="err">כמה משפטים, בבקשה (לפחות 40 תווים)</p></div>
@@ -117,7 +117,7 @@
       <div class="sum" id="sum"></div>
       <div class="fr" data-req="select"><label class="lbl" for="slot">מתי נוח לכם לשיחת ההיכרות? *</label><select id="slot"><option value="">בחרו</option><option>בוקר (9:00–12:00)</option><option>צהריים (12:00–16:00)</option><option>ערב (18:00–21:00)</option></select><p class="err">נא לבחור זמן</p></div>
       <p class="faint mb-1">בשיחה נעבור על כל תנאי ההסכם, כולל מה שמצופה מכם. אתם מתחייבים רק אחרי שהבנתם הכול.</p>
-      <label class="consent" id="consentBox"><input type="checkbox" id="consent"><span><b>אני מתחייב/ת לנתינה קהילתית של 4 שעות בחודש לפחות</b> לאורך תקופת הליווי, כחלק בלתי נפרד מהעסקה. ההסכם המלא ייחתם בשיחת ההיכרות, אחרי שאבין את כל התנאים. אני מסכים/ה שהמידע שמסרתי ישמש רק לליווי שלי, יישמר מוצפן ולא יועבר לאיש, ויודע/ת שזה לא ייעוץ פיננסי.</span></label>
+      <label class="consent" id="consentBox"><input type="checkbox" id="consent"><span><b>אני מתחייב/ת לנתינה קהילתית בהיקף שייקבע לפי גובה החוב</b>, לאורך תקופה מוגדרת, כחלק בלתי נפרד מהעסקה. ההסכם המלא ייחתם בשיחת ההיכרות, אחרי שאבין את כל התנאים. אני מסכים/ה שהמידע שמסרתי ישמש רק לליווי שלי, יישמר מוצפן ולא יועבר לאיש, ויודע/ת שזה לא ייעוץ פיננסי.</span></label>
       <p class="faint mt-1">גרסת הדגמה: שום דבר לא נשלח לשרת. הפרטים נשמרים רק בדפדפן שלכם, כדי שהאזור האישי יוכל לפנות אליכם בשם.</p>
     </div>
 
@@ -133,6 +133,7 @@
 </div>
 </main>
 <script src="shefa.js"></script>
+<script src="giving-model.js"></script>
 <script>
 const $=id=>document.getElementById(id);
 const SK=["בישול","אפייה","נגינה ושירה","שש־בש וקלפים","ציור ויצירה","צביעת קירות ותיקונים","ניקיון וסידור","סיפורים ובדיחות","הקראה","חינוך והוראה","רפואה וסיוע","טכנולוגיה","שירות לקוחות","מכירות ושיווק","ניהול ואדמיניסטרציה","חשבונאות","כתיבה ועריכה","תרגום","ייעוץ נפשי","עיצוב","צילום","נגרות ומלאכה","משפטים","נהיגה","גינון","אחר"];
@@ -195,7 +196,7 @@ function summary(){
     <li><b>אבחון עומק:</b> ${gate}.</li>
     ${debt>=20000?`<li><b>איפוס פיננסי:</b> בחוב צרכני ממוצע של 12%, ההחזר על ${SG.ils(debt)} הוא כ־${SG.ils(p1)} בחודש. ${hish?`עם הלוואה כנגד השתלמות והלוואת שפע הוא עשוי לרדת לכ־<b>${SG.ils(p2)}</b>.`:'עם הלוואת שפע ב־0%, ההחזר יכול לרדת משמעותית.'}</li>`:''}
     <li><b>העצמה:</b> SHEFA OS אישי, ויעד של +30% הכנסה תוך 6 חודשים.</li>
-    <li><b>נתינה (חלק מההסכם):</b> ${picked('areas')[0]||'תחום שתבחרו'}, ${$('hours').value||'4'} שעות בחודש${picked('skills').length?`, דרך ה${picked('skills').slice(0,2).join(' וה')} שלכם`:''}.</li></ol>
+    <li><b>נתינה (חלק מההסכם):</b> ${picked('areas')[0]||'תחום שתבחרו'}. לפי החוב, כ־${GIVING.plan({debt:Math.max(debt,50000)}).H} שעות בחודש למשפחה, לאורך 3 שנים (כ־${GIVING.plan({debt:Math.max(debt,50000)}).perAdultWeek.toFixed(1)} שעות בשבוע לכל מבוגר)${picked('skills').length?`, דרך ה${picked('skills').slice(0,2).join(' וה')} שלכם`:''}.</li></ol>
     <p style="font-size:.8rem;color:rgba(243,233,210,.55);margin-top:.6rem">חישוב להמחשה בלבד, לא ייעוץ פיננסי. ההחלטות מתקבלות בשיחה ובייעוץ מורשה.</p>`;
   const L=(k,v)=>`<div class="ln"><span>${k}</span><b>${v||'—'}</b></div>`;
   $('sum').innerHTML = `<h4>הפרטים שמסרתם</h4>${L('שם',$('name').value)}${L('טלפון',$('phone').value)}${L('אימייל',$('email').value)}${L('עיר',$('city').value)}${L('הכנסה',SG.ils(inc))}${L('חובות',SG.ils(debt))}${exp?L('הוצאות',SG.ils(exp)):''}${L('תחושת שליטה',control+'/10')}${L('כישורים',picked('skills').join(', '))}${L('זכויות',picked('rights').join(', '))}${L('זמינות',$('hours').value+' שעות בחודש')}`;

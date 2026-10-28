@@ -74,7 +74,7 @@
       <p class="eyebrow">ליווי לסגירת חובות · בתמורה לנתינה</p>
       <h1>אנחנו מוציאים אותך מהחוב.<br><span class="gold">אתה מחזיר לקהילה.</span></h1>
       <p class="lead">שפע גלובל מלווה משפחות שעובדות קשה ועדיין נשחקות: סוגרים את החובות היקרים, בונים תקציב שעובד, ומחזקים את הביטחון. הליווי לא עולה כסף. המחיר הוא נתינה: כל מי שמצטרף מתחייב לתרום מזמנו ומכישוריו לקהילה.</p>
-      <div class="deal-strip"><span><b>₪0</b> עלות הליווי</span><span><b>4+</b> שעות נתינה בחודש</span><span><b>1</b> קהילה שתומכת בך</span></div>
+      <div class="deal-strip"><span><b>₪0</b> עלות הליווי</span><span><b>לפי החוב</b> היקף הנתינה</span><span><b>1</b> קהילה שתומכת בך</span></div>
       <div class="row"><a href="#pact" class="btn btn-line">מה בדיוק העסקה?</a><a href="process.html" class="btn btn-line">איך התהליך עובד</a></div>
     </div>
 
@@ -86,7 +86,7 @@
         <div class="fr" data-req="phone"><label class="lbl" for="qPhone">טלפון</label><input type="tel" id="qPhone" autocomplete="tel" inputmode="tel" placeholder="050-1234567"><p class="err">מספר טלפון תקין, 9 ספרות לפחות</p></div>
         <div class="fr" id="qDebtRow"><label class="lbl">סך החובות הצרכניים, בערך</label>
           <div class="seg" id="qDebt"><button type="button" data-v="עד 50 אלף">עד 50K</button><button type="button" data-v="50–150 אלף">50–150K</button><button type="button" data-v="150–250 אלף">150–250K</button><button type="button" data-v="מעל 250 אלף">250K+</button></div><p class="err">נא לבחור טווח</p></div>
-        <label class="consent" style="display:flex;gap:.6rem;align-items:flex-start;font-size:.86rem;margin-top:.4rem;cursor:pointer"><input type="checkbox" id="qGive" style="width:18px;height:18px;accent-color:var(--gold);margin-top:.2rem;flex-shrink:0"><span>אני מבין/ה שהליווי כולל <b>התחייבות לנתינה קהילתית</b>, לפחות 4 שעות בחודש.</span></label>
+        <label class="consent" style="display:flex;gap:.6rem;align-items:flex-start;font-size:.86rem;margin-top:.4rem;cursor:pointer"><input type="checkbox" id="qGive" style="width:18px;height:18px;accent-color:var(--gold);margin-top:.2rem;flex-shrink:0"><span>אני מבין/ה שהליווי כולל <b>התחייבות לנתינה קהילתית</b>, בהיקף שנגזר מגובה החוב.</span></label>
         <p class="err" id="qGiveErr" style="color:var(--risk);font-size:.8rem;display:none">זה חלק מהעסקה. בלי ההתחייבות הזו אי אפשר להצטרף.</p>
         <button type="submit" class="btn btn-gold">בדקו את ההתאמה שלי</button>
         <p class="note">הפרטים משמשים רק לחזרה אליכם. בלי ספאם.</p>
@@ -123,7 +123,8 @@
         <li>ליווי צמוד מהיום הראשון, עד שעומדים על הרגליים</li></ul></div>
       <div class="plus">+</div>
       <div class="side you"><p class="who">מה אתם נותנים</p><h3>נתינה לקהילה</h3><ul>
-        <li>לפחות 4 שעות בחודש, לאורך כל תקופת הליווי</li>
+        <li>היקף שנגזר מגובה החוב, לאורך תקופה מוגדרת. לרוב כמה שעות בשבוע</li>
+        <li>ערך השעה שלכם עולה עם הזמן והביצועים, כמו קידום</li>
         <li>לפי הכישרון שלכם: בישול, מוזיקה, משחק, סיפור, ידיים עובדות, מקצוע</li>
         <li>בעמותות שצריכות מגע אנושי: ילדים בבתי חולים, קשישים בודדים, משפחות</li>
         <li>בהמשך: ללוות משפחה חדשה שנמצאת איפה שהייתם</li>
@@ -172,7 +173,7 @@
         <li>יש לכם חובות צרכניים משמעותיים, ולפחות הכנסה אחת קבועה</li>
         <li>אתם רוצים שינוי עמוק, לא רק "לכבות שריפה"</li>
         <li>אתם מוכנים לקחת אחריות ולעבוד על זה</li>
-        <li>אתם מוכנים להתחייב ל־4 שעות נתינה בחודש לפחות</li></ul></div>
+        <li>אתם מוכנים להתחייב לנתינה משמעותית, כמה שעות בשבוע</li></ul></div>
       <div class="card no"><h3>נפנה אתכם למקום מתאים יותר אם</h3><ul>
         <li>אתם בהליך משפטי פעיל, כמו חדלות פירעון: קודם עורך דין, ואנחנו נלווה במקביל</li>
         <li>יש מצוקה נפשית חריפה או התמכרות: קודם טיפול מקצועי</li>
@@ -190,7 +191,7 @@
     <details class="acc"><summary>אתם נותנים הלוואה?</summary><div class="acc-body">לרוב אנחנו לא מתחילים בהלוואה. קודם ממפים את החובות, מנהלים מו"מ, ומאחדים ומחזרים הלוואות. כשצריך, יש "הלוואת שפע" בריבית אפסית לגישור, והיא מוחזרת מהתזרים המשופר בפריסה נוחה.</div></details>
     <details class="acc"><summary>מה נדרש מאיתנו חוץ מהנתינה?</summary><div class="acc-body">מחויבות אמיתית לתהליך. את כל התנאים, כולל מה שמצופה מכם, נעבור יחד בשיחת ההיכרות, בשקיפות מלאה ולפני שמתחילים. אף אחד לא מתחייב לשום דבר לפני שהוא מבין בדיוק מה ההסכם.</div></details>
     <details class="acc"><summary>מה אם אנחנו לא מתאימים כרגע?</summary><div class="acc-body">בשלב הראשון אנחנו מלווים קבוצה קטנה, ולכן המקומות מוגבלים. מי שלא נכנס עכשיו נשאר ברשימת ההמתנה, מקבל תוכן וכלים, ונחזור אליו כשייפתח מחזור מתאים. אף אחד לא נשאר בחוץ.</div></details>
-    <details class="acc"><summary>הנתינה היא באמת חובה?</summary><div class="acc-body">כן. היא חלק מהעסקה ונחתמת בהסכם בשיחה הראשונה. לפחות 4 שעות בחודש, בעמותות ובגופים קהילתיים, לפי הכישורים שלכם. הנתינה היא לא עבודה בשבילנו, והיא לא "מחזירה" את החוב בשעות. אם קורה משבר, מקפיאים יחד.</div></details>
+    <details class="acc"><summary>הנתינה היא באמת חובה? וכמה?</summary><div class="acc-body">כן. היא חלק מהעסקה ונחתמת בהסכם בשיחה הראשונה. ההיקף נגזר מגובה החוב שעזרנו לכם לצאת ממנו, ונפרס על תקופה מוגדרת. למשל, משפחה עם חוב של 200 אלף ש"ח נותנת כ־20 שעות בחודש, כלומר בערך שעתיים וחצי בשבוע לכל אחד מבני הזוג, לאורך שלוש שנים. כל שעה שווה יותר ככל שמתמידים ומשתפרים, ולכן מי שנותן טוב צריך פחות שעות. הנתינה היא בעמותות, לא עבורנו, והלוואות מוחזרות בכסף ולא בשעות. במשבר אמיתי מקפיאים יחד. <a href="process.html">למחשבון ←</a></div></details>
     <details class="acc"><summary>כמה זמן זה לוקח?</summary><div class="acc-body">שלושת החודשים הראשונים הם ליווי צמוד. היעד הוא תוכנית סגירה חתומה תוך 3 חודשים, ויציאה מכל החובות היקרים תוך שנה עד שנתיים. אחר כך ממשיכים בליווי חודשי.</div></details>
     <details class="acc"><summary>מה קורה למידע שאני מוסר?</summary><div class="acc-body">הוא משמש רק לליווי שלכם, נשמר מוצפן, הגישה אליו מוגבלת לצוות, והוא לא מועבר לאף אחד. אפשר לבקש מחיקה בכל עת.</div></details>
   </div>

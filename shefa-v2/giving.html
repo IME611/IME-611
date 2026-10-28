@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>מחשבון הנתינה | שפע גלובל</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Cpolygon points='48,4 88,26 88,70 48,92 8,70 8,26' fill='%23FAF6EE' stroke='%23B8860B' stroke-width='6'/%3E%3Ccircle cx='48' cy='48' r='12' fill='%23C9961A'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=Assistant:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shefa.css">
+<style>
+.calc{display:grid;grid-template-columns:340px 1fr;gap:1.5rem;align-items:start}
+.calc .inputs{position:sticky;top:calc(var(--nav-h) + 16px)}
+.out{display:grid;grid-template-columns:repeat(4,1fr);gap:.8rem}
+.out .o{background:var(--ivory);border:1px solid var(--line);border-radius:12px;padding:1rem;text-align:center}
+.out .o b{display:block;font-family:Heebo;font-weight:900;font-size:1.6rem;color:var(--gold);font-variant-numeric:tabular-nums;line-height:1.1}
+.out .o span{font-size:.8rem;color:var(--ink-dim)}
+.out .o.main{background:var(--night);border-color:transparent}
+.out .o.main b{color:var(--gold-lt);font-size:2rem}.out .o.main span{color:rgba(243,233,210,.7)}
+.ladder{display:grid;grid-template-columns:repeat(4,1fr);gap:.6rem;align-items:end;margin-top:1rem}
+.step{border-radius:12px 12px 4px 4px;padding:1rem .8rem;text-align:center;border:1px solid var(--line);background:var(--ivory);position:relative}
+.step .r{font-family:Heebo;font-weight:900;font-size:1.5rem;color:var(--gold)}
+.step .r small{font-size:.75rem;color:var(--ink-faint);font-weight:500}
+.step .nm{font-family:Heebo;font-weight:700}
+.step .mm{font-size:.78rem;color:var(--ink-faint);margin-top:.3rem}
+.step.s0{height:120px}.step.s1{height:150px}.step.s2{height:180px}.step.s3{height:210px;background:var(--night);border-color:transparent}
+.step.s3 .nm{color:#FBF3DF}.step.s3 .r{color:var(--gold-lt)}.step.s3 .mm{color:rgba(243,233,210,.6)}
+.chart{width:100%;height:auto;direction:ltr}
+.chart text{font-family:Heebo;font-size:11px;fill:var(--ink-faint)}
+.rates td:first-child{font-family:Heebo;font-weight:600}
+.verdict{margin-top:1rem;padding:1.2rem 1.4rem;border-radius:var(--r);background:var(--gold-xss);border-right:3px solid var(--gold);font-size:1rem}
+.radio{display:flex;gap:.4rem;flex-wrap:wrap}
+.radio button{padding:.45rem .9rem;border-radius:2rem;border:1px solid var(--line);background:var(--pearl);font-family:Heebo;font-weight:600;font-size:.85rem}
+.radio button.on{background:var(--gold);color:#fff;border-color:var(--gold)}
+@media(max-width:1000px){.calc{grid-template-columns:1fr}.calc .inputs{position:static}.out{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.ladder{grid-template-columns:1fr 1fr}.step{height:auto!important}}
+</style>
+</head>
+<body data-area="founder">
+<main>
+<header class="page-hero" style="padding-bottom:3rem">
+  <p class="eyebrow">אזור המייסד · כלי עבודה</p>
+  <h1 class="h-l">מחשבון <span class="gold">הנתינה</span></h1>
+  <p class="lead">כמה נתינה משפחה מחזירה לקהילה, לפי גובה החוב שעזרנו לה לצאת ממנו. ערך השעה שלה עולה עם הזמן ועם הביצועים, כמו קידום בעבודה.</p>
+</header>
+
+<section style="padding-top:2.5rem">
+  <div class="wrap calc">
+    <div class="card inputs">
+      <div class="range-row"><div class="top"><label class="lbl" for="debt">חוב שטופל</label><b id="o_debt"></b></div><input type="range" id="debt" min="50000" max="300000" step="5000" value="200000"></div>
+      <div class="range-row"><div class="top"><label class="lbl" for="ratio">יחס ההחזרה לקהילה</label><b id="o_ratio"></b></div><input type="range" id="ratio" min="10" max="60" step="5" value="30"><p class="faint">איזה חלק משווי החוב המשפחה מחזירה בנתינה</p></div>
+      <div class="range-row"><div class="top"><label class="lbl" for="months">תקופת הנתינה</label><b id="o_months"></b></div><input type="range" id="months" min="12" max="60" step="6" value="36"></div>
+      <div class="range-row"><label class="lbl">מבוגרים שנותנים</label><div class="radio" id="adults"><button data-v="1">אחד</button><button data-v="2" class="on">שניים</button></div></div>
+      <div class="range-row"><div class="top"><label class="lbl" for="score">ציון ביצועים</label><b id="o_score"></b></div><input type="range" id="score" min="1" max="5" step="1" value="3"><p class="faint">עמידה ביעד, איכות לפי משוב העמותה, ליווי והדהוד. ציון גבוה מקדם מהר יותר ומוסיף בונוס לשעה.</p></div>
+    </div>
+    <div>
+      <div class="out">
+        <div class="o main"><b id="r_H"></b><span>שעות בחודש, למשפחה</span></div>
+        <div class="o"><b id="r_w"></b><span>שעות בשבוע, לכל מבוגר</span></div>
+        <div class="o"><b id="r_target"></b><span>יעד ערך לקהילה</span></div>
+        <div class="o"><b id="r_tot"></b><span>סך שעות לאורך התקופה</span></div>
+      </div>
+      <div class="card mt-1"><h3>מדרגות שכר הנתינה</h3><p class="faint">ערך השעה בכל דרגה, וכמה חודשים המשפחה נמצאת בה בתרחיש הזה</p><div class="ladder" id="ladder"></div></div>
+      <div class="card mt-1"><h3>הערך המצטבר לקהילה</h3><svg class="chart" id="chart" viewBox="0 0 640 260"></svg></div>
+      <div class="verdict" id="verdict"></div>
+    </div>
+  </div>
+</section>
+
+<section class="bg-pearl edge-top">
+  <div class="wrap">
+    <div class="center narrow mb-2"><p class="eyebrow">למה ₪100 לשעה, ומה האפשרויות</p><h2 class="h-l">איך מתמחרים שעת נתינה</h2>
+      <p class="lead">₪100 לשעה לא נקבע כאן. הוא הגיע ממסמך 2.4 ב־Notion ("1 קריסטל = שעה = ערך פנימי של ₪100"). יש לפחות ארבע דרכים לתמחר, וכל אחת מספרת סיפור אחר:</p></div>
+    <div class="tbl-wrap"><table class="rates"><thead><tr><th>שיטה</th><th class="num">ערך לשעה</th><th>יתרון</th><th>חיסרון</th></tr></thead><tbody>
+      <tr><td>קבוע, מהמסמך המקורי</td><td class="num">₪100</td><td>פשוט, מספר עגול</td><td>שרירותי. לא מתגמל התמדה ולא מבחין בין מתחיל לוותיק</td></tr>
+      <tr><td>שכר מינימום</td><td class="num">₪35.40</td><td>עוגן חוקי ומובן לכולם</td><td>נמוך, ומכפיל פי שלושה את השעות שנדרשות</td></tr>
+      <tr><td>שווי השוק של הכישרון</td><td class="num">₪50–₪250</td><td>מכבד מקצועות: עו"ד, מעצב, מורה</td><td>מעדיף בעלי מקצוע, ומסובך לניהול</td></tr>
+      <tr style="background:var(--gold-xss)"><td>מדרגות לפי ותק וביצועים · <span class="gold">ההמלצה</span></td><td class="num">₪36 ← ₪100</td><td>מתחיל ברצפה חוקית ועולה. נותן דרייב, מתגמל מחויבות</td><td>דורש מדידת ביצועים חודשית</td></tr>
+    </tbody></table></div>
+    <div class="grid g-3 mt-2">
+      <div class="card"><h3>📈 איך עולים דרגה</h3><p>בכל תקופת דרגה עומדים ביעד השעות. ציון ביצועים 3 מקדם כל 6 חודשים, ציון 5 כל 4 חודשים, וציון 1 רק כל 10 חודשים.</p></div>
+      <div class="card"><h3>⭐ ממה מורכב הציון</h3><p>עמידה ביעד החודשי, משוב מהעמותה, ליווי משפחה חדשה, והדהוד: גיוס, תוכן, פתיחת מעגל. ציון 5 מוסיף 10% לערך השעה, וציון 1 מוריד 10%.</p></div>
+      <div class="card"><h3>🧭 רצפה ותקרה</h3><p>לפחות 8 שעות בחודש למשפחה, גם על חוב קטן. ולכל היותר 40 שעות בחודש: אם צריך יותר, התקופה מתארכת. משפחה עובדת לא תישבר בגלל הנתינה.</p></div>
+    </div>
+    <div class="note-risk mt-2"><b>דורש בדיקה · יחסי עובד־מעביד ·</b> ככל שהנתינה צמודה לחוב ומתומחרת בשקלים, היא נראית יותר כמו עבודה תמורת מחיקת חוב. שלוש הגנות: ① הרצפה היא שכר מינימום, כך שאף שעה לא מתומחרת מתחתיו. ② ההלוואות מוחזרות בכסף, ושעות הנתינה הן "החזר לקהילה" ולא קיזוז של החוב. ③ הנתינה ניתנת לעמותות, לא לשפע גלובל. את הנוסח הסופי לבדוק עם עורך דין לדיני עבודה (שאלה 4).</div>
+  </div>
+</section>
+
+<nav class="next-chapter" aria-label="פרקים">
+  <a href="founder.html"><small>→ חזרה</small><b>לוח המייסד</b></a>
+  <a href="crystals.html" class="fwd"><small>קשור ←</small><b>כלכלת הקריסטלים</b></a>
+</nav>
+</main>
+<script src="shefa.js"></script>
+<script src="giving-model.js"></script>
+<script>
+const $=id=>document.getElementById(id); let adults=2;
+document.querySelectorAll('#adults button').forEach(b=>b.onclick=()=>{ document.querySelectorAll('#adults button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); adults=+b.dataset.v; calc(); });
+['debt','ratio','months','score'].forEach(i=>$(i).addEventListener('input',calc));
+const SCORE=['','חלש','בינוני־','סטנדרט','טוב','מצוין'];
+function calc(){
+  const debt=+$('debt').value, ratio=+$('ratio').value/100, months=+$('months').value, score=+$('score').value;
+  $('o_debt').textContent=SG.ils(debt); $('o_ratio').textContent=Math.round(ratio*100)+'%'; $('o_months').textContent=months+' חודשים'; $('o_score').textContent=score+' · '+SCORE[score];
+  const p=GIVING.plan({debt,ratio,months,adults,score});
+  $('r_H').textContent=p.H; $('r_w').textContent=p.perAdultWeek.toFixed(1); $('r_target').textContent=SG.k(p.target); $('r_tot').textContent=p.totalHours.toLocaleString('he-IL');
+  $('ladder').innerHTML=GIVING.TIERS.map((t,i)=>{ const bt=p.byTier.find(x=>x.key===t.key); return `<div class="step s${i}"><div>${t.icon}</div><div class="nm">${t.name}</div><div class="r">₪${Math.round(t.rate*GIVING.BONUS(score))}<small> לשעה</small></div><div class="mm">${bt?bt.months+' חודשים':'לא מגיעים'}</div></div>`; }).join('');
+  // chart
+  const W=640,H=260,L=56,R=12,T=16,B=28, n=p.rows.length, mx=p.target*1.05;
+  const x=i=>L+(W-L-R)*(i/Math.max(1,n-1)), y=v=>H-B-(H-T-B)*(v/mx);
+  const cols=['#9CB8A0','#B9A994','#C9961A','#16100A'];
+  let s=''; [0,.5,1].forEach(f=>{ const v=p.target*f; s+=`<line x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}" stroke="rgba(184,134,11,.15)"/><text x="${L-6}" y="${y(v)+4}" text-anchor="end">${SG.k(v).replace('₪','₪')}</text>`; });
+  p.rows.forEach((r,i)=>{ if(i===0) return; const pr=p.rows[i-1]; s+=`<line x1="${x(i-1)}" y1="${y(pr.v)}" x2="${x(i)}" y2="${y(r.v)}" stroke="${cols[r.t]}" stroke-width="3" stroke-linecap="round"/>`; });
+  for(let i=0;i<n;i+=6) s+=`<text x="${x(i)}" y="${H-8}" text-anchor="middle">חודש ${i+1}</text>`;
+  s+=`<text x="${x(n-1)}" y="${y(p.target)-8}" text-anchor="end" style="fill:#B8860B;font-weight:800">יעד ${SG.k(p.target)}</text>`;
+  $('chart').innerHTML=s;
+  let v=`משפחה עם חוב של <b>${SG.ils(debt)}</b> מחזירה לקהילה ערך של <b>${SG.k(p.target)}</b>. זה <b>${p.H} שעות בחודש</b> למשפחה, כלומר כ־<b>${p.perAdultWeek.toFixed(1)} שעות בשבוע</b> ${adults===2?'לכל אחד מבני הזוג':''}, לאורך ${p.months} חודשים. הערך הממוצע של שעה יוצא ₪${Math.round(p.avgRate)}.`;
+  if(p.note==='cap') v+=` <span style="color:var(--risk)">התקרה של 40 שעות בחודש הגיעה, ולכן התקופה התארכה ל־${p.months} חודשים.</span>`;
+  if(p.note==='floor') v+=' החוב קטן, ולכן חלה הרצפה של 8 שעות בחודש.';
+  const lo=GIVING.plan({debt,ratio,months,adults,score:5}); if(score<5) v+=` עם ציון ביצועים 5 אותו יעד דורש רק ${lo.H} שעות בחודש. זה הדרייב.`;
+  $('verdict').innerHTML=v;
+}
+calc();
+</script>
+</body>
+</html>
