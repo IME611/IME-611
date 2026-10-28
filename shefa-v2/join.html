@@ -106,6 +106,7 @@
         <div class="fr" data-req="select"><label class="lbl">כמה שעות נתינה בחודש תוכלו להתחייב? *</label><select id="hours"><option value="">בחרו</option><option>4 (המינימום)</option><option>4–6</option><option>6–10</option><option>מעל 10</option></select><p class="err">נא לבחור</p></div>
         <div class="fr" data-req="select"><label class="lbl">איזו אמירה מתארת אתכם? *</label><select id="mind"><option value="">בחרו</option><option>"אני יכול לשנות את המציאות שלי"</option><option>"אני קורבן של הנסיבות"</option></select><p class="err">נא לבחור</p></div>
       </div>
+      <div class="fr" data-req="long"><label class="lbl">למה עכשיו? ומה אתם מוכנים לעשות כדי שזה יקרה? *</label><p class="faint" style="margin:-.2rem 0 .4rem">כמה משפטים בשפה שלכם. זו התשובה שאנחנו קוראים הכי לאט.</p><textarea id="why" rows="3" placeholder="ספרו לנו בכנות"></textarea><p class="err">כמה משפטים, בבקשה (לפחות 40 תווים)</p></div>
       <div class="fr" data-req="text"><label class="lbl">איך אתם רואים את האחריות שלכם לשינוי המצב? *</label><textarea id="resp" rows="2" placeholder="אין תשובה נכונה"></textarea><p class="err">כמה מילים, בבקשה</p></div>
     </div>
 
@@ -114,7 +115,9 @@
       <h2>שלב 4 · סיכום ואישור</h2><p class="hint">זו התוכנית הראשונית שנבנתה מהתשובות שלכם. בשיחת הבהירות נדייק אותה יחד.</p>
       <div class="plan" id="plan"></div>
       <div class="sum" id="sum"></div>
-      <label class="consent" id="consentBox"><input type="checkbox" id="consent"><span><b>אני מתחייב/ת לנתינה קהילתית של 4 שעות בחודש לפחות</b> לאורך תקופת הליווי, כחלק בלתי נפרד מהעסקה. ההתחייבות תיחתם בשיחת ההיכרות. אני מסכים/ה שהמידע שמסרתי ישמש רק לליווי שלי, יישמר מוצפן ולא יועבר לאיש, ויודע/ת שזה לא ייעוץ פיננסי.</span></label>
+      <div class="fr" data-req="select"><label class="lbl" for="slot">מתי נוח לכם לשיחת ההיכרות? *</label><select id="slot"><option value="">בחרו</option><option>בוקר (9:00–12:00)</option><option>צהריים (12:00–16:00)</option><option>ערב (18:00–21:00)</option></select><p class="err">נא לבחור זמן</p></div>
+      <p class="faint mb-1">בשיחה נעבור על כל תנאי ההסכם, כולל מה שמצופה מכם. אתם מתחייבים רק אחרי שהבנתם הכול.</p>
+      <label class="consent" id="consentBox"><input type="checkbox" id="consent"><span><b>אני מתחייב/ת לנתינה קהילתית של 4 שעות בחודש לפחות</b> לאורך תקופת הליווי, כחלק בלתי נפרד מהעסקה. ההסכם המלא ייחתם בשיחת ההיכרות, אחרי שאבין את כל התנאים. אני מסכים/ה שהמידע שמסרתי ישמש רק לליווי שלי, יישמר מוצפן ולא יועבר לאיש, ויודע/ת שזה לא ייעוץ פיננסי.</span></label>
       <p class="faint mt-1">גרסת הדגמה: שום דבר לא נשלח לשרת. הפרטים נשמרים רק בדפדפן שלכם, כדי שהאזור האישי יוכל לפנות אליכם בשם.</p>
     </div>
 
@@ -149,6 +152,7 @@ function valid(n){
   document.querySelectorAll(`.step[data-s="${n}"] .fr[data-req]`).forEach(fr=>{
     const el=fr.querySelector('input,select,textarea'), v=el.value.trim(), t=fr.dataset.req; let good=true;
     if(t==='text') good=v.length>=2;
+    if(t==='long') good=v.length>=40;
     if(t==='select') good=!!v;
     if(t==='num') good=v!=='' && /^\d+$/.test(v);
     if(t==='age') good=/^\d+$/.test(v) && +v>=16 && +v<=99;
@@ -171,10 +175,11 @@ function show(n){
 }
 $('fwd').onclick=()=>{
   if(s<4){ if(valid(s)) show(s+1); return; }
+  if(!valid(4)) return;
   if(!$('consent').checked){ $('consentBox').classList.add('bad'); return; }
   const data={name:$('name').value.trim(), first:$('name').value.trim().split(' ')[0], debt:+$('debt').value, income:+$('income').value, hish:+($('hish').value||0), control, skills:picked('skills'), areas:picked('areas'), hours:$('hours').value, joined:new Date().toISOString()};
   try{ localStorage.setItem('shefa_member', JSON.stringify(data)); }catch(e){}
-  $('doneMsg').textContent = `${data.first}, הבקשה התקבלה. מלווה חוזר אליכם תוך 48 שעות לשיחת היכרות. שם חותמים יחד על ההסכם ומתחילים את החודש הראשון.`;
+  $('doneMsg').textContent = `${data.first}, הבקשה התקבלה. מלווה חוזר אליכם תוך 48 שעות לשיחת היכרות, שבה תשמעו את כל התנאים. המקומות במחזור הראשון מוגבלים. אם עוד לא יהיה מקום, תישארו ברשימת ההמתנה ונחזור אליכם.`;
   show(5);
 };
 $('back').onclick=()=>show(s-1);
