@@ -277,7 +277,7 @@ input[type=password]{width:100%;background:var(--pearl);border:1px solid var(--l
 /* mime-fix-permanent */
 
 /* ── prelaunch banner (public pages) ── */
-.prelaunch{display:flex;align-items:center;justify-content:center;gap:.55rem;flex-wrap:wrap;text-align:center;padding:.55rem 1rem;background:var(--night);color:#F3E9D2;font-size:.85rem;line-height:1.45}
+.prelaunch{position:relative;z-index:5;display:flex;align-items:center;justify-content:center;gap:.55rem;flex-wrap:wrap;text-align:center;padding:.55rem 1rem;background:var(--night);color:#F3E9D2;font-size:.85rem;line-height:1.45}
 .prelaunch b{font-family:Heebo;color:var(--gold-lt)}
 .prelaunch a{color:var(--gold-lt);text-decoration:underline}
 .prelaunch .pulse{width:8px;height:8px;border-radius:50%;background:var(--gold-lt);animation:pulse 2.4s infinite;flex-shrink:0}

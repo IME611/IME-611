@@ -57,7 +57,7 @@
     const tag = FOUNDER ? '<span class="tag ink" style="margin-right:.4rem">אזור המייסד</span>' : '<small>· Shefa Global</small>';
     const cta = FOUNDER
       ? `<a href="index.html" class="btn btn-line btn-sm">לאתר הציבורי ↗</a><button class="btn btn-dark btn-sm" id="sgLock">יציאה</button>`
-      : `<a href="dashboard.html" class="btn btn-line btn-sm">האזור האישי</a><a href="join.html" class="btn btn-gold btn-sm">הרשמה</a>`;
+      : `<a href="dashboard.html" class="btn btn-line btn-sm">האזור האישי</a><a href="index.html#quick" class="btn btn-gold btn-sm">עדכונים</a>`;
     return `<a href="${brandHref}" class="brand">${MARK}שפע גלובל ${tag}</a>
       <ul class="nav-links">${li}</ul>
       <div class="nav-cta">${cta}<button class="burger" aria-label="תפריט"><span></span></button></div>`;
@@ -65,7 +65,7 @@
   function drawerHTML(){
     let h = `<div class="drawer-panel"><button class="drawer-close" aria-label="סגירה">×</button><a href="${FOUNDER?'founder.html':'index.html'}" class="brand" style="border:none;display:flex;gap:.5rem;align-items:center">${MARK}שפע גלובל</a>`;
     NAV.forEach(n=>{ if(n.href) h += `<a href="${n.href}">${n.t}</a>`; else { h += `<h5>${n.t}</h5>` + n.items.map(i=>`<a href="${i.href}">${i.t}</a>`).join(''); } });
-    h += FOUNDER ? `<h5>יציאה</h5><a href="index.html">לאתר הציבורי</a>` : `<h5>אישי</h5><a href="join.html">הרשמה</a><a href="dashboard.html">האזור האישי</a>`;
+    h += FOUNDER ? `<h5>יציאה</h5><a href="index.html">לאתר הציבורי</a>` : `<h5>אישי</h5><a href="index.html#quick">הרשמה לעדכונים</a><a href="tools.html">כלים למשפחה</a><a href="dashboard.html">האזור האישי</a>`;
     return h + '</div>';
   }
   function footerHTML(){
@@ -75,7 +75,7 @@
         <p class="slogan">תודעת שפע היא הדרך להגשמה.</p>
         <p style="font-size:.88rem;max-width:36ch">יוצאים מהחוב, בונים חיים חדשים, ומחזירים לקהילה. זו העסקה.</p></div>
       <div><h6>התהליך</h6><a href="process.html">איך זה עובד</a><a href="index.html#pact">ההסכם</a><a href="index.html#faq">שאלות נפוצות</a></div>
-      <div><h6>מתחילים</h6><a href="join.html">הרשמה</a><a href="dashboard.html">האזור האישי</a></div>
+      <div><h6>מתחילים</h6><a href="index.html#quick">הרשמה לעדכונים</a><a href="join.html">שאלון התאמה</a><a href="tools.html">כלים למשפחה</a><a href="dashboard.html">האזור האישי</a></div>
     </div>
     <div class="legal"><span>© 2026 שפע גלובל · מיזם של IME 611</span>
     <span>אין באתר ייעוץ פיננסי, פנסיוני או משפטי. · <a href="founder.html" style="display:inline;color:rgba(243,233,210,.35)">כניסת מייסד</a></span></div>`;
@@ -98,7 +98,7 @@
     if(!FOUNDER){
       const b = document.createElement('div'); b.className='prelaunch';
       b.innerHTML='<span class="pulse"></span><b>שפע גלובל בשלב הקמה.</b> עוד לא מקבלים משפחות. אפשר <a href="index.html#quick">להירשם לעדכונים</a>, ונודיע כשהפיילוט ייפתח.';
-      document.body.insertBefore(b, document.body.firstChild);
+      const host=document.querySelector('main')||document.body; host.insertBefore(b, host.firstChild);
     }
     // founder chapter footers: point "back" to the hub instead of the public home
     if(FOUNDER) document.querySelectorAll('.next-chapter a[href="index.html"]').forEach(a=>{ a.href='founder.html'; const b=a.querySelector('b'); if(b) b.textContent='לוח המייסד'; });
