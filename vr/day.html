@@ -211,6 +211,8 @@ const ctx = pc.getContext('2d');
 const tex = new THREE.CanvasTexture(pc); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 4;
 const panel = new THREE.Mesh(new THREE.PlaneGeometry(2.4,1.5), new THREE.MeshBasicMaterial({map:tex, transparent:true}));
 panel.position.set(0,1.6,-2.6); scene.add(panel);
+const INTRO='נשימה עמוקה. עוד רגע היום מתחיל, מהאור הראשון ועד הלילה. אפשר להביט סביב, ולהתקדם בקצב שלך.';
+const EMPTY='השגרה הזו עוד לא נכתבה. אפשר להוסיף אותה בעריכה.';
 function wrap(text, maxW){
   const words = text.split(/\s+/).filter(Boolean), lines=[]; let line='';
   for (const w of words){ const t = line? line+' '+w : w; if (ctx.measureText(t).width>maxW && line){ lines.push(line); line=w; } else line=t; }
@@ -219,7 +221,12 @@ function wrap(text, maxW){
 function rr(x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
 function drawPanel(i, intro){
   const R = ROUTINES[i], night = i===4;
-  const H = PORTRAIT ? 1500 : 1000; if (pc.height!==H) pc.height = H;
+  const fs0 = PORTRAIT ? 74 : 56; ctx.font = `400 ${fs0}px Assistant, Arial, sans-serif`;
+  const body0 = intro ? INTRO : (DAY.r[i] || EMPTY);
+  const n0 = Math.min(wrap(body0,1380).length, PORTRAIT ? 14 : 10);
+  const H = Math.max(PORTRAIT ? 760 : 640, Math.round(370 + n0*fs0*1.32 + 70));
+  if (pc.height!==H) pc.height = H;
+  panel.scale.y = H/1000;
   ctx.clearRect(0,0,pc.width,pc.height);
   rr(20,20,1560,H-40,60); ctx.fillStyle = night ? 'rgba(30,38,62,.78)' : 'rgba(255,255,255,.80)'; ctx.fill();
   ctx.lineWidth=4; ctx.strokeStyle= night ? 'rgba(255,255,255,.35)' : 'rgba(255,255,255,.95)'; ctx.stroke();
@@ -230,7 +237,7 @@ function drawPanel(i, intro){
   ctx.fillStyle = ink; ctx.font = '700 108px Assistant, Arial, sans-serif';
   ctx.fillText(intro ? 'היום המושלם' : R.title, 1490, 250);
   const fs = PORTRAIT ? 74 : 56; ctx.font = `400 ${fs}px Assistant, Arial, sans-serif`;
-  const body = intro ? 'נשימה עמוקה. עוד רגע היום מתחיל, מהאור הראשון ועד הלילה. אפשר להביט סביב, ולהתקדם בקצב שלך.' : (DAY.r[i] || 'השגרה הזו עוד לא נכתבה. אפשר להוסיף אותה בעריכה.');
+  const body = intro ? INTRO : (DAY.r[i] || EMPTY);
   const lines = wrap(body, 1380).slice(0, PORTRAIT ? 14 : 10);
   lines.forEach((l,k)=> ctx.fillText(l, 1490, 370 + k*fs*1.32));
   tex.needsUpdate = true;
@@ -297,7 +304,6 @@ addEventListener('pointerup', ()=> drag=null);
 addEventListener('resize', ()=>{ camera.aspect=innerWidth/innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth,innerHeight); fitPanel(); });
 function fitPanel(){
   const was = PORTRAIT; PORTRAIT = camera.aspect < .8 && !renderer.xr.isPresenting;
-  panel.scale.y = PORTRAIT ? 1.5 : 1;
   const half = Math.atan(Math.tan(THREE.MathUtils.degToRad(camera.fov/2))*camera.aspect);
   panel.position.z = -Math.max(2.6, 1.32/Math.tan(half));
   if (was!==PORTRAIT) drawPanel(Math.max(0,idx), idx<0);
