@@ -80,18 +80,18 @@
 
     <form class="quick" id="quick" novalidate>
       <div id="qForm">
-        <h2>בדיקת התאמה, 60 שניות</h2>
-        <p class="sub">משאירים פרטים, ומלווה חוזר אליכם לשיחת היכרות ללא התחייבות.</p>
+        <h2>הרשמה לעדכונים</h2>
+        <p class="sub">שפע גלובל בשלב הקמה, ועוד לא מקבל משפחות. השאירו פרטים, ונעדכן אתכם כשהפיילוט ייפתח.</p>
         <div class="fr" data-req="text"><label class="lbl" for="qName">שם מלא</label><input type="text" id="qName" autocomplete="name" placeholder="נועה כהן"><p class="err">נא למלא שם</p></div>
         <div class="fr" data-req="phone"><label class="lbl" for="qPhone">טלפון</label><input type="tel" id="qPhone" autocomplete="tel" inputmode="tel" placeholder="050-1234567"><p class="err">מספר טלפון תקין, 9 ספרות לפחות</p></div>
         <div class="fr" id="qDebtRow"><label class="lbl">סך החובות הצרכניים, בערך</label>
           <div class="seg" id="qDebt"><button type="button" data-v="עד 50 אלף">עד 50K</button><button type="button" data-v="50–150 אלף">50–150K</button><button type="button" data-v="150–250 אלף">150–250K</button><button type="button" data-v="מעל 250 אלף">250K+</button></div><p class="err">נא לבחור טווח</p></div>
         <label class="consent" style="display:flex;gap:.6rem;align-items:flex-start;font-size:.86rem;margin-top:.4rem;cursor:pointer"><input type="checkbox" id="qGive" style="width:18px;height:18px;accent-color:var(--gold);margin-top:.2rem;flex-shrink:0"><span>אני מבין/ה שהליווי כולל <b>התחייבות לנתינה קהילתית</b>, בהיקף שנגזר מגובה החוב.</span></label>
         <p class="err" id="qGiveErr" style="color:var(--risk);font-size:.8rem;display:none">זה חלק מהעסקה. בלי ההתחייבות הזו אי אפשר להצטרף.</p>
-        <button type="submit" class="btn btn-gold">בדקו את ההתאמה שלי</button>
-        <p class="note">הפרטים משמשים רק לחזרה אליכם. בלי ספאם.</p>
+        <button type="submit" class="btn btn-gold">עדכנו אותי</button>
+        <p class="note">הפרטים משמשים רק כדי לעדכן אתכם על פתיחת הפיילוט. בלי ספאם.</p>
       </div>
-      <div class="ok-box" id="qOk"><div class="big">💎</div><h2 id="qOkT"></h2><p class="sub mt-1">נפתח לכם מייל מוכן עם הפרטים. שלחו אותו ונחזור אליכם. אם תרצו, השלב הבא הוא שאלון קצר של 4 צעדים, כדי שנגיע לשיחה מוכנים.</p><a href="join.html" class="btn btn-gold">להמשך ההרשמה</a></div>
+      <div class="ok-box" id="qOk"><div class="big">💎</div><h2 id="qOkT"></h2><p class="sub mt-1">נעדכן אתכם כשהפיילוט ייפתח. בינתיים אפשר לעבור על השאלון העצמי, ולראות איך התוכנית הראשונית שלכם עשויה להיראות.</p><a href="join.html" class="btn btn-gold">להמשך ההרשמה</a></div>
     </form>
   </div>
 </section>
@@ -202,7 +202,7 @@
   <div class="narrow">
     <h2 class="h-l">החודש הבא יכול להיגמר אחרת.</h2>
     <p class="lead mt-1" style="margin-inline:auto">ארבעה צעדים קצרים, ושיחה אחת. משם מתחילים.</p>
-    <div class="row mt-2" style="justify-content:center"><a href="join.html" class="btn btn-gold">אני רוצה להתחיל</a><a href="#quick" class="btn btn-line" style="color:#F3E9D2">בדיקת התאמה מהירה</a></div>
+    <div class="row mt-2" style="justify-content:center"><a href="#quick" class="btn btn-gold">הרשמה לעדכונים</a><a href="join.html" class="btn btn-line" style="color:#F3E9D2">שאלון התאמה עצמי</a></div>
   </div>
 </section>
 
@@ -217,13 +217,12 @@ document.getElementById('quick').addEventListener('submit',e=>{
   const set=(el,good)=>{ el.closest('.fr').classList.toggle('bad',!good); if(!good) ok=false; };
   set(document.getElementById('qName'), name.length>=2); set(document.getElementById('qPhone'), /^\d{9,}$/.test(phone));
   document.getElementById('qDebtRow').classList.toggle('bad',!debt); if(!debt) ok=false;
-  const g=document.getElementById('qGive').checked; document.getElementById('qGiveErr').style.display=g?'none':'block'; if(!g) ok=false;
+  const g=document.getElementById('qGive').checked;
   if(!ok) return;
   try{ localStorage.setItem('shefa_lead', JSON.stringify({name,phone,debt})); }catch(err){}
-  const body=`שם: ${name}\nטלפון: ${phone}\nחוב צרכני משוער: ${debt}\nמאשר/ת התחייבות לנתינה: כן`;
-  location.href='mailto:admin@ime611.com?subject='+encodeURIComponent('שפע גלובל · בדיקת התאמה · '+name)+'&body='+encodeURIComponent(body);
+  window.SG_send({form:'עדכונים', name, phone, debt_range:debt, interest: g?'מבין את מודל הנתינה':''});
   document.getElementById('qForm').hidden=true; document.getElementById('qOk').style.display='block';
-  document.getElementById('qOkT').textContent = name.split(' ')[0]+', נראה שזה יכול להתאים לכם';
+  document.getElementById('qOkT').textContent = 'תודה, '+name.split(' ')[0]+'. נרשמתם לעדכונים';
 });
 </script>
 </body>

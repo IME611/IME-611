@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>הצטרפות — המסע מתחיל כאן | שפע גלובל</title>
+<title>שאלון התאמה | שפע גלובל</title>
 <meta name="description" content="אשף הצטרפות בארבעה שלבים: פרטים אישיים, מצב כלכלי, כישורים וזכויות, וסיכום עם תוכנית ראשונית.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Cpolygon points='48,4 88,26 88,70 48,92 8,70 8,26' fill='%23FAF6EE' stroke='%23B8860B' stroke-width='6'/%3E%3Ccircle cx='48' cy='48' r='12' fill='%23C9961A'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -55,8 +55,8 @@
 <div class="jw">
   <div class="center">
     <p class="eyebrow">הצטרפות · נתיב הקריסטל</p>
-    <h1 class="h-l">המסע לתודעת שפע<br><span class="gold">מתחיל כאן</span></h1>
-    <p class="lead" style="margin:1rem auto 0">ספרו לנו קצת על עצמכם, ונבנה יחד תוכנית מותאמת אישית: אנחנו מלווים אתכם מהחוב החוצה, ואתם מתחייבים לתת לקהילה.</p>
+    <h1 class="h-l">שאלון התאמה<br><span class="gold">ותוכנית ראשונית</span></h1>
+    <p class="lead" style="margin:1rem auto 0">ענו על ארבעה צעדים קצרים, ותקבלו תוכנית ראשונית להמחשה. שפע גלובל בשלב הקמה ועוד לא מקבל משפחות. הנתונים הכספיים נשארים בדפדפן שלכם, ורק פרטי הקשר נשמרים כדי לעדכן אתכם כשהפיילוט ייפתח.</p>
   </div>
   <div class="progress" id="prog"><div class="on"><i>1</i>פרטים אישיים</div><div><i>2</i>מצב כלכלי</div><div><i>3</i>כישורים וזכויות</div><div><i>4</i>סיכום ואישור</div></div>
   <div class="pbar"><i id="pfill" style="width:25%"></i></div>
@@ -170,7 +170,7 @@ function show(n){
   $('pfill').style.width=Math.min(4,n)*25+'%';
   $('back').style.visibility = n>1&&n<5?'visible':'hidden';
   $('acts').style.display = n===5?'none':'flex';
-  $('fwd').textContent = n===4?'שליחת בקשת הצטרפות 💎':'הבא ←';
+  $('fwd').textContent = n===4?'לתוכנית הראשונית שלי 💎':'הבא ←';
   if(n===4) summary();
   window.scrollTo({top:0,behavior:'smooth'});
 }
@@ -180,9 +180,9 @@ $('fwd').onclick=()=>{
   if(!$('consent').checked){ $('consentBox').classList.add('bad'); return; }
   const data={name:$('name').value.trim(), first:$('name').value.trim().split(' ')[0], debt:+$('debt').value, income:+$('income').value, hish:+($('hish').value||0), control, skills:picked('skills'), areas:picked('areas'), hours:$('hours').value, joined:new Date().toISOString()};
   try{ localStorage.setItem('shefa_member', JSON.stringify(data)); }catch(e){}
-  const body=`שם: ${data.name}\nחוב: ${data.debt}\nהכנסה: ${data.income}\nקרן השתלמות: ${data.hish}\nתחומי נתינה: ${data.areas.join(', ')}\nכישורים: ${data.skills.join(', ')}\nשעות: ${data.hours}`;
-  location.href='mailto:admin@ime611.com?subject='+encodeURIComponent('שפע גלובל · בקשת הצטרפות · '+data.name)+'&body='+encodeURIComponent(body);
-  $('doneMsg').textContent = `${data.first}, נפתח לכם מייל מוכן עם הפרטים. שלחו אותו, ונחזור אליכם לשיחת היכרות שבה תשמעו את כל התנאים. אנחנו בשלב ההקמה והמקומות בפיילוט הראשון מוגבלים. אם עוד לא יהיה מקום, תישארו ברשימת ההמתנה.`;
+  const dr = data.debt<50000?'עד 50 אלף':data.debt<150000?'50–150 אלף':data.debt<250000?'150–250 אלף':'250 אלף+';
+  window.SG_send({form:'שאלון התאמה', name:data.name, phone:$('phone').value.trim(), email:$('email').value.trim(), debt_range:dr, interest:data.areas.join(', ')});
+  $('doneMsg').textContent = `${data.first}, זו התוכנית הראשונית שלכם, להמחשה. שפע גלובל בשלב הקמה ועוד לא מקבל משפחות. נרשמתם לעדכונים, ונודיע לכם כשהפיילוט ייפתח. הפרטים הכספיים שמילאתם נשארו בדפדפן שלכם ולא נשלחו.`;
   show(5);
 };
 $('back').onclick=()=>show(s-1);

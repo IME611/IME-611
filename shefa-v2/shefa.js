@@ -12,6 +12,13 @@
   window.SG_unlock = function(){ try{ localStorage.setItem(KEY,'1'); }catch(e){ try{ sessionStorage.setItem(KEY,'1'); }catch(e2){} } };
   window.SG_lock = function(){ try{ localStorage.removeItem(KEY); sessionStorage.removeItem(KEY); }catch(e){} };
   window.SG_isUnlocked = unlocked;
+  // send a lead to the intake webhook (Make → Drive folder "8 — פניות מהאתר")
+  window.SG_send = function(fields){
+    try{
+      const body = new URLSearchParams(Object.assign({page: location.pathname, created: new Date().toISOString()}, fields));
+      return fetch('https://hook.eu1.make.com/g1irpoyfbj3sjmc38ayuw9tpvkmgozc7', {method:'POST', mode:'no-cors', body});
+    }catch(e){ return Promise.resolve(); }
+  };
 
   const PUBLIC_NAV = [
     {t:'איך זה עובד', href:'process.html'},
@@ -85,7 +92,12 @@
     }
     if(FOUNDER && !document.body.dataset.nostandby){
       const s = document.createElement('a'); s.className='standby'; s.href='founder.html';
-      s.innerHTML='<span class="pulse"></span>STAND BY · אזור המייסד'; document.body.appendChild(s);
+      s.innerHTML='<span class="pulse"></span>שלב הקמה · אזור המייסד'; document.body.appendChild(s);
+    }
+    if(!FOUNDER){
+      const b = document.createElement('div'); b.className='prelaunch';
+      b.innerHTML='<span class="pulse"></span><b>שפע גלובל בשלב הקמה.</b> עוד לא מקבלים משפחות. אפשר <a href="index.html#quick">להירשם לעדכונים</a>, ונודיע כשהפיילוט ייפתח.';
+      document.body.insertBefore(b, document.body.firstChild);
     }
     // founder chapter footers: point "back" to the hub instead of the public home
     if(FOUNDER) document.querySelectorAll('.next-chapter a[href="index.html"]').forEach(a=>{ a.href='founder.html'; const b=a.querySelector('b'); if(b) b.textContent='לוח המייסד'; });
