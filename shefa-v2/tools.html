@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>כלים למשפחה | שפע גלובל</title>
+<meta name="description" content="מפת חובות, תקציב משפחתי ויומן נתינה. הכלים של שפע גלובל, בחינם, והנתונים נשארים אצלכם בדפדפן.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Cpolygon points='48,4 88,26 88,70 48,92 8,70 8,26' fill='%23FAF6EE' stroke='%23B8860B' stroke-width='6'/%3E%3Ccircle cx='48' cy='48' r='12' fill='%23C9961A'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=Assistant:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shefa.css?v=3">
+<style>
+.tabs-bar{display:flex;gap:.4rem;justify-content:center;flex-wrap:wrap;margin:0 auto 1.6rem}
+.tabs-bar button{font-family:Heebo;font-weight:700;font-size:.92rem;padding:.6rem 1.2rem;border-radius:2rem;border:1.5px solid var(--line);background:var(--ivory);color:var(--ink-mid);cursor:pointer}
+.tabs-bar button.on{background:var(--gold);border-color:var(--gold);color:#fff}
+.tool{max-width:980px;margin:0 auto}
+.tool[hidden]{display:none}
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--ivory)}
+table.t{width:100%;border-collapse:collapse;font-size:.92rem;min-width:640px}
+table.t th{font-family:Heebo;font-weight:700;font-size:.8rem;color:var(--ink-dim);text-align:right;padding:.7rem .6rem;background:var(--pearl);border-bottom:1px solid var(--line)}
+table.t td{padding:.35rem .4rem;border-bottom:1px dashed var(--line);vertical-align:middle}
+table.t input,table.t select{width:100%;padding:.45rem .5rem;border:1px solid transparent;border-radius:8px;background:transparent;font:inherit;color:var(--ink)}
+table.t input:focus,table.t select:focus{outline:none;border-color:var(--gold);background:#fff}
+table.t input[type=number]{font-variant-numeric:tabular-nums}
+.del{border:none;background:none;color:var(--ink-faint);cursor:pointer;font-size:1.1rem;padding:.2rem .5rem}
+.del:hover{color:var(--risk)}
+.flag{display:inline-block;font-family:Heebo;font-size:.72rem;font-weight:700;padding:.15rem .55rem;border-radius:1rem}
+.flag.hot{background:rgba(154,59,46,.12);color:var(--risk)}
+.flag.ok{background:rgba(63,125,78,.12);color:var(--ok)}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:.8rem;margin:1.2rem 0}
+.kpi{background:var(--ivory);border:1px solid var(--line);border-radius:var(--r);padding:1rem 1.1rem}
+.kpi span{display:block;font-size:.8rem;color:var(--ink-dim)}
+.kpi b{font-family:Heebo;font-size:1.45rem;font-weight:800;font-variant-numeric:tabular-nums}
+.kpi.neg b{color:var(--risk)} .kpi.pos b{color:var(--ok)}
+.tool-actions{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:1rem}
+.budget{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem}
+.bl{display:grid;grid-template-columns:1fr 130px;gap:.5rem;align-items:center;padding:.3rem 0;border-bottom:1px dashed var(--line)}
+.bl label{font-size:.93rem;color:var(--ink-mid)}
+.bl input{padding:.5rem .6rem;border:1px solid var(--line);border-radius:8px;font:inherit;background:#fff;font-variant-numeric:tabular-nums}
+.bl.auto input{background:var(--pearl);color:var(--ink-dim)}
+.bar{height:12px;border-radius:6px;background:var(--pearl);overflow:hidden;border:1px solid var(--line)}
+.bar i{display:block;height:100%;background:var(--g-give);width:0;transition:width .4s}
+.privacy{display:flex;gap:.7rem;align-items:flex-start;padding:1rem 1.2rem;border-radius:var(--r);background:var(--gold-xss);border-right:3px solid var(--gold);font-size:.9rem;color:var(--ink-mid);max-width:980px;margin:0 auto 1.6rem}
+.hint{font-size:.85rem;color:var(--ink-faint);margin-top:.6rem}
+@media(max-width:760px){.kpis{grid-template-columns:1fr 1fr}.budget{grid-template-columns:1fr}}
+@media print{.tabs-bar,.tool-actions,.del,.privacy{display:none!important}.tool[hidden]{display:block!important}}
+</style>
+</head>
+<body>
+<main>
+<header class="page-hero" style="padding-bottom:2.5rem">
+  <p class="eyebrow">כלים למשפחה</p>
+  <h1 class="h-l">שלושה כלים, <span class="gold">תמונה אחת ברורה</span></h1>
+  <p class="lead">מפת החובות מראה מה באמת יקר. התקציב מראה אם נשאר עודף. יומן הנתינה מראה את הדרך חזרה לקהילה. הכלים בחינם, ועובדים גם בלי להירשם.</p>
+</header>
+
+<section style="padding-top:1rem">
+  <div class="privacy"><span>🔒</span><div><b>הנתונים נשארים אצלכם.</b> כל מה שתמלאו כאן נשמר רק בדפדפן הזה, ולא נשלח לשום מקום. אפשר להוריד קובץ, להדפיס, או למחוק הכול בלחיצה. זה כלי להמחשה ולסדר, לא ייעוץ פיננסי.</div></div>
+
+  <div class="tabs-bar" role="tablist">
+    <button class="on" data-tab="debts" role="tab">מפת חובות</button>
+    <button data-tab="budget" role="tab">תקציב משפחתי</button>
+    <button data-tab="giving" role="tab">יומן נתינה</button>
+  </div>
+
+  <!-- DEBTS -->
+  <div class="tool" id="t-debts">
+    <div class="tbl-wrap"><table class="t" id="debtTbl">
+      <thead><tr><th style="width:22%">נושה</th><th style="width:18%">סוג</th><th>יתרה (₪)</th><th>ריבית שנתית %</th><th>החזר חודשי (₪)</th><th>עוד כמה זמן</th><th></th><th></th></tr></thead>
+      <tbody></tbody>
+    </table></div>
+    <div class="tool-actions"><button class="btn btn-line btn-sm" id="addDebt">+ הוספת חוב</button><button class="btn btn-line btn-sm" id="sortDebt">מיון לפי ריבית</button></div>
+    <div class="kpis">
+      <div class="kpi"><span>סך החובות</span><b id="kTotal">₪0</b></div>
+      <div class="kpi"><span>החזר חודשי כולל</span><b id="kPay">₪0</b></div>
+      <div class="kpi"><span>ריבית ממוצעת (משוקללת)</span><b id="kRate">0%</b></div>
+      <div class="kpi"><span>חובות יקרים (מעל 8%)</span><b id="kHot">0</b></div>
+    </div>
+    <p class="hint">מתחילים מהחובות שמסומנים "יקר", מהריבית הגבוהה לנמוכה. "עוד כמה זמן" מחושב לפי ההחזר והריבית שהזנתם.</p>
+  </div>
+
+  <!-- BUDGET -->
+  <div class="tool" id="t-budget" hidden>
+    <div class="budget">
+      <div class="card"><h3>הכנסות חודשיות (נטו)</h3><div id="incList"></div></div>
+      <div class="card"><h3>הוצאות חודשיות</h3><div id="expList"></div></div>
+    </div>
+    <div class="kpis">
+      <div class="kpi"><span>סך הכנסות</span><b id="bInc">₪0</b></div>
+      <div class="kpi"><span>סך הוצאות</span><b id="bExp">₪0</b></div>
+      <div class="kpi" id="bNetBox"><span>עודף או גירעון</span><b id="bNet">₪0</b></div>
+      <div class="kpi"><span>החזרי חובות מתוך ההכנסה</span><b id="bRatio">0%</b></div>
+    </div>
+    <p class="hint">שורת "החזרי חובות" מתמלאת אוטומטית ממפת החובות. היעד הראשון: עודף חיובי בסוף כל חודש.</p>
+  </div>
+
+  <!-- GIVING -->
+  <div class="tool" id="t-giving" hidden>
+    <div class="card">
+      <div class="row" style="justify-content:space-between;align-items:flex-end">
+        <div><h3>היעד החודשי</h3><p class="muted" id="gGoalTxt">מחושב לפי סך החובות במפת החובות.</p></div>
+        <div style="min-width:220px;flex:1;max-width:360px"><div class="row" style="justify-content:space-between"><span class="faint">החודש</span><b id="gMonth" class="heebo">0 / 0 שעות</b></div><div class="bar mt-1"><i id="gBar"></i></div></div>
+      </div>
+    </div>
+    <div class="tbl-wrap mt-1"><table class="t" id="giveTbl">
+      <thead><tr><th style="width:15%">תאריך</th><th style="width:15%">מי</th><th style="width:24%">עמותה או מקום</th><th style="width:10%">שעות</th><th>מה עשינו</th><th></th></tr></thead>
+      <tbody></tbody>
+    </table></div>
+    <div class="tool-actions"><button class="btn btn-line btn-sm" id="addGive">+ רישום נתינה</button></div>
+    <div class="kpis">
+      <div class="kpi"><span>שעות החודש</span><b id="gM">0</b></div>
+      <div class="kpi"><span>שעות מצטברות</span><b id="gAll">0</b></div>
+      <div class="kpi"><span>מקומות שונים</span><b id="gOrgs">0</b></div>
+      <div class="kpi"><span>חודשים עם נתינה</span><b id="gMonths">0</b></div>
+    </div>
+    <p class="hint">הנתינה לא מקזזת חוב או הלוואה. היא הדרך שלכם להחזיר לקהילה, ונעשית בעמותות ולא עבור שפע גלובל.</p>
+  </div>
+
+  <div class="tool-actions" style="justify-content:center;max-width:980px;margin:2rem auto 0">
+    <button class="btn btn-gold" id="dl">הורדת הכול (CSV)</button>
+    <button class="btn btn-line" onclick="window.print()">הדפסה / PDF</button>
+    <button class="btn btn-line" id="wipe">מחיקת הנתונים מהדפדפן</button>
+  </div>
+  <p class="center faint mt-2" style="text-align:center">רוצים להבין את השלב הבא? <a href="process.html">איך התהליך עובד</a> · <a href="https://eil.ime611.com" target="_blank" rel="noopener">E.I.L — מסע ההעצמה</a></p>
+</section>
+</main>
+<script src="giving-model.js"></script>
+<script src="shefa.js?v=3"></script>
+<script>
+const KEY='shefa_tools_v1';
+const ils=n=>'₪'+Math.round(n||0).toLocaleString('he-IL');
+const DEF={debts:[{creditor:'',type:'כרטיס אשראי',bal:'',rate:'',pay:''}],inc:{a:'',b:'',other:''},exp:{rent:'',edu:'',car:'',food:'',ins:'',bills:'',other:''},give:[]};
+let S; try{ S=Object.assign(structuredClone(DEF), JSON.parse(localStorage.getItem(KEY)||'{}')); }catch(e){ S=structuredClone(DEF); }
+const save=()=>{ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} };
+const num=v=>+String(v||'').replace(/[^\d.]/g,'')||0;
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+// tabs
+document.querySelectorAll('.tabs-bar button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.tabs-bar button').forEach(x=>x.classList.toggle('on',x===b));
+  document.querySelectorAll('.tool[id^=t-]').forEach(t=>t.hidden = t.id!=='t-'+b.dataset.tab);
+  renderAll();
+});
+
+// months to payoff given balance, annual rate, monthly payment
+function months(bal,rate,pay){
+  bal=num(bal); pay=num(pay); const r=num(rate)/1200;
+  if(!bal) return ''; if(!pay) return '—';
+  if(r===0) return Math.ceil(bal/pay);
+  if(pay<=bal*r) return '∞';
+  return Math.ceil(-Math.log(1-r*bal/pay)/Math.log(1+r));
+}
+const fmtM=m=>m===''?'':(m==='—'||m==='∞')?(m==='∞'?'ההחזר לא מכסה ריבית':'—'):(m<12?m+' חודשים':(m/12).toFixed(1)+' שנים');
+const TYPES=['כרטיס אשראי','משיכת יתר','הלוואה בנקאית','הלוואה חוץ־בנקאית','משכנתא','אחר'];
+
+function renderDebts(){
+  const tb=document.querySelector('#debtTbl tbody');
+  tb.innerHTML=S.debts.map((d,i)=>{
+    const m=months(d.bal,d.rate,d.pay), hot=num(d.rate)>8;
+    return `<tr data-i="${i}"><td><input data-k="creditor" value="${esc(d.creditor)}" placeholder="בנק / חברה"></td>
+    <td><select data-k="type">${TYPES.map(t=>`<option${t===d.type?' selected':''}>${t}</option>`).join('')}</select></td>
+    <td><input data-k="bal" type="number" inputmode="numeric" value="${esc(d.bal)}" placeholder="0"></td>
+    <td><input data-k="rate" type="number" inputmode="decimal" step="0.1" value="${esc(d.rate)}" placeholder="0"></td>
+    <td><input data-k="pay" type="number" inputmode="numeric" value="${esc(d.pay)}" placeholder="0"></td>
+    <td class="faint">${fmtM(m)}</td>
+    <td>${d.rate!==''?`<span class="flag ${hot?'hot':'ok'}">${hot?'יקר':'סביר'}</span>`:''}</td>
+    <td><button class="del" title="מחיקה" aria-label="מחיקת שורה">×</button></td></tr>`;
+  }).join('');
+  const tot=S.debts.reduce((a,d)=>a+num(d.bal),0), pay=S.debts.reduce((a,d)=>a+num(d.pay),0);
+  const w=tot?S.debts.reduce((a,d)=>a+num(d.bal)*num(d.rate),0)/tot:0;
+  kTotal.textContent=ils(tot); kPay.textContent=ils(pay); kRate.textContent=w.toFixed(1)+'%';
+  kHot.textContent=S.debts.filter(d=>num(d.rate)>8&&num(d.bal)>0).length;
+}
+document.querySelector('#debtTbl').addEventListener('change',e=>{
+  const tr=e.target.closest('tr'); if(!tr||!e.target.dataset.k) return;
+  S.debts[+tr.dataset.i][e.target.dataset.k]=e.target.value; save(); renderDebts();
+});
+document.querySelector('#debtTbl').addEventListener('click',e=>{
+  if(!e.target.classList.contains('del')) return; S.debts.splice(+e.target.closest('tr').dataset.i,1);
+  if(!S.debts.length) S.debts.push({...DEF.debts[0]}); save(); renderDebts();
+});
+addDebt.onclick=()=>{ S.debts.push({...DEF.debts[0]}); save(); renderDebts(); };
+sortDebt.onclick=()=>{ S.debts.sort((a,b)=>num(b.rate)-num(a.rate)); save(); renderDebts(); };
+
+const INC=[['a','הכנסה — בן/בת זוג א׳'],['b','הכנסה — בן/בת זוג ב׳'],['other','הכנסות נוספות (קצבאות, צד)']];
+const EXP=[['rent','דיור (שכירות או משכנתא)'],['edu','חינוך וילדים'],['car','רכב ותחבורה'],['food','מזון וסופר'],['ins','ביטוחים'],['bills','חשבונות ותקשורת'],['other','שונות']];
+function renderBudget(){
+  const debtPay=S.debts.reduce((a,d)=>a+num(d.pay),0);
+  incList.innerHTML=INC.map(([k,l])=>`<div class="bl"><label for="i_${k}">${l}</label><input id="i_${k}" data-g="inc" data-k="${k}" type="number" inputmode="numeric" value="${esc(S.inc[k])}" placeholder="0"></div>`).join('');
+  expList.innerHTML=EXP.map(([k,l])=>`<div class="bl"><label for="e_${k}">${l}</label><input id="e_${k}" data-g="exp" data-k="${k}" type="number" inputmode="numeric" value="${esc(S.exp[k])}" placeholder="0"></div>`).join('')
+    +`<div class="bl auto"><label>החזרי חובות (ממפת החובות)</label><input value="${Math.round(debtPay)}" disabled></div>`;
+  const inc=Object.values(S.inc).reduce((a,v)=>a+num(v),0), exp=Object.values(S.exp).reduce((a,v)=>a+num(v),0)+debtPay, net=inc-exp;
+  bInc.textContent=ils(inc); bExp.textContent=ils(exp); bNet.textContent=(net<0?'−':'')+ils(Math.abs(net));
+  bNetBox.className='kpi '+(net<0?'neg':net>0?'pos':''); bRatio.textContent=inc?Math.round(debtPay/inc*100)+'%':'0%';
+}
+document.querySelector('.budget').addEventListener('change',e=>{ const t=e.target; if(!t.dataset.g) return; S[t.dataset.g][t.dataset.k]=t.value; save(); renderBudget(); });
+
+const ym=d=>String(d||'').slice(0,7);
+function renderGiving(){
+  const tb=document.querySelector('#giveTbl tbody');
+  tb.innerHTML=S.give.length?S.give.map((g,i)=>`<tr data-i="${i}"><td><input data-k="date" type="date" value="${esc(g.date)}"></td>
+    <td><input data-k="who" value="${esc(g.who)}" placeholder="שם"></td><td><input data-k="org" value="${esc(g.org)}" placeholder="עמותה"></td>
+    <td><input data-k="hours" type="number" inputmode="decimal" step="0.5" value="${esc(g.hours)}" placeholder="0"></td>
+    <td><input data-k="what" value="${esc(g.what)}" placeholder="מה עשינו"></td><td><button class="del" aria-label="מחיקת שורה">×</button></td></tr>`).join('')
+    :`<tr><td colspan="6" class="faint" style="padding:1rem;text-align:center">עוד אין רישומים. לחצו "רישום נתינה" כדי להתחיל.</td></tr>`;
+  const debt=S.debts.reduce((a,d)=>a+num(d.bal),0);
+  const goal=debt>=20000 && window.GIVING ? GIVING.plan({debt}).H : 0;
+  gGoalTxt.textContent = goal ? `לפי חוב של ${ils(debt)}: כ־${goal} שעות בחודש למשפחה, לאורך 3 שנים. ההיקף הסופי נקבע יחד בשיחה.` : 'הזינו חובות במפת החובות, ונחשב יעד חודשי.';
+  const now=new Date().toISOString().slice(0,7), mH=S.give.filter(g=>ym(g.date)===now).reduce((a,g)=>a+num(g.hours),0);
+  gMonth.textContent=`${mH} / ${goal||0} שעות`; gBar.style.width=goal?Math.min(100,mH/goal*100)+'%':'0';
+  gM.textContent=mH; gAll.textContent=S.give.reduce((a,g)=>a+num(g.hours),0);
+  gOrgs.textContent=new Set(S.give.map(g=>g.org.trim()).filter(Boolean)).size;
+  gMonths.textContent=new Set(S.give.filter(g=>num(g.hours)>0).map(g=>ym(g.date)).filter(Boolean)).size;
+}
+document.querySelector('#giveTbl').addEventListener('change',e=>{ const tr=e.target.closest('tr'); if(!tr||!e.target.dataset.k) return; S.give[+tr.dataset.i][e.target.dataset.k]=e.target.value; save(); renderGiving(); });
+document.querySelector('#giveTbl').addEventListener('click',e=>{ if(!e.target.classList.contains('del')) return; S.give.splice(+e.target.closest('tr').dataset.i,1); save(); renderGiving(); });
+addGive.onclick=()=>{ S.give.unshift({date:new Date().toISOString().slice(0,10),who:'',org:'',hours:'',what:''}); save(); renderGiving(); };
+
+function renderAll(){ renderDebts(); renderBudget(); renderGiving(); }
+renderAll();
+
+dl.onclick=()=>{
+  const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"', rows=[];
+  rows.push(['מפת חובות']); rows.push(['נושה','סוג','יתרה','ריבית %','החזר חודשי']); S.debts.forEach(d=>rows.push([d.creditor,d.type,d.bal,d.rate,d.pay]));
+  rows.push([]); rows.push(['תקציב']); INC.forEach(([k,l])=>rows.push([l,S.inc[k]])); EXP.forEach(([k,l])=>rows.push([l,S.exp[k]]));
+  rows.push([]); rows.push(['יומן נתינה']); rows.push(['תאריך','מי','עמותה','שעות','מה עשינו']); S.give.forEach(g=>rows.push([g.date,g.who,g.org,g.hours,g.what]));
+  const blob=new Blob(['﻿'+rows.map(r=>r.map(q).join(',')).join('\n')],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='shefa-tools.csv'; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+};
+wipe.onclick=()=>{ if(!confirm('למחוק את כל הנתונים שמילאתם בדפדפן הזה?')) return; try{ localStorage.removeItem(KEY); }catch(e){} S=structuredClone(DEF); renderAll(); };
+</script>
+</body>
+</html>

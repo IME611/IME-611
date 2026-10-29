@@ -22,6 +22,7 @@
 
   const PUBLIC_NAV = [
     {t:'איך זה עובד', href:'process.html'},
+    {t:'כלים', href:'tools.html'},
     {t:'ההסכם', href:'index.html#pact'},
     {t:'שאלות נפוצות', href:'index.html#faq'},
   ];

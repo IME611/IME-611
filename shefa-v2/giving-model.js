@@ -1,7 +1,7 @@
 /* SHEFA GLOBAL — giving model (מחשבון הנתינה)
    The value a family returns to the community is derived from the debt it was helped with.
    Hours are valued on a rising ladder ("מדרגות שכר נתינה"): the longer and better you give,
-   the more each hour is worth — like a promotion. */
+   the more impact each hour carries. */
 (function(){
   const TIERS = [
     {key:'start',  name:'מתנדב/ת', rate:36,  icon:'🌱', desc:'שכר מינימום לשעה, כרצפה'},
