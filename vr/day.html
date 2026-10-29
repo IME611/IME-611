@@ -56,6 +56,7 @@ html,body{margin:0;height:100%;background:var(--ground);color:var(--ink);font-fa
 .toast{position:fixed;top:70px;left:50%;transform:translateX(-50%);z-index:20;background:var(--ink);color:#fff;padding:10px 16px;border-radius:12px;font-size:15px;opacity:0;transition:opacity .3s;pointer-events:none}
 .toast.on{opacity:1}
 .fallback{position:fixed;inset:0;display:grid;place-items:center;text-align:center;padding:24px;z-index:1}
+.fallback[hidden],#vrslot[hidden]{display:none}
 </style>
 </head>
 <body>
@@ -205,6 +206,7 @@ scene.add(stars);
 
 /* ── text panel (canvas texture, RTL) ── */
 const pc = document.createElement('canvas'); pc.width=1600; pc.height=1000;
+let PORTRAIT = false;
 const ctx = pc.getContext('2d');
 const tex = new THREE.CanvasTexture(pc); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 4;
 const panel = new THREE.Mesh(new THREE.PlaneGeometry(2.4,1.5), new THREE.MeshBasicMaterial({map:tex, transparent:true}));
@@ -217,8 +219,9 @@ function wrap(text, maxW){
 function rr(x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
 function drawPanel(i, intro){
   const R = ROUTINES[i], night = i===4;
+  const H = PORTRAIT ? 1500 : 1000; if (pc.height!==H) pc.height = H;
   ctx.clearRect(0,0,pc.width,pc.height);
-  rr(20,20,1560,960,60); ctx.fillStyle = night ? 'rgba(30,38,62,.78)' : 'rgba(255,255,255,.80)'; ctx.fill();
+  rr(20,20,1560,H-40,60); ctx.fillStyle = night ? 'rgba(30,38,62,.78)' : 'rgba(255,255,255,.80)'; ctx.fill();
   ctx.lineWidth=4; ctx.strokeStyle= night ? 'rgba(255,255,255,.35)' : 'rgba(255,255,255,.95)'; ctx.stroke();
   ctx.direction='rtl'; ctx.textAlign='right';
   const ink = night ? '#f2f4fa' : '#24292b', soft = night ? 'rgba(242,244,250,.75)' : '#5c6567';
@@ -226,10 +229,10 @@ function drawPanel(i, intro){
   ctx.fillText(intro ? (DAY.name ? `${DAY.name}, זה היום שלך` : 'זה היום שלך') : `${i+1} / 5 · ${R.hours}`, 1490, 120);
   ctx.fillStyle = ink; ctx.font = '700 108px Assistant, Arial, sans-serif';
   ctx.fillText(intro ? 'היום המושלם' : R.title, 1490, 250);
-  ctx.font = '400 56px Assistant, Arial, sans-serif';
+  const fs = PORTRAIT ? 74 : 56; ctx.font = `400 ${fs}px Assistant, Arial, sans-serif`;
   const body = intro ? 'נשימה עמוקה. עוד רגע היום מתחיל, מהאור הראשון ועד הלילה. אפשר להביט סביב, ולהתקדם בקצב שלך.' : (DAY.r[i] || 'השגרה הזו עוד לא נכתבה. אפשר להוסיף אותה בעריכה.');
-  const lines = wrap(body, 1380).slice(0,10);
-  lines.forEach((l,k)=> ctx.fillText(l, 1490, 360 + k*74));
+  const lines = wrap(body, 1380).slice(0, PORTRAIT ? 14 : 10);
+  lines.forEach((l,k)=> ctx.fillText(l, 1490, 370 + k*fs*1.32));
   tex.needsUpdate = true;
 }
 
@@ -277,9 +280,13 @@ addEventListener('keydown', e => { if (e.target.closest && e.target.closest('.sh
 
 /* ── VR: controller trigger advances ── */
 const vrBtn = VRButton.createButton(renderer);
-document.getElementById('vrslot').appendChild(vrBtn);
+const vrSlot = document.getElementById('vrslot'); vrSlot.appendChild(vrBtn); vrSlot.hidden = true;
+if (navigator.xr && navigator.xr.isSessionSupported) navigator.xr.isSessionSupported('immersive-vr').then(ok=>{ vrSlot.hidden=!ok; }).catch(()=>{});
+const vrHe = () => { const t=vrBtn.textContent.trim(); if (t==='ENTER VR') vrBtn.textContent='🥽 כניסה ל־VR'; else if (t==='EXIT VR') vrBtn.textContent='יציאה מ־VR'; };
+new MutationObserver(vrHe).observe(vrBtn,{childList:true,characterData:true,subtree:true}); vrHe();
 for (let k=0;k<2;k++){ const c = renderer.xr.getController(k); c.addEventListener('select', ()=> go(idx<4 ? idx+1 : -1)); rig.add(c); }
-renderer.xr.addEventListener('sessionstart', ()=>{ if(!playing) start(); });
+renderer.xr.addEventListener('sessionstart', ()=>{ fitPanel(); drawPanel(Math.max(0,idx), idx<0); if(!playing) start(); });
+renderer.xr.addEventListener('sessionend', ()=> fitPanel());
 
 /* ── look around (mouse / touch drag) outside VR ── */
 let yaw=0, pitch=0, drag=null;
@@ -288,7 +295,13 @@ renderer.domElement.addEventListener('pointermove', e=>{ if(!drag) return; yaw =
 addEventListener('pointerup', ()=> drag=null);
 
 addEventListener('resize', ()=>{ camera.aspect=innerWidth/innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth,innerHeight); fitPanel(); });
-function fitPanel(){ panel.position.z = camera.aspect < .8 ? -3.9 : -2.6; }
+function fitPanel(){
+  const was = PORTRAIT; PORTRAIT = camera.aspect < .8 && !renderer.xr.isPresenting;
+  panel.scale.y = PORTRAIT ? 1.5 : 1;
+  const half = Math.atan(Math.tan(THREE.MathUtils.degToRad(camera.fov/2))*camera.aspect);
+  panel.position.z = -Math.max(2.6, 1.32/Math.tan(half));
+  if (was!==PORTRAIT) drawPanel(Math.max(0,idx), idx<0);
+}
 fitPanel();
 
 const clock = new THREE.Clock();
