@@ -131,7 +131,8 @@ function clean(d){
   return { name:String((d&&d.name)||'').slice(0,40), r:ROUTINES.map((_,i)=>String(r[i]||'').slice(0,900)) };
 }
 function load(){
-  const m = location.hash.match(/d=([A-Za-z0-9_-]+)/);
+  let h = location.hash; try { h = decodeURIComponent(h); } catch(e){}
+  const m = h.match(/d=([A-Za-z0-9_+\/=-]+)/);
   if (m) { try { const d = clean(JSON.parse(b64d(m[1]))); save(d); return {d, from:'link'}; } catch(e){} }
   try { const s = localStorage.getItem(LS); if (s) return {d:clean(JSON.parse(s)), from:'saved'}; } catch(e){}
   return {d:clean(DEMO), from:'demo'};
