@@ -180,7 +180,9 @@ $('fwd').onclick=()=>{
   if(!$('consent').checked){ $('consentBox').classList.add('bad'); return; }
   const data={name:$('name').value.trim(), first:$('name').value.trim().split(' ')[0], debt:+$('debt').value, income:+$('income').value, hish:+($('hish').value||0), control, skills:picked('skills'), areas:picked('areas'), hours:$('hours').value, joined:new Date().toISOString()};
   try{ localStorage.setItem('shefa_member', JSON.stringify(data)); }catch(e){}
-  $('doneMsg').textContent = `${data.first}, הבקשה התקבלה. מלווה חוזר אליכם תוך 48 שעות לשיחת היכרות, שבה תשמעו את כל התנאים. המקומות במחזור הראשון מוגבלים. אם עוד לא יהיה מקום, תישארו ברשימת ההמתנה ונחזור אליכם.`;
+  const body=`שם: ${data.name}\nחוב: ${data.debt}\nהכנסה: ${data.income}\nקרן השתלמות: ${data.hish}\nתחומי נתינה: ${data.areas.join(', ')}\nכישורים: ${data.skills.join(', ')}\nשעות: ${data.hours}`;
+  location.href='mailto:admin@ime611.com?subject='+encodeURIComponent('שפע גלובל · בקשת הצטרפות · '+data.name)+'&body='+encodeURIComponent(body);
+  $('doneMsg').textContent = `${data.first}, נפתח לכם מייל מוכן עם הפרטים. שלחו אותו, ונחזור אליכם לשיחת היכרות שבה תשמעו את כל התנאים. אנחנו בשלב ההקמה והמקומות בפיילוט הראשון מוגבלים. אם עוד לא יהיה מקום, תישארו ברשימת ההמתנה.`;
   show(5);
 };
 $('back').onclick=()=>show(s-1);
