@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>היום המושלם שלי · IME VR</title>
+<meta name="description" content="להיכנס אל היום המושלם שלך: חמש שגרות, מהזריחה ועד הלילה, בחוויה שאפשר לחיות שוב ושוב.">
+<meta name="theme-color" content="#f3f4f2">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500&family=Assistant:wght@400;600;700&display=swap">
+<style>
+:root{
+  --ground:#f3f4f2; --ink:#24292b; --ink-soft:#5c6567; --line:#ccd5d2;
+  --mint-deep:#2f7d63; --glass:rgba(255,255,255,.72); --glass-edge:rgba(255,255,255,.95);
+  --body:"Assistant","Arial Hebrew","Segoe UI",system-ui,sans-serif; --display:"Jost",system-ui,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--ground);color:var(--ink);font-family:var(--body)}
+#stage{position:fixed;inset:0}
+#stage canvas{display:block;width:100%;height:100%;touch-action:none}
+.hud{position:fixed;inset:auto 0 0 0;z-index:5;padding:0 16px max(16px,env(safe-area-inset-bottom));pointer-events:none}
+.bar{pointer-events:auto;max-width:760px;margin:0 auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:center;
+  background:var(--glass);border:1px solid var(--glass-edge);border-radius:18px;padding:10px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  box-shadow:0 14px 36px -18px rgba(36,41,43,.45)}
+.bar button,.bar a{font:600 15px/1 var(--body);border:1px solid var(--line);background:#fff;color:var(--ink);padding:10px 14px;border-radius:12px;cursor:pointer;text-decoration:none}
+.bar button.primary{background:var(--ink);color:#fff;border-color:var(--ink)}
+.bar button[aria-pressed="true"]{background:#e6f3ee;border-color:var(--mint-deep);color:var(--mint-deep)}
+.dots{display:flex;gap:6px;margin-inline:6px}
+.dots i{width:10px;height:10px;border-radius:50%;background:var(--line);display:block}
+.dots i.on{background:var(--mint-deep)}
+.top{position:fixed;top:0;inset-inline:0;z-index:5;display:flex;justify-content:space-between;align-items:center;padding:max(12px,env(safe-area-inset-top)) 16px 0;pointer-events:none}
+.top a,.top button{pointer-events:auto;font:500 13px/1 var(--display);letter-spacing:.24em;color:var(--ink-soft);text-decoration:none;direction:ltr;
+  background:var(--glass);border:1px solid var(--glass-edge);padding:9px 12px;border-radius:999px;backdrop-filter:blur(10px)}
+.top button{font:600 14px/1 var(--body);letter-spacing:0;cursor:pointer;color:var(--ink)}
+#vrslot button{position:static!important;transform:none!important;left:auto!important;bottom:auto!important;width:auto!important;
+  font:600 15px/1 var(--body)!important;padding:10px 14px!important;border-radius:12px!important;border:1px solid var(--mint-deep)!important;
+  background:#e6f3ee!important;color:var(--mint-deep)!important;opacity:1!important}
+/* editor */
+.sheet{position:fixed;inset:0;z-index:10;overflow:auto;background:rgba(243,244,242,.96);padding:max(20px,env(safe-area-inset-top)) 16px 40px}
+.sheet[hidden]{display:none}
+.sheet .in{max-width:720px;margin:0 auto;display:grid;gap:14px}
+.sheet h1{margin:8px 0 0;font-size:clamp(28px,6vw,40px);line-height:1.15}
+.sheet p{margin:0;color:var(--ink-soft)}
+.sheet label{display:grid;gap:6px;font-weight:700}
+.sheet label small{font-weight:400;color:var(--ink-soft)}
+.sheet input,.sheet textarea{font:16px/1.5 var(--body);padding:12px;border-radius:12px;border:1px solid var(--line);background:#fff;color:var(--ink);width:100%}
+.sheet textarea{min-height:92px;resize:vertical}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.row button{font:600 16px/1 var(--body);padding:13px 18px;border-radius:12px;border:1px solid var(--line);background:#fff;cursor:pointer;color:var(--ink)}
+.row button.primary{background:var(--ink);color:#fff;border-color:var(--ink)}
+.note{font-size:14px;color:var(--ink-soft);border-top:1px solid var(--line);padding-top:12px}
+.r-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.r-head span{font-size:13px;color:var(--ink-soft);direction:ltr}
+.toast{position:fixed;top:70px;left:50%;transform:translateX(-50%);z-index:20;background:var(--ink);color:#fff;padding:10px 16px;border-radius:12px;font-size:15px;opacity:0;transition:opacity .3s;pointer-events:none}
+.toast.on{opacity:1}
+.fallback{position:fixed;inset:0;display:grid;place-items:center;text-align:center;padding:24px;z-index:1}
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<div class="fallback" id="fallback" hidden><div><h2>הדפדפן לא מצליח להציג תלת־ממד</h2><p>אפשר לפתוח את הקישור בכרום או בספארי עדכניים, או במשקפי Quest.</p></div></div>
+
+<div class="top">
+  <a href="index.html">IME VR</a>
+  <button id="edit" type="button">✎ לערוך את היום</button>
+</div>
+
+<div class="hud">
+  <div class="bar" role="toolbar" aria-label="ניווט ביום">
+    <button id="prev" type="button" aria-label="השגרה הקודמת">→</button>
+    <div class="dots" id="dots" aria-hidden="true"></div>
+    <button id="next" type="button" aria-label="השגרה הבאה">←</button>
+    <button id="play" class="primary" type="button">▶ לחיות את היום</button>
+    <button id="voice" type="button" aria-pressed="true">🔊 קריינות</button>
+    <span id="vrslot"></span>
+  </div>
+</div>
+
+<section class="sheet" id="sheet" hidden aria-labelledby="sh-title">
+  <div class="in">
+    <h1 id="sh-title">היום המושלם שלך</h1>
+    <p>כתבו בכל שגרה איך נראה היום כשאתם כבר מנצחים. כתבו בהווה, בגוף ראשון, בפרטים שאפשר לראות ולהרגיש. הבוט של IME VR יכול למלא את זה בשבילכם בסוף הראיון.</p>
+    <label>שם <small>(יופיע בפתיחה)</small><input id="f-name" maxlength="40" autocomplete="given-name"></label>
+    <div id="f-routines"></div>
+    <div class="row">
+      <button class="primary" id="f-go" type="button">להיכנס אל היום</button>
+      <button id="f-link" type="button">להעתיק קישור אישי</button>
+      <button id="f-demo" type="button">לטעון דוגמה</button>
+      <button id="f-close" type="button">סגירה</button>
+    </div>
+    <p class="note">התוכן נשמר רק בדפדפן הזה ובקישור שאתם יוצרים. הוא לא נשלח לשום שרת. מי שמקבל את הקישור רואה את היום שכתבתם.</p>
+  </div>
+</section>
+<div class="toast" id="toast" role="status"></div>
+
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { VRButton } from 'three/addons/webxr/VRButton.js';
+
+/* ── the five routines (same hours as the bot) ── */
+const ROUTINES = [
+  {key:'r1', title:'בוקר',        hours:'עד 12:00',     sky:['#ffd9b0','#fff3e2'], sun:0.12, light:0.85},
+  {key:'r2', title:'צהריים',      hours:'12:00–16:00',  sky:['#9fd0ef','#f4f8ff'], sun:0.5,  light:1.1},
+  {key:'r3', title:'אחר הצהריים', hours:'16:00–18:00',  sky:['#b9dccf','#fff1d6'], sun:0.72, light:0.95},
+  {key:'r4', title:'ערב',         hours:'18:00–20:00',  sky:['#d7a1b6','#ffd2a6'], sun:0.92, light:0.7},
+  {key:'r5', title:'לילה',        hours:'20:00 ←',       sky:['#1f2a48','#4b5878'], sun:1.15, light:0.35}
+];
+const DEMO = {
+  name:'',
+  r:[
+    'אני מתעורר בלי שעון מעורר, עם אור ראשון שנכנס מהחלון. כוס מים, עשר דקות של תנועה במרפסת, ונשימה עמוקה לפני שאני פותח את הטלפון. ארוחת בוקר רגועה עם האנשים שלי.',
+    'אני עובד על הדבר שהכי חשוב לי, בשקט ובריכוז. אני יודע למה אני עושה את זה, והעבודה מתקדמת בלי לחץ. יש לי זמן לאנשים שצריכים אותי.',
+    'אני סוגר את העבודה בזמן. הליכה בחוץ, מוזיקה שאני אוהב, ושיחה עם חבר. הגוף משתחרר.',
+    'ארוחת ערב משותפת. אני נוכח לגמרי: בלי מסכים, עם צחוק. אני שומע איך עבר היום של כל אחד.',
+    'אני כותב שלושה דברים שהצליחו היום. מקלחת חמה, אור עמום, ואני נרדם בהכרת תודה, יודע שמחר יהיה עוד יום כזה.'
+  ]
+};
+
+/* ── data: hash (#d=base64url JSON) → localStorage → demo ── */
+const LS='imevr_day_v1';
+const b64e = s => btoa(unescape(encodeURIComponent(s))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+const b64d = s => decodeURIComponent(escape(atob(s.replace(/-/g,'+').replace(/_/g,'/'))));
+function clean(d){
+  const r = Array.isArray(d && d.r) ? d.r : [];
+  return { name:String((d&&d.name)||'').slice(0,40), r:ROUTINES.map((_,i)=>String(r[i]||'').slice(0,900)) };
+}
+function load(){
+  const m = location.hash.match(/d=([A-Za-z0-9_-]+)/);
+  if (m) { try { const d = clean(JSON.parse(b64d(m[1]))); save(d); return {d, from:'link'}; } catch(e){} }
+  try { const s = localStorage.getItem(LS); if (s) return {d:clean(JSON.parse(s)), from:'saved'}; } catch(e){}
+  return {d:clean(DEMO), from:'demo'};
+}
+function save(d){ try{ localStorage.setItem(LS, JSON.stringify(d)); }catch(e){} }
+let {d:DAY, from:SOURCE} = load();
+const linkFor = d => location.origin + location.pathname + '#d=' + b64e(JSON.stringify(d));
+
+/* ── three.js scene ── */
+const stage = document.getElementById('stage');
+let renderer;
+try { renderer = new THREE.WebGLRenderer({antialias:true}); }
+catch(e){ document.getElementById('fallback').hidden=false; throw e; }
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.setSize(innerWidth, innerHeight);
+renderer.xr.enabled = true;
+stage.appendChild(renderer.domElement);
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(70, innerWidth/innerHeight, 0.05, 200);
+camera.position.set(0,1.6,0);
+const rig = new THREE.Group(); rig.add(camera); scene.add(rig);
+
+// sky dome with vertical gradient
+const skyU = { top:{value:new THREE.Color('#ffd9b0')}, bottom:{value:new THREE.Color('#fff3e2')} };
+const sky = new THREE.Mesh(new THREE.SphereGeometry(90,48,24), new THREE.ShaderMaterial({
+  side:THREE.BackSide, depthWrite:false, uniforms:skyU,
+  vertexShader:`varying vec3 vP; void main(){ vP=normalize(position); gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);} `,
+  fragmentShader:`uniform vec3 top; uniform vec3 bottom; varying vec3 vP; void main(){ float h=clamp(vP.y*1.2+0.15,0.0,1.0); gl_FragColor=vec4(mix(bottom,top,pow(h,0.8)),1.0);} `
+}));
+scene.add(sky);
+
+const hemi = new THREE.HemisphereLight(0xffffff, 0xcfd8d4, 0.9); scene.add(hemi);
+const sunLight = new THREE.DirectionalLight(0xfff1dc, 0.8); scene.add(sunLight);
+const sun = new THREE.Mesh(new THREE.SphereGeometry(2.2,32,16), new THREE.MeshBasicMaterial({color:0xfff2cc}));
+scene.add(sun);
+
+// soft ground + water ring
+const ground = new THREE.Mesh(new THREE.CircleGeometry(60,64), new THREE.MeshStandardMaterial({color:0xe9ede8, roughness:1}));
+ground.rotation.x = -Math.PI/2; scene.add(ground);
+const water = new THREE.Mesh(new THREE.RingGeometry(14,60,64), new THREE.MeshStandardMaterial({color:0xa9d3cf, roughness:.25, metalness:.1, transparent:true, opacity:.75}));
+water.rotation.x = -Math.PI/2; water.position.y = .01; scene.add(water);
+
+// gentle hills and trees around the viewer
+const hillMat = new THREE.MeshStandardMaterial({color:0xcfe0d2, roughness:1, flatShading:true});
+for (let i=0;i<9;i++){
+  const a = i/9*Math.PI*2, r = 34+ (i%3)*6;
+  const h = new THREE.Mesh(new THREE.ConeGeometry(8+(i%4)*2, 6+(i%3)*3, 7), hillMat);
+  h.position.set(Math.cos(a)*r, 2, Math.sin(a)*r); scene.add(h);
+}
+const trunkM = new THREE.MeshStandardMaterial({color:0xb39b7d}), leafM = new THREE.MeshStandardMaterial({color:0x9cc8a6, flatShading:true});
+for (let i=0;i<14;i++){
+  const a = i/14*Math.PI*2+.2, r = 8+(i%4)*1.6;
+  if (Math.abs(Math.sin(a))<.25 && Math.cos(a)<0) continue; // keep the panel's view clear (panel sits at -z)
+  const t = new THREE.Group();
+  const tr = new THREE.Mesh(new THREE.CylinderGeometry(.08,.12,1.4,6), trunkM); tr.position.y=.7; t.add(tr);
+  const lf = new THREE.Mesh(new THREE.IcosahedronGeometry(.7+(i%3)*.15,0), leafM); lf.position.y=1.7; t.add(lf);
+  t.position.set(Math.sin(a)*r, 0, Math.cos(a)*r); scene.add(t);
+}
+
+// floating light motes
+const N=420, pos=new Float32Array(N*3);
+for (let i=0;i<N;i++){ pos[i*3]=(Math.random()-.5)*40; pos[i*3+1]=Math.random()*12+.3; pos[i*3+2]=(Math.random()-.5)*40; }
+const pg=new THREE.BufferGeometry(); pg.setAttribute('position', new THREE.BufferAttribute(pos,3));
+const motes=new THREE.Points(pg,new THREE.PointsMaterial({color:0xffffff,size:.06,transparent:true,opacity:.8,depthWrite:false}));
+scene.add(motes);
+// stars for night
+const sp=new Float32Array(900*3);
+for (let i=0;i<900;i++){ const v=new THREE.Vector3().randomDirection(); v.y=Math.abs(v.y); v.multiplyScalar(85); sp.set([v.x,v.y,v.z],i*3); }
+const sg=new THREE.BufferGeometry(); sg.setAttribute('position', new THREE.BufferAttribute(sp,3));
+const stars=new THREE.Points(sg,new THREE.PointsMaterial({color:0xffffff,size:.35,transparent:true,opacity:0,depthWrite:false}));
+scene.add(stars);
+
+/* ── text panel (canvas texture, RTL) ── */
+const pc = document.createElement('canvas'); pc.width=1600; pc.height=1000;
+const ctx = pc.getContext('2d');
+const tex = new THREE.CanvasTexture(pc); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 4;
+const panel = new THREE.Mesh(new THREE.PlaneGeometry(2.4,1.5), new THREE.MeshBasicMaterial({map:tex, transparent:true}));
+panel.position.set(0,1.6,-2.6); scene.add(panel);
+function wrap(text, maxW){
+  const words = text.split(/\s+/).filter(Boolean), lines=[]; let line='';
+  for (const w of words){ const t = line? line+' '+w : w; if (ctx.measureText(t).width>maxW && line){ lines.push(line); line=w; } else line=t; }
+  if (line) lines.push(line); return lines;
+}
+function rr(x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function drawPanel(i, intro){
+  const R = ROUTINES[i], night = i===4;
+  ctx.clearRect(0,0,pc.width,pc.height);
+  rr(20,20,1560,960,60); ctx.fillStyle = night ? 'rgba(30,38,62,.78)' : 'rgba(255,255,255,.80)'; ctx.fill();
+  ctx.lineWidth=4; ctx.strokeStyle= night ? 'rgba(255,255,255,.35)' : 'rgba(255,255,255,.95)'; ctx.stroke();
+  ctx.direction='rtl'; ctx.textAlign='right';
+  const ink = night ? '#f2f4fa' : '#24292b', soft = night ? 'rgba(242,244,250,.75)' : '#5c6567';
+  ctx.fillStyle = soft; ctx.font = '600 46px Assistant, Arial, sans-serif';
+  ctx.fillText(intro ? (DAY.name ? `${DAY.name}, זה היום שלך` : 'זה היום שלך') : `${i+1} / 5 · ${R.hours}`, 1490, 120);
+  ctx.fillStyle = ink; ctx.font = '700 108px Assistant, Arial, sans-serif';
+  ctx.fillText(intro ? 'היום המושלם' : R.title, 1490, 250);
+  ctx.font = '400 56px Assistant, Arial, sans-serif';
+  const body = intro ? 'נשימה עמוקה. עוד רגע היום מתחיל, מהאור הראשון ועד הלילה. אפשר להביט סביב, ולהתקדם בקצב שלך.' : (DAY.r[i] || 'השגרה הזו עוד לא נכתבה. אפשר להוסיף אותה בעריכה.');
+  const lines = wrap(body, 1380).slice(0,10);
+  lines.forEach((l,k)=> ctx.fillText(l, 1490, 360 + k*74));
+  tex.needsUpdate = true;
+}
+
+/* ── day state & transitions ── */
+let idx = -1; // -1 = intro
+const cur = {top:new THREE.Color('#ffe6c8'), bottom:new THREE.Color('#fff7ec'), sun:0.05, light:.8, star:0};
+const tgt = {top:new THREE.Color('#ffe6c8'), bottom:new THREE.Color('#fff7ec'), sun:0.05, light:.8, star:0};
+function go(i){
+  idx = Math.max(-1, Math.min(4, i));
+  const R = ROUTINES[Math.max(0,idx)];
+  if (idx>=0){ tgt.top.set(R.sky[0]); tgt.bottom.set(R.sky[1]); tgt.sun=R.sun; tgt.light=R.light; tgt.star = idx===4?1:0; }
+  else { tgt.top.set('#ffe6c8'); tgt.bottom.set('#fff7ec'); tgt.sun=.05; tgt.light=.8; tgt.star=0; }
+  drawPanel(Math.max(0,idx), idx<0);
+  renderDots(); speak();
+}
+const dotsEl = document.getElementById('dots');
+function renderDots(){ dotsEl.innerHTML = ROUTINES.map((_,k)=>`<i class="${k===idx?'on':''}"></i>`).join(''); }
+
+/* ── narration ── */
+let voiceOn = true, playing = false, advanceTimer = null;
+const synth = window.speechSynthesis;
+function speak(){
+  clearTimeout(advanceTimer);
+  if (synth) synth.cancel();
+  const text = idx<0 ? (DAY.name? DAY.name+'. ':'') + 'נשימה עמוקה. עוד רגע היום המושלם שלך מתחיל.' : ROUTINES[idx].title + '. ' + (DAY.r[idx]||'');
+  const next = () => { if (playing) advanceTimer = setTimeout(()=>{ if (idx<4) go(idx+1); else stop(); }, 2500); };
+  if (voiceOn && synth){
+    const u = new SpeechSynthesisUtterance(text); u.lang='he-IL'; u.rate=.92;
+    const v = synth.getVoices().find(v=>/^he|iw/i.test(v.lang)); if (v) u.voice=v;
+    u.onend = next; u.onerror = () => { advanceTimer = setTimeout(next, Math.max(6000, text.length*70)); };
+    synth.speak(u);
+  } else if (playing){ advanceTimer = setTimeout(()=>{ if (idx<4) go(idx+1); else stop(); }, Math.max(7000, text.length*75)); }
+}
+const playBtn = document.getElementById('play');
+function start(){ playing=true; playBtn.textContent='❚❚ עצירה'; go(idx<0||idx===4 ? 0 : idx); }
+function stop(){ playing=false; playBtn.textContent='▶ לחיות את היום'; clearTimeout(advanceTimer); if (synth) synth.cancel(); }
+playBtn.onclick = () => playing ? stop() : start();
+document.getElementById('next').onclick = () => go(idx+1);
+document.getElementById('prev').onclick = () => go(idx-1);
+const voiceBtn = document.getElementById('voice');
+if (!synth) { voiceOn=false; voiceBtn.hidden = true; }
+voiceBtn.onclick = () => { voiceOn=!voiceOn; voiceBtn.setAttribute('aria-pressed', voiceOn); voiceBtn.textContent = voiceOn?'🔊 קריינות':'🔈 בלי קול'; if(!voiceOn && synth) synth.cancel(); };
+addEventListener('keydown', e => { if (e.target.closest && e.target.closest('.sheet')) return;
+  if (e.key==='ArrowLeft') go(idx+1); if (e.key==='ArrowRight') go(idx-1); if (e.key===' ') { e.preventDefault(); playing?stop():start(); } });
+
+/* ── VR: controller trigger advances ── */
+const vrBtn = VRButton.createButton(renderer);
+document.getElementById('vrslot').appendChild(vrBtn);
+for (let k=0;k<2;k++){ const c = renderer.xr.getController(k); c.addEventListener('select', ()=> go(idx<4 ? idx+1 : -1)); rig.add(c); }
+renderer.xr.addEventListener('sessionstart', ()=>{ if(!playing) start(); });
+
+/* ── look around (mouse / touch drag) outside VR ── */
+let yaw=0, pitch=0, drag=null;
+renderer.domElement.addEventListener('pointerdown', e=>{ drag={x:e.clientX,y:e.clientY,yaw,pitch}; renderer.domElement.setPointerCapture(e.pointerId); });
+renderer.domElement.addEventListener('pointermove', e=>{ if(!drag) return; yaw = drag.yaw + (e.clientX-drag.x)*.005; pitch = Math.max(-1.1,Math.min(1.1, drag.pitch + (e.clientY-drag.y)*.004)); });
+addEventListener('pointerup', ()=> drag=null);
+
+addEventListener('resize', ()=>{ camera.aspect=innerWidth/innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth,innerHeight); fitPanel(); });
+function fitPanel(){ panel.position.z = camera.aspect < .8 ? -3.9 : -2.6; }
+fitPanel();
+
+const clock = new THREE.Clock();
+renderer.setAnimationLoop(()=>{
+  const dt = Math.min(clock.getDelta(), .05), k = 1 - Math.pow(.18, dt);
+  cur.top.lerp(tgt.top,k); cur.bottom.lerp(tgt.bottom,k);
+  cur.sun += (tgt.sun-cur.sun)*k; cur.light += (tgt.light-cur.light)*k; cur.star += (tgt.star-cur.star)*k;
+  skyU.top.value.copy(cur.top); skyU.bottom.value.copy(cur.bottom);
+  const a = Math.PI*(1-cur.sun);                       // arc from east to west, behind the panel
+  sun.position.set(Math.cos(a)*70, Math.sin(a)*45 - 4, -40);
+  sun.material.color.set(cur.sun>1 ? 0xe9ecff : 0xfff2cc);
+  sunLight.position.copy(sun.position); sunLight.intensity = cur.light;
+  hemi.intensity = .35 + cur.light*.6;
+  stars.material.opacity = cur.star*.9;
+  motes.material.opacity = .25 + (1-cur.star)*.5;
+  motes.rotation.y += dt*.01;
+  const t = clock.elapsedTime;
+  panel.position.y = 1.6 + Math.sin(t*.6)*.015;
+  if (!renderer.xr.isPresenting){ camera.rotation.set(-pitch, -yaw, 0, 'YXZ'); }
+  renderer.render(scene, camera);
+});
+
+/* ── editor sheet ── */
+const sheet = document.getElementById('sheet'), fr = document.getElementById('f-routines'), fname = document.getElementById('f-name');
+fr.innerHTML = ROUTINES.map((R,i)=>`<label><span class="r-head">${R.title}<span>${R.hours}</span></span><textarea id="f-${i}" maxlength="900"></textarea></label>`).join('');
+function fill(d){ fname.value=d.name||''; ROUTINES.forEach((_,i)=> document.getElementById('f-'+i).value = d.r[i]||''); }
+function read(){ return clean({name:fname.value.trim(), r:ROUTINES.map((_,i)=>document.getElementById('f-'+i).value.trim())}); }
+function openSheet(){ fill(DAY); sheet.hidden=false; stop(); }
+document.getElementById('edit').onclick = openSheet;
+document.getElementById('f-close').onclick = () => sheet.hidden=true;
+document.getElementById('f-demo').onclick = () => fill(clean(DEMO));
+document.getElementById('f-go').onclick = () => { DAY=read(); save(DAY); history.replaceState(null,'',location.pathname); sheet.hidden=true; go(-1); };
+document.getElementById('f-link').onclick = async () => {
+  DAY=read(); save(DAY); const url = linkFor(DAY);
+  try { await navigator.clipboard.writeText(url); toast('הקישור הועתק'); } catch(e){ prompt('הקישור האישי:', url); }
+};
+const toastEl = document.getElementById('toast');
+function toast(m){ toastEl.textContent=m; toastEl.classList.add('on'); setTimeout(()=>toastEl.classList.remove('on'),2200); }
+
+drawPanel(0,true); renderDots();
+if (document.fonts) document.fonts.ready.then(()=> drawPanel(Math.max(0,idx), idx<0));
+if (SOURCE==='demo') toast('זו דוגמה. אפשר לכתוב את היום שלכם ב"לערוך את היום"');
+if (synth) synth.onvoiceschanged = () => {};
+</script>
+</body>
+</html>

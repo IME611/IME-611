@@ -88,6 +88,7 @@ html[lang="en"] .step h3{font-family:var(--display);font-weight:500}
 .step p{margin:0;color:var(--ink-soft);font-size:16px}
 .soon{justify-self:start;font-size:12px;font-weight:700;letter-spacing:.06em;padding:3px 10px;border-radius:999px;border:1px solid #bfcfe0;color:#43607d;background:rgba(255,255,255,.7)}
 
+.try{justify-self:start;font-weight:700;color:var(--mint-deep);text-decoration:none;border-bottom:1px solid currentColor}
 .facts{margin-top:clamp(40px,7vw,64px);display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;border-top:1px solid var(--line);padding-top:24px}
 .fact b{display:block;font-size:17px}
 .fact span{color:var(--ink-soft);font-size:15px}
@@ -153,9 +154,10 @@ footer a{text-decoration:none;border-bottom:1px solid var(--line)}
     </article>
     <article class="step">
       <span class="num">03</span>
-      <span class="soon" data-i18n="soon">בקרוב</span>
+      <span class="soon" data-i18n="soon">גרסה ראשונה</span>
       <h3 data-i18n="s3">חוויית VR</h3>
-      <p data-i18n="s3d">היום המושלם הופך לחוויה שאפשר להיכנס אליה ולחיות אותה, שוב ושוב.</p>
+      <p data-i18n="s3d">היום המושלם הופך לחוויה שאפשר להיכנס אליה ולחיות אותה, שוב ושוב: בטלפון, במחשב או במשקפי VR.</p>
+      <a class="try" href="day.html" data-i18n="try">להיכנס אל היום ←</a>
     </article>
   </section>
 
@@ -194,7 +196,7 @@ const T = {
     "r5":"Night","r5d":"How you close the day and go to sleep.",
     "s1":"Conversation","s1d":"One question at a time for each routine. No right or wrong answers. Choose the depth: general, medium or deep.",
     "s2":"The perfect day","s2d":"Your answers become a personal profile, and you get a summary of your perfect day: the victory image.",
-    "soon":"Coming soon","s3":"VR experience","s3d":"Your perfect day becomes an experience you can step into and live, again and again.",
+    "soon":"First version","s3":"VR experience","s3d":"Your perfect day becomes an experience you can step into and live, again and again: on a phone, a computer or a VR headset.","try":"Step into the day →",
     "f1":"In Hebrew","f1d":"The bot addresses you in the masculine or feminine form, as you choose.",
     "f2":"At your pace","f2d":"Stop and come back any time. The bot remembers where you left off.",
     "f3":"Privacy","f3d":"Your answers are used only to build your perfect day and are not shared with anyone.",
