@@ -225,7 +225,7 @@ function drawPanel(i, intro){
   const body0 = intro ? INTRO : (DAY.r[i] || EMPTY);
   const n0 = Math.min(wrap(body0,1380).length, PORTRAIT ? 14 : 10);
   const H = Math.max(PORTRAIT ? 760 : 640, Math.round(370 + n0*fs0*1.32 + 70));
-  if (pc.height!==H) pc.height = H;
+  if (pc.height!==H) { pc.height = H; tex.dispose(); }
   panel.scale.y = H/1000;
   ctx.clearRect(0,0,pc.width,pc.height);
   rr(20,20,1560,H-40,60); ctx.fillStyle = night ? 'rgba(30,38,62,.78)' : 'rgba(255,255,255,.80)'; ctx.fill();
