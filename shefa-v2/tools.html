@@ -44,6 +44,26 @@ table.t input[type=number]{font-variant-numeric:tabular-nums}
 .hint{font-size:.85rem;color:var(--ink-faint);margin-top:.6rem}
 @media(max-width:760px){.kpis{grid-template-columns:1fr 1fr}.budget{grid-template-columns:1fr}}
 @media print{.tabs-bar,.tool-actions,.del,.privacy{display:none!important}.tool[hidden]{display:block!important}}
+.rep-ctl{display:flex;gap:.6rem;flex-wrap:wrap;align-items:flex-end;margin-top:1.2rem}
+.rep-ctl label{display:grid;gap:.25rem;font-size:.85rem;color:var(--ink-dim)}
+.rep-ctl input{font:inherit;padding:.5rem .6rem;border:1px solid var(--line);border-radius:10px;background:#fff}
+#rep{display:none}
+#rep .rep-card{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:1.6rem;margin-top:1rem}
+#rep h2{margin:0 0 .2rem;font-size:1.5rem}
+#rep .rep-meta{color:var(--ink-dim);font-size:.9rem;margin-bottom:1rem}
+#rep .rep-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:.6rem;margin:1rem 0}
+#rep .rep-kpis div{border:1px solid var(--line);border-radius:12px;padding:.7rem;text-align:center}
+#rep .rep-kpis b{display:block;font-family:Heebo;font-size:1.4rem;color:var(--gold)}
+#rep .rep-kpis span{font-size:.8rem;color:var(--ink-dim)}
+#rep table{width:100%;border-collapse:collapse;font-size:.9rem;margin-top:.4rem}
+#rep th,#rep td{border-bottom:1px solid var(--line);padding:.45rem;text-align:right}
+#rep h3{margin:1.2rem 0 .2rem;font-size:1.05rem}
+#rep .rep-note{font-size:.82rem;color:var(--ink-dim);margin-top:1.2rem;line-height:1.6}
+#rep .rep-sign{display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-top:2rem;font-size:.85rem;color:var(--ink-dim)}
+#rep .rep-sign div{border-top:1px solid var(--ink-faint);padding-top:.4rem}
+@media(max-width:600px){#rep .rep-kpis{grid-template-columns:1fr 1fr}}
+body.rep-mode #rep{display:block}
+@media print{body.rep-mode > *:not(main){display:none!important} body.rep-mode main > *:not(#tools-sec){display:none!important} body.rep-mode #tools-sec > *:not(#rep){display:none!important} body.rep-mode #rep .rep-card{border:none;padding:0} body.rep-mode .rep-x{display:none!important}}
 </style>
 </head>
 <body>
@@ -54,7 +74,7 @@ table.t input[type=number]{font-variant-numeric:tabular-nums}
   <p class="lead">מפת החובות מראה מה באמת יקר. התקציב מראה אם נשאר עודף. יומן הנתינה מראה את הדרך חזרה לקהילה. הכלים בחינם, ועובדים גם בלי להירשם.</p>
 </header>
 
-<section style="padding-top:1rem">
+<section id="tools-sec" style="padding-top:1rem">
   <div class="privacy"><span>🔒</span><div><b>הנתונים נשארים אצלכם.</b> כל מה שתמלאו כאן נשמר רק בדפדפן הזה, ולא נשלח לשום מקום. אפשר להוריד קובץ, להדפיס, או למחוק הכול בלחיצה. זה כלי להמחשה ולסדר, לא ייעוץ פיננסי.</div></div>
 
   <div class="tabs-bar" role="tablist">
@@ -114,7 +134,13 @@ table.t input[type=number]{font-variant-numeric:tabular-nums}
       <div class="kpi"><span>חודשים עם נתינה</span><b id="gMonths">0</b></div>
     </div>
     <p class="hint">הנתינה לא מקזזת חוב או הלוואה. היא הדרך שלכם להחזיר לקהילה, ונעשית בעמותות ולא עבור שפע גלובל.</p>
+    <div class="rep-ctl">
+      <label>חודש לדוח<input type="month" id="repMonth"></label>
+      <label>שם המשפחה (לא חובה)<input id="repName" maxlength="40" placeholder="משפחת..."></label>
+      <button class="btn btn-gold btn-sm" id="repBtn" type="button">דוח נתינה חודשי</button>
+    </div>
   </div>
+  <div id="rep" aria-live="polite"></div>
 
   <div class="tool-actions" style="justify-content:center;max-width:980px;margin:2rem auto 0">
     <button class="btn btn-gold" id="dl">הורדת הכול (CSV)</button>
@@ -216,6 +242,36 @@ document.querySelector('#giveTbl').addEventListener('change',e=>{ const tr=e.tar
 document.querySelector('#giveTbl').addEventListener('click',e=>{ if(!e.target.classList.contains('del')) return; S.give.splice(+e.target.closest('tr').dataset.i,1); save(); renderGiving(); });
 addGive.onclick=()=>{ S.give.unshift({date:new Date().toISOString().slice(0,10),who:'',org:'',hours:'',what:''}); save(); renderGiving(); };
 
+const MONTHS=['ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'];
+repMonth.value=new Date().toISOString().slice(0,7);
+try{ repName.value=localStorage.getItem('shefa_rep_name')||''; }catch(e){}
+function buildReport(){
+  const m=repMonth.value||new Date().toISOString().slice(0,7), [yy,mm]=m.split('-');
+  const name=repName.value.trim(); try{ localStorage.setItem('shefa_rep_name',name); }catch(e){}
+  const rows=S.give.filter(g=>ym(g.date)===m && num(g.hours)>0).sort((a,b)=>a.date<b.date?-1:1);
+  const debt=S.debts.reduce((a,d)=>a+num(d.bal),0), goal=debt>=20000&&window.GIVING?GIVING.plan({debt}).H:0;
+  const hrs=rows.reduce((a,g)=>a+num(g.hours),0), pct=goal?Math.round(hrs/goal*100):null;
+  const upto=S.give.filter(g=>ym(g.date)&&ym(g.date)<=m).reduce((a,g)=>a+num(g.hours),0);
+  const group=k=>{ const o={}; rows.forEach(g=>{ const v=(g[k]||'').trim()||'—'; o[v]=(o[v]||0)+num(g.hours); }); return Object.entries(o).sort((a,b)=>b[1]-a[1]); };
+  const tbl=(head,list)=>`<table><thead><tr>${head.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${list}</tbody></table>`;
+  rep.innerHTML=`<div class="rep-card">
+    <div class="row" style="justify-content:space-between;align-items:flex-start"><div><h2>דוח נתינה · ${MONTHS[+mm-1]} ${yy}</h2>
+    <div class="rep-meta">${name?esc(name)+' · ':''}שפע גלובל · הופק ב־${new Date().toLocaleDateString('he-IL')}</div></div>
+    <button class="btn btn-line btn-sm rep-x" type="button" onclick="document.body.classList.remove('rep-mode')">סגירת הדוח</button></div>
+    <div class="rep-kpis"><div><b>${hrs}</b><span>שעות החודש</span></div><div><b>${goal||'—'}</b><span>יעד חודשי</span></div>
+      <div><b>${pct===null?'—':pct+'%'}</b><span>מהיעד</span></div><div><b>${upto}</b><span>שעות מצטברות</span></div></div>
+    ${rows.length?`<h3>לפי עמותה</h3>${tbl(['עמותה או מקום','שעות'],group('org').map(([k,v])=>`<tr><td>${esc(k)}</td><td>${v}</td></tr>`).join(''))}
+    <h3>לפי בן משפחה</h3>${tbl(['מי','שעות'],group('who').map(([k,v])=>`<tr><td>${esc(k)}</td><td>${v}</td></tr>`).join(''))}
+    <h3>כל הרישומים</h3>${tbl(['תאריך','מי','עמותה','שעות','מה עשינו'],rows.map(g=>`<tr><td>${new Date(g.date).toLocaleDateString('he-IL')}</td><td>${esc(g.who)}</td><td>${esc(g.org)}</td><td>${num(g.hours)}</td><td>${esc(g.what)}</td></tr>`).join(''))}`
+      :`<p class="muted">אין רישומי נתינה בחודש הזה.</p>`}
+    <p class="rep-note">הדוח הופק מהנתונים שנשמרו במכשיר הזה בלבד. הנתינה נעשית בעמותות, לא עבור שפע גלובל, והיא לא מקזזת חוב או הלוואה. ${goal?'היעד מחושב לפי סך החובות במפת החובות; ההיקף הסופי נקבע בשיחה.':''}</p>
+    <div class="rep-sign"><div>חתימת המשפחה</div><div>אישור העמותה (לא חובה)</div></div>
+  </div>`;
+  document.body.classList.add('rep-mode');
+  rep.scrollIntoView({behavior:'smooth',block:'start'});
+}
+repBtn.onclick=()=>{ buildReport(); setTimeout(()=>window.print(),350); };
+window.addEventListener('afterprint',()=>{});
 function renderAll(){ renderDebts(); renderBudget(); renderGiving(); }
 renderAll();
 
